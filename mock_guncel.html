@@ -3676,6 +3676,21 @@
                 pageTitle.textContent = t('dashboard');
                 if (isSupplier) {
                 pageContent.innerHTML = `
+                    <!-- Dashboard Info -->
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-tachometer-alt text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-blue-800">Tedarikçi Dashboard</h3>
+                                <div class="mt-2 text-sm text-blue-700">
+                                    <p>Bu sayfada tedarikçi olarak işletmenizin genel performansını takip edebilirsiniz. Siparişler, ürünler, stok durumu ve iade bilgileri burada özetlenir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white p-6 rounded-lg shadow"><h3 class="text-gray-500">TOPLAM SİPARİŞ</h3><p class="text-3xl font-bold mt-2">1,022</p></div>
                         <div class="bg-white p-6 rounded-lg shadow"><h3 class="text-gray-500">TOPLAM ÜRÜN</h3><p class="text-3xl font-bold mt-2">${mockData.products.length}</p></div>
@@ -3740,6 +3755,21 @@
                     const lowStockItems = lowStockTop.map(p => `<li class=\"flex items-center justify-between py-2 border-b last:border-0\"><div><p class=\"text-sm font-medium text-gray-900\">${t(p.name)}</p><p class=\"text-xs text-gray-500\">SKU: ${p.sku}</p></div><span class=\"px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800\">${getProductStock(p.id)} adet</span></li>`).join('');
 
                     pageContent.innerHTML = `
+                        <!-- Admin Dashboard Info -->
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-chart-line text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-green-800">Admin Dashboard</h3>
+                                    <div class="mt-2 text-sm text-green-700">
+                                        <p>Bu sayfada platformun genel durumunu ve performansını takip edebilirsiniz. Ürün istatistikleri, tedarikçi bilgileri, işlemler ve iade durumları burada özetlenir.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- KPI Cards -->
                         <div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6\">
                             <div class=\"bg-white p-6 rounded-lg shadow\"><h3 class=\"text-gray-500\">TOPLAM ÜRÜN</h3><p class=\"text-3xl font-bold mt-2\">${totalProducts}</p></div>
@@ -3861,6 +3891,21 @@
                     </nav>`;
 
                 pageContent.innerHTML = `
+                    <!-- Products Page Info -->
+                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-box text-purple-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-purple-800">Ürün Yönetimi</h3>
+                                <div class="mt-2 text-sm text-purple-700">
+                                    <p>Bu sayfada tüm ürünlerinizi yönetebilirsiniz. Yeni gelen ürünleri onaylayabilir, mevcut ürünleri düzenleyebilir ve ürün durumlarını takip edebilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="bg-white rounded-lg shadow">
                          <div class="border-b border-gray-200">
                             ${tabsHTML}
@@ -4280,12 +4325,44 @@
             integrations: () => {
                 pageTitle.textContent = t('integrations');
                 const integrationCards = mockData.integrations.map(int => `<div class="bg-white rounded-lg shadow p-4 flex flex-col justify-between"><div class="flex items-start"><img src="${int.logo}" alt="${int.name}" class="w-12 h-12 rounded-md mr-4 object-cover"><div><h3 class="font-semibold">${int.name}</h3><p class="text-sm text-gray-500">${t(int.description)}</p></div></div><div class="mt-4 flex justify-between items-center"><div class="flex items-center"><span class="w-2 h-2 rounded-full mr-2 ${int.status === 'active' ? 'bg-green-500' : 'bg-red-500'}"></span><span class="text-sm font-medium ${int.status === 'active' ? 'text-green-700' : 'text-red-700'}">${int.status === 'active' ? t('status_active') : t('status_passive')}</span></div><button class="px-3 py-1 text-sm rounded-md ${int.status === 'active' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}">${int.status === 'active' ? 'Bağlantıyı Kes' : 'Bağlan'}</button></div></div>`).join('');
-                pageContent.innerHTML = `<div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('integrations')}</h2><p class="mt-1 text-sm text-gray-500">Sisteminizi diğer servislerle bağlayın ve yönetin.</p></div><button id="addIntegrationBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Entegrasyon Ekle</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${integrationCards}</div>`;
+                pageContent.innerHTML = `
+                    <!-- Integrations Page Info -->
+                    <div class="bg-teal-50 border-l-4 border-teal-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-plug text-teal-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-teal-800">Entegrasyonlar</h3>
+                                <div class="mt-2 text-sm text-teal-700">
+                                    <p>Bu sayfada sisteminizi diğer servislerle bağlayabilirsiniz. E-ticaret platformları, ödeme sistemleri ve diğer üçüncü parti uygulamalar burada yönetilir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('integrations')}</h2><p class="mt-1 text-sm text-gray-500">Sisteminizi diğer servislerle bağlayın ve yönetin.</p></div><button id="addIntegrationBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Entegrasyon Ekle</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${integrationCards}</div>`;
                 document.getElementById('addIntegrationBtn').addEventListener('click', showAddIntegrationModal);
             },
             categoriesPage: (initialTab = 'master') => {
                 pageTitle.textContent = t('categories');
-                pageContent.innerHTML = `<div class="bg-white rounded-lg shadow"><div class="border-b border-gray-200"><nav id="main-tabs" class="-mb-px flex space-x-6 px-6"><button data-tab="master" class="tab-button ${initialTab === 'master' ? 'active' : 'text-gray-500'} font-medium py-4">${t('master_category_tree')}</button><button data-tab="mapping" class="tab-button ${initialTab === 'mapping' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_mapping')}</button></nav></div><div id="main-tab-content" class="p-0 sm:p-6"></div></div>`;
+                pageContent.innerHTML = `
+                    <!-- Categories Page Info -->
+                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-sitemap text-indigo-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-indigo-800">Kategori Yönetimi</h3>
+                                <div class="mt-2 text-sm text-indigo-700">
+                                    <p>Bu sayfada ürün kategorilerinizi hiyerarşik olarak yönetebilirsiniz. Ana kategori ağacını oluşturabilir ve farklı kanallara kategori eşleştirmeleri yapabilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow"><div class="border-b border-gray-200"><nav id="main-tabs" class="-mb-px flex space-x-6 px-6"><button data-tab="master" class="tab-button ${initialTab === 'master' ? 'active' : 'text-gray-500'} font-medium py-4">${t('master_category_tree')}</button><button data-tab="mapping" class="tab-button ${initialTab === 'mapping' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_mapping')}</button></nav></div><div id="main-tab-content" class="p-0 sm:p-6"></div></div>`;
                 const tabs = document.querySelectorAll('#main-tabs .tab-button');
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
@@ -4563,7 +4640,23 @@
                     const priceText = price ? `${price.toFixed(2)} ₺'den başlayan` : 'Fiyat Yok';
                     return `<tr class="border-b hover:bg-gray-50"><td class="p-3 flex items-center"><img src="${p.imageUrl}" alt="${t(p.name)}" class="w-12 h-12 rounded-md mr-4 object-cover"><div><a href="#suppliers/detail/${p.id}" class="font-semibold text-blue-600 hover:underline">${t(p.name)}</a><p class="text-xs text-gray-500">${p.sku}</p></div></td><td class="p-3 text-sm">${t(category.name)}</td><td class="p-3 text-sm font-medium">${priceText}</td><td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td><td class="p-3 text-right"><a href="#suppliers/detail/${p.id}" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200">${t('update_stock_price')} <i class="fas fa-chevron-right ml-1"></i></a></td></tr>`;
                 }).join('');
-                pageContent.innerHTML = `<div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('supplier_stock_management')}</h2><p class="mt-1 text-sm text-gray-500">Ürünlerin tedarikçi bazlı stok ve fiyat bilgilerini yönetin.</p></div></div><div class="bg-white p-4 rounded-lg shadow"><table class="w-full text-left"><thead class="table-header"><tr><th class="p-3 text-sm font-semibold">${t('product_name_header')}</th><th class="p-3 text-sm font-semibold">${t('category_header')}</th><th class="p-3 text-sm font-semibold">${t('price_header')}</th><th class="p-3 text-sm font-semibold">${t('stock_header')}</th><th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${productRows}</tbody></table></div>`;
+                pageContent.innerHTML = `
+                    <!-- Suppliers Page Info -->
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-truck text-orange-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-orange-800">Tedarikçi Stok Yönetimi</h3>
+                                <div class="mt-2 text-sm text-orange-700">
+                                    <p>Bu sayfada tedarikçilerinizin stok ve fiyat bilgilerini yönetebilirsiniz. Her ürün için tedarikçi bazlı stok miktarları ve fiyatları burada güncellenir.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('supplier_stock_management')}</h2><p class="mt-1 text-sm text-gray-500">Ürünlerin tedarikçi bazlı stok ve fiyat bilgilerini yönetin.</p></div></div><div class="bg-white p-4 rounded-lg shadow"><table class="w-full text-left"><thead class="table-header"><tr><th class="p-3 text-sm font-semibold">${t('product_name_header')}</th><th class="p-3 text-sm font-semibold">${t('category_header')}</th><th class="p-3 text-sm font-semibold">${t('price_header')}</th><th class="p-3 text-sm font-semibold">${t('stock_header')}</th><th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${productRows}</tbody></table></div>`;
             },
             supplierProductDetail: (productId) => {
                 const product = mockData.products.find(p => p.id === parseInt(productId));
@@ -4841,6 +4934,21 @@
             commissionManagement: (activeTab = 'brand') => {
                 pageTitle.textContent = t('commission_management');
                 pageContent.innerHTML = `
+                    <!-- Commission Management Page Info -->
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-percentage text-yellow-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-yellow-800">Komisyon Yönetimi</h3>
+                                <div class="mt-2 text-sm text-yellow-700">
+                                    <p>Bu sayfada marka, kategori ve ürün bazlı komisyon oranlarını yönetebilirsiniz. Farklı komisyon stratejileri oluşturabilir ve gelir optimizasyonu yapabilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="bg-white rounded-lg shadow">
                         <div class="border-b border-gray-200">
                             <nav id="commission-tabs" class="-mb-px flex space-x-6 px-6">
@@ -4859,6 +4967,21 @@
             settings: (activeTab = 'users') => {
                 pageTitle.textContent = t('settings');
                 pageContent.innerHTML = `
+                    <!-- Settings Page Info -->
+                    <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-cog text-gray-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-gray-800">Sistem Ayarları</h3>
+                                <div class="mt-2 text-sm text-gray-700">
+                                    <p>Bu sayfada sistem genelinde kullanıcı yönetimi, API anahtarları ve komisyon ayarlarını yapılandırabilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="bg-white rounded-lg shadow">
                         <div class="border-b border-gray-200">
                             <nav id="settings-tabs" class="-mb-px flex space-x-6 px-6">
@@ -4926,6 +5049,21 @@
                 `;
                 
                 pageContent.innerHTML = `
+                    <!-- Returns Page Info -->
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-undo text-red-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">İade Yönetimi</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p>Bu sayfada müşteri iadelerini yönetebilirsiniz. İade taleplerini onaylayabilir, işleyebilir ve tamamlanan iadeleri takip edebilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="bg-white rounded-lg shadow">
                         <div class="border-b border-gray-200 flex justify-between items-center pr-4">
                             <nav id="returns-tabs" class="-mb-px flex space-x-6 px-6">
@@ -5508,6 +5646,21 @@
             }
 
             pageContent.innerHTML = `
+                <!-- Bulk Upload Page Info -->
+                <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-upload text-cyan-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-cyan-800">Toplu Yükleme</h3>
+                            <div class="mt-2 text-sm text-cyan-700">
+                                <p>Bu sayfada Excel dosyaları kullanarak ürünlerinizi toplu olarak yükleyebilir veya güncelleyebilirsiniz. Toplu işlemler için şablon dosyalarını indirebilirsiniz.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="space-y-6">
                     <!-- Header -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -6905,6 +7058,82 @@
             
             
             try {
+                // Add informational content for each tab
+                let infoContent = '';
+                switch (activeTab) {
+                    case 'supplier-revenue':
+                        infoContent = `
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-chart-line text-blue-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-blue-800">Tedarikçi Gelirleri</h3>
+                                        <div class="mt-2 text-sm text-blue-700">
+                                            <p>Bu sekmede tedarikçilerinizin gelir performansını detaylı olarak görüntüleyebilirsiniz. Her tedarikçinin aylık gelirleri, komisyon oranları ve toplam satış hacimleri burada listelenir.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'orders':
+                        infoContent = `
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-shopping-cart text-green-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-green-800">Siparişler</h3>
+                                        <div class="mt-2 text-sm text-green-700">
+                                            <p>Bu sekmede tüm siparişlerin finansal detaylarını görüntüleyebilirsiniz. Sipariş tutarları, komisyon hesaplamaları ve ödeme durumları burada takip edilir.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'transactions':
+                        infoContent = `
+                            <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-exchange-alt text-purple-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-purple-800">İşlemler</h3>
+                                        <div class="mt-2 text-sm text-purple-700">
+                                            <p>Bu sekmede tüm finansal işlemlerin detaylı kayıtlarını görüntüleyebilirsiniz. Gelir, gider, komisyon ve diğer mali işlemlerin tam geçmişi burada tutulur.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'profitability':
+                        infoContent = `
+                            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-trending-up text-orange-400"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-orange-800">Gelir Trendi</h3>
+                                        <div class="mt-2 text-sm text-orange-700">
+                                            <p>Bu sekmede gelir trendlerinizi grafiksel olarak analiz edebilirsiniz. Zaman içindeki performans değişimleri, büyüme oranları ve gelecek projeksiyonları burada görüntülenir.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+
+                // Render the info content and then the actual tab content
+                contentEl.innerHTML = infoContent;
+                
                 switch (activeTab) {
                     case 'supplier-revenue':
                         renderSupplierRevenueTable();
@@ -7011,7 +7240,7 @@
             const suppliers = mockData.suppliers || [];
             const supplierOptions = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
             
-            contentEl.innerHTML = `
+            contentEl.innerHTML += `
                 <div class="space-y-4">
                     <!-- Filter Section -->
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -7138,7 +7367,7 @@
             const suppliers = mockData.suppliers || [];
             const supplierOptions = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
             
-            contentEl.innerHTML = `
+            contentEl.innerHTML += `
                 <div class="space-y-4">
                     <!-- Filter Section -->
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -7294,7 +7523,7 @@
                 return `<text x="${x}" y="${chartHeight - 10}" text-anchor="middle" class="text-xs fill-gray-600">${data.month.split(' ')[0]}</text>`;
             }).join('');
             
-            contentEl.innerHTML = `
+            contentEl.innerHTML += `
                 <div class="space-y-6">
                     <div class="bg-white p-6 rounded-lg shadow">
                         <div class="flex justify-between items-center mb-6">
@@ -7701,7 +7930,7 @@
             const suppliers = mockData.suppliers || [];
             const supplierOptions = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
             
-            contentEl.innerHTML = `
+            contentEl.innerHTML += `
                 <div class="space-y-4">
                     <!-- Filter Section -->
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -8674,6 +8903,116 @@
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
             
+            // Add informational content for each tab
+            let infoContent = '';
+            switch(tabName) {
+                case 'transactions':
+                    infoContent = `
+                        <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exchange-alt text-purple-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-purple-800">İşlemler</h3>
+                                    <div class="mt-2 text-sm text-purple-700">
+                                        <p>Bu sekmede tüm finansal işlemlerin detaylı kayıtlarını görüntüleyebilirsiniz. Gelir, gider, komisyon ve diğer mali işlemlerin tam geçmişi burada tutulur.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'completed':
+                    infoContent = `
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-check-circle text-green-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-green-800">Geçmiş Ödemeler</h3>
+                                    <div class="mt-2 text-sm text-green-700">
+                                        <p>Bu sekmede tamamlanmış ödemelerinizin detaylarını görüntüleyebilirsiniz. Ödeme tarihleri, tutarlar ve banka bilgileri burada listelenir.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'pending':
+                    infoContent = `
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-clock text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-yellow-800">Bekleyen Ödemeler</h3>
+                                    <div class="mt-2 text-sm text-yellow-700">
+                                        <p>Bu sekmede henüz tamamlanmamış ödemelerinizi görüntüleyebilirsiniz. Beklenen ödeme tarihleri ve tutarlar burada takip edilir.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'revenue-trend':
+                    infoContent = `
+                        <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-trending-up text-orange-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-orange-800">Gelir Trendi</h3>
+                                    <div class="mt-2 text-sm text-orange-700">
+                                        <p>Bu sekmede gelir trendlerinizi grafiksel olarak analiz edebilirsiniz. Zaman içindeki performans değişimleri, büyüme oranları ve gelecek projeksiyonları burada görüntülenir.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'history':
+                    infoContent = `
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-history text-blue-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-blue-800">Ödeme Geçmişi</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        <p>Bu sekmede tüm ödeme geçmişinizi detaylı olarak görüntüleyebilirsiniz. Geçmiş ödemelerin tamamı burada arşivlenir.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'profitability':
+                    infoContent = `
+                        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-chart-pie text-indigo-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-indigo-800">Ürün Karlılığı</h3>
+                                    <div class="mt-2 text-sm text-indigo-700">
+                                        <p>Bu sekmede ürünlerinizin karlılık analizini görüntüleyebilirsiniz. Satış hacimleri, komisyonlar ve net kar hesaplamaları burada yapılır.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            // Render the info content first
+            container.innerHTML = infoContent;
+            
             switch(tabName) {
                 case 'transactions':
                     const visibleTx = (Array.isArray(mockData.transactions)? mockData.transactions: [])
@@ -8692,7 +9031,7 @@
                             <td class="p-3 text-right"><button onclick="showTransactionDetailModal('${tx.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-search"></i></button></td>
                         </tr>`;
                     }).join('');
-                    container.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-left">
+                    container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">İşlem id</th><th class="p-3 text-sm font-semibold">Tarih</th>
                             <th class="p-3 text-sm font-semibold">İşlem türü</th><th class="p-3 text-sm font-semibold">Ürün</th>
@@ -8717,7 +9056,7 @@
                             <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
                         </tr>`;
                     }).join('');
-                    container.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-left">
+                    container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                             <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
@@ -8742,7 +9081,7 @@
                             <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
                         </tr>`;
                     }).join('');
-                    container.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-left">
+                    container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">BEKLENEN TARİH</th>
                             <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
@@ -8770,7 +9109,7 @@
                             <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
                         </tr>`;
                     }).join('');
-                     container.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-left">
+                     container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">${t('payment_id')}</th><th class="p-3 text-sm font-semibold">TARİH</th>
                             <th class="p-3 text-sm font-semibold">TUTAR</th><th class="p-3 text-sm font-semibold">${t('bank_info')}</th>
@@ -8807,7 +9146,7 @@
                             <td class="p-3 text-sm font-bold ${netProfit > 0 ? 'text-green-600' : 'text-red-600'}">${netProfit.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
                         </tr>`;
                      }).join('');
-                     container.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-left">
+                     container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">${t('product_name_header')}</th><th class="p-3 text-sm font-semibold">${t('total_sales_units')}</th>
                             <th class="p-3 text-sm font-semibold">${t('gross_revenue')}</th><th class="p-3 text-sm font-semibold">${t('total_commission')}</th>
@@ -11521,6 +11860,21 @@
             pageTitle.textContent = `Kategori Detayları: ${t(category.name)}`;
             
             pageContent.innerHTML = `
+                <!-- Category Detail Page Info -->
+                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-indigo-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-indigo-800">Kategori Detayları</h3>
+                            <div class="mt-2 text-sm text-indigo-700">
+                                <p>Bu sayfada seçilen kategorinin detaylı bilgilerini görüntüleyebilirsiniz. Alt kategoriler, ürünler, özellikler ve kanal eşleştirmeleri burada listelenir.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="space-y-6">
                     <!-- Breadcrumb -->
                     <nav class="flex items-center space-x-2 text-sm text-gray-500">
