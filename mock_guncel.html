@@ -11905,11 +11905,112 @@
         }
         function navigateTo(hash) { location.hash = hash; }
         function showBulkImportModal(type) { const isUpdate = type === 'update'; const title = isUpdate ? t('update_with_file') : t('import_with_file'); const body = `<div id="drop-zone" class="drop-zone p-10 text-center rounded-lg cursor-pointer"><input type="file" id="bulk-file-input" class="hidden" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"><i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i><p class="mt-4 text-gray-600">Dosyanızı buraya sürükleyin veya seçmek için tıklayın.</p><p id="file-name-display" class="mt-2 text-sm font-semibold text-blue-600"></p></div><div class="mt-4 text-xs text-gray-500 bg-gray-50 p-3 rounded-md"><h4 class="font-semibold mb-1">Dosya Formatı Talimatları:</h4><p>Lütfen bir CSV dosyası kullanın. Sütunlar şu sırada olmalıdır:</p><p class="font-mono mt-1">${isUpdate ? 'sku,stock,price_TRY' : 'sku,name,categoryId,stock,price_TRY'}</p><p class="mt-1">${isUpdate ? 'Güncellenecek ürünleri SKU ile eşleştirir.' : 'Yeni ürünler ekler. `name` alanı hem Türkçe hem İngilizce için kullanılacaktır.'}</p></div>`; showModal(title, body, 'Dosyayı İşle', () => { const fileInput = document.getElementById('bulk-file-input'); if (fileInput.files.length > 0) { processBulkFile(type, fileInput.files[0]); } else { showModal('Hata', '<p>Lütfen işleme devam etmek için bir dosya seçin.</p>', 'Tamam', closeModal); } }); const dropZone = document.getElementById('drop-zone'); const fileInput = document.getElementById('bulk-file-input'); const fileNameDisplay = document.getElementById('file-name-display'); dropZone.addEventListener('click', () => fileInput.click()); fileInput.addEventListener('change', () => { if (fileInput.files.length > 0) { fileNameDisplay.textContent = fileInput.files[0].name; } }); dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }); dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }); dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files.length > 0) { fileInput.files = e.dataTransfer.files; fileNameDisplay.textContent = fileInput.files[0].name; } }); }
-        function processBulkFile(type, file) { showModal('İşleniyor...', '<div class="text-center"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i><p class="mt-4">Toplu işlem gerçekleştiriliyor, lütfen bekleyin...</p></div>'); document.getElementById('modal-footer').classList.add('hidden'); setTimeout(() => { document.getElementById('modal-footer').classList.remove('hidden'); let successCount = 0; if (type === 'update') { successCount = 2; } else { const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: 100, status: 'draft', health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: 100, status: 'draft', health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
-        function showDownloadTemplateModal() { const categoryOptions = mockData.categories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('template_type')}</label><div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked><span class="text-sm font-medium">${t('template_add_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="update" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_stock_price')}</span></label></div></div><p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p><div id="category-selection-wrapper"><label for="template-category-select" class="block text-sm font-medium text-gray-700">${t('select_category')}</label><select id="template-category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">-- ${t('select_category')} --</option>${categoryOptions}</select></div></div>`; showModal(t('download_template'), body, t('download_template'), handleTemplateDownload); document.querySelectorAll('input[name="template_type"]').forEach(radio => { radio.addEventListener('change', (e) => { const type = e.target.value; const categoryWrapper = document.getElementById('category-selection-wrapper'); const description = document.getElementById('template-description'); if (type === 'stock_price') { categoryWrapper.classList.add('hidden'); description.textContent = t('download_template_desc_stock'); } else { categoryWrapper.classList.remove('hidden'); description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update'); } }); }); }
+        function processBulkFile(type, file) { showModal('İşleniyor...', '<div class="text-center"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i><p class="mt-4">Toplu işlem gerçekleştiriliyor, lütfen bekleyin...</p></div>'); document.getElementById('modal-footer').classList.add('hidden'); setTimeout(() => { document.getElementById('modal-footer').classList.remove('hidden'); let successCount = 0; if (type === 'update') { successCount = 2; } else { 
+                // Find a valid lowest-level category for bulk import
+                const validCategory = mockData.categories.find(c => isLowestLevelCategory(c.id));
+                const categoryId = validCategory ? validCategory.id : 1; // fallback to first category
+                
+                const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft', health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft', health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
+        function showDownloadTemplateModal() { 
+            // Filter categories to only show lowest-level categories (where products can be created)
+            const applicableCategories = mockData.categories.filter(c => isLowestLevelCategory(c.id));
+            const categoryOptions = applicableCategories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('template_type')}</label><div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked><span class="text-sm font-medium">${t('template_add_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="update" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_stock_price')}</span></label></div></div><p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p><div id="category-selection-wrapper"><label for="template-category-select" class="block text-sm font-medium text-gray-700">${t('select_category')}</label><select id="template-category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">-- ${t('select_category')} --</option>${categoryOptions}</select></div></div>`; showModal(t('download_template'), body, t('download_template'), handleTemplateDownload); document.querySelectorAll('input[name="template_type"]').forEach(radio => { radio.addEventListener('change', (e) => { const type = e.target.value; const categoryWrapper = document.getElementById('category-selection-wrapper'); const description = document.getElementById('template-description'); if (type === 'stock_price') { categoryWrapper.classList.add('hidden'); description.textContent = t('download_template_desc_stock'); } else { categoryWrapper.classList.remove('hidden'); description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update'); } }); }); }
         function handleTemplateDownload() { const templateType = document.querySelector('input[name="template_type"]:checked').value; let headers = []; let fileName = 'sablon.csv'; switch (templateType) { case 'add': case 'update': const categoryId = document.getElementById('template-category-select').value; if (!categoryId) { showModal('Hata', '<p>Lütfen bir kategori seçin.</p>', 'Tamam', () => { showDownloadTemplateModal(); }); return; } const category = mockData.categories.find(c => c.id == categoryId); if (!category) return; headers = templateType === 'add' ? ['sku', 'name_tr', 'name_en', 'categoryId', 'stock', 'price_TRY'] : ['sku', 'name_tr', 'name_en', 'stock', 'price_TRY']; if (category.attributes) { category.attributes.forEach(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (attribute) { headers.push(attribute.name); } }); } const safeCategoryName = t(category.name).replace(/[^a-z0-9]/gi, '_').toLowerCase(); fileName = `sablon_${templateType}_${safeCategoryName}.csv`; break; case 'stock_price': headers = ['sku', 'stock', 'price_TRY']; fileName = `sablon_stok_fiyat_guncelleme.csv`; break; } const csvHeader = headers.join(','); const blob = new Blob([`\uFEFF${csvHeader}`], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", fileName); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); closeModal(); }
         function approveProduct(productId) { const productToApprove = mockData.products.find(p => p.id === productId); if (!productToApprove) return; productToApprove.status = 'active'; productToApprove.lastUpdated = new Date().toISOString(); navigateTo('#products/onaylanan'); }
-        function showDeleteModal(itemType, itemId) { const title = `Silme Onayı`; let body = `<p>Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>`; let onConfirm = () => {}; if(itemType === 'product') { onConfirm = () => { mockData.products = mockData.products.filter(p => p.id !== itemId); mockData.supplierProducts = mockData.supplierProducts.filter(sp => sp.productId !== itemId); closeModal(); navigateTo('#products'); }; } else if (itemType === 'category') { const hasChildren = mockData.categories.some(c => c.parentId === itemId); if (hasChildren) { body = `<p class="text-red-600">Bu kategorinin alt kategorileri bulunmaktadır. Silmek için önce alt kategorilerini silmelisiniz.</p>`; onConfirm = () => closeModal(); } else { onConfirm = () => { mockData.categories = mockData.categories.filter(c => c.id !== itemId); closeModal(); handleRouteChange(); }; } } showModal(title, body, t('delete'), onConfirm); }
+        // Category validation functions
+        function hasProductsInCategory(categoryId) {
+            return mockData.products.some(p => p.categoryId === categoryId);
+        }
+        
+        function hasSubcategories(categoryId) {
+            return mockData.categories.some(c => c.parentId === categoryId);
+        }
+        
+        function isLowestLevelCategory(categoryId) {
+            return !hasSubcategories(categoryId);
+        }
+        
+        function validateCategoryDeletion(categoryId) {
+            const errors = [];
+            
+            if (hasProductsInCategory(categoryId)) {
+                errors.push('Bu kategoride ürünler bulunmaktadır. Önce ürünleri başka kategorilere taşıyın.');
+            }
+            
+            if (hasSubcategories(categoryId)) {
+                errors.push('Bu kategorinin alt kategorileri bulunmaktadır. Önce alt kategorileri silin.');
+            }
+            
+            return errors;
+        }
+        
+        function validateProductCreation(categoryId) {
+            const errors = [];
+            
+            if (!isLowestLevelCategory(categoryId)) {
+                errors.push('Ürünler sadece en alt seviye kategorilerde oluşturulabilir.');
+            }
+            
+            return errors;
+        }
+        
+        function getCategoryStatusInfo(categoryId) {
+            const hasChildren = hasSubcategories(categoryId);
+            const hasProducts = hasProductsInCategory(categoryId);
+            const isLowestLevel = !hasChildren;
+            
+            if (isLowestLevel) {
+                return {
+                    type: 'product-category',
+                    label: hasProducts ? 'Ürünlü' : 'Ürün Eklenebilir',
+                    icon: 'fas fa-box',
+                    color: hasProducts ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                };
+            } else {
+                return {
+                    type: 'parent-category',
+                    label: 'Alt Kategori',
+                    icon: 'fas fa-folder',
+                    color: 'bg-gray-100 text-gray-600'
+                };
+            }
+        }
+
+        function showDeleteModal(itemType, itemId) { 
+            const title = `Silme Onayı`; 
+            let body = `<p>Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>`; 
+            let onConfirm = () => {}; 
+            
+            if(itemType === 'product') { 
+                onConfirm = () => { 
+                    mockData.products = mockData.products.filter(p => p.id !== itemId); 
+                    mockData.supplierProducts = mockData.supplierProducts.filter(sp => sp.productId !== itemId); 
+                    closeModal(); 
+                    navigateTo('#products'); 
+                }; 
+            } else if (itemType === 'category') { 
+                const validationErrors = validateCategoryDeletion(itemId);
+                
+                if (validationErrors.length > 0) {
+                    body = `
+                        <div class="text-red-600">
+                            <p class="font-semibold mb-2">Bu kategori silinemez:</p>
+                            <ul class="list-disc list-inside space-y-1">
+                                ${validationErrors.map(error => `<li>${error}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                    onConfirm = () => closeModal();
+                } else {
+                    onConfirm = () => { 
+                        mockData.categories = mockData.categories.filter(c => c.id !== itemId); 
+                        closeModal(); 
+                        handleRouteChange(); 
+                    }; 
+                }
+            } 
+            showModal(title, body, t('delete'), onConfirm); 
+        }
         function renderCategoryAttributes(categoryId) { const container = document.getElementById('category-attributes-container'); if (!categoryId) { container.innerHTML = '<p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p>'; updateProductModalButtons(); return; } const category = mockData.categories.find(c => c.id == categoryId); if (!category || !category.attributes || category.attributes.length === 0) { container.innerHTML = '<p class="text-sm text-gray-500">Bu kategori için tanımlı bir nitelik bulunmuyor.</p>'; updateProductModalButtons(); return; } const variantAttributeIds = category.variantAttributes || []; const attributesHtml = category.attributes.map(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (!attribute) return ''; const isVariant = variantAttributeIds.includes(attrId); let inputHtml = ''; if (attribute.type === 'Text') { inputHtml = `<input type="text" id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="${t(attribute.label)}">`; } else if (attribute.type === 'Select') { const optionsHtml = attribute.options.map(opt => `<option value="${opt}">${opt}</option>`).join(''); inputHtml = `<select id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">${optionsHtml}</select>`; } return `<div><label for="attr_${attribute.name}" class="block text-sm font-medium text-gray-700 flex justify-between items-center"><span>${t(attribute.label)}</span> ${isVariant ? '<span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">VARYANT</span>' : ''}</label>${inputHtml}</div>`; }).join(''); container.innerHTML = `<div class="space-y-4">${attributesHtml}</div>`; 
             // Add event listeners to attribute inputs to update buttons dynamically
             setTimeout(() => {
@@ -12016,7 +12117,11 @@
             // Ensure modal footer is visible and set up initial buttons
             updateProductModalButtons();
             document.getElementById('product-search-btn').addEventListener('click', handleProductSearch); }
-        function handleProductSearch() { const sku = document.getElementById('product-search-sku').value.trim(); if (!sku) return; const product = mockData.products.find(p => p.sku === sku); const container = document.getElementById('product-form-container'); if (product) { container.innerHTML = `<div data-product-id="${product.id}"><div class="flex items-center bg-gray-50 p-4 rounded-md"><img src="${product.imageUrl}" alt="${t(product.name)}" class="w-16 h-16 rounded-md mr-4 object-cover"><div><h4 class="font-semibold">${t(product.name)}</h4><p class="text-sm text-gray-500">${t('sku_header')}: ${product.sku}</p></div></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Bu alandan sadece ürünün temel bilgileri güncellenir. Tedarikçi stok/fiyat bilgileri için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div>`; } else { const categoryOptions = mockData.categories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); container.innerHTML = `<div data-product-id="new"><p class="text-sm text-green-700 bg-green-50 p-3 rounded-md mb-4">Yeni ürün oluşturuluyor.</p><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" id="product-sku" value="${sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div><div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="product-name" placeholder="Örn: Mavi Keten Gömlek" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kategori</label><select id="newProductCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Kategori Seçin</option>${categoryOptions}</select></div><div id="category-attributes-container" class="space-y-4 pt-4 border-t"><p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Ürün oluşturulduktan sonra stok/fiyat bilgisi girmek için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div></div>`; document.getElementById('newProductCategory').addEventListener('change', (event) => { renderCategoryAttributes(event.target.value); updateProductModalButtons(); }); 
+        function handleProductSearch() { const sku = document.getElementById('product-search-sku').value.trim(); if (!sku) return; const product = mockData.products.find(p => p.sku === sku); const container = document.getElementById('product-form-container'); if (product) { container.innerHTML = `<div data-product-id="${product.id}"><div class="flex items-center bg-gray-50 p-4 rounded-md"><img src="${product.imageUrl}" alt="${t(product.name)}" class="w-16 h-16 rounded-md mr-4 object-cover"><div><h4 class="font-semibold">${t(product.name)}</h4><p class="text-sm text-gray-500">${t('sku_header')}: ${product.sku}</p></div></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Bu alandan sadece ürünün temel bilgileri güncellenir. Tedarikçi stok/fiyat bilgileri için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div>`; } else { 
+                // Filter categories to only show lowest-level categories (where products can be created)
+                const applicableCategories = mockData.categories.filter(c => isLowestLevelCategory(c.id));
+                const categoryOptions = applicableCategories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); 
+                container.innerHTML = `<div data-product-id="new"><p class="text-sm text-green-700 bg-green-50 p-3 rounded-md mb-4">Yeni ürün oluşturuluyor.</p><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" id="product-sku" value="${sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div><div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="product-name" placeholder="Örn: Mavi Keten Gömlek" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kategori</label><select id="newProductCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Kategori Seçin</option>${categoryOptions}</select></div><div id="category-attributes-container" class="space-y-4 pt-4 border-t"><p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Ürün oluşturulduktan sonra stok/fiyat bilgisi girmek için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div></div>`; document.getElementById('newProductCategory').addEventListener('change', (event) => { renderCategoryAttributes(event.target.value); updateProductModalButtons(); }); 
             // Add event listeners to form inputs to update buttons dynamically
             const nameInput = document.getElementById('product-name');
             if (nameInput) {
