@@ -18,6 +18,11 @@
             display: none !important;
         }
         
+        /* Category tree rotation animation */
+        .rotate-90 {
+            transform: rotate(90deg);
+        }
+        
         .sidebar {
             transition: width 0.3s ease;
         }
@@ -3460,12 +3465,6 @@
                     ],
                     notes: 'Ürün gerçekten hasarlı'
                 }
-            ],
-            // Categories
-            categories: [
-                { id: 1, name: { tr: 'Giyim', en: 'Clothing' }, parentId: null },
-                { id: 2, name: { tr: 'Ayakkabı', en: 'Shoes' }, parentId: null },
-                { id: 3, name: { tr: 'Aksesuar', en: 'Accessories' }, parentId: null }
             ],
             // Attributes
             attributes: [
@@ -11912,9 +11911,8 @@
                 
                 const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft', health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft', health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
         function showDownloadTemplateModal() { 
-            // Filter categories to only show lowest-level categories (where products can be created)
-            const applicableCategories = mockData.categories.filter(c => isLowestLevelCategory(c.id));
-            const categoryOptions = applicableCategories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('template_type')}</label><div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked><span class="text-sm font-medium">${t('template_add_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="update" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_stock_price')}</span></label></div></div><p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p><div id="category-selection-wrapper"><label for="template-category-select" class="block text-sm font-medium text-gray-700">${t('select_category')}</label><select id="template-category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">-- ${t('select_category')} --</option>${categoryOptions}</select></div></div>`; showModal(t('download_template'), body, t('download_template'), handleTemplateDownload); document.querySelectorAll('input[name="template_type"]').forEach(radio => { radio.addEventListener('change', (e) => { const type = e.target.value; const categoryWrapper = document.getElementById('category-selection-wrapper'); const description = document.getElementById('template-description'); if (type === 'stock_price') { categoryWrapper.classList.add('hidden'); description.textContent = t('download_template_desc_stock'); } else { categoryWrapper.classList.remove('hidden'); description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update'); } }); }); }
+            // Build category tree for dropdown with visual hierarchy
+            const categoryTreeOptions = buildCategoryTreeForDropdown(mockData.categories); const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('template_type')}</label><div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked><span class="text-sm font-medium">${t('template_add_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="update" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_stock_price')}</span></label></div></div><p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p><div id="category-selection-wrapper"><label for="template-category-select" class="block text-sm font-medium text-gray-700">${t('select_category')}</label><select id="template-category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">-- ${t('select_category')} --</option>${categoryTreeOptions}</select></div></div>`; showModal(t('download_template'), body, t('download_template'), handleTemplateDownload); document.querySelectorAll('input[name="template_type"]').forEach(radio => { radio.addEventListener('change', (e) => { const type = e.target.value; const categoryWrapper = document.getElementById('category-selection-wrapper'); const description = document.getElementById('template-description'); if (type === 'stock_price') { categoryWrapper.classList.add('hidden'); description.textContent = t('download_template_desc_stock'); } else { categoryWrapper.classList.remove('hidden'); description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update'); } }); }); }
         function handleTemplateDownload() { const templateType = document.querySelector('input[name="template_type"]:checked').value; let headers = []; let fileName = 'sablon.csv'; switch (templateType) { case 'add': case 'update': const categoryId = document.getElementById('template-category-select').value; if (!categoryId) { showModal('Hata', '<p>Lütfen bir kategori seçin.</p>', 'Tamam', () => { showDownloadTemplateModal(); }); return; } const category = mockData.categories.find(c => c.id == categoryId); if (!category) return; headers = templateType === 'add' ? ['sku', 'name_tr', 'name_en', 'categoryId', 'stock', 'price_TRY'] : ['sku', 'name_tr', 'name_en', 'stock', 'price_TRY']; if (category.attributes) { category.attributes.forEach(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (attribute) { headers.push(attribute.name); } }); } const safeCategoryName = t(category.name).replace(/[^a-z0-9]/gi, '_').toLowerCase(); fileName = `sablon_${templateType}_${safeCategoryName}.csv`; break; case 'stock_price': headers = ['sku', 'stock', 'price_TRY']; fileName = `sablon_stok_fiyat_guncelleme.csv`; break; } const csvHeader = headers.join(','); const blob = new Blob([`\uFEFF${csvHeader}`], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", fileName); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); closeModal(); }
         function approveProduct(productId) { const productToApprove = mockData.products.find(p => p.id === productId); if (!productToApprove) return; productToApprove.status = 'active'; productToApprove.lastUpdated = new Date().toISOString(); navigateTo('#products/onaylanan'); }
         // Category validation functions
@@ -12117,11 +12115,118 @@
             // Ensure modal footer is visible and set up initial buttons
             updateProductModalButtons();
             document.getElementById('product-search-btn').addEventListener('click', handleProductSearch); }
+        function buildCategoryTreeForDropdown(categories, parentId = null, level = 0) {
+            const children = categories.filter(c => c.parentId === parentId);
+            if (children.length === 0) return '';
+            
+            return children.map(category => {
+                const isLowestLevel = isLowestLevelCategory(category.id);
+                const indent = '&nbsp;'.repeat(level * 4);
+                const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                
+                // Only show lowest-level categories as selectable options
+                if (isLowestLevel) {
+                    return `<option value="${category.id}">${indent}${categoryName}</option>`;
+                } else {
+                    // Show parent categories as disabled options for visual hierarchy
+                    return `<option value="" disabled style="font-weight: bold; color: #6b7280;">${indent}${categoryName}</option>`;
+                }
+            }).join('') + children.map(category => buildCategoryTreeForDropdown(categories, category.id, level + 1)).join('');
+        }
+
+        function buildCollapsibleCategoryTree(categories, parentId = null, level = 0) {
+            const children = categories.filter(c => c.parentId === parentId);
+            if (children.length === 0) return '';
+            
+            return children.map(category => {
+                const isLowestLevel = isLowestLevelCategory(category.id);
+                const hasChildren = categories.some(c => c.parentId === category.id);
+                const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                const indent = level * 20; // 20px per level
+                
+                if (isLowestLevel) {
+                    // Selectable leaf category
+                    return `
+                        <div class="category-option border border-transparent" style="margin-left: ${indent}px; padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: all 0.2s;" 
+                             onmouseover="this.style.backgroundColor='#f3f4f6'" 
+                             onmouseout="this.style.backgroundColor='transparent'"
+                             onclick="selectCategory(${category.id}, '${categoryName.replace(/'/g, "\\'")}')">
+                            <div class="flex items-center">
+                                <i class="fas fa-circle text-xs text-green-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">${categoryName}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Collapsible parent category (non-selectable)
+                    const childContent = buildCollapsibleCategoryTree(categories, category.id, level + 1);
+                    return `
+                        <div class="category-group">
+                            <div class="category-header" style="margin-left: ${indent}px; padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s;" 
+                                 onmouseover="this.style.backgroundColor='#f3f4f6'" 
+                                 onmouseout="this.style.backgroundColor='transparent'"
+                                 onclick="toggleCategoryGroup('category-${category.id}')">
+                                <div class="flex items-center">
+                                    <i id="category-icon-${category.id}" class="fas fa-chevron-right text-xs text-gray-500 mr-2 transition-transform duration-200"></i>
+                                    <i class="fas fa-folder text-sm text-gray-400 mr-2"></i>
+                                    <span class="text-sm font-medium text-gray-500">${categoryName}</span>
+                                    <span class="ml-2 text-xs text-gray-400 italic">(Ürün eklenemez)</span>
+                                </div>
+                            </div>
+                            <div id="category-${category.id}" class="category-children hidden">
+                                ${childContent}
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function toggleCategoryGroup(categoryId) {
+            const childrenDiv = document.getElementById(categoryId);
+            const icon = document.getElementById(categoryId.replace('category-', 'category-icon-'));
+            
+            if (childrenDiv && icon) {
+                childrenDiv.classList.toggle('hidden');
+                icon.classList.toggle('rotate-90');
+            }
+        }
+
+        function selectCategory(categoryId, categoryName) {
+            // Set the hidden input value
+            const categoryInput = document.getElementById('newProductCategory');
+            if (categoryInput) {
+                categoryInput.value = categoryId;
+            }
+            
+            // Update visual selection in the tree
+            updateCategorySelection(categoryId);
+            
+            // Render category attributes
+            renderCategoryAttributes(categoryId);
+            updateProductModalButtons();
+        }
+
+        function updateCategorySelection(selectedCategoryId) {
+            // Remove previous selection styling
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('bg-blue-50', 'border-blue-200', 'border');
+                option.classList.add('border-transparent');
+            });
+            
+            // Add selection styling to the selected category
+            const selectedOption = document.querySelector(`[onclick*="selectCategory(${selectedCategoryId}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('bg-blue-50', 'border-blue-200', 'border');
+                selectedOption.classList.remove('border-transparent');
+            }
+        }
+
         function handleProductSearch() { const sku = document.getElementById('product-search-sku').value.trim(); if (!sku) return; const product = mockData.products.find(p => p.sku === sku); const container = document.getElementById('product-form-container'); if (product) { container.innerHTML = `<div data-product-id="${product.id}"><div class="flex items-center bg-gray-50 p-4 rounded-md"><img src="${product.imageUrl}" alt="${t(product.name)}" class="w-16 h-16 rounded-md mr-4 object-cover"><div><h4 class="font-semibold">${t(product.name)}</h4><p class="text-sm text-gray-500">${t('sku_header')}: ${product.sku}</p></div></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Bu alandan sadece ürünün temel bilgileri güncellenir. Tedarikçi stok/fiyat bilgileri için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div>`; } else { 
-                // Filter categories to only show lowest-level categories (where products can be created)
-                const applicableCategories = mockData.categories.filter(c => isLowestLevelCategory(c.id));
-                const categoryOptions = applicableCategories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); 
-                container.innerHTML = `<div data-product-id="new"><p class="text-sm text-green-700 bg-green-50 p-3 rounded-md mb-4">Yeni ürün oluşturuluyor.</p><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" id="product-sku" value="${sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div><div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="product-name" placeholder="Örn: Mavi Keten Gömlek" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kategori</label><select id="newProductCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Kategori Seçin</option>${categoryOptions}</select></div><div id="category-attributes-container" class="space-y-4 pt-4 border-t"><p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Ürün oluşturulduktan sonra stok/fiyat bilgisi girmek için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div></div>`; document.getElementById('newProductCategory').addEventListener('change', (event) => { renderCategoryAttributes(event.target.value); updateProductModalButtons(); }); 
+                // Build collapsible category tree
+                const categoryTreeContent = buildCollapsibleCategoryTree(mockData.categories);
+                
+                container.innerHTML = `<div data-product-id="new"><p class="text-sm text-green-700 bg-green-50 p-3 rounded-md mb-4">Yeni ürün oluşturuluyor.</p><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" id="product-sku" value="${sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div><div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="product-name" placeholder="Örn: Mavi Keten Gömlek" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kategori</label><input type="hidden" id="newProductCategory" value=""><div class="mt-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md bg-white"><div class="p-2">${categoryTreeContent}</div></div></div><div id="category-attributes-container" class="space-y-4 pt-4 border-t"><p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Ürün oluşturulduktan sonra stok/fiyat bilgisi girmek için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div></div>`; 
             // Add event listeners to form inputs to update buttons dynamically
             const nameInput = document.getElementById('product-name');
             if (nameInput) {
