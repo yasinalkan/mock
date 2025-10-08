@@ -14820,6 +14820,109 @@ sidebarNav.addEventListener('click', (e) => {
     </script>
 
 <script>
+// Export function for orders
+function exportOrdersToCSV(userType) {
+  const orders = Array.isArray(mockData.orders) ? mockData.orders : [];
+  const suppliers = Array.isArray(mockData.suppliers) ? mockData.suppliers : [];
+  
+  // Get filtered orders based on current filters
+  let filteredOrders = orders;
+  
+  if (userType === 'admin') {
+    const sup = document.getElementById('ord-supplier')?.value;
+    const q = (document.getElementById('ord-query')?.value || '').toLowerCase();
+    filteredOrders = orders.filter(o => {
+      if (sup && String(o.supplierId) !== String(sup)) return false;
+      if (!q) return true;
+      const text = `${o.id} ${o.status || ''} ${(o.items || []).map(i => `${i.sku} ${i.name || ""}`).join(' ')}`.toLowerCase();
+      return text.includes(q);
+    });
+  } else if (userType === 'supplier') {
+    const currentUser = window.currentUser || {};
+    const supplierId = currentUser.supplierId;
+    if (supplierId) {
+      filteredOrders = orders.filter(o => String(o.supplierId) === String(supplierId));
+    }
+    
+    // Apply additional filters
+    const searchQuery = (document.getElementById('sord-search')?.value || '').toLowerCase();
+    const statusFilter = document.getElementById('sord-status')?.value || '';
+    const dateRangeFilter = document.getElementById('sord-date-range')?.value || '';
+    const amountFilter = document.getElementById('sord-amount')?.value || '';
+    
+    filteredOrders = filteredOrders.filter(order => {
+      if (searchQuery) {
+        const searchText = `${order.id} ${(order.items || []).map(i => `${i.sku} ${i.name || ''}`).join(' ')}`.toLowerCase();
+        if (!searchText.includes(searchQuery)) return false;
+      }
+      if (statusFilter && order.status !== statusFilter) return false;
+      if (dateRangeFilter && order.date) {
+        const orderDate = new Date(order.date);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        switch (dateRangeFilter) {
+          case 'today': if (orderDate < today) return false; break;
+          case 'week': const weekAgo = new Date(today); weekAgo.setDate(weekAgo.getDate() - 7); if (orderDate < weekAgo) return false; break;
+          case 'month': const monthAgo = new Date(today); monthAgo.setMonth(monthAgo.getMonth() - 1); if (orderDate < monthAgo) return false; break;
+          case 'quarter': const quarterAgo = new Date(today); quarterAgo.setMonth(quarterAgo.getMonth() - 3); if (orderDate < quarterAgo) return false; break;
+        }
+      }
+      if (amountFilter && typeof order.total === 'number') {
+        const total = order.total;
+        switch (amountFilter) {
+          case '0-500': if (total < 0 || total > 500) return false; break;
+          case '500-1000': if (total < 500 || total > 1000) return false; break;
+          case '1000-2500': if (total < 1000 || total > 2500) return false; break;
+          case '2500-5000': if (total < 2500 || total > 5000) return false; break;
+          case '5000+': if (total < 5000) return false; break;
+        }
+      }
+      return true;
+    });
+  }
+  
+  // Prepare CSV data
+  const headers = userType === 'admin' 
+    ? ['Sipariş ID', 'Tedarikçi', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Tutar (₺)']
+    : ['Sipariş ID', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Tutar (₺)'];
+  
+  const csvData = filteredOrders.map(order => {
+    const supplierName = (suppliers.find(s => String(s.id) === String(order.supplierId)) || {}).name || ('Tedarikçi ' + order.supplierId);
+    const customerName = order.shippingAddress?.name || 'Bilinmiyor';
+    const itemCount = (order.items || []).length;
+    const totalItemQuantity = (order.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
+    const dateStr = order.date ? new Date(order.date).toLocaleDateString('tr-TR') : '-';
+    const totalAmount = order.total || 0;
+    
+    if (userType === 'admin') {
+      return [order.id, supplierName, customerName, itemCount, totalItemQuantity, dateStr, order.status, totalAmount.toFixed(2)];
+    } else {
+      return [order.id, customerName, itemCount, totalItemQuantity, dateStr, order.status, totalAmount.toFixed(2)];
+    }
+  });
+  
+  // Create CSV content
+  const csvContent = [headers, ...csvData]
+    .map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+  
+  // Create and download file
+  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `siparisler_${userType}_${new Date().toISOString().split('T')[0]}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Show success message
+  if (typeof showToast === 'function') {
+    showToast(`${filteredOrders.length} sipariş CSV olarak dışa aktarıldı.`);
+  }
+}
+
 renderers['orders'] = () => {
   // Enforce access control
   if (window.currentUser?.role === 'supplier') {
@@ -14897,6 +15000,10 @@ renderers['orders'] = () => {
         <div class="flex gap-2">
           <button id="ord-apply" class="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700">Uygula</button>
           <button id="ord-clear" class="px-4 py-2 rounded-md border hover:bg-gray-50">Temizle</button>
+          <button id="ord-export" class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center space-x-2">
+            <i class="fas fa-download"></i>
+            <span>Dışa Aktar</span>
+          </button>
         </div>
       </div>
       <div class="rounded-lg border shadow-sm overflow-hidden">
@@ -14906,10 +15013,11 @@ renderers['orders'] = () => {
               <tr>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-36">Sipariş ID</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-56">Tedarikçi</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Müşteri</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24">Ürün Sayısı</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Tarih</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Durum</th>
                 <th class="text-right text-xs font-semibold text-gray-500 px-3 py-2 w-28">Tutar</th>
-                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2">Ürünler</th>
             </tr>
           </thead>
             <tbody id="ord-rows" class="divide-y divide-gray-100"></tbody>
@@ -15257,13 +15365,23 @@ window.mockData.orders = window.mockData.orders || [
 
   function statusPill(status){
     const map = {
-      'hazırlanıyor': 'bg-amber-100 text-amber-800',
-      'kargolandı': 'bg-blue-100 text-blue-800',
-      'teslim edildi': 'bg-green-100 text-green-800',
-      'iptal': 'bg-red-100 text-red-800'
+      'hazırlanıyor': 'bg-amber-100 text-amber-800 border border-amber-200',
+      'kargolandı': 'bg-blue-100 text-blue-800 border border-blue-200',
+      'teslim edildi': 'bg-green-100 text-green-800 border border-green-200',
+      'iptal': 'bg-red-100 text-red-800 border border-red-200'
     };
-    const cls = map[status] || 'bg-gray-100 text-gray-800';
-    return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cls}">${status||'-'}</span>`;
+    const cls = map[status] || 'bg-gray-100 text-gray-800 border border-gray-200';
+    const iconMap = {
+      'hazırlanıyor': 'fas fa-clock',
+      'kargolandı': 'fas fa-shipping-fast',
+      'teslim edildi': 'fas fa-check-circle',
+      'iptal': 'fas fa-times-circle'
+    };
+    const icon = iconMap[status] || 'fas fa-question-circle';
+    return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${cls} shadow-sm">
+      <i class="${icon} mr-1"></i>
+      ${status||'-'}
+    </span>`;
   }
 
   function initials(name){
@@ -15287,12 +15405,22 @@ window.mockData.orders = window.mockData.orders || [
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
       const dateStr = o.date ? new Date(o.date).toLocaleDateString('tr-TR') : '-';
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-2 text-sm text-gray-700 font-medium\">${o.id}</td>\n        <td class=\"px-3 py-2 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-7 h-7 rounded-full bg-gray-200 text-gray-700 text-xs flex items-center justify-center\">${initials(supplierName)}</div>\n            <div class=\"leading-5\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-2 text-sm text-gray-600\">${dateStr}</td>\n        <td class=\"px-3 py-2 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-2 text-sm text-right font-semibold\">${numberTRY(o.total)}</td>\n        <td class=\"px-3 py-2 text-sm\">\n          <div class=\"flex flex-wrap items-center\">${shown}${extra}</div>\n        </td>\n      </tr>`;
+      const customerName = o.shippingAddress?.name || 'Bilinmiyor';
+      const itemCount = (o.items || []).length;
+      const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
+      
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs flex items-center justify-center font-semibold shadow-sm\">${initials(supplierName)}</div>\n            <div class=\"leading-5 font-medium text-gray-900\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n            <i class=\"fas fa-lira-sign text-green-500\"></i>\n            <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
-    document.getElementById('ord-rows').innerHTML = rows || `<tr><td colspan="6" class="p-4 text-sm text-gray-500">Kayıt bulunamadı.</td></tr>`;
+    document.getElementById('ord-rows').innerHTML = rows || `<tr><td colspan="7" class="p-8 text-center text-gray-500">
+      <div class="flex flex-col items-center space-y-3">
+        <i class="fas fa-inbox text-4xl text-gray-300"></i>
+        <p class="text-sm">Kayıt bulunamadı</p>
+      </div>
+    </td></tr>`;
   }
   document.getElementById('ord-apply').addEventListener('click', renderRows);
   document.getElementById('ord-clear').addEventListener('click', ()=>{ document.getElementById('ord-supplier').value=''; document.getElementById('ord-query').value=''; renderRows(); });
+  document.getElementById('ord-export').addEventListener('click', () => exportOrdersToCSV('admin'));
   pageContent.addEventListener('click', (e)=>{
     const tr = e.target.closest('tr[data-order-id]'); 
     if(!tr) return;
@@ -16200,6 +16328,10 @@ window.mockData.orders = window.mockData.orders || [
             <button id="sord-clear" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-2 focus:ring-gray-500">
               <i class="fas fa-times mr-2"></i>Temizle
             </button>
+            <button id="sord-export" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500 flex items-center space-x-2">
+              <i class="fas fa-download"></i>
+              <span>Dışa Aktar</span>
+            </button>
           </div>
           <div class="text-sm text-gray-500">
             <span id="sord-count">Toplam: ${orders.length} sipariş</span>
@@ -16214,10 +16346,11 @@ window.mockData.orders = window.mockData.orders || [
             <thead class="bg-gray-50 sticky top-0 z-10">
               <tr>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-36">Sipariş ID</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Müşteri</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24">Ürün Sayısı</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Tarih</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32">Durum</th>
                 <th class="text-right text-xs font-semibold text-gray-500 px-3 py-2 w-28">Tutar</th>
-                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2">Ürünler</th>
               </tr>
             </thead>
             <tbody id="sord-rows" class="divide-y divide-gray-100"></tbody>
@@ -16229,13 +16362,23 @@ window.mockData.orders = window.mockData.orders || [
   function numberTRY(x){ return (typeof x==='number') ? (x.toLocaleString('tr-TR',{style:'currency',currency:'TRY'})) : '-'; }
   function statusPill(status){
     const map = {
-      'hazırlanıyor': 'bg-amber-100 text-amber-800',
-      'kargolandı': 'bg-blue-100 text-blue-800',
-      'teslim edildi': 'bg-green-100 text-green-800',
-      'iptal': 'bg-red-100 text-red-800'
+      'hazırlanıyor': 'bg-amber-100 text-amber-800 border border-amber-200',
+      'kargolandı': 'bg-blue-100 text-blue-800 border border-blue-200',
+      'teslim edildi': 'bg-green-100 text-green-800 border border-green-200',
+      'iptal': 'bg-red-100 text-red-800 border border-red-200'
     };
-    const cls = map[status] || 'bg-gray-100 text-gray-800';
-    return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${cls}">${status||'-'}</span>`;
+    const cls = map[status] || 'bg-gray-100 text-gray-800 border border-gray-200';
+    const iconMap = {
+      'hazırlanıyor': 'fas fa-clock',
+      'kargolandı': 'fas fa-shipping-fast',
+      'teslim edildi': 'fas fa-check-circle',
+      'iptal': 'fas fa-times-circle'
+    };
+    const icon = iconMap[status] || 'fas fa-question-circle';
+    return `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${cls} shadow-sm">
+      <i class="${icon} mr-1"></i>
+      ${status||'-'}
+    </span>`;
   }
 
   function renderRows(){
@@ -16325,10 +16468,19 @@ window.mockData.orders = window.mockData.orders || [
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
       const dateStr = o.date ? new Date(o.date).toLocaleDateString('tr-TR') : '-';
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-2 text-sm text-gray-700 font-medium\">${o.id}</td>\n        <td class=\"px-3 py-2 text-sm text-gray-600\">${dateStr}</td>\n        <td class=\"px-3 py-2 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-2 text-sm text-right font-semibold\">${numberTRY(o.total)}</td>\n        <td class=\"px-3 py-2 text-sm\"><div class=\"flex flex-wrap items-center\">${shown}${extra}</div></td>\n      </tr>`;
+      const customerName = o.shippingAddress?.name || 'Bilinmiyor';
+      const itemCount = (o.items || []).length;
+      const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
+      
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n            <i class=\"fas fa-lira-sign text-green-500\"></i>\n            <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
     
-    document.getElementById('sord-rows').innerHTML = rows || `<tr><td colspan="5" class="p-4 text-sm text-gray-500 text-center">Filtreleme kriterlerine uygun sipariş bulunamadı.</td></tr>`;
+    document.getElementById('sord-rows').innerHTML = rows || `<tr><td colspan="6" class="p-8 text-center text-gray-500">
+      <div class="flex flex-col items-center space-y-3">
+        <i class="fas fa-inbox text-4xl text-gray-300"></i>
+        <p class="text-sm">Filtreleme kriterlerine uygun sipariş bulunamadı</p>
+      </div>
+    </td></tr>`;
   }
 
   pageContent.addEventListener('click', (e)=>{
@@ -16353,6 +16505,7 @@ window.mockData.orders = window.mockData.orders || [
     document.getElementById('sord-amount').value = '';
     renderRows();
   });
+  document.getElementById('sord-export')?.addEventListener('click', () => exportOrdersToCSV('supplier'));
 
   // Auto-filter on input changes
   document.getElementById('sord-search')?.addEventListener('input', renderRows);
