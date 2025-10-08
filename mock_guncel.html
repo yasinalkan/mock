@@ -8120,7 +8120,8 @@
             
             const itemsList = order.items ? order.items.map(item => {
                 const itemCommissionRate = calculateItemCommissionRate(item, order);
-                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100);
+                const itemQuantity = item.qty || 1;
+                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100) * itemQuantity;
                 
                 return `
                 <div class="py-3 border-b border-gray-100">
@@ -8264,7 +8265,8 @@
             
             const itemsList = order.items ? order.items.map(item => {
                 const itemCommissionRate = calculateItemCommissionRate(item, order);
-                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100);
+                const itemQuantity = item.qty || 1;
+                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100) * itemQuantity;
                 
                 return `
                 <div class="py-4 border-b border-gray-100">
