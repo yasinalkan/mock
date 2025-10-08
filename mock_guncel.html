@@ -3466,20 +3466,6 @@
                     notes: 'Ürün gerçekten hasarlı'
                 }
             ],
-            // Attributes
-            attributes: [
-                { id: 1, label: { tr: 'Renk', en: 'Color' }, type: 'text', required: true },
-                { id: 2, label: { tr: 'Beden', en: 'Size' }, type: 'text', required: true },
-                { id: 3, label: { tr: 'Malzeme', en: 'Material' }, type: 'text', required: true },
-                { id: 4, label: { tr: 'Beden (Ayakkabı)', en: 'Size (Shoes)' }, type: 'text', required: false },
-                { id: 5, label: { tr: 'Renk (Ayakkabı)', en: 'Color (Shoes)' }, type: 'text', required: false },
-                { id: 6, label: { tr: 'Topuk Yüksekliği', en: 'Heel Height' }, type: 'text', required: false },
-                { id: 7, label: { tr: 'Sezon', en: 'Season' }, type: 'text', required: false },
-                { id: 8, label: { tr: 'Stil', en: 'Style' }, type: 'text', required: false },
-                { id: 9, label: { tr: 'Menşei', en: 'Origin' }, type: 'text', required: false },
-                { id: 10, label: { tr: 'Ağırlık', en: 'Weight' }, type: 'text', required: false },
-                { id: 11, label: { tr: 'Boyutlar', en: 'Dimensions' }, type: 'text', required: false }
-            ],
             // Prohibited Words/Phrases
             prohibitedWords: [
                 { 
@@ -4493,12 +4479,26 @@
                 });
                 renderCategoriesSubTab(initialTab);
             },
-            genericPage: (titleKey, data, columns, addAction, subtitleKey = null) => {
+            genericPage: (titleKey, data, columns, addAction, subtitleKey = null, rowClickHandler = null) => {
                 pageTitle.textContent = t(titleKey);
                 const subtitleHTML = subtitleKey ? `<p class="mt-1 mb-4 text-sm text-gray-500">${t(subtitleKey)}</p>` : '';
-                const rows = data.map(item => `<tr class="border-b hover:bg-gray-50">${columns.map(col => `<td class="p-3 text-sm">${typeof col.render === 'function' ? col.render(item) : t(item[col.key])}</td>`).join('')}<td class="p-3 text-right"><button class="p-2 text-gray-500 hover:text-blue-600"><i class="fas fa-edit"></i></button><button class="p-2 text-gray-500 hover:text-red-600"><i class="fas fa-trash"></i></button></td></tr>`).join('');
+                const rows = data.map(item => {
+                    const cursorClass = rowClickHandler ? 'cursor-pointer' : '';
+                    const rowId = `row-${item.id}`;
+                    return `<tr id="${rowId}" class="border-b hover:bg-gray-50 ${cursorClass}">${columns.map(col => `<td class="p-3 text-sm">${typeof col.render === 'function' ? col.render(item) : t(item[col.key])}</td>`).join('')}<td class="p-3 text-right"><button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation()"><i class="fas fa-edit"></i></button><button class="p-2 text-gray-500 hover:text-red-600" onclick="event.stopPropagation()"><i class="fas fa-trash"></i></button></td></tr>`;
+                }).join('');
                 pageContent.innerHTML = `${subtitleHTML}<div class="bg-white p-4 rounded-lg shadow"><div class="flex justify-between items-center mb-4"><div class="relative w-1/3"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" placeholder="${t(titleKey)} içinde ara..." class="pl-10 p-2 border rounded-md w-full"></div><button id="genericAddBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i> Yeni ${t(titleKey).slice(0, -3)} Ekle</button></div><table class="w-full text-left"><thead class="table-header"><tr>${columns.map(col => `<th class="p-3 text-sm font-semibold">${t(col.label)}</th>`).join('')}<th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
                 if(addAction) { document.getElementById('genericAddBtn').addEventListener('click', addAction); }
+                
+                // Add click handlers to rows if rowClickHandler is provided
+                if (rowClickHandler) {
+                    data.forEach(item => {
+                        const row = document.getElementById(`row-${item.id}`);
+                        if (row) {
+                            row.addEventListener('click', () => rowClickHandler(item.id));
+                        }
+                    });
+                }
             },
             productComparison: (mainId, compareId) => {
                 const mainProduct = mockData.products.find(p => p.id === mainId);
@@ -5741,6 +5741,310 @@
                                 </div>
                             `}
                         </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // --- ATTRIBUTE DETAIL PAGE RENDERER ---
+        renderers['attribute'] = (attributeId) => {
+            const attribute = mockData.attributes.find(a => a.id == attributeId);
+            if (!attribute) {
+                pageTitle.textContent = 'Özellik Bulunamadı';
+                pageContent.innerHTML = '<div class="text-center p-8"><i class="fas fa-exclamation-triangle text-4xl text-gray-400 mb-4"></i><h4 class="font-semibold text-gray-600 mb-2">Özellik Bulunamadı</h4><p class="text-gray-500">Aradığınız özellik mevcut değil veya silinmiş olabilir.</p></div>';
+                return;
+            }
+
+            pageTitle.textContent = `Özellik Detayı - ${t(attribute.label)}`;
+
+            // Get categories that use this attribute
+            const categoriesUsingAttribute = mockData.categories.filter(cat => 
+                cat.attributes && cat.attributes.includes(parseInt(attributeId))
+            );
+
+            // Get products that use this attribute
+            const productsUsingAttribute = mockData.products.filter(product => 
+                product.attributes && product.attributes[attributeId]
+            );
+
+            // Get attribute usage statistics
+            const totalProducts = productsUsingAttribute.length;
+            const approvedValues = productsUsingAttribute.filter(p => 
+                p.attributes[attributeId]?.validationStatus === 'approved'
+            ).length;
+            const pendingValues = productsUsingAttribute.filter(p => 
+                p.attributes[attributeId]?.validationStatus === 'pending'
+            ).length;
+            const rejectedValues = productsUsingAttribute.filter(p => 
+                p.attributes[attributeId]?.validationStatus === 'rejected'
+            ).length;
+
+            // Get unique values for this attribute
+            const uniqueValues = [...new Set(
+                productsUsingAttribute.map(p => p.attributes[attributeId]?.value).filter(Boolean)
+            )].sort();
+
+            pageContent.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Back Button -->
+                    <div class="flex items-center space-x-4">
+                        <button onclick="navigateTo('#attributes')" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 flex items-center space-x-2">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Özelliklere Dön</span>
+                        </button>
+                    </div>
+
+                    <!-- Attribute Information Card -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
+                                <i class="fas fa-tag text-blue-600 mr-3"></i>
+                                ${t(attribute.label)}
+                            </h2>
+                            <div class="flex space-x-2">
+                                <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center space-x-2">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Düzenle</span>
+                                </button>
+                                <button class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center space-x-2">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Sil</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Basic Information -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Temel Bilgiler</h3>
+                                
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-code text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Kod</div>
+                                            <div class="font-medium text-gray-900">${attribute.name}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-tag text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Etiket</div>
+                                            <div class="font-medium text-gray-900">${t(attribute.label)}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-cog text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Tip</div>
+                                            <div class="font-medium text-gray-900">${attribute.type}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-globe text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Çevrilebilir</div>
+                                            <div class="font-medium text-gray-900">${attribute.localizable ? 'Evet' : 'Hayır'}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-filter text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Filtrelenebilir</div>
+                                            <div class="font-medium text-gray-900">${attribute.scopeable ? 'Evet' : 'Hayır'}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-clock text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Son Güncelleme</div>
+                                            <div class="font-medium text-gray-900">${attribute.lastUpdated ? new Date(attribute.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Usage Statistics -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Kullanım İstatistikleri</h3>
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-blue-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-box text-blue-600 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="text-2xl font-bold text-blue-600">${totalProducts}</div>
+                                                <div class="text-sm text-blue-600">Toplam Ürün</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-green-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-check-circle text-green-600 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="text-2xl font-bold text-green-600">${approvedValues}</div>
+                                                <div class="text-sm text-green-600">Onaylanmış</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-yellow-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-clock text-yellow-600 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="text-2xl font-bold text-yellow-600">${pendingValues}</div>
+                                                <div class="text-sm text-yellow-600">Beklemede</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="bg-red-50 p-4 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-times-circle text-red-600 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="text-2xl font-bold text-red-600">${rejectedValues}</div>
+                                                <div class="text-sm text-red-600">Reddedilmiş</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Default Value -->
+                        ${attribute.default ? `
+                            <div class="mt-6 pt-6 border-t">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Varsayılan Değer</h3>
+                                <div class="bg-gray-50 p-3 rounded-md">
+                                    <span class="font-medium text-gray-900">${attribute.default}</span>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <!-- Options (for Select type) -->
+                        ${attribute.options && attribute.options.length > 0 ? `
+                            <div class="mt-6 pt-6 border-t">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Seçenekler</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                    ${attribute.options.map(option => `
+                                        <div class="bg-gray-50 p-2 rounded-md text-center">
+                                            <span class="text-sm font-medium text-gray-900">${option}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Categories Using This Attribute -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-sitemap text-green-600 mr-2"></i>
+                            Bu Özelliği Kullanan Kategoriler (${categoriesUsingAttribute.length})
+                        </h3>
+                        ${categoriesUsingAttribute.length > 0 ? `
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                ${categoriesUsingAttribute.map(category => `
+                                    <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#category/${category.id}')">
+                                        <div class="flex items-center justify-between">
+                                            <div>
+                                                <div class="font-medium text-gray-900">${t(category.name)}</div>
+                                                <div class="text-sm text-gray-500">ID: ${category.id}</div>
+                                            </div>
+                                            <i class="fas fa-arrow-right text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="text-center py-8">
+                                <i class="fas fa-folder-open text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500">Bu özellik henüz hiçbir kategoride kullanılmıyor.</p>
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Unique Values -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-list text-purple-600 mr-2"></i>
+                            Kullanılan Değerler (${uniqueValues.length})
+                        </h3>
+                        ${uniqueValues.length > 0 ? `
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                                ${uniqueValues.map(value => `
+                                    <div class="bg-purple-50 border border-purple-200 rounded-md p-2 text-center">
+                                        <span class="text-sm font-medium text-purple-900">${value}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <div class="text-center py-8">
+                                <i class="fas fa-list text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500">Bu özellik için henüz hiç değer girilmemiş.</p>
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Recent Products Using This Attribute -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-box text-orange-600 mr-2"></i>
+                            Bu Özelliği Kullanan Ürünler (${Math.min(productsUsingAttribute.length, 10)} gösteriliyor)
+                        </h3>
+                        ${productsUsingAttribute.length > 0 ? `
+                            <div class="space-y-3">
+                                ${productsUsingAttribute.slice(0, 10).map(product => {
+                                    const attributeValue = product.attributes[attributeId];
+                                    const statusColor = attributeValue?.validationStatus === 'approved' ? 'green' : 
+                                                      attributeValue?.validationStatus === 'pending' ? 'yellow' : 'red';
+                                    const statusIcon = attributeValue?.validationStatus === 'approved' ? 'check-circle' : 
+                                                     attributeValue?.validationStatus === 'pending' ? 'clock' : 'times-circle';
+                                    
+                                    return `
+                                        <div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#product/${product.id}')">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-3">
+                                                    <img src="${product.imageUrl || 'https://via.placeholder.com/40'}" alt="${t(product.name)}" class="w-10 h-10 rounded-md object-cover">
+                                                    <div>
+                                                        <div class="font-medium text-gray-900">${t(product.name)}</div>
+                                                        <div class="text-sm text-gray-500">SKU: ${product.sku}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center space-x-3">
+                                                    <div class="text-right">
+                                                        <div class="text-sm font-medium text-gray-900">${attributeValue?.value || 'N/A'}</div>
+                                                        <div class="flex items-center space-x-1">
+                                                            <i class="fas fa-${statusIcon} text-${statusColor}-500 text-xs"></i>
+                                                            <span class="text-xs text-${statusColor}-600">${attributeValue?.validationStatus || 'pending'}</span>
+                                                        </div>
+                                                    </div>
+                                                    <i class="fas fa-arrow-right text-gray-400"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            ${productsUsingAttribute.length > 10 ? `
+                                <div class="mt-4 text-center">
+                                    <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                                        Tümünü Görüntüle (${productsUsingAttribute.length})
+                                    </button>
+                                </div>
+                            ` : ''}
+                        ` : `
+                            <div class="text-center py-8">
+                                <i class="fas fa-box text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-gray-500">Bu özellik henüz hiçbir üründe kullanılmıyor.</p>
+                            </div>
+                        `}
                     </div>
                 </div>
             `;
@@ -8438,12 +8742,12 @@
                 return `
                 <div class="py-3 border-b border-gray-100">
                     <div class="flex justify-between items-center mb-2">
-                        <div>
-                            <div class="font-medium">${item.name}</div>
-                            <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
-                        </div>
-                        <div class="text-sm font-semibold">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                    <div>
+                        <div class="font-medium">${item.name}</div>
+                        <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
                     </div>
+                    <div class="text-sm font-semibold">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                </div>
                     <div class="flex items-center justify-between bg-gray-50 rounded p-2">
                         <div class="flex items-center space-x-3">
                             <div class="flex items-center space-x-1">
@@ -8583,20 +8887,20 @@
                 return `
                 <div class="py-4 border-b border-gray-100">
                     <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-gray-100 rounded-md mr-4 flex items-center justify-center">
-                                <i class="fas fa-box text-gray-400"></i>
-                            </div>
-                            <div>
-                                <div class="font-medium text-gray-900">${item.name}</div>
-                                <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
-                            </div>
+                    <div class="flex items-center">
+                        <div class="w-12 h-12 bg-gray-100 rounded-md mr-4 flex items-center justify-center">
+                            <i class="fas fa-box text-gray-400"></i>
                         </div>
-                        <div class="text-right">
-                            <div class="text-sm font-semibold text-gray-900">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                            ${item.qty ? `<div class="text-xs text-gray-500">${item.qty} adet</div>` : ''}
+                        <div>
+                            <div class="font-medium text-gray-900">${item.name}</div>
+                            <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
                         </div>
                     </div>
+                    <div class="text-right">
+                        <div class="text-sm font-semibold text-gray-900">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                        ${item.qty ? `<div class="text-xs text-gray-500">${item.qty} adet</div>` : ''}
+                    </div>
+                </div>
                     <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
                         <div class="flex items-center space-x-4">
                             <div class="flex items-center space-x-2">
@@ -8675,14 +8979,14 @@
                     </div>
                     
                     <!-- Customer Details -->
-                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Müşteri Bilgileri</h3>
                             <button onclick="navigateTo('#customer/${order.customerId || 'CUST-001'}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                                 <i class="fas fa-external-link-alt mr-1"></i>
                                 Detayları Görüntüle
                             </button>
-                        </div>
+                                </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-3">
@@ -8690,8 +8994,8 @@
                                     <div>
                                         <div class="text-sm text-gray-500">Ad Soyad</div>
                                         <div class="font-medium text-gray-900">${order.shippingAddress?.name || 'Bilinmiyor'}</div>
-                                    </div>
                                 </div>
+                            </div>
                                 <div class="flex items-center space-x-3">
                                     <i class="fas fa-id-card text-gray-400 w-5"></i>
                                     <div>
@@ -8699,7 +9003,7 @@
                                         <button onclick="navigateTo('#customer/${order.customerId || 'CUST-001'}')" class="font-medium text-blue-600 hover:text-blue-800 cursor-pointer">
                                             ${order.customerId || 'CUST-001'}
                                         </button>
-                                    </div>
+                        </div>
                                 </div>
                             </div>
                             <div class="space-y-3">
@@ -8755,7 +9059,7 @@
                     <div class="bg-white rounded-lg shadow-sm border">
                         <div class="p-6 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
+                            <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
                                 <div class="flex items-center space-x-2 text-sm text-gray-500">
                                     <i class="fas fa-box text-blue-500"></i>
                                     <span>${itemCount} ürün</span>
@@ -11910,10 +12214,233 @@
                 const categoryId = validCategory ? validCategory.id : 1; // fallback to first category
                 
                 const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft', health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft', health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
+        function buildMultiSelectCategoryTree(categories, parentId = null, level = 0) {
+            const children = categories.filter(c => c.parentId === parentId);
+            if (children.length === 0) return '';
+            
+            return children.map(category => {
+                const isLowestLevel = isLowestLevelCategory(category.id);
+                const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                const indent = level * 20; // 20px per level
+                
+                if (isLowestLevel) {
+                    // Selectable leaf category with checkbox
+                    return `
+                        <div class="category-option border border-transparent" style="margin-left: ${indent}px; padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: all 0.2s;" 
+                             onmouseover="this.style.backgroundColor='#f3f4f6'" 
+                             onmouseout="this.style.backgroundColor='transparent'"
+                             onclick="toggleCategorySelection(${category.id}, '${categoryName.replace(/'/g, "\\'")}')">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="cat-checkbox-${category.id}" class="form-checkbox h-4 w-4 text-blue-600 mr-3" onchange="event.stopPropagation()">
+                                <i class="fas fa-circle text-xs text-green-500 mr-2"></i>
+                                <span class="text-sm text-gray-700">${categoryName}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Collapsible parent category (non-selectable)
+                    const childContent = buildMultiSelectCategoryTree(categories, category.id, level + 1);
+                    return `
+                        <div class="category-group">
+                            <div class="category-header" style="margin-left: ${indent}px; padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: background-color 0.2s;" 
+                                 onmouseover="this.style.backgroundColor='#f3f4f6'" 
+                                 onmouseout="this.style.backgroundColor='transparent'"
+                                 onclick="toggleCategoryGroup('template-category-${category.id}')">
+                                <div class="flex items-center">
+                                    <i id="template-category-icon-${category.id}" class="fas fa-chevron-right text-xs text-gray-500 mr-2 transition-transform duration-200"></i>
+                                    <i class="fas fa-folder text-sm text-gray-400 mr-2"></i>
+                                    <span class="text-sm font-medium text-gray-500">${categoryName}</span>
+                                    <span class="ml-2 text-xs text-gray-400 italic">(Ürün eklenemez)</span>
+                                </div>
+                            </div>
+                            <div id="template-category-${category.id}" class="category-children hidden">
+                                ${childContent}
+                            </div>
+                        </div>
+                    `;
+                }
+            }).join('');
+        }
+
+        function toggleCategorySelection(categoryId, categoryName) {
+            const checkbox = document.getElementById(`cat-checkbox-${categoryId}`);
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                updateSelectedCategoriesDisplay();
+            }
+        }
+
+        function updateSelectedCategoriesDisplay() {
+            const selectedCategories = [];
+            document.querySelectorAll('input[id^="cat-checkbox-"]:checked').forEach(checkbox => {
+                const categoryId = checkbox.id.replace('cat-checkbox-', '');
+                const category = mockData.categories.find(c => c.id == categoryId);
+                if (category) {
+                    const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                    selectedCategories.push({ id: categoryId, name: categoryName });
+                }
+            });
+            
+            const displayDiv = document.getElementById('selected-categories-display');
+            if (displayDiv) {
+                if (selectedCategories.length === 0) {
+                    displayDiv.innerHTML = '<p class="text-sm text-gray-500">Hiç kategori seçilmedi</p>';
+                } else {
+                    displayDiv.innerHTML = `
+                        <div class="space-y-2">
+                            <p class="text-sm font-medium text-gray-700">Seçilen Kategoriler (${selectedCategories.length}):</p>
+                            <div class="flex flex-wrap gap-2">
+                                ${selectedCategories.map(cat => `
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        ${cat.name}
+                                        <button onclick="removeCategorySelection(${cat.id})" class="ml-1 text-blue-600 hover:text-blue-800">
+                                            <i class="fas fa-times text-xs"></i>
+                                        </button>
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function removeCategorySelection(categoryId) {
+            const checkbox = document.getElementById(`cat-checkbox-${categoryId}`);
+            if (checkbox) {
+                checkbox.checked = false;
+                updateSelectedCategoriesDisplay();
+            }
+        }
+
         function showDownloadTemplateModal() { 
-            // Build category tree for dropdown with visual hierarchy
-            const categoryTreeOptions = buildCategoryTreeForDropdown(mockData.categories); const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('template_type')}</label><div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2"><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked><span class="text-sm font-medium">${t('template_add_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="update" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_product')}</span></label><label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer"><input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600"><span class="text-sm font-medium">${t('template_update_stock_price')}</span></label></div></div><p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p><div id="category-selection-wrapper"><label for="template-category-select" class="block text-sm font-medium text-gray-700">${t('select_category')}</label><select id="template-category-select" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">-- ${t('select_category')} --</option>${categoryTreeOptions}</select></div></div>`; showModal(t('download_template'), body, t('download_template'), handleTemplateDownload); document.querySelectorAll('input[name="template_type"]').forEach(radio => { radio.addEventListener('change', (e) => { const type = e.target.value; const categoryWrapper = document.getElementById('category-selection-wrapper'); const description = document.getElementById('template-description'); if (type === 'stock_price') { categoryWrapper.classList.add('hidden'); description.textContent = t('download_template_desc_stock'); } else { categoryWrapper.classList.remove('hidden'); description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update'); } }); }); }
-        function handleTemplateDownload() { const templateType = document.querySelector('input[name="template_type"]:checked').value; let headers = []; let fileName = 'sablon.csv'; switch (templateType) { case 'add': case 'update': const categoryId = document.getElementById('template-category-select').value; if (!categoryId) { showModal('Hata', '<p>Lütfen bir kategori seçin.</p>', 'Tamam', () => { showDownloadTemplateModal(); }); return; } const category = mockData.categories.find(c => c.id == categoryId); if (!category) return; headers = templateType === 'add' ? ['sku', 'name_tr', 'name_en', 'categoryId', 'stock', 'price_TRY'] : ['sku', 'name_tr', 'name_en', 'stock', 'price_TRY']; if (category.attributes) { category.attributes.forEach(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (attribute) { headers.push(attribute.name); } }); } const safeCategoryName = t(category.name).replace(/[^a-z0-9]/gi, '_').toLowerCase(); fileName = `sablon_${templateType}_${safeCategoryName}.csv`; break; case 'stock_price': headers = ['sku', 'stock', 'price_TRY']; fileName = `sablon_stok_fiyat_guncelleme.csv`; break; } const csvHeader = headers.join(','); const blob = new Blob([`\uFEFF${csvHeader}`], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", fileName); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); closeModal(); }
+            alert('showDownloadTemplateModal called!'); // Test alert
+            
+            // Build multi-select category tree
+            const categoryTreeContent = buildMultiSelectCategoryTree(mockData.categories);
+            
+            // Fallback if no categories found
+            const finalCategoryContent = categoryTreeContent || '<p class="text-sm text-gray-500 p-4">Kategori bulunamadı</p>';
+            
+            const body = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">${t('template_type')}</label>
+                        <div class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="template_type" value="add" class="form-radio text-blue-600" checked>
+                                <span class="text-sm font-medium">${t('template_add_product')}</span>
+                            </label>
+                            <label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="template_type" value="update" class="form-radio text-blue-600">
+                                <span class="text-sm font-medium">${t('template_update_product')}</span>
+                            </label>
+                            <label class="border rounded-md p-3 flex items-center space-x-3 hover:bg-gray-50 cursor-pointer">
+                                <input type="radio" name="template_type" value="stock_price" class="form-radio text-blue-600">
+                                <span class="text-sm font-medium">${t('template_update_stock_price')}</span>
+                            </label>
+                        </div>
+                    </div>
+                    <p id="template-description" class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">${t('download_template_desc_add')}</p>
+                    <div id="category-selection-wrapper">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Kategorileri Seçin</label>
+                        <div class="max-h-64 overflow-y-auto border border-gray-200 rounded-md bg-white">
+                            <div class="p-2">${finalCategoryContent}</div>
+                        </div>
+                        <div id="selected-categories-display" class="mt-3 p-3 bg-gray-50 rounded-md">
+                            <p class="text-sm text-gray-500">Hiç kategori seçilmedi</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showModal(t('download_template'), body, t('download_template'), handleTemplateDownload);
+            
+            document.querySelectorAll('input[name="template_type"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const type = e.target.value;
+                    const categoryWrapper = document.getElementById('category-selection-wrapper');
+                    const description = document.getElementById('template-description');
+                    if (type === 'stock_price') {
+                        categoryWrapper.classList.add('hidden');
+                        description.textContent = t('download_template_desc_stock');
+                    } else {
+                        categoryWrapper.classList.remove('hidden');
+                        description.textContent = type === 'add' ? t('download_template_desc_add') : t('download_template_desc_update');
+                    }
+                });
+            });
+        }
+        function handleTemplateDownload() {
+            const templateType = document.querySelector('input[name="template_type"]:checked').value;
+            let headers = [];
+            let fileName = 'sablon.csv';
+            
+            switch (templateType) {
+                case 'add':
+                case 'update':
+                    // Get selected categories
+                    const selectedCategories = [];
+                    document.querySelectorAll('input[id^="cat-checkbox-"]:checked').forEach(checkbox => {
+                        const categoryId = checkbox.id.replace('cat-checkbox-', '');
+                        const category = mockData.categories.find(c => c.id == categoryId);
+                        if (category) {
+                            selectedCategories.push(category);
+                        }
+                    });
+                    
+                    if (selectedCategories.length === 0) {
+                        showModal('Hata', '<p>Lütfen en az bir kategori seçin.</p>', 'Tamam', () => { showDownloadTemplateModal(); });
+                        return;
+                    }
+                    
+                    // Build headers based on all selected categories' attributes
+                    headers = templateType === 'add' ? ['sku', 'name_tr', 'name_en', 'categoryId', 'stock', 'price_TRY'] : ['sku', 'name_tr', 'name_en', 'stock', 'price_TRY'];
+                    
+                    // Collect all unique attributes from selected categories
+                    const allAttributes = new Set();
+                    selectedCategories.forEach(category => {
+                        if (category.attributes) {
+                            category.attributes.forEach(attrId => allAttributes.add(attrId));
+                        }
+                    });
+                    
+                    // Add attribute columns to headers
+                    allAttributes.forEach(attrId => {
+                        const attribute = mockData.attributes.find(a => a.id === attrId);
+                        if (attribute) {
+                            headers.push(attribute.name);
+                        }
+                    });
+                    
+                    // Generate filename based on selected categories
+                    if (selectedCategories.length === 1) {
+                        const safeCategoryName = t(selectedCategories[0].name).replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                        fileName = `sablon_${templateType}_${safeCategoryName}.csv`;
+                    } else {
+                        fileName = `sablon_${templateType}_${selectedCategories.length}_kategori.csv`;
+                    }
+                    break;
+                    
+                case 'stock_price':
+                    headers = ['sku', 'stock', 'price_TRY'];
+                    fileName = `sablon_stok_fiyat_guncelleme.csv`;
+                    break;
+            }
+            
+            // Create and download CSV
+            const csvHeader = headers.join(',');
+            const blob = new Blob([`\uFEFF${csvHeader}`], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            closeModal();
+        }
         function approveProduct(productId) { const productToApprove = mockData.products.find(p => p.id === productId); if (!productToApprove) return; productToApprove.status = 'active'; productToApprove.lastUpdated = new Date().toISOString(); navigateTo('#products/onaylanan'); }
         // Category validation functions
         function hasProductsInCategory(categoryId) {
@@ -15147,7 +15674,11 @@
                 const customerId = id1 || subpage;
                 renderers.customer(customerId); 
             } 
-            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'localizable', label: 'Çevrilebilir', render: (item) => item.localizable ? 'Evet' : 'Hayır'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal); } 
+            else if (page === 'attribute' && (id1 || subpage)) { 
+                const attributeId = id1 || subpage;
+                renderers.attribute(attributeId); 
+            } 
+            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'localizable', label: 'Çevrilebilir', render: (item) => item.localizable ? 'Evet' : 'Hayır'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal, null, (id) => navigateTo('#attribute/' + id)); } 
             else if (page === 'channels') { renderers.genericPage('channels', mockData.channels, [{key: 'name', label: 'channel_name'}, {key: 'productCount', label: 'product_count'}, {key: 'currency', label: 'currency'}, {key: 'status', label: 'status_header', render: (item) => item.status === 'active' ? `<span class="text-green-600">${t('status_active')}</span>` : `<span class="text-red-600">${t('status_passive')}</span>`}], showAddChannelModal); } 
             else if (page === 'finance') { 
                 const user = window.currentUser || {};
@@ -20422,9 +20953,20 @@ function filterAdminFinanceData(startDate, endDate) {
             const bulkAddFile = document.getElementById('bulk-add-file');
             const bulkUpdateFile = document.getElementById('bulk-update-file');
             const bulkDownloadTemplate = document.getElementById('bulk-download-template');
+            console.log('bulkDownloadTemplate button found:', bulkDownloadTemplate);
             if (bulkAddFile) bulkAddFile.addEventListener('click', (e) => { e.preventDefault(); showBulkImportModal('add'); bulkActionsDropdown.classList.add('hidden'); });
             if (bulkUpdateFile) bulkUpdateFile.addEventListener('click', (e) => { e.preventDefault(); showBulkImportModal('update'); bulkActionsDropdown.classList.add('hidden'); });
-            if (bulkDownloadTemplate) bulkDownloadTemplate.addEventListener('click', (e) => { e.preventDefault(); showDownloadTemplateModal(); bulkActionsDropdown.classList.add('hidden'); });
+            if (bulkDownloadTemplate) {
+                console.log('Adding event listener to bulkDownloadTemplate');
+                bulkDownloadTemplate.addEventListener('click', (e) => { 
+                    console.log('bulkDownloadTemplate clicked!');
+                    e.preventDefault(); 
+                    showDownloadTemplateModal(); 
+                    bulkActionsDropdown.classList.add('hidden'); 
+                });
+            } else {
+                console.log('bulkDownloadTemplate button not found!');
+            }
         }
 
         function setupActionEventListeners(activeTab, isSupplier, actionsDropdown) {
