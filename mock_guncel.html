@@ -2848,6 +2848,101 @@
                     updatedAt: '2025-01-19T10:00:00Z'
                 }
             ],
+            // Customers
+            customers: [
+                {
+                    id: 'CUST-001',
+                    firstName: 'Ahmet',
+                    lastName: 'Yılmaz',
+                    email: 'ahmet.yilmaz@email.com',
+                    phone: '+90 532 123 4567',
+                    registrationDate: '2024-03-15',
+                    lastLoginDate: '2025-01-15T09:30:00Z',
+                    status: 'active',
+                    totalOrders: 8,
+                    totalSpent: 12500.00,
+                    address: {
+                        line1: 'Gül Sk. No:12',
+                        city: 'İstanbul',
+                        postalCode: '34000',
+                        country: 'TR'
+                    },
+                    preferences: {
+                        language: 'tr',
+                        currency: 'TRY',
+                        notifications: true
+                    }
+                },
+                {
+                    id: 'CUST-002',
+                    firstName: 'Elif',
+                    lastName: 'Demir',
+                    email: 'elif.demir@email.com',
+                    phone: '+90 533 234 5678',
+                    registrationDate: '2024-05-20',
+                    lastLoginDate: '2025-01-14T16:45:00Z',
+                    status: 'active',
+                    totalOrders: 5,
+                    totalSpent: 8500.00,
+                    address: {
+                        line1: 'Lale Cd. No:5',
+                        city: 'Ankara',
+                        postalCode: '06000',
+                        country: 'TR'
+                    },
+                    preferences: {
+                        language: 'tr',
+                        currency: 'TRY',
+                        notifications: true
+                    }
+                },
+                {
+                    id: 'CUST-003',
+                    firstName: 'Mehmet',
+                    lastName: 'Kaya',
+                    email: 'mehmet.kaya@email.com',
+                    phone: '+90 534 345 6789',
+                    registrationDate: '2024-07-10',
+                    lastLoginDate: '2025-01-10T11:20:00Z',
+                    status: 'active',
+                    totalOrders: 12,
+                    totalSpent: 18900.00,
+                    address: {
+                        line1: 'Çiçek Sk. No:8',
+                        city: 'İzmir',
+                        postalCode: '35000',
+                        country: 'TR'
+                    },
+                    preferences: {
+                        language: 'tr',
+                        currency: 'TRY',
+                        notifications: false
+                    }
+                },
+                {
+                    id: 'CUST-004',
+                    firstName: 'Ayşe',
+                    lastName: 'Özkan',
+                    email: 'ayse.ozkan@email.com',
+                    phone: '+90 535 456 7890',
+                    registrationDate: '2024-09-05',
+                    lastLoginDate: '2025-01-12T14:15:00Z',
+                    status: 'active',
+                    totalOrders: 3,
+                    totalSpent: 4200.00,
+                    address: {
+                        line1: 'Gülbahar Cd. No:15',
+                        city: 'Bursa',
+                        postalCode: '16000',
+                        country: 'TR'
+                    },
+                    preferences: {
+                        language: 'tr',
+                        currency: 'TRY',
+                        notifications: true
+                    }
+                }
+            ],
             returns: [
                 {
                     id: 'RET-2025-001',
@@ -5432,6 +5527,224 @@
                     </div>
                 `;
             },
+        };
+
+        // --- CUSTOMER DETAIL PAGE RENDERER ---
+        renderers['customer'] = (customerId) => {
+            const customer = mockData.customers.find(c => c.id === customerId);
+            if (!customer) {
+                pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Müşteri Bulunamadı</h2><p class="text-gray-500">Aradığınız müşteri mevcut değil.</p><button onclick="navigateTo(\'#orders\')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Siparişlere Dön</button></div>';
+                return;
+            }
+
+            // Get customer's past orders
+            const customerOrders = mockData.orders.filter(order => order.customerId === customerId);
+            
+            // Calculate customer statistics
+            const totalSpent = customerOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+            const averageOrderValue = customerOrders.length > 0 ? totalSpent / customerOrders.length : 0;
+            const lastOrderDate = customerOrders.length > 0 ? 
+                new Date(Math.max(...customerOrders.map(o => new Date(o.date).getTime()))).toLocaleDateString('tr-TR') : 
+                'Henüz sipariş yok';
+
+            pageTitle.textContent = `Müşteri: ${customer.firstName} ${customer.lastName}`;
+            
+            pageContent.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Customer Info Card -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900">Müşteri Bilgileri</h2>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-3 py-1 rounded-full text-sm font-medium ${customer.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    ${customer.status === 'active' ? 'Aktif' : 'Pasif'}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Personal Info -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 border-b pb-2">Kişisel Bilgiler</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-user text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Ad Soyad</div>
+                                            <div class="font-medium text-gray-900">${customer.firstName} ${customer.lastName}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-id-card text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Müşteri ID</div>
+                                            <div class="font-medium text-gray-900">${customer.id}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-envelope text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">E-posta</div>
+                                            <div class="font-medium text-gray-900">${customer.email}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-phone text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Telefon</div>
+                                            <div class="font-medium text-gray-900">${customer.phone}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Address Info -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 border-b pb-2">Adres Bilgileri</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-start space-x-3">
+                                        <i class="fas fa-map-marker-alt text-gray-400 w-5 mt-1"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Adres</div>
+                                            <div class="font-medium text-gray-900">
+                                                ${customer.address.line1}<br>
+                                                ${customer.address.city} ${customer.address.postalCode}<br>
+                                                ${customer.address.country}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Account Info -->
+                            <div class="space-y-4">
+                                <h3 class="text-lg font-semibold text-gray-900 border-b pb-2">Hesap Bilgileri</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-calendar text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Kayıt Tarihi</div>
+                                            <div class="font-medium text-gray-900">${new Date(customer.registrationDate).toLocaleDateString('tr-TR')}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-sign-in-alt text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Son Giriş</div>
+                                            <div class="font-medium text-gray-900">${new Date(customer.lastLoginDate).toLocaleDateString('tr-TR')}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <i class="fas fa-bell text-gray-400 w-5"></i>
+                                        <div>
+                                            <div class="text-sm text-gray-500">Bildirimler</div>
+                                            <div class="font-medium text-gray-900">${customer.preferences.notifications ? 'Açık' : 'Kapalı'}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Statistics -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-blue-100 rounded-lg">
+                                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm text-gray-500">Toplam Sipariş</div>
+                                    <div class="text-2xl font-bold text-gray-900">${customerOrders.length}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-green-100 rounded-lg">
+                                    <i class="fas fa-lira-sign text-green-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm text-gray-500">Toplam Harcama</div>
+                                    <div class="text-2xl font-bold text-gray-900">${totalSpent.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-yellow-100 rounded-lg">
+                                    <i class="fas fa-chart-line text-yellow-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm text-gray-500">Ortalama Sipariş</div>
+                                    <div class="text-2xl font-bold text-gray-900">${averageOrderValue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-purple-100 rounded-lg">
+                                    <i class="fas fa-clock text-purple-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm text-gray-500">Son Sipariş</div>
+                                    <div class="text-2xl font-bold text-gray-900">${lastOrderDate}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Orders -->
+                    <div class="bg-white rounded-lg shadow-sm border">
+                        <div class="p-6 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Geçmiş Siparişler (${customerOrders.length})</h3>
+                        </div>
+                        <div class="p-6">
+                            ${customerOrders.length > 0 ? `
+                                <div class="space-y-4">
+                                    ${customerOrders.map(order => {
+                                        const supplier = mockData.suppliers.find(s => s.id === order.supplierId);
+                                        const statusClass = {
+                                            'hazırlanıyor': 'bg-yellow-100 text-yellow-800',
+                                            'kargolandı': 'bg-blue-100 text-blue-800',
+                                            'teslim edildi': 'bg-green-100 text-green-800',
+                                            'iptal': 'bg-red-100 text-red-800'
+                                        }[order.status] || 'bg-gray-100 text-gray-800';
+                                        
+                                        return `
+                                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#order/${order.id}')">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center space-x-4">
+                                                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                                                        <i class="fas fa-shopping-bag text-gray-400"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-medium text-gray-900">${order.id}</div>
+                                                        <div class="text-sm text-gray-500">${supplier?.name || 'Bilinmeyen Tedarikçi'} • ${new Date(order.date).toLocaleDateString('tr-TR')}</div>
+                                                        <div class="text-sm text-gray-500">${order.items?.length || 0} ürün</div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-right">
+                                                    <div class="text-lg font-semibold text-gray-900">${(order.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                                                        ${order.status || 'Bilinmiyor'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            ` : `
+                                <div class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-4"></i>
+                                    <p>Bu müşterinin henüz siparişi bulunmuyor.</p>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
         };
 
         // --- SUPPORT PAGE RENDERER ---
@@ -8357,6 +8670,53 @@
                                     <button class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
                                         <i class="fas fa-download mr-2"></i>PDF İndir
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Customer Details -->
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Müşteri Bilgileri</h3>
+                            <button onclick="navigateTo('#customer/${order.customerId || 'CUST-001'}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                <i class="fas fa-external-link-alt mr-1"></i>
+                                Detayları Görüntüle
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-user text-gray-400 w-5"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Ad Soyad</div>
+                                        <div class="font-medium text-gray-900">${order.shippingAddress?.name || 'Bilinmiyor'}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-id-card text-gray-400 w-5"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Müşteri ID</div>
+                                        <button onclick="navigateTo('#customer/${order.customerId || 'CUST-001'}')" class="font-medium text-blue-600 hover:text-blue-800 cursor-pointer">
+                                            ${order.customerId || 'CUST-001'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-envelope text-gray-400 w-5"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">E-posta</div>
+                                        <div class="font-medium text-gray-900">${order.customerEmail || order.shippingAddress?.email || 'Bilinmiyor'}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <i class="fas fa-phone text-gray-400 w-5"></i>
+                                    <div>
+                                        <div class="text-sm text-gray-500">Telefon</div>
+                                        <div class="font-medium text-gray-900">${order.customerPhone || order.shippingAddress?.phone || 'Bilinmiyor'}</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -14572,6 +14932,10 @@
             else if (page === 'orderDetail' && (id1 || subpage)) { 
                 const orderId = id1 || subpage;
                 renderers.orderDetail(orderId); 
+            }
+            else if (page === 'customer' && (id1 || subpage)) { 
+                const customerId = id1 || subpage;
+                renderers.customer(customerId); 
             } 
             else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'localizable', label: 'Çevrilebilir', render: (item) => item.localizable ? 'Evet' : 'Hayır'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal); } 
             else if (page === 'channels') { renderers.genericPage('channels', mockData.channels, [{key: 'name', label: 'channel_name'}, {key: 'productCount', label: 'product_count'}, {key: 'currency', label: 'currency'}, {key: 'status', label: 'status_header', render: (item) => item.status === 'active' ? `<span class="text-green-600">${t('status_active')}</span>` : `<span class="text-red-600">${t('status_passive')}</span>`}], showAddChannelModal); } 
@@ -15469,7 +15833,7 @@ window.mockData.suppliers = window.mockData.suppliers || [
     { id: 3, name: 'Başka Tedarikçi', status: 'approved' }
 ];
 window.mockData.orders = window.mockData.orders || [
-  { id: 'ORD-1001', supplierId: 1, date: '2025-09-15', status: 'hazırlanıyor', total: 3499.90,
+  { id: 'ORD-1001', supplierId: 1, customerId: 'CUST-001', date: '2025-09-15', status: 'hazırlanıyor', total: 3499.90,
     items: [
       { sku: '8683822429962-41', name: 'Kahverengi Deri Ayakkabı 41', qty: 1, total: 2999.90 },
       { sku: '8683822429962-Temizlik', name: 'Bakım Kiti', qty: 1, total: 500.00 }
@@ -15483,7 +15847,7 @@ window.mockData.orders = window.mockData.orders || [
     ],
     note: 'Hediye paketi istendi.'
   },
-  { id: 'ORD-1002', supplierId: 2, date: '2025-09-16', status: 'kargolandı', total: 1299.00,
+  { id: 'ORD-1002', supplierId: 2, customerId: 'CUST-002', date: '2025-09-16', status: 'kargolandı', total: 1299.00,
     items: [{ sku: '8683822429963', name: 'Mavi Keten Gömlek', qty: 1, total: 1299.00 }],
     shippingAddress: { name: 'Elif Demir', line1: 'Lale Cd. No:5', city: 'Ankara', postalCode: '06000', country: 'TR' },
     payment: { method: 'Havale/EFT', status: 'onay bekliyor' },
@@ -20852,7 +21216,7 @@ window.mockData.suppliers = window.mockData.suppliers || [
     { id: 3, name: 'Başka Tedarikçi', status: 'approved' }
 ];
 window.mockData.orders = window.mockData.orders || [
-  { id: 'ORD-1001', supplierId: 1, date: '2025-09-15', status: 'hazırlanıyor', total: 3499.90,
+  { id: 'ORD-1001', supplierId: 1, customerId: 'CUST-001', date: '2025-09-15', status: 'hazırlanıyor', total: 3499.90,
     items: [
       { sku: '8683822429962-41', name: 'Kahverengi Deri Ayakkabı 41', qty: 1, total: 2999.90 },
       { sku: '8683822429962-Temizlik', name: 'Bakım Kiti', qty: 1, total: 500.00 }
@@ -20866,7 +21230,7 @@ window.mockData.orders = window.mockData.orders || [
     ],
     note: 'Hediye paketi istendi.'
   },
-  { id: 'ORD-1002', supplierId: 2, date: '2025-09-16', status: 'kargolandı', total: 1299.00,
+  { id: 'ORD-1002', supplierId: 2, customerId: 'CUST-002', date: '2025-09-16', status: 'kargolandı', total: 1299.00,
     items: [{ sku: '8683822429963', name: 'Mavi Keten Gömlek', qty: 1, total: 1299.00 }],
     shippingAddress: { name: 'Elif Demir', line1: 'Lale Cd. No:5', city: 'Ankara', postalCode: '06000', country: 'TR' },
     payment: { method: 'Havale/EFT', status: 'onay bekliyor' },
