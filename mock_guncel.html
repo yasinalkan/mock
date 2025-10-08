@@ -7956,7 +7956,7 @@
                 const orderRows = filteredOrders.map(order => {
                     const itemCount = order.items ? order.items.length : 0;
                     const totalAmount = order.total || 0;
-                    const commissionRate = 12; // Default commission rate
+                    const commissionRate = calculateWeightedAverageCommissionRate(order);
                     const commissionAmount = totalAmount * (commissionRate / 100);
                     
                     const statusClass = {
@@ -8115,18 +8115,39 @@
             
             const itemCount = order.items ? order.items.length : 0;
             const totalAmount = order.total || 0;
-            const commissionRate = 12; // Default commission rate
+            const commissionRate = calculateWeightedAverageCommissionRate(order);
             const commissionAmount = totalAmount * (commissionRate / 100);
             
-            const itemsList = order.items ? order.items.map(item => `
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <div>
-                        <div class="font-medium">${item.name}</div>
-                        <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
+            const itemsList = order.items ? order.items.map(item => {
+                const itemCommissionRate = calculateItemCommissionRate(item, order);
+                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100);
+                
+                return `
+                <div class="py-3 border-b border-gray-100">
+                    <div class="flex justify-between items-center mb-2">
+                        <div>
+                            <div class="font-medium">${item.name}</div>
+                            <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
+                        </div>
+                        <div class="text-sm font-semibold">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                     </div>
-                    <div class="text-sm font-semibold">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                    <div class="flex items-center justify-between bg-gray-50 rounded p-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-percentage text-green-500 text-xs"></i>
+                                <span class="text-xs text-gray-600">Komisyon:</span>
+                                <span class="text-xs font-semibold text-green-600">${itemCommissionRate}%</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <i class="fas fa-coins text-yellow-500 text-xs"></i>
+                                <span class="text-xs text-gray-600">Tutar:</span>
+                                <span class="text-xs font-semibold text-yellow-600">${itemCommissionAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            `).join('') : '<div class="text-sm text-gray-500">Ürün bilgisi bulunamadı.</div>';
+                `;
+            }).join('') : '<div class="text-sm text-gray-500">Ürün bilgisi bulunamadı.</div>';
             
             const body = `
                 <div class="space-y-4">
@@ -8227,7 +8248,7 @@
             
             const itemCount = order.items ? order.items.length : 0;
             const totalAmount = order.total || 0;
-            const commissionRate = 12; // Default commission rate
+            const commissionRate = calculateWeightedAverageCommissionRate(order);
             const commissionAmount = totalAmount * (commissionRate / 100);
             
             // Status options for dropdown
@@ -8241,23 +8262,44 @@
                 order.status
             ]));
             
-            const itemsList = order.items ? order.items.map(item => `
-                <div class="flex justify-between items-center py-3 border-b border-gray-100">
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-gray-100 rounded-md mr-4 flex items-center justify-center">
-                            <i class="fas fa-box text-gray-400"></i>
+            const itemsList = order.items ? order.items.map(item => {
+                const itemCommissionRate = calculateItemCommissionRate(item, order);
+                const itemCommissionAmount = (item.total || 0) * (itemCommissionRate / 100);
+                
+                return `
+                <div class="py-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gray-100 rounded-md mr-4 flex items-center justify-center">
+                                <i class="fas fa-box text-gray-400"></i>
+                            </div>
+                            <div>
+                                <div class="font-medium text-gray-900">${item.name}</div>
+                                <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-medium text-gray-900">${item.name}</div>
-                            <div class="text-sm text-gray-500">SKU: ${item.sku}${item.qty ? ' • Adet: ' + item.qty : ''}</div>
+                        <div class="text-right">
+                            <div class="text-sm font-semibold text-gray-900">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                            ${item.qty ? `<div class="text-xs text-gray-500">${item.qty} adet</div>` : ''}
                         </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm font-semibold text-gray-900">${(item.total || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                        ${item.qty ? `<div class="text-xs text-gray-500">${item.qty} adet</div>` : ''}
+                    <div class="flex items-center justify-between bg-gray-50 rounded-lg p-3">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-percentage text-green-500 text-sm"></i>
+                                <span class="text-sm text-gray-600">Komisyon Oranı:</span>
+                                <span class="text-sm font-semibold text-green-600">${itemCommissionRate}%</span>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-coins text-yellow-500 text-sm"></i>
+                                <span class="text-sm text-gray-600">Komisyon Tutarı:</span>
+                                <span class="text-sm font-semibold text-yellow-600">${itemCommissionAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `).join('') : '<div class="text-center py-8 text-gray-500">Ürün bilgisi bulunamadı.</div>';
+                `;
+            }).join('') : '<div class="text-center py-8 text-gray-500">Ürün bilgisi bulunamadı.</div>';
             
             pageTitle.textContent = `Sipariş ${order.id} - Detaylar`;
             
@@ -8319,26 +8361,19 @@
                     </div>
                     
                     <!-- Order Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="bg-white rounded-lg shadow-sm border p-6">
-                            <div class="flex items-center">
-                                <div class="p-3 bg-blue-100 rounded-lg">
-                                    <i class="fas fa-box text-blue-600"></i>
-                                </div>
-                                <div class="ml-4">
-                                    <div class="text-sm text-gray-500">Ürün Sayısı</div>
-                                    <div class="text-2xl font-bold text-gray-900">${itemCount}</div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-white rounded-lg shadow-sm border p-6">
                             <div class="flex items-center">
                                 <div class="p-3 bg-green-100 rounded-lg">
                                     <i class="fas fa-percentage text-green-600"></i>
                                 </div>
-                                <div class="ml-4">
+                                <div class="ml-4 flex-1">
                                     <div class="text-sm text-gray-500">Komisyon Oranı</div>
                                     <div class="text-2xl font-bold text-gray-900">${commissionRate}%</div>
+                                    <div class="text-xs text-gray-400 mt-1 flex items-center">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Ağırlıklı ortalama komisyon oranı
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -8358,7 +8393,13 @@
                     <!-- Order Items -->
                     <div class="bg-white rounded-lg shadow-sm border">
                         <div class="p-6 border-b border-gray-200">
-                            <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
+                                <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                    <i class="fas fa-box text-blue-500"></i>
+                                    <span>${itemCount} ürün</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="p-6">
                             <div class="space-y-0">
@@ -14820,6 +14861,108 @@ sidebarNav.addEventListener('click', (e) => {
     </script>
 
 <script>
+// Function to calculate commission rate for a specific item
+function calculateItemCommissionRate(item, order) {
+    if (!item || !order) {
+        return 12; // Default commission rate
+    }
+    
+    const commissionRules = mockData.commissionRules || [];
+    
+    // Find the product to get category and supplier info
+    const product = mockData.products.find(p => p.sku === item.sku);
+    if (!product) {
+        return 12; // Default rate if product not found
+    }
+    
+    // Find applicable commission rule
+    let applicableRate = 12; // Default rate
+    
+    // Priority: 1. Supplier-specific rule, 2. Category-specific rule, 3. Default rate
+    const supplierRule = commissionRules.find(rule => 
+        rule.type === 'supplier' && 
+        rule.supplierId === order.supplierId &&
+        new Date(rule.startDate) <= new Date(order.date) &&
+        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+    );
+    
+    const categoryRule = commissionRules.find(rule => 
+        rule.type === 'category' && 
+        rule.categoryId === product.categoryId &&
+        new Date(rule.startDate) <= new Date(order.date) &&
+        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+    );
+    
+    if (supplierRule) {
+        applicableRate = supplierRule.rate;
+    } else if (categoryRule) {
+        applicableRate = categoryRule.rate;
+    }
+    
+    return applicableRate;
+}
+
+// Function to calculate weighted average commission rate for an order
+function calculateWeightedAverageCommissionRate(order) {
+    if (!order || !order.items || order.items.length === 0) {
+        return 12; // Default commission rate
+    }
+    
+    const commissionRules = mockData.commissionRules || [];
+    let totalWeightedRate = 0;
+    let totalAmount = 0;
+    
+    // Process each item in the order
+    order.items.forEach(item => {
+        const itemAmount = item.total || 0;
+        if (itemAmount <= 0) return;
+        
+        // Find the product to get category and supplier info
+        const product = mockData.products.find(p => p.sku === item.sku);
+        if (!product) {
+            // If product not found, use default rate
+            totalWeightedRate += itemAmount * 12; // Default 12%
+            totalAmount += itemAmount;
+            return;
+        }
+        
+        // Find applicable commission rule
+        let applicableRate = 12; // Default rate
+        
+        // Priority: 1. Supplier-specific rule, 2. Category-specific rule, 3. Default rate
+        const supplierRule = commissionRules.find(rule => 
+            rule.type === 'supplier' && 
+            rule.supplierId === order.supplierId &&
+            new Date(rule.startDate) <= new Date(order.date) &&
+            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+        );
+        
+        const categoryRule = commissionRules.find(rule => 
+            rule.type === 'category' && 
+            rule.categoryId === product.categoryId &&
+            new Date(rule.startDate) <= new Date(order.date) &&
+            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+        );
+        
+        if (supplierRule) {
+            applicableRate = supplierRule.rate;
+        } else if (categoryRule) {
+            applicableRate = categoryRule.rate;
+        }
+        
+        // Add to weighted calculation
+        totalWeightedRate += itemAmount * applicableRate;
+        totalAmount += itemAmount;
+    });
+    
+    // Calculate weighted average
+    if (totalAmount > 0) {
+        return Math.round((totalWeightedRate / totalAmount) * 100) / 100; // Round to 2 decimal places
+    }
+    
+    return 12; // Default rate if no valid items
+}
+
 // Export function for orders
 function exportOrdersToCSV(userType) {
   const orders = Array.isArray(mockData.orders) ? mockData.orders : [];
@@ -14883,8 +15026,8 @@ function exportOrdersToCSV(userType) {
   
   // Prepare CSV data
   const headers = userType === 'admin' 
-    ? ['Sipariş ID', 'Tedarikçi', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Tutar (₺)']
-    : ['Sipariş ID', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Tutar (₺)'];
+    ? ['Sipariş ID', 'Tedarikçi', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Komisyon Oranı (%)', 'Tutar (₺)']
+    : ['Sipariş ID', 'Müşteri', 'Ürün Sayısı', 'Toplam Adet', 'Tarih', 'Durum', 'Komisyon Oranı (%)', 'Tutar (₺)'];
   
   const csvData = filteredOrders.map(order => {
     const supplierName = (suppliers.find(s => String(s.id) === String(order.supplierId)) || {}).name || ('Tedarikçi ' + order.supplierId);
@@ -14893,11 +15036,12 @@ function exportOrdersToCSV(userType) {
     const totalItemQuantity = (order.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
     const dateStr = order.date ? new Date(order.date).toLocaleDateString('tr-TR') : '-';
     const totalAmount = order.total || 0;
+    const commissionRate = calculateWeightedAverageCommissionRate(order);
     
     if (userType === 'admin') {
-      return [order.id, supplierName, customerName, itemCount, totalItemQuantity, dateStr, order.status, totalAmount.toFixed(2)];
+      return [order.id, supplierName, customerName, itemCount, totalItemQuantity, dateStr, order.status, commissionRate.toFixed(2), totalAmount.toFixed(2)];
     } else {
-      return [order.id, customerName, itemCount, totalItemQuantity, dateStr, order.status, totalAmount.toFixed(2)];
+      return [order.id, customerName, itemCount, totalItemQuantity, dateStr, order.status, commissionRate.toFixed(2), totalAmount.toFixed(2)];
     }
   });
   
