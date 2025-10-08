@@ -3677,16 +3677,21 @@
                 if (isSupplier) {
                 pageContent.innerHTML = `
                     <!-- Dashboard Info -->
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="supplier-dashboard-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-tachometer-alt text-blue-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-blue-800">Tedarikçi Dashboard</h3>
                                 <div class="mt-2 text-sm text-blue-700">
                                     <p>Bu sayfada tedarikçi olarak işletmenizin genel performansını takip edebilirsiniz. Siparişler, ürünler, stok durumu ve iade bilgileri burada özetlenir.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -3756,16 +3761,21 @@
 
                     pageContent.innerHTML = `
                         <!-- Admin Dashboard Info -->
-                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="admin-dashboard-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-chart-line text-green-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-green-800">Admin Dashboard</h3>
                                     <div class="mt-2 text-sm text-green-700">
                                         <p>Bu sayfada platformun genel durumunu ve performansını takip edebilirsiniz. Ürün istatistikleri, tedarikçi bilgileri, işlemler ve iade durumları burada özetlenir.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -3892,16 +3902,21 @@
 
                 pageContent.innerHTML = `
                     <!-- Products Page Info -->
-                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                    <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6" id="products-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-box text-purple-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-purple-800">Ürün Yönetimi</h3>
                                 <div class="mt-2 text-sm text-purple-700">
                                     <p>Bu sayfada tüm ürünlerinizi yönetebilirsiniz. Yeni gelen ürünleri onaylayabilir, mevcut ürünleri düzenleyebilir ve ürün durumlarını takip edebilirsiniz.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-purple-400 hover:text-purple-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4327,16 +4342,21 @@
                 const integrationCards = mockData.integrations.map(int => `<div class="bg-white rounded-lg shadow p-4 flex flex-col justify-between"><div class="flex items-start"><img src="${int.logo}" alt="${int.name}" class="w-12 h-12 rounded-md mr-4 object-cover"><div><h3 class="font-semibold">${int.name}</h3><p class="text-sm text-gray-500">${t(int.description)}</p></div></div><div class="mt-4 flex justify-between items-center"><div class="flex items-center"><span class="w-2 h-2 rounded-full mr-2 ${int.status === 'active' ? 'bg-green-500' : 'bg-red-500'}"></span><span class="text-sm font-medium ${int.status === 'active' ? 'text-green-700' : 'text-red-700'}">${int.status === 'active' ? t('status_active') : t('status_passive')}</span></div><button class="px-3 py-1 text-sm rounded-md ${int.status === 'active' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}">${int.status === 'active' ? 'Bağlantıyı Kes' : 'Bağlan'}</button></div></div>`).join('');
                 pageContent.innerHTML = `
                     <!-- Integrations Page Info -->
-                    <div class="bg-teal-50 border-l-4 border-teal-400 p-4 mb-6">
+                    <div class="bg-teal-50 border-l-4 border-teal-400 p-4 mb-6" id="integrations-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-plug text-teal-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-teal-800">Entegrasyonlar</h3>
                                 <div class="mt-2 text-sm text-teal-700">
                                     <p>Bu sayfada sisteminizi diğer servislerle bağlayabilirsiniz. E-ticaret platformları, ödeme sistemleri ve diğer üçüncü parti uygulamalar burada yönetilir.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-teal-400 hover:text-teal-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4348,16 +4368,21 @@
                 pageTitle.textContent = t('categories');
                 pageContent.innerHTML = `
                     <!-- Categories Page Info -->
-                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                    <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6" id="categories-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-sitemap text-indigo-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-indigo-800">Kategori Yönetimi</h3>
                                 <div class="mt-2 text-sm text-indigo-700">
                                     <p>Bu sayfada ürün kategorilerinizi hiyerarşik olarak yönetebilirsiniz. Ana kategori ağacını oluşturabilir ve farklı kanallara kategori eşleştirmeleri yapabilirsiniz.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4642,16 +4667,21 @@
                 }).join('');
                 pageContent.innerHTML = `
                     <!-- Suppliers Page Info -->
-                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                    <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6" id="suppliers-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-truck text-orange-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-orange-800">Tedarikçi Stok Yönetimi</h3>
                                 <div class="mt-2 text-sm text-orange-700">
                                     <p>Bu sayfada tedarikçilerinizin stok ve fiyat bilgilerini yönetebilirsiniz. Her ürün için tedarikçi bazlı stok miktarları ve fiyatları burada güncellenir.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-orange-400 hover:text-orange-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4935,16 +4965,21 @@
                 pageTitle.textContent = t('commission_management');
                 pageContent.innerHTML = `
                     <!-- Commission Management Page Info -->
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="commission-management-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-percentage text-yellow-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-yellow-800">Komisyon Yönetimi</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
                                     <p>Bu sayfada marka, kategori ve ürün bazlı komisyon oranlarını yönetebilirsiniz. Farklı komisyon stratejileri oluşturabilir ve gelir optimizasyonu yapabilirsiniz.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4968,16 +5003,21 @@
                 pageTitle.textContent = t('settings');
                 pageContent.innerHTML = `
                     <!-- Settings Page Info -->
-                    <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mb-6">
+                    <div class="bg-gray-50 border-l-4 border-gray-400 p-4 mb-6" id="settings-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-cog text-gray-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-gray-800">Sistem Ayarları</h3>
                                 <div class="mt-2 text-sm text-gray-700">
                                     <p>Bu sayfada sistem genelinde kullanıcı yönetimi, API anahtarları ve komisyon ayarlarını yapılandırabilirsiniz.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -5050,16 +5090,21 @@
                 
                 pageContent.innerHTML = `
                     <!-- Returns Page Info -->
-                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6" id="returns-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
                                 <i class="fas fa-undo text-red-400"></i>
                             </div>
-                            <div class="ml-3">
+                            <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-red-800">İade Yönetimi</h3>
                                 <div class="mt-2 text-sm text-red-700">
                                     <p>Bu sayfada müşteri iadelerini yönetebilirsiniz. İade taleplerini onaylayabilir, işleyebilir ve tamamlanan iadeleri takip edebilirsiniz.</p>
                                 </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-red-400 hover:text-red-600 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -5647,16 +5692,21 @@
 
             pageContent.innerHTML = `
                 <!-- Bulk Upload Page Info -->
-                <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 mb-6">
+                <div class="bg-cyan-50 border-l-4 border-cyan-400 p-4 mb-6" id="bulk-upload-info">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <i class="fas fa-upload text-cyan-400"></i>
                         </div>
-                        <div class="ml-3">
+                        <div class="ml-3 flex-1">
                             <h3 class="text-sm font-medium text-cyan-800">Toplu Yükleme</h3>
                             <div class="mt-2 text-sm text-cyan-700">
                                 <p>Bu sayfada Excel dosyaları kullanarak ürünlerinizi toplu olarak yükleyebilir veya güncelleyebilirsiniz. Toplu işlemler için şablon dosyalarını indirebilirsiniz.</p>
                             </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button onclick="this.parentElement.parentElement.style.display='none'" class="text-cyan-400 hover:text-cyan-600 focus:outline-none">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -7063,16 +7113,21 @@
                 switch (activeTab) {
                     case 'supplier-revenue':
                         infoContent = `
-                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="supplier-revenue-info">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
                                         <i class="fas fa-chart-line text-blue-400"></i>
                                     </div>
-                                    <div class="ml-3">
+                                    <div class="ml-3 flex-1">
                                         <h3 class="text-sm font-medium text-blue-800">Tedarikçi Gelirleri</h3>
                                         <div class="mt-2 text-sm text-blue-700">
                                             <p>Bu sekmede tedarikçilerinizin gelir performansını detaylı olarak görüntüleyebilirsiniz. Her tedarikçinin aylık gelirleri, komisyon oranları ve toplam satış hacimleri burada listelenir.</p>
                                         </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -7080,16 +7135,21 @@
                         break;
                     case 'orders':
                         infoContent = `
-                            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="orders-info">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
                                         <i class="fas fa-shopping-cart text-green-400"></i>
                                     </div>
-                                    <div class="ml-3">
+                                    <div class="ml-3 flex-1">
                                         <h3 class="text-sm font-medium text-green-800">Siparişler</h3>
                                         <div class="mt-2 text-sm text-green-700">
                                             <p>Bu sekmede tüm siparişlerin finansal detaylarını görüntüleyebilirsiniz. Sipariş tutarları, komisyon hesaplamaları ve ödeme durumları burada takip edilir.</p>
                                         </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -7097,16 +7157,21 @@
                         break;
                     case 'transactions':
                         infoContent = `
-                            <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                            <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6" id="transactions-info">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
                                         <i class="fas fa-exchange-alt text-purple-400"></i>
                                     </div>
-                                    <div class="ml-3">
+                                    <div class="ml-3 flex-1">
                                         <h3 class="text-sm font-medium text-purple-800">İşlemler</h3>
                                         <div class="mt-2 text-sm text-purple-700">
                                             <p>Bu sekmede tüm finansal işlemlerin detaylı kayıtlarını görüntüleyebilirsiniz. Gelir, gider, komisyon ve diğer mali işlemlerin tam geçmişi burada tutulur.</p>
                                         </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-purple-400 hover:text-purple-600 focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -7114,16 +7179,21 @@
                         break;
                     case 'profitability':
                         infoContent = `
-                            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                            <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6" id="profitability-info">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
                                         <i class="fas fa-trending-up text-orange-400"></i>
                                     </div>
-                                    <div class="ml-3">
+                                    <div class="ml-3 flex-1">
                                         <h3 class="text-sm font-medium text-orange-800">Gelir Trendi</h3>
                                         <div class="mt-2 text-sm text-orange-700">
                                             <p>Bu sekmede gelir trendlerinizi grafiksel olarak analiz edebilirsiniz. Zaman içindeki performans değişimleri, büyüme oranları ve gelecek projeksiyonları burada görüntülenir.</p>
                                         </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-orange-400 hover:text-orange-600 focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -8908,16 +8978,21 @@
             switch(tabName) {
                 case 'transactions':
                     infoContent = `
-                        <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6">
+                        <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6" id="supplier-transactions-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-exchange-alt text-purple-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-purple-800">İşlemler</h3>
                                     <div class="mt-2 text-sm text-purple-700">
                                         <p>Bu sekmede tüm finansal işlemlerin detaylı kayıtlarını görüntüleyebilirsiniz. Gelir, gider, komisyon ve diğer mali işlemlerin tam geçmişi burada tutulur.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-purple-400 hover:text-purple-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -8925,16 +9000,21 @@
                     break;
                 case 'completed':
                     infoContent = `
-                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="completed-payments-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-check-circle text-green-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-green-800">Geçmiş Ödemeler</h3>
                                     <div class="mt-2 text-sm text-green-700">
                                         <p>Bu sekmede tamamlanmış ödemelerinizin detaylarını görüntüleyebilirsiniz. Ödeme tarihleri, tutarlar ve banka bilgileri burada listelenir.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -8942,16 +9022,21 @@
                     break;
                 case 'pending':
                     infoContent = `
-                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="pending-payments-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-clock text-yellow-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-yellow-800">Bekleyen Ödemeler</h3>
                                     <div class="mt-2 text-sm text-yellow-700">
                                         <p>Bu sekmede henüz tamamlanmamış ödemelerinizi görüntüleyebilirsiniz. Beklenen ödeme tarihleri ve tutarlar burada takip edilir.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -8959,16 +9044,21 @@
                     break;
                 case 'revenue-trend':
                     infoContent = `
-                        <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                        <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6" id="revenue-trend-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-trending-up text-orange-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-orange-800">Gelir Trendi</h3>
                                     <div class="mt-2 text-sm text-orange-700">
                                         <p>Bu sekmede gelir trendlerinizi grafiksel olarak analiz edebilirsiniz. Zaman içindeki performans değişimleri, büyüme oranları ve gelecek projeksiyonları burada görüntülenir.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-orange-400 hover:text-orange-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -8976,16 +9066,21 @@
                     break;
                 case 'history':
                     infoContent = `
-                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="payment-history-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-history text-blue-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-blue-800">Ödeme Geçmişi</h3>
                                     <div class="mt-2 text-sm text-blue-700">
                                         <p>Bu sekmede tüm ödeme geçmişinizi detaylı olarak görüntüleyebilirsiniz. Geçmiş ödemelerin tamamı burada arşivlenir.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -8993,16 +9088,21 @@
                     break;
                 case 'profitability':
                     infoContent = `
-                        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6" id="product-profitability-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
                                     <i class="fas fa-chart-pie text-indigo-400"></i>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-indigo-800">Ürün Karlılığı</h3>
                                     <div class="mt-2 text-sm text-indigo-700">
                                         <p>Bu sekmede ürünlerinizin karlılık analizini görüntüleyebilirsiniz. Satış hacimleri, komisyonlar ve net kar hesaplamaları burada yapılır.</p>
                                     </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -11861,16 +11961,21 @@
             
             pageContent.innerHTML = `
                 <!-- Category Detail Page Info -->
-                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6">
+                <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6" id="category-detail-info">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <i class="fas fa-info-circle text-indigo-400"></i>
                         </div>
-                        <div class="ml-3">
+                        <div class="ml-3 flex-1">
                             <h3 class="text-sm font-medium text-indigo-800">Kategori Detayları</h3>
                             <div class="mt-2 text-sm text-indigo-700">
                                 <p>Bu sayfada seçilen kategorinin detaylı bilgilerini görüntüleyebilirsiniz. Alt kategoriler, ürünler, özellikler ve kanal eşleştirmeleri burada listelenir.</p>
                             </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button onclick="this.parentElement.parentElement.style.display='none'" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
