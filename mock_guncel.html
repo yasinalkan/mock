@@ -2495,13 +2495,13 @@
                 { id: 4, name: { tr: 'T-Shirt', en: 'T-Shirt'}, parentId: 102, active: true, attributes: [1, 2], variantAttributes: [1, 2] }
             ],
             attributes: [
-                { id: 1, name: 'color', label: { tr: 'Renk', en: 'Color'}, type: 'Select', options: ['Siyah', 'Beyaz', 'Mavi', 'Kırmızı', 'Kahverengi'], localizable: true, scopeable: false, default: 'Beyaz', lastUpdated: '2025-01-15T10:30:00Z' },
-                { id: 2, name: 'size', label: { tr: 'Beden', en: 'Size'}, type: 'Select', options: ['XS', 'S', 'M', 'L', 'XL', '41', '42', '43'], localizable: false, scopeable: true, default: 'M', lastUpdated: '2025-01-14T14:20:00Z' },
-                { id: 3, name: 'material', label: { tr: 'Materyal', en: 'Material'}, type: 'Text', localizable: true, scopeable: false, default: '', lastUpdated: '2025-01-13T09:15:00Z' },
-                { id: 4, name: 'season', label: { tr: 'Sezon', en: 'Season'}, type: 'Select', options: ['İlkbahar/Yaz', 'Sonbahar/Kış', 'Dört Mevsim'], localizable: false, scopeable: false, default: 'Dört Mevsim', lastUpdated: '2025-01-12T16:45:00Z' },
-                { id: 5, name: 'style', label: { tr: 'Stil', en: 'Style'}, type: 'Text', localizable: true, scopeable: false, default: '', lastUpdated: '2025-01-11T11:30:00Z' },
-                { id: 6, name: 'heel_height', label: { tr: 'Topuk Yüksekliği', en: 'Heel Height'}, type: 'Number', localizable: false, scopeable: false, default: '', lastUpdated: '2025-01-10T13:20:00Z' },
-                { id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', localizable: false, scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
+                { id: 1, name: 'color', label: { tr: 'Renk', en: 'Color'}, type: 'Select', options: ['Siyah', 'Beyaz', 'Mavi', 'Kırmızı', 'Kahverengi'], scopeable: false, default: 'Beyaz', lastUpdated: '2025-01-15T10:30:00Z' },
+                { id: 2, name: 'size', label: { tr: 'Beden', en: 'Size'}, type: 'Select', options: ['XS', 'S', 'M', 'L', 'XL', '41', '42', '43'], scopeable: true, default: 'M', lastUpdated: '2025-01-14T14:20:00Z' },
+                { id: 3, name: 'material', label: { tr: 'Materyal', en: 'Material'}, type: 'Text', scopeable: false, default: '', lastUpdated: '2025-01-13T09:15:00Z' },
+                { id: 4, name: 'season', label: { tr: 'Sezon', en: 'Season'}, type: 'Select', options: ['İlkbahar/Yaz', 'Sonbahar/Kış', 'Dört Mevsim'], scopeable: false, default: 'Dört Mevsim', lastUpdated: '2025-01-12T16:45:00Z' },
+                { id: 5, name: 'style', label: { tr: 'Stil', en: 'Style'}, type: 'Text', scopeable: false, default: '', lastUpdated: '2025-01-11T11:30:00Z' },
+                { id: 6, name: 'heel_height', label: { tr: 'Topuk Yüksekliği', en: 'Heel Height'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-10T13:20:00Z' },
+                { id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
             ],
             channels: [
                 { id: 1, name: 'Trendyol', status: 'active', productCount: 6293, currency: 'TRY' },
@@ -3620,7 +3620,6 @@
                     word: 'ucuz', 
                     category: 'pricing', 
                     appliesTo: ['description', 'attributes'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-10T10:00:00Z',
                     reason: 'Yanıltıcı fiyatlandırma ifadesi'
@@ -3630,7 +3629,6 @@
                     word: 'çok ucuz', 
                     category: 'pricing', 
                     appliesTo: ['description', 'name'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-10T10:05:00Z',
                     reason: 'Yanıltıcı fiyatlandırma ifadesi'
@@ -3640,7 +3638,6 @@
                     word: 'sahte', 
                     category: 'quality', 
                     appliesTo: ['description', 'attributes', 'name'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-10T10:10:00Z',
                     reason: 'Olumsuz kalite ifadesi'
@@ -3650,7 +3647,6 @@
                     word: 'replika', 
                     category: 'quality', 
                     appliesTo: ['description', 'attributes', 'name'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-10T10:15:00Z',
                     reason: 'Telif hakki ihlali riski'
@@ -3660,7 +3656,6 @@
                     word: 'tıklayın', 
                     category: 'spam', 
                     appliesTo: ['description'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-12T14:20:00Z',
                     reason: 'Spam içerik'
@@ -3670,7 +3665,6 @@
                     word: 'garanti kazanç', 
                     category: 'misleading', 
                     appliesTo: ['description'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-15T09:30:00Z',
                     reason: 'Yanıltıcı pazarlama ifadesi'
@@ -3680,7 +3674,6 @@
                     word: 'taklit', 
                     category: 'quality', 
                     appliesTo: ['description', 'attributes', 'name'],
-                    caseSensitive: false,
                     addedBy: 'Admin',
                     addedAt: '2025-01-16T11:45:00Z',
                     reason: 'Kalite ve telif hakki ihlali riski'
@@ -4656,12 +4649,76 @@
             genericPage: (titleKey, data, columns, addAction, subtitleKey = null, rowClickHandler = null) => {
                 pageTitle.textContent = t(titleKey);
                 const subtitleHTML = subtitleKey ? `<p class="mt-1 mb-4 text-sm text-gray-500">${t(subtitleKey)}</p>` : '';
+                
+                // Generate filter options based on data and columns
+                const filterOptions = generateFilterOptions(data, columns, titleKey);
+                
                 const rows = data.map(item => {
                     const cursorClass = rowClickHandler ? 'cursor-pointer' : '';
                     const rowId = `row-${item.id}`;
                     return `<tr id="${rowId}" class="border-b hover:bg-gray-50 ${cursorClass}">${columns.map(col => `<td class="p-3 text-sm">${typeof col.render === 'function' ? col.render(item) : t(item[col.key])}</td>`).join('')}<td class="p-3 text-right"><button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation()"><i class="fas fa-edit"></i></button><button class="p-2 text-gray-500 hover:text-red-600" onclick="event.stopPropagation()"><i class="fas fa-trash"></i></button></td></tr>`;
                 }).join('');
-                pageContent.innerHTML = `${subtitleHTML}<div class="bg-white p-4 rounded-lg shadow"><div class="flex justify-between items-center mb-4"><div class="relative w-1/3"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" placeholder="${t(titleKey)} içinde ara..." class="pl-10 p-2 border rounded-md w-full"></div><button id="genericAddBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i> Yeni ${t(titleKey).slice(0, -3)} Ekle</button></div><table id="generic-table" class="w-full text-left"><thead class="table-header"><tr>${columns.map(col => `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t(col.label)}</th>`).join('')}<th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+                
+                pageContent.innerHTML = `${subtitleHTML}
+                    <div class="bg-white p-4 rounded-lg shadow">
+                        <!-- Enhanced Search and Filter Controls -->
+                        <div class="mb-4">
+                            <div class="flex flex-col lg:flex-row gap-4 mb-4">
+                                <!-- Search Input -->
+                                <div class="flex-1">
+                                    <label for="generic-search" class="block text-sm font-medium text-gray-700 mb-1">Arama</label>
+                                    <div class="relative">
+                                        <input type="text" id="generic-search" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="${t(titleKey)} içinde ara...">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Filter Dropdowns -->
+                                ${filterOptions.map(option => `
+                                    <div class="lg:w-48">
+                                        <label for="generic-filter-${option.key}" class="block text-sm font-medium text-gray-700 mb-1">${option.label}</label>
+                                        <select id="generic-filter-${option.key}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm ${option.label}</option>
+                                            ${option.values.map(value => `<option value="${value}">${value}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                `).join('')}
+                                
+                                <!-- Add Button -->
+                                <div class="flex items-end">
+                                    <button id="genericAddBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        <i class="fas fa-plus mr-2"></i> Yeni ${t(titleKey).slice(0, -3)} Ekle
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Actions -->
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center space-x-2">
+                                    <button id="clear-generic-filters" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                                        <i class="fas fa-times mr-1"></i>Filtreleri Temizle
+                                    </button>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    <span id="generic-count">Toplam: ${data.length} ${t(titleKey).toLowerCase()}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Table -->
+                        <table id="generic-table" class="w-full text-left">
+                            <thead class="table-header">
+                                <tr>
+                                    ${columns.map(col => `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t(col.label)}</th>`).join('')}
+                                    <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows}</tbody>
+                        </table>
+                    </div>`;
+                
                 if(addAction) { document.getElementById('genericAddBtn').addEventListener('click', addAction); }
                 
                 // Add click handlers to rows if rowClickHandler is provided
@@ -4673,6 +4730,9 @@
                         }
                     });
                 }
+                
+                // Add enhanced filtering functionality
+                setupGenericFiltering(data, columns, titleKey);
                 
                 // Make the table sortable
                 makeTableSortable('generic-table');
@@ -6051,17 +6111,6 @@
                                     
                                     <!-- Checkboxes -->
                                     <div class="flex items-center space-x-3">
-                                        <i class="fas fa-globe text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Çevrilebilir</div>
-                                            <div id="attribute-localizable-display" class="font-medium text-gray-900">${attribute.localizable ? 'Evet' : 'Hayır'}</div>
-                                            <div id="attribute-localizable-edit" class="hidden">
-                                                <label class="flex items-center">
-                                                    <input type="checkbox" ${attribute.localizable ? 'checked' : ''} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                    <span class="ml-2 text-sm text-gray-700">Çevrilebilir</span>
-                                                </label>
-                                            </div>
-                                        </div>
                                     </div>
                                     
                                     <div class="flex items-center space-x-3">
@@ -6381,7 +6430,6 @@
                 label: { ...attribute.label },
                 type: attribute.type,
                 default: attribute.default,
-                localizable: attribute.localizable,
                 scopeable: attribute.scopeable
             };
 
@@ -6439,7 +6487,6 @@
             const labelEn = document.getElementById('attribute-label-en-edit').value.trim();
             const type = document.getElementById('attribute-type-edit').value;
             const defaultValue = document.getElementById('attribute-default-edit').value.trim();
-            const localizable = document.getElementById('attribute-localizable-edit').querySelector('input[type="checkbox"]').checked;
             const scopeable = document.getElementById('attribute-scopeable-edit').querySelector('input[type="checkbox"]').checked;
 
             // Validation
@@ -6475,7 +6522,6 @@
             document.getElementById('attribute-label-en-display').textContent = labelEn;
             document.getElementById('attribute-type-display').textContent = type;
             document.getElementById('attribute-default-display').textContent = defaultValue || 'Belirtilmemiş';
-            document.getElementById('attribute-localizable-display').textContent = localizable ? 'Evet' : 'Hayır';
             document.getElementById('attribute-scopeable-display').textContent = scopeable ? 'Evet' : 'Hayır';
 
             // Exit edit mode
@@ -11914,8 +11960,108 @@
         // --- Diğer Tüm Fonksiyonlar ---
         
         function toggleCategory(categoryId, isChannelTree = false) { const prefix = isChannelTree ? 'channel-tree-node-' : 'tree-node-'; const iconPrefix = isChannelTree ? 'channel-icon-' : 'icon-'; const targetUl = document.getElementById(`${prefix}${categoryId}`); const icon = document.getElementById(`${iconPrefix}${categoryId}`); if (targetUl && icon) { targetUl.classList.toggle('hidden'); icon.classList.toggle('rotate-90'); } }
-        function buildCategoryTree(categories, parentId = null, isChannelTree = false, mappings = {}, channelId = null, searchTerm = '') { const lowerCaseSearchTerm = searchTerm.toLowerCase(); const getAncestors = (catId) => { let ancestors = new Set(); let current = categories.find(c => c.id === catId); while (current && current.parentId !== null) { ancestors.add(current.parentId); current = categories.find(c => c.id === current.parentId); } return ancestors; }; let filteredCategories = categories; let ancestorIds = new Set(); if (searchTerm) { const matchingCategories = categories.filter(c => (t(c.name) || c.name).toLowerCase().includes(lowerCaseSearchTerm)); matchingCategories.forEach(c => { getAncestors(c.id).forEach(id => ancestorIds.add(id)); }); filteredCategories = categories.filter(c => matchingCategories.some(mc => mc.id === c.id) || ancestorIds.has(c.id)); } const buildRecursive = (pId) => { const children = filteredCategories.filter(c => c.parentId === pId); if (children.length === 0) return ''; const ulClass = pId === null ? '' : 'pl-6 border-l ml-3' + (searchTerm ? '' : ' hidden'); const prefix = isChannelTree ? 'channel-tree-node-' : 'tree-node-'; const iconPrefix = isChannelTree ? 'channel-icon-' : 'icon-'; const onclickAction = 'toggleCategory'; return `<ul class="${ulClass}" id="${prefix}${pId || 'root'}">${children.map(category => { const hasChildren = categories.some(c => c.parentId === category.id); const categoryName = typeof category.name === 'object' ? t(category.name) : category.name; const mappedToId = mappings[category.id]; const mappedToCategory = mappedToId ? mockData.channelCategories[channelId]?.find(c => c.id === mappedToId) : null; return `<li class="my-1"><div class="flex items-center justify-between p-2 rounded-md hover:bg-gray-50"><div class="flex items-center"><input type="checkbox" class="${isChannelTree ? 'channel-category-check' : 'master-category-check'}" data-id="${category.id}"><div class="flex items-center ml-2 ${hasChildren ? 'cursor-pointer' : ''}" ${hasChildren ? `onclick="${onclickAction}(${category.id}, ${isChannelTree})"` : ''}><span class="w-6 mr-2 text-center text-gray-500">${hasChildren ? `<i id="${iconPrefix}${category.id}" class="fas fa-chevron-right text-xs transition-transform duration-200 ${searchTerm ? 'rotate-90' : ''}"></i>` : ''}</span><span class="font-medium cursor-pointer text-blue-600 hover:text-blue-800 hover:underline" onclick="showCategoryDetail(${category.id})">${categoryName}</span> ${!isChannelTree && mappedToCategory ? `<span class="ml-2 text-xs text-gray-500"><i class="fas fa-link"></i> ${mappedToCategory.name}</span>` : ''}</div></div> ${!isChannelTree ? `<div class="flex items-center space-x-2"><span class="px-2 py-1 text-xs font-semibold rounded-full ${category.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${category.active ? 'Aktif' : 'Pasif'}</span><button class="p-1 text-gray-400 hover:text-blue-600" onclick="showEditCategoryModal(${category.id})"><i class="fas fa-edit text-xs"></i></button><button class="p-1 text-gray-400 hover:text-red-600" onclick="showDeleteModal('category', ${category.id})"><i class="fas fa-trash text-xs"></i></button></div>` : ''}</div>${buildRecursive(category.id)}</li>` }).join('')}</ul>`; }; return buildRecursive(parentId); };
-        function renderCategoriesSubTab(tabName) { const tabContent = document.getElementById('main-tab-content'); if (!tabContent) return; switch (tabName) { case 'master': tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('master_category_tree')}</h3><p class="mt-1 text-sm text-gray-500">Tüm ürün kategorilerinizi hiyerarşik olarak yönetin.</p></div><button id="addCategoryBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Kategori Ekle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border">${buildCategoryTree(mockData.categories, null, false)}</div>`; document.getElementById('addCategoryBtn').addEventListener('click', showAddCategoryModal); break; case 'mapping': const renderMappingView = (masterSearch = '', channelSearch = '') => { const channelSelect = document.getElementById('channel-select'); const selectedChannelId = channelSelect ? channelSelect.value : mockData.channels[0]?.id; const channelCategories = mockData.channelCategories[selectedChannelId] || []; const mappingsForChannel = mockData.categoryMappings[selectedChannelId] || {}; tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('category_mapping')}</h3><p class="mt-1 text-sm text-gray-500">Ana kategorilerinizi satış kanalı kategorileriyle eşleştirin.</p></div><div><label for="channel-select" class="text-sm font-medium mr-2">Kanal Seç:</label><select id="channel-select" class="rounded-md border-gray-300 shadow-sm">${mockData.channels.map(ch => `<option value="${ch.id}" ${ch.id == selectedChannelId ? 'selected' : ''}>${ch.name}</option>`).join('')}</select></div></div><div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center"><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">${t('master_category_tree')}</h4><input type="text" id="master-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${masterSearch}"><div id="master-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(mockData.categories, null, false, mappingsForChannel, selectedChannelId, masterSearch)}</div></div><div class="flex flex-col items-center"><button id="map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-link mr-2"></i> Eşle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">Kanal Kategori Ağacı</h4><input type="text" id="channel-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${channelSearch}"><div id="channel-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(channelCategories, null, true, {}, null, channelSearch)}</div></div></div>`; document.getElementById('channel-select').addEventListener('change', () => renderMappingView()); document.getElementById('master-search').addEventListener('input', (e) => renderMappingView(e.target.value, document.getElementById('channel-search').value)); document.getElementById('channel-search').addEventListener('input', (e) => renderMappingView(document.getElementById('master-search').value, e.target.value)); document.querySelectorAll('.master-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.master-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.querySelectorAll('.channel-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.channel-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.getElementById('map-btn').addEventListener('click', () => { const selectedMaster = document.querySelector('.master-category-check:checked'); const selectedChannel = document.querySelector('.channel-category-check:checked'); if (selectedMaster && selectedChannel) { const masterId = parseInt(selectedMaster.dataset.id); const channelId = parseInt(selectedChannel.dataset.id); if (!mockData.categoryMappings[selectedChannelId]) { mockData.categoryMappings[selectedChannelId] = {}; } mockData.categoryMappings[selectedChannelId][masterId] = channelId; renderMappingView(document.getElementById('master-search').value, document.getElementById('channel-search').value); } else { alert('Lütfen her iki ağaçtan da bir kategori seçin.'); } }); }; renderMappingView(); break; } }
+        function buildCategoryTree(categories, parentId = null, isChannelTree = false, mappings = {}, channelId = null, searchTerm = '') { 
+            const lowerCaseSearchTerm = searchTerm.toLowerCase(); 
+            const getAncestors = (catId) => { 
+                let ancestors = new Set(); 
+                let current = categories.find(c => c.id === catId); 
+                while (current && current.parentId !== null) { 
+                    ancestors.add(current.parentId); 
+                    current = categories.find(c => c.id === current.parentId); 
+                } 
+                return ancestors; 
+            }; 
+            let filteredCategories = categories; 
+            let ancestorIds = new Set(); 
+            if (searchTerm) { 
+                const matchingCategories = categories.filter(c => (t(c.name) || c.name).toLowerCase().includes(lowerCaseSearchTerm)); 
+                matchingCategories.forEach(c => { 
+                    getAncestors(c.id).forEach(id => ancestorIds.add(id)); 
+                }); 
+                filteredCategories = categories.filter(c => matchingCategories.some(mc => mc.id === c.id) || ancestorIds.has(c.id)); 
+            } 
+            const buildRecursive = (pId) => { 
+                const children = filteredCategories.filter(c => c.parentId === pId); 
+                if (children.length === 0) return ''; 
+                const ulClass = pId === null ? '' : 'pl-6 border-l ml-3' + (searchTerm ? '' : ' hidden'); 
+                const prefix = isChannelTree ? 'channel-tree-node-' : 'tree-node-'; 
+                const iconPrefix = isChannelTree ? 'channel-icon-' : 'icon-'; 
+                const onclickAction = 'toggleCategory'; 
+                return `<ul class="${ulClass}" id="${prefix}${pId || 'root'}">${children.map(category => { 
+                    const hasChildren = categories.some(c => c.parentId === category.id); 
+                    const categoryName = typeof category.name === 'object' ? t(category.name) : category.name; 
+                    const mappedToId = mappings[category.id]; 
+                    const mappedToCategory = mappedToId ? mockData.channelCategories[channelId]?.find(c => c.id === mappedToId) : null; 
+                    return `<li class="my-1"><div class="flex items-center justify-between p-2 rounded-md hover:bg-gray-50"><div class="flex items-center"><div class="flex items-center ml-2 ${hasChildren ? 'cursor-pointer' : ''}" ${hasChildren ? `onclick="${onclickAction}(${category.id}, ${isChannelTree})"` : ''}><span class="w-6 mr-2 text-center text-gray-500">${hasChildren ? `<i id="${iconPrefix}${category.id}" class="fas fa-chevron-right text-xs transition-transform duration-200 ${searchTerm ? 'rotate-90' : ''}"></i>` : ''}</span><span class="font-medium cursor-pointer text-blue-600 hover:text-blue-800 hover:underline" onclick="showCategoryDetail(${category.id})">${categoryName}</span> ${!isChannelTree && mappedToCategory ? `<span class="ml-2 text-xs text-gray-500"><i class="fas fa-link"></i> ${mappedToCategory.name}</span>` : ''}</div></div> ${!isChannelTree ? `<div class="flex items-center space-x-2"><button class="p-1 text-gray-400 hover:text-blue-600" onclick="showEditCategoryModal(${category.id})"><i class="fas fa-edit text-xs"></i></button><button class="p-1 text-gray-400 hover:text-red-600" onclick="showDeleteModal('category', ${category.id})"><i class="fas fa-trash text-xs"></i></button></div>` : ''}</div>${buildRecursive(category.id)}</li>` 
+                }).join('')}</ul>`; 
+            }; 
+            return buildRecursive(parentId); 
+        };
+        function renderCategoriesSubTab(tabName) { 
+            const tabContent = document.getElementById('main-tab-content'); 
+            if (!tabContent) return; 
+            switch (tabName) { 
+                case 'master': 
+                    tabContent.innerHTML = `
+                        <div class="flex justify-between items-center mb-4 px-6 sm:px-0">
+                            <div>
+                                <h3 class="text-xl font-bold">${t('master_category_tree')}</h3>
+                                <p class="mt-1 text-sm text-gray-500">Tüm ürün kategorilerinizi hiyerarşik olarak yönetin.</p>
+                            </div>
+                            <button id="addCategoryBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                <i class="fas fa-box mr-2"></i>Yeni Kategori Ekle
+                            </button>
+                        </div>
+                        
+                        <!-- Search Controls -->
+                        <div class="bg-white p-4 rounded-lg shadow-sm border mb-4">
+                            <div class="flex items-center space-x-4">
+                                <!-- Search Input -->
+                                <div class="flex-1">
+                                    <label for="category-search" class="block text-sm font-medium text-gray-700 mb-1">Kategori Ara</label>
+                                    <div class="relative">
+                                        <input type="text" id="category-search" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Kategori adı yazın...">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Actions -->
+                            <div class="flex justify-between items-center mt-4">
+                                <div class="flex items-center space-x-2">
+                                    <button id="expand-all-categories" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                                        <i class="fas fa-expand-arrows-alt mr-1"></i>Tümünü Aç
+                                    </button>
+                                    <button id="collapse-all-categories" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                                        <i class="fas fa-compress-arrows-alt mr-1"></i>Tümünü Kapat
+                                    </button>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="clear-category-filters" class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200">
+                                        <i class="fas fa-times mr-1"></i>Filtreleri Temizle
+                                    </button>
+                                    <span id="category-count" class="text-sm text-gray-500">Toplam: ${mockData.categories.length} kategori</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Category Tree -->
+                        <div class="bg-white p-4 rounded-lg shadow-sm border">
+                            <div id="category-tree-container">
+                                ${buildCategoryTree(mockData.categories, null, false)}
+                            </div>
+                        </div>
+                    `; 
+                    
+                    // Add event listeners
+                    document.getElementById('addCategoryBtn').addEventListener('click', showAddCategoryModal);
+                    document.getElementById('category-search').addEventListener('input', filterCategories);
+                    document.getElementById('expand-all-categories').addEventListener('click', expandAllCategories);
+                    document.getElementById('collapse-all-categories').addEventListener('click', collapseAllCategories);
+                    document.getElementById('clear-category-filters').addEventListener('click', clearCategoryFilters);
+                    break; case 'mapping': const renderMappingView = (masterSearch = '', channelSearch = '') => { const channelSelect = document.getElementById('channel-select'); const selectedChannelId = channelSelect ? channelSelect.value : mockData.channels[0]?.id; const channelCategories = mockData.channelCategories[selectedChannelId] || []; const mappingsForChannel = mockData.categoryMappings[selectedChannelId] || {}; tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('category_mapping')}</h3><p class="mt-1 text-sm text-gray-500">Ana kategorilerinizi satış kanalı kategorileriyle eşleştirin.</p></div><div><label for="channel-select" class="text-sm font-medium mr-2">Kanal Seç:</label><select id="channel-select" class="rounded-md border-gray-300 shadow-sm">${mockData.channels.map(ch => `<option value="${ch.id}" ${ch.id == selectedChannelId ? 'selected' : ''}>${ch.name}</option>`).join('')}</select></div></div><div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center"><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">${t('master_category_tree')}</h4><input type="text" id="master-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${masterSearch}"><div id="master-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(mockData.categories, null, false, mappingsForChannel, selectedChannelId, masterSearch)}</div></div><div class="flex flex-col items-center"><button id="map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-link mr-2"></i> Eşle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">Kanal Kategori Ağacı</h4><input type="text" id="channel-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${channelSearch}"><div id="channel-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(channelCategories, null, true, {}, null, channelSearch)}</div></div></div>`; document.getElementById('channel-select').addEventListener('change', () => renderMappingView()); document.getElementById('master-search').addEventListener('input', (e) => renderMappingView(e.target.value, document.getElementById('channel-search').value)); document.getElementById('channel-search').addEventListener('input', (e) => renderMappingView(document.getElementById('master-search').value, e.target.value)); document.querySelectorAll('.master-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.master-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.querySelectorAll('.channel-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.channel-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.getElementById('map-btn').addEventListener('click', () => { const selectedMaster = document.querySelector('.master-category-check:checked'); const selectedChannel = document.querySelector('.channel-category-check:checked'); if (selectedMaster && selectedChannel) { const masterId = parseInt(selectedMaster.dataset.id); const channelId = parseInt(selectedChannel.dataset.id); if (!mockData.categoryMappings[selectedChannelId]) { mockData.categoryMappings[selectedChannelId] = {}; } mockData.categoryMappings[selectedChannelId][masterId] = channelId; renderMappingView(document.getElementById('master-search').value, document.getElementById('channel-search').value); } else { alert('Lütfen her iki ağaçtan da bir kategori seçin.'); } }); }; renderMappingView(); break; } }
         function renderProductTab(tabName, product) { 
             const contentEl = document.getElementById('product-tab-content'); 
             let content = ''; 
@@ -12752,14 +12898,13 @@
                 const indent = level * 20; // 20px per level
                 
                 if (isLowestLevel) {
-                    // Selectable leaf category with checkbox
+                    // Selectable leaf category without checkbox
                     return `
                         <div class="category-option border border-transparent" style="margin-left: ${indent}px; padding: 8px 12px; cursor: pointer; border-radius: 4px; transition: all 0.2s;" 
                              onmouseover="this.style.backgroundColor='#f3f4f6'" 
                              onmouseout="this.style.backgroundColor='transparent'"
                              onclick="toggleCategorySelection(${category.id}, '${categoryName.replace(/'/g, "\\'")}')">
                             <div class="flex items-center">
-                                <input type="checkbox" id="cat-checkbox-${category.id}" class="form-checkbox h-4 w-4 text-blue-600 mr-3" onchange="event.stopPropagation()">
                                 <i class="fas fa-circle text-xs text-green-500 mr-2"></i>
                                 <span class="text-sm text-gray-700">${categoryName}</span>
                             </div>
@@ -12791,21 +12936,31 @@
         }
 
         function toggleCategorySelection(categoryId, categoryName) {
-            const checkbox = document.getElementById(`cat-checkbox-${categoryId}`);
-            if (checkbox) {
-                checkbox.checked = !checkbox.checked;
+            // Remove selection from all other categories
+            document.querySelectorAll('.category-option').forEach(option => {
+                option.classList.remove('bg-blue-100', 'border-blue-300');
+            });
+            
+            // Add selection to clicked category
+            const categoryElement = document.querySelector(`[onclick*="toggleCategorySelection(${categoryId}"]`);
+            if (categoryElement) {
+                categoryElement.classList.add('bg-blue-100', 'border-blue-300');
                 updateSelectedCategoriesDisplay();
             }
         }
 
         function updateSelectedCategoriesDisplay() {
             const selectedCategories = [];
-            document.querySelectorAll('input[id^="cat-checkbox-"]:checked').forEach(checkbox => {
-                const categoryId = checkbox.id.replace('cat-checkbox-', '');
-                const category = mockData.categories.find(c => c.id == categoryId);
-                if (category) {
-                    const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
-                    selectedCategories.push({ id: categoryId, name: categoryName });
+            document.querySelectorAll('.category-option.bg-blue-100').forEach(option => {
+                const onclickAttr = option.getAttribute('onclick');
+                const match = onclickAttr.match(/toggleCategorySelection\((\d+)/);
+                if (match) {
+                    const categoryId = match[1];
+                    const category = mockData.categories.find(c => c.id == categoryId);
+                    if (category) {
+                        const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                        selectedCategories.push({ id: categoryId, name: categoryName });
+                    }
                 }
             });
             
@@ -12834,11 +12989,174 @@
         }
 
         function removeCategorySelection(categoryId) {
-            const checkbox = document.getElementById(`cat-checkbox-${categoryId}`);
-            if (checkbox) {
-                checkbox.checked = false;
+            const categoryElement = document.querySelector(`[onclick*="toggleCategorySelection(${categoryId}"]`);
+            if (categoryElement) {
+                categoryElement.classList.remove('bg-blue-100', 'border-blue-300');
                 updateSelectedCategoriesDisplay();
             }
+        }
+
+        // --- Category Filtering Functions ---
+        function filterCategories() {
+            const searchTerm = document.getElementById('category-search').value.toLowerCase();
+            
+            // Filter categories based on search term
+            let filteredCategories = mockData.categories.filter(category => {
+                const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                const nameMatch = !searchTerm || categoryName.toLowerCase().includes(searchTerm);
+                
+                return nameMatch;
+            });
+            
+            // Update the category tree with filtered results
+            const container = document.getElementById('category-tree-container');
+            if (container) {
+                container.innerHTML = buildCategoryTree(filteredCategories, null, false, {}, null, searchTerm);
+            }
+            
+            // Update category count
+            const countElement = document.getElementById('category-count');
+            if (countElement) {
+                countElement.textContent = `Gösterilen: ${filteredCategories.length} / ${mockData.categories.length} kategori`;
+            }
+        }
+        
+        
+        function expandAllCategories() {
+            document.querySelectorAll('[id^="tree-node-"]').forEach(node => {
+                node.classList.remove('hidden');
+            });
+            document.querySelectorAll('[id^="icon-"]').forEach(icon => {
+                icon.classList.add('rotate-90');
+            });
+        }
+        
+        function collapseAllCategories() {
+            document.querySelectorAll('[id^="tree-node-"]').forEach(node => {
+                if (node.id !== 'tree-node-root') {
+                    node.classList.add('hidden');
+                }
+            });
+            document.querySelectorAll('[id^="icon-"]').forEach(icon => {
+                icon.classList.remove('rotate-90');
+            });
+        }
+        
+        function clearCategoryFilters() {
+            document.getElementById('category-search').value = '';
+            
+            // Reset to show all categories
+            const container = document.getElementById('category-tree-container');
+            if (container) {
+                container.innerHTML = buildCategoryTree(mockData.categories, null, false);
+            }
+            
+            // Update category count
+            const countElement = document.getElementById('category-count');
+            if (countElement) {
+                countElement.textContent = `Toplam: ${mockData.categories.length} kategori`;
+            }
+        }
+
+        // --- Generic Page Filtering Functions ---
+        function generateFilterOptions(data, columns, titleKey) {
+            const filterOptions = [];
+            
+            // Generate filter options for specific columns that make sense to filter
+            columns.forEach(column => {
+                if (column.key === 'type' || column.key === 'status') {
+                    const uniqueValues = [...new Set(data.map(item => {
+                        return typeof column.render === 'function' ? column.render(item) : item[column.key];
+                    }))].filter(value => value && value !== '-');
+                    
+                    if (uniqueValues.length > 1) {
+                        filterOptions.push({
+                            key: column.key,
+                            label: t(column.label),
+                            values: uniqueValues.sort()
+                        });
+                    }
+                }
+            });
+            
+            return filterOptions;
+        }
+        
+        function setupGenericFiltering(data, columns, titleKey) {
+            const searchInput = document.getElementById('generic-search');
+            const clearButton = document.getElementById('clear-generic-filters');
+            const countElement = document.getElementById('generic-count');
+            
+            // Get all filter dropdowns
+            const filterDropdowns = [];
+            columns.forEach(column => {
+                const filterElement = document.getElementById(`generic-filter-${column.key}`);
+                if (filterElement) {
+                    filterDropdowns.push({ element: filterElement, key: column.key, column: column });
+                }
+            });
+            
+            function filterData() {
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                // Filter data based on search and filters
+                let filteredData = data.filter(item => {
+                    // Search filter
+                    const searchMatch = !searchTerm || columns.some(col => {
+                        const value = typeof col.render === 'function' ? col.render(item) : item[col.key];
+                        return String(value).toLowerCase().includes(searchTerm);
+                    });
+                    
+                    // Column filters
+                    const filterMatch = filterDropdowns.every(filter => {
+                        const selectedValue = filter.element.value;
+                        if (!selectedValue) return true;
+                        
+                        const itemValue = typeof filter.column.render === 'function' ? 
+                            filter.column.render(item) : item[filter.column.key];
+                        
+                        return String(itemValue) === selectedValue;
+                    });
+                    
+                    return searchMatch && filterMatch;
+                });
+                
+                // Update table rows
+                const tbody = document.querySelector('#generic-table tbody');
+                if (tbody) {
+                    // Hide all rows first
+                    tbody.querySelectorAll('tr').forEach(row => {
+                        row.style.display = 'none';
+                    });
+                    
+                    // Show filtered rows
+                    filteredData.forEach(item => {
+                        const row = document.getElementById(`row-${item.id}`);
+                        if (row) {
+                            row.style.display = '';
+                        }
+                    });
+                }
+                
+                // Update count
+                if (countElement) {
+                    countElement.textContent = `Gösterilen: ${filteredData.length} / ${data.length} ${t(titleKey).toLowerCase()}`;
+                }
+            }
+            
+            // Add event listeners
+            searchInput.addEventListener('input', filterData);
+            filterDropdowns.forEach(filter => {
+                filter.element.addEventListener('change', filterData);
+            });
+            
+            clearButton.addEventListener('click', () => {
+                searchInput.value = '';
+                filterDropdowns.forEach(filter => {
+                    filter.element.value = '';
+                });
+                filterData();
+            });
         }
 
         function showDownloadTemplateModal() { 
@@ -13488,7 +13806,7 @@
             } 
             handleRouteChange(); 
         }
-        function showAddAttributeModal() { const title = 'Yeni Nitelik Ekle'; const body = `<div class="space-y-4"><div><label for="attr_name" class="block text-sm font-medium text-gray-700">Nitelik Kodu</label><input type="text" id="attr_name" placeholder="Örn: color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div id="attr_label_container" class="space-y-4"><div><label for="attr_label" class="block text-sm font-medium text-gray-700">Nitelik Etiketi</label><input type="text" id="attr_label" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div></div><div><label for="attr_type" class="block text-sm font-medium text-gray-700">Tip</label><select id="attr_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="Text">Yazı (Text)</option><option value="Textarea">Uzun Yazı (Textarea)</option><option value="Number">Rakam (Number)</option><option value="Boolean">Evet/Hayır (Boolean)</option><option value="Select">Seçim (Select)</option></select></div><div id="attr_options_container" class="hidden space-y-2"><label for="attr_options" class="block text-sm font-medium text-gray-700">Seçenekler</label><textarea id="attr_options" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Seçenekleri virgülle ayırarak girin. Örn: Kırmızı,Yeşil,Mavi"></textarea></div><div class="flex items-center space-x-4 pt-2"><div class="flex items-start"><div class="flex items-center h-5"><input id="attr_localizable" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="attr_localizable" class="font-medium text-gray-700">Çevrilebilir</label></div></div><div class="flex items-start"><div class="flex items-center h-5"><input id="attr_scopeable" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="attr_scopeable" class="font-medium text-gray-700">Kanal Bazlı</label></div></div></div></div>`; showModal(title, body, 'Niteliği Oluştur', () => { const isLocalizable = document.getElementById('attr_localizable').checked; const label = {}; if (isLocalizable) { label.tr = document.getElementById('attr_label_tr')?.value || ''; label.en = document.getElementById('attr_label_en')?.value || ''; } else { const singleLabel = document.getElementById('attr_label')?.value || ''; label.tr = singleLabel; label.en = singleLabel; } const newAttribute = { id: Math.max(...mockData.attributes.map(a => a.id)) + 1, name: document.getElementById('attr_name').value, label: label, type: document.getElementById('attr_type').value, options: document.getElementById('attr_type').value === 'Select' ? document.getElementById('attr_options').value.split(',').map(s => s.trim()) : [], localizable: isLocalizable, scopeable: document.getElementById('attr_scopeable').checked, default: '', lastUpdated: new Date().toISOString() }; mockData.attributes.push(newAttribute); closeModal(); handleRouteChange(); }); document.getElementById('attr_type').addEventListener('change', (e) => { document.getElementById('attr_options_container').classList.toggle('hidden', e.target.value !== 'Select'); }); document.getElementById('attr_localizable').addEventListener('change', (e) => { const labelContainer = document.getElementById('attr_label_container'); if (e.target.checked) { labelContainer.innerHTML = `<div><label for="attr_label_tr" class="block text-sm font-medium text-gray-700">Nitelik Etiketi (TR) 🇹🇷</label><input type="text" id="attr_label_tr" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_label_en" class="block text-sm font-medium text-gray-700">Nitelik Etiketi (EN) 🇬🇧</label><input type="text" id="attr_label_en" placeholder="Örn: Color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div>`; } else { labelContainer.innerHTML = `<div><label for="attr_label" class="block text-sm font-medium text-gray-700">Nitelik Etiketi</label><input type="text" id="attr_label" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div>`; } }); }
+        function showAddAttributeModal() { const title = 'Yeni Nitelik Ekle'; const body = `<div class="space-y-4"><div><label for="attr_name" class="block text-sm font-medium text-gray-700">Nitelik Kodu</label><input type="text" id="attr_name" placeholder="Örn: color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_label" class="block text-sm font-medium text-gray-700">Nitelik Etiketi</label><input type="text" id="attr_label" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_type" class="block text-sm font-medium text-gray-700">Tip</label><select id="attr_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="Text">Yazı (Text)</option><option value="Textarea">Uzun Yazı (Textarea)</option><option value="Number">Rakam (Number)</option><option value="Boolean">Evet/Hayır (Boolean)</option><option value="Select">Seçim (Select)</option></select></div><div id="attr_options_container" class="hidden space-y-2"><label for="attr_options" class="block text-sm font-medium text-gray-700">Seçenekler</label><textarea id="attr_options" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Seçenekleri virgülle ayırarak girin. Örn: Kırmızı,Yeşil,Mavi"></textarea></div><div class="flex items-center space-x-4 pt-2"><div class="flex items-start"><div class="flex items-center h-5"><input id="attr_scopeable" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="attr_scopeable" class="font-medium text-gray-700">Kanal Bazlı</label></div></div></div></div>`; showModal(title, body, 'Niteliği Oluştur', () => { const label = document.getElementById('attr_label').value; const newAttribute = { id: Math.max(...mockData.attributes.map(a => a.id)) + 1, name: document.getElementById('attr_name').value, label: { tr: label, en: label }, type: document.getElementById('attr_type').value, options: document.getElementById('attr_type').value === 'Select' ? document.getElementById('attr_options').value.split(',').map(s => s.trim()) : [], scopeable: document.getElementById('attr_scopeable').checked, default: '', lastUpdated: new Date().toISOString() }; mockData.attributes.push(newAttribute); closeModal(); handleRouteChange(); }); document.getElementById('attr_type').addEventListener('change', (e) => { document.getElementById('attr_options_container').classList.toggle('hidden', e.target.value !== 'Select'); }); }
         function showAddChannelModal() { const title = 'Yeni Kanal Ekle'; const body = `<div class="space-y-4"><div><label for="channel_name" class="block text-sm font-medium text-gray-700">Kanal Adı</label><input type="text" id="channel_name" placeholder="Örn: Trendyol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="channel_currency" class="block text-sm font-medium text-gray-700">Para Birimi</label><select id="channel_currency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="TRY">TRY</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div><div class="flex items-start"><div class="flex items-center h-5"><input id="channel_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="channel_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kanalı Oluştur', () => { const newChannel = { id: Math.max(...(mockData.channels.map(c => c.id) || [0])) + 1, name: document.getElementById('channel_name').value, status: document.getElementById('channel_active').checked ? 'active' : 'passive', productCount: 0, currency: document.getElementById('channel_currency').value }; mockData.channels.push(newChannel); closeModal(); handleRouteChange(); }); }
         function showAddCategoryModal() { const title = 'Yeni Kategori Ekle'; const parentCategoryOptions = mockData.categories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); const attributeSelectionHTML = mockData.attributes.map(a => `<div class="flex justify-between items-center p-2 border rounded-md"><span>${t(a.label)}</span><div class="flex items-center space-x-4"><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-assoc-check"><span class="ml-2">İlişkili</span></label><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-variant-check" disabled><span class="ml-2 text-gray-400">Varyant</span></label></div></div>`).join(''); const body = `<div class="space-y-4"><div><label for="cat_name" class="block text-sm font-medium text-gray-700">Kategori Adı</label><input type="text" id="cat_name" placeholder="Örn: Spor Ayakkabı" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="cat_parent" class="block text-sm font-medium text-gray-700">Üst Kategori</label><select id="cat_parent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Yok (Ana Kategori)</option>${parentCategoryOptions}</select></div><div><label class="block text-sm font-medium text-gray-700 mb-2">İlişkili Özellikler</label><div id="attribute-selection-container" class="space-y-2 max-h-48 overflow-y-auto p-1">${attributeSelectionHTML}</div></div><div class="flex items-start"><div class="flex items-center h-5"><input id="cat_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="cat_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kategoriyi Oluştur', () => { const selectedAttributes = []; const variantAttributes = []; document.querySelectorAll('#attribute-selection-container .attribute-assoc-check:checked').forEach(cb => { const attrId = parseInt(cb.dataset.attrId); selectedAttributes.push(attrId); const variantCb = document.querySelector(`#attribute-selection-container .attribute-variant-check[data-attr-id="${attrId}"]`); if (variantCb && variantCb.checked) { variantAttributes.push(attrId); } }); const catName = document.getElementById('cat_name').value; const newCategory = { id: Math.max(...mockData.categories.map(c => c.id)) + 1, name: { tr: catName, en: catName }, parentId: parseInt(document.getElementById('cat_parent').value) || null, active: document.getElementById('cat_active').checked, attributes: selectedAttributes, variantAttributes: variantAttributes }; mockData.categories.push(newCategory); closeModal(); handleRouteChange(); }); document.querySelectorAll('.attribute-assoc-check').forEach(assocCheck => { assocCheck.addEventListener('change', (e) => { const attrId = e.target.dataset.attrId; const variantCheck = document.querySelector(`.attribute-variant-check[data-attr-id="${attrId}"]`); const variantLabel = variantCheck.nextElementSibling; if (e.target.checked) { variantCheck.disabled = false; variantLabel.classList.remove('text-gray-400'); } else { variantCheck.disabled = true; variantCheck.checked = false; variantLabel.classList.add('text-gray-400'); } }); }); }
         function showEditCategoryModal(categoryId) {
@@ -13767,7 +14085,6 @@
                                         
                                         return sortedAttributes.map(attr => {
                                             const isVariant = variantAttributes.some(vAttr => vAttr.id === attr.id);
-                                            const isLocalizable = attr.localizable;
                                             const isScopeable = attr.scopeable;
                                             const optionsText = attr.options && attr.options.length > 0 ? attr.options.join(', ') : '';
                                             
@@ -13792,10 +14109,6 @@
                                                         <div>
                                                             <span class="font-medium ${isVariant ? 'text-blue-700' : 'text-gray-700'}">Özellikler:</span>
                                                             <div class="mt-1 space-y-1">
-                                                                <div class="flex items-center space-x-2">
-                                                                    <i class="fas fa-language ${isVariant ? 'text-blue-400' : 'text-gray-400'}"></i>
-                                                                    <span class="${isVariant ? 'text-blue-600' : 'text-gray-600'}">${isLocalizable ? 'Çevrilebilir' : 'Çevrilemez'}</span>
-                                                                </div>
                                                                 <div class="flex items-center space-x-2">
                                                                     <i class="fas fa-globe ${isVariant ? 'text-blue-400' : 'text-gray-400'}"></i>
                                                                     <span class="${isVariant ? 'text-blue-600' : 'text-gray-600'}">${isScopeable ? 'Kanal Bazlı' : 'Global'}</span>
@@ -14426,9 +14739,6 @@
                             <td class="p-3 text-sm font-medium">${word.word}</td>
                             <td class="p-3 text-sm">${categoryLabel}</td>
                             <td class="p-3 text-sm text-gray-600 text-xs">${appliesTo}</td>
-                            <td class="p-3 text-sm text-center">
-                                ${word.caseSensitive ? '<i class="fas fa-check text-green-600"></i>' : '<i class="fas fa-times text-gray-400"></i>'}
-                            </td>
                             <td class="p-3 text-sm">${word.addedBy}</td>
                             <td class="p-3 text-right">
                                 <button class="p-2 text-gray-500 hover:text-blue-600 edit-word" data-id="${word.id}"><i class="fas fa-edit"></i></button>
@@ -14471,12 +14781,11 @@
                                     <th class="p-3 text-sm font-semibold">${t('word_phrase')}</th>
                                     <th class="p-3 text-sm font-semibold">${t('category')}</th>
                                     <th class="p-3 text-sm font-semibold">${t('applies_to')}</th>
-                                    <th class="p-3 text-sm font-semibold text-center">${t('case_sensitive')}</th>
                                     <th class="p-3 text-sm font-semibold">${t('added_by')}</th>
                                     <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                                 </tr>
                             </thead>
-                            <tbody>${rows || `<tr><td colspan="6" class="p-6 text-center text-gray-500">Henüz yasaklı kelime tanımlanmamış.</td></tr>`}</tbody>
+                            <tbody>${rows || `<tr><td colspan="5" class="p-6 text-center text-gray-500">Henüz yasaklı kelime tanımlanmamış.</td></tr>`}</tbody>
                         </table>
                     </div>
                 `;
@@ -14941,11 +15250,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center">
-                        <input type="checkbox" id="word-case-sensitive" class="h-4 w-4 text-blue-600 border-gray-300 rounded" ${word?.caseSensitive ? 'checked' : ''}>
-                        <label for="word-case-sensitive" class="ml-2 text-sm text-gray-700">${t('case_sensitive')}</label>
-                        <p class="ml-2 text-xs text-gray-500">(Genellikle kapalı tutulur)</p>
-                    </div>
                     <div>
                         <label for="word-reason" class="block text-sm font-medium text-gray-700">${t('reason')}</label>
                         <textarea id="word-reason" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Bu kelimenin neden yasaklandığını açıklayın...">${word?.reason || ''}</textarea>
@@ -14960,7 +15264,6 @@
             const wordText = document.getElementById('word-text').value.trim();
             const category = document.getElementById('word-category').value;
             const reason = document.getElementById('word-reason').value.trim();
-            const caseSensitive = document.getElementById('word-case-sensitive').checked;
             
             const appliesTo = [];
             if (document.getElementById('applies-name').checked) appliesTo.push('name');
@@ -14991,7 +15294,6 @@
                     wordItem.word = wordText;
                     wordItem.category = category;
                     wordItem.appliesTo = appliesTo;
-                    wordItem.caseSensitive = caseSensitive;
                     wordItem.reason = reason;
                 }
                 showToast(t('word_updated'));
@@ -15005,7 +15307,6 @@
                     word: wordText,
                     category,
                     appliesTo,
-                    caseSensitive,
                     addedBy: user.name || 'Admin',
                     addedAt: now,
                     reason
@@ -16209,7 +16510,7 @@
                 const attributeId = id1 || subpage;
                 renderers.attribute(attributeId); 
             } 
-            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'localizable', label: 'Çevrilebilir', render: (item) => item.localizable ? 'Evet' : 'Hayır'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal, null, (id) => navigateTo('#attribute/' + id)); } 
+            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal, null, (id) => navigateTo('#attribute/' + id)); } 
             else if (page === 'channels') { renderers.genericPage('channels', mockData.channels, [{key: 'name', label: 'channel_name'}, {key: 'productCount', label: 'product_count'}, {key: 'currency', label: 'currency'}, {key: 'status', label: 'status_header', render: (item) => item.status === 'active' ? `<span class="text-green-600">${t('status_active')}</span>` : `<span class="text-red-600">${t('status_passive')}</span>`}], showAddChannelModal); } 
             else if (page === 'finance') { 
                 const user = window.currentUser || {};
