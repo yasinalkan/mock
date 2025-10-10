@@ -4184,7 +4184,14 @@
                 // Actions button setup is handled in the reattach section below
             },
             productDetail: (id) => {
-                const product = mockData.products.find(p => p.id === parseInt(id));
+                // Check if this is a new product (temporary ID)
+                let product;
+                if (id.toString().startsWith('new-') && window.tempNewProduct) {
+                    product = window.tempNewProduct;
+                } else {
+                    product = mockData.products.find(p => p.id === parseInt(id));
+                }
+                
                 if (!product) { navigateTo('#products'); return; }
                 
                 // Check user role and restrict access
@@ -4192,12 +4199,18 @@
                 const isSupplier = user.role === 'supplier';
                 
                 const category = mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
-                pageTitle.textContent = t(product.name);
+                pageTitle.textContent = product.isNew ? `Yeni Ürün Oluştur - ${product.sku}` : t(product.name);
                 
                 // Different header buttons based on user role and product status
                 let headerButtons = '';
                 if (isSupplier) {
-                    if (product.status === 'draft' && !product.supplierSubmission) {
+                    if (product.isNew) {
+                        // New product - show create and submit buttons
+                        headerButtons = `
+                            <button id="save-draft-btn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Taslak Olarak Kaydet</button>
+                            <button id="submit-product-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ürün Oluştur ve Gönder</button>
+                        `;
+                    } else if (product.status === 'draft' && !product.supplierSubmission) {
                         // Draft product that hasn't been submitted yet - show submit button
                         headerButtons = `
                             <button id="save-draft-btn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Taslak Olarak Kaydet</button>
@@ -4303,8 +4316,8 @@
                      document.getElementById('reject-product-btn').addEventListener('click', () => showRejectProductModal(product.id));
                 }
                 
-                // Supplier functionality for draft products
-                if (isSupplier && product.status === 'draft' && !product.supplierSubmission) {
+                // Supplier functionality for draft products and new products
+                if (isSupplier && ((product.status === 'draft' && !product.supplierSubmission) || product.isNew)) {
 
                     
                     const saveDraftBtn = document.getElementById('save-draft-btn');
@@ -11392,21 +11405,21 @@
 
             container.innerHTML = `
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left whitespace-nowrap">
+                    <table id="products-table-alt" class="w-full text-left whitespace-nowrap">
                         <thead class="table-header">
                             <tr>
                                 <th class="p-3 w-10"><input type="checkbox" id="selectAllCheckbox" class="rounded border-gray-300"></th>
-                                <th class="p-3 text-sm font-semibold">${t('product_name_header')}</th>
-                                ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold">Tedarikçi</th>` : ''}
-                                ${isAwaitingApprovalTab ? `<th class="p-3 text-sm font-semibold">Tedarikçi</th>` : ''}
-                                ${isPriceUpdateRequestsTab ? `<th class="p-3 text-sm font-semibold">Tedarikçi</th>` : ''}
-                                <th class="p-3 text-sm font-semibold">${t('category_header')}</th>
-                                <th class="p-3 text-sm font-semibold">${t('price_header')}</th>
-                                <th class="p-3 text-sm font-semibold">${t('stock_header')}</th>
-                                <th class="p-3 text-sm font-semibold">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
-                                ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold">${t('originality_header')}</th>` : ''}
-                                <th class="p-3 text-sm font-semibold">${t('status_description_header')}</th>
-                                <th class="p-3 text-sm font-semibold">${t('last_updated_header')}</th>
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('product_name_header')}</th>
+                                ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Tedarikçi</th>` : ''}
+                                ${isAwaitingApprovalTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Tedarikçi</th>` : ''}
+                                ${isPriceUpdateRequestsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Tedarikçi</th>` : ''}
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('category_header')}</th>
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th>
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th>
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
+                                ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('originality_header')}</th>` : ''}
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('status_description_header')}</th>
+                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('last_updated_header')}</th>
                                 <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                             </tr>
                         </thead>
@@ -11427,6 +11440,9 @@
             document.querySelectorAll('.product-checkbox').forEach(checkbox => {
                 checkbox.addEventListener('change', updateBulkActionsVisibility);
             });
+            
+            // Make the products table sortable
+            setTimeout(() => makeTableSortable('products-table-alt'), 100);
         }
 
         function renderPriceUpdateRequestsTable(products, container) {
@@ -11550,21 +11566,21 @@
 
             container.innerHTML = `
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left whitespace-nowrap">
+                    <table id="price-requests-table" class="w-full text-left whitespace-nowrap">
                         <thead class="table-header">
                             <tr>
                                 <th class="p-4 w-10">
                                     <input type="checkbox" id="selectAllCheckbox" class="rounded border-gray-300">
                                 </th>
-                                <th class="p-4 text-sm font-semibold">Ürün</th>
-                                <th class="p-4 text-sm font-semibold">Tedarikçi</th>
-                                <th class="p-4 text-sm font-semibold">Kategori</th>
-                                <th class="p-4 text-sm font-semibold">Mevcut Fiyat</th>
-                                <th class="p-4 text-sm font-semibold">Talep Edilen Fiyat</th>
-                                <th class="p-4 text-sm font-semibold">Değişim</th>
-                                <th class="p-4 text-sm font-semibold">Platform Ortalaması</th>
-                                <th class="p-4 text-sm font-semibold">Öneri</th>
-                                <th class="p-4 text-sm font-semibold">Neden</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Ürün</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Tedarikçi</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Kategori</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Mevcut Fiyat</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Talep Edilen Fiyat</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Değişim</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Platform Ortalaması</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Öneri</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Neden</th>
                                 <th class="p-4 text-sm font-semibold text-right">İşlemler</th>
                             </tr>
                         </thead>
@@ -11575,6 +11591,9 @@
             
             // Setup checkbox event listeners using existing system
             setupPriceRequestsCheckboxListeners();
+            
+            // Make the price requests table sortable
+            setTimeout(() => makeTableSortable('price-requests-table'), 100);
         }
 
         function setupPriceRequestsCheckboxListeners() {
@@ -12071,8 +12090,8 @@
             
             switch(tabName) { 
                 case 'general': 
-                    const totalStock = getProductStock(product.id); 
-                    const price = getProductPrice(product.id); 
+                    const totalStock = product.isNew ? 0 : getProductStock(product.id); 
+                    const price = product.isNew ? 0 : getProductPrice(product.id); 
                     const priceText = price ? `${price.toFixed(2)} ₺` : 'N/A'; 
                     
                     // Generate attributes content (show all defined attributes, fallback to '-')
@@ -12101,8 +12120,8 @@
                     if (isSupplier) {
                         // Suppliers can now edit more product information
                         const supplierId = user.supplierId;
-                        const supplierStock = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId)?.stock || 0;
-                        const supplierPrice = getProductPrice(product.id, supplierId) || '';
+                        const supplierStock = product.isNew ? 0 : (mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId)?.stock || 0);
+                        const supplierPrice = product.isNew ? '' : (getProductPrice(product.id, supplierId) || '');
                         
                         content = `
                             <!-- General Information Section -->
@@ -12295,9 +12314,9 @@
                         // Show traditional variants section (if any)
                         if (product.variants && product.variants.length > 0) { 
                             const variantRows = product.variants.map(variant => { 
-                                const price = getProductPrice(product.id); 
+                                const price = product.isNew ? 0 : getProductPrice(product.id); 
                                 const priceText = price ? `${price.toFixed(2)} ₺` : '-'; 
-                                const stock = getProductStock(product.id); 
+                                const stock = product.isNew ? 0 : getProductStock(product.id); 
                                 return `<tr class="border-b hover:bg-gray-50"><td class="p-3"><input type="checkbox" class="rounded border-gray-300"></td>${variantAttributeIds.map(id => `<td class="p-3 text-sm">${variant.attributes[id] || '-'}</td>`).join('')}<td class="p-3 text-sm">${variant.sku}</td><td class="p-3 text-sm">${priceText}</td><td class="p-3 text-sm">${stock}</td><td class="p-3 text-right"><button class="p-2 text-gray-500 hover:text-blue-600"><i class="fas fa-edit"></i></button><button class="p-2 text-gray-500 hover:text-red-600"><i class="fas fa-trash"></i></button></td></tr>`; 
                             }).join(''); 
                             variantContent += `
@@ -13681,6 +13700,34 @@
             });
         }
 
+        function navigateToNewProductPage(sku) {
+            // Create a temporary new product with the searched SKU
+            const newProductId = 'new-' + Date.now(); // Temporary ID for new products
+            const user = window.currentUser || {};
+            const isSupplier = user.role === 'supplier';
+            
+            // Create a temporary product object for the new product page
+            const tempProduct = {
+                id: newProductId,
+                sku: sku,
+                name: { tr: '', en: '' },
+                categoryId: null,
+                status: 'draft',
+                health: 0,
+                imageUrl: 'https://placehold.co/100x100?text=NEW',
+                attributes: {},
+                variants: [],
+                lastUpdated: new Date().toISOString(),
+                isNew: true // Flag to indicate this is a new product
+            };
+            
+            // Store the temporary product in a global variable for the product detail page
+            window.tempNewProduct = tempProduct;
+            
+            // Navigate to product detail page with edit mode
+            navigateTo(`#product/${newProductId}`);
+        }
+
         function handleProductSearch() { 
             const sku = document.getElementById('product-search-sku').value.trim(); 
             if (!sku) return; 
@@ -13772,19 +13819,41 @@
                     });
                 }
             } else { 
-                // Build collapsible category tree
-                const categoryTreeContent = buildCollapsibleCategoryTree(mockData.categories);
+                // Product not found - show message and add product button
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="mb-6">
+                            <i class="fas fa-search text-gray-400 text-4xl mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Ürün Bulunamadı</h3>
+                            <p class="text-gray-600 mb-4">
+                                <strong>SKU: ${sku}</strong> ile eşleşen bir ürün bulunamadı.
+                            </p>
+                            <p class="text-sm text-gray-500 mb-6">
+                                Bu ürün daha önce sistemde oluşturulmamış. Ürün detaylarını göndermek ister misiniz?
+                            </p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <button type="button" id="add-product-btn" class="w-full px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                                <i class="fas fa-plus mr-2"></i>Ürün Ekle
+                            </button>
+                            <button type="button" id="cancel-search-btn" class="w-full px-6 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                                İptal
+                            </button>
+                        </div>
+                    </div>
+                `;
                 
-                container.innerHTML = `<div data-product-id="new"><p class="text-sm text-green-700 bg-green-50 p-3 rounded-md mb-4">Yeni ürün oluşturuluyor.</p><div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" id="product-sku" value="${sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div><div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="product-name" placeholder="Örn: Mavi Keten Gömlek" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label class="block text-sm font-medium text-gray-700">Kategori</label><input type="hidden" id="newProductCategory" value=""><div class="mt-2 max-h-64 overflow-y-auto border border-gray-200 rounded-md bg-white"><div class="p-2">${categoryTreeContent}</div></div></div><div id="category-attributes-container" class="space-y-4 pt-4 border-t"><p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Ürün oluşturulduktan sonra stok/fiyat bilgisi girmek için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div></div>`; 
-            // Add event listeners to form inputs to update buttons dynamically
-            const nameInput = document.getElementById('product-name');
-            if (nameInput) {
-                nameInput.addEventListener('input', updateProductModalButtons);
-            }
-            
-            // Update buttons after form is rendered
-            setTimeout(updateProductModalButtons, 100);
-        } }
+                // Add event listeners
+                document.getElementById('add-product-btn').addEventListener('click', () => {
+                    closeModal();
+                    navigateToNewProductPage(sku);
+                });
+                
+                document.getElementById('cancel-search-btn').addEventListener('click', () => {
+                    closeModal();
+                });
+            } }
         function saveProductAsDraft() {
             const formContainer = document.getElementById('product-form-container').firstElementChild; 
             if (!formContainer) return; 
@@ -13840,7 +13909,14 @@
         
         function saveProductFromDetail(productId, submitForReview = false) {
             
-            const product = mockData.products.find(p => p.id === productId);
+            // Check if this is a new product
+            let product;
+            if (productId.toString().startsWith('new-') && window.tempNewProduct) {
+                product = window.tempNewProduct;
+            } else {
+                product = mockData.products.find(p => p.id === productId);
+            }
+            
             if (!product) {
                 console.error('Product not found with ID:', productId);
                 return;
@@ -13851,7 +13927,22 @@
             const currentSupplierId = currentUser.supplierId;
             
             
-            if (isSupplier && currentSupplierId && product.status === 'draft' && !product.supplierSubmission) {
+            if (isSupplier && currentSupplierId && ((product.status === 'draft' && !product.supplierSubmission) || product.isNew)) {
+                
+                // If this is a new product, create it first
+                if (product.isNew) {
+                    const newProductId = Math.max(...mockData.products.map(p => p.id)) + 1;
+                    product.id = newProductId;
+                    product.status = 'draft';
+                    product.lastUpdated = new Date().toISOString();
+                    delete product.isNew; // Remove the new flag
+                    
+                    // Add to products array
+                    mockData.products.push(product);
+                    
+                    // Clear the temporary product
+                    window.tempNewProduct = null;
+                }
                 
                 // Save form data first
                 const nameInput = document.getElementById('edit-product-name');
@@ -13916,7 +14007,20 @@
                     product.lastUpdated = new Date().toISOString();
                     
                     // Show success message
-                    showModal('Başarılı', '<p>Ürün taslak olarak kaydedildi.</p>', 'Tamam', closeModal);
+                    const message = product.id && mockData.products.find(p => p.id === product.id) ? 
+                        '<p>Ürün taslak olarak kaydedildi.</p>' : 
+                        '<p>Yeni ürün oluşturuldu ve taslak olarak kaydedildi.</p>';
+                    
+                    showModal('Başarılı', message, 'Tamam', () => {
+                        closeModal();
+                        if (product.id && mockData.products.find(p => p.id === product.id)) {
+                            // Navigate to the product detail page
+                            navigateTo(`#product/${product.id}`);
+                        } else {
+                            // Navigate to products page
+                            navigateTo('#products/draft');
+                        }
+                    });
                 }
             }
         }
@@ -16670,6 +16774,10 @@
                     renderers.productDetail(id1); 
                 }
             } 
+            else if (page === 'product' && subpage && subpage.startsWith('new-')) {
+                // Handle new product URLs like #product/new-1234567890/edit
+                renderers.productDetail(subpage);
+            }
             else if (page === 'products') { renderers.products(subpage || 'yeni-gelenler'); } 
             else if (page === 'suppliers' && subpage === 'detail' && id1) { renderers.supplierProductDetail(id1); } 
             else if (page === 'categories' && subpage === 'detail' && id1) { renderers.categoryDetail(id1); }
@@ -20024,8 +20132,8 @@ function renderProductTab(tabName, product) {
      try {
          const category = mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
          const brand = mockData.brands.find(b => b.id === product.brandId) || { name: 'Bilinmeyen Marka' };
-         const price = getProductPrice(product.id);
-         const stock = getProductStock(product.id);
+         const price = product.isNew ? 0 : getProductPrice(product.id);
+         const stock = product.isNew ? 0 : getProductStock(product.id);
          
          // Get supplier submission data
          const submission = product.supplierSubmission;
@@ -20207,12 +20315,12 @@ function renderGeneralTab(container, product, isSupplier) {
     try {
         const category = mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
         const brand = mockData.brands.find(b => b.id === product.brandId) || { name: 'Bilinmeyen Marka' };
-        const price = getProductPrice(product.id);
-        const stock = getProductStock(product.id);
+        const price = product.isNew ? 0 : getProductPrice(product.id);
+        const stock = product.isNew ? 0 : getProductStock(product.id);
         
     
-        // Check if this is a draft product that can be edited
-        const isDraftEditable = isSupplier && product.status === 'draft' && !product.supplierSubmission;
+        // Check if this is a draft product or new product that can be edited
+        const isDraftEditable = isSupplier && ((product.status === 'draft' && !product.supplierSubmission) || product.isNew);
         
         if (isDraftEditable) {
             // Editable version for draft products
@@ -20228,7 +20336,7 @@ function renderGeneralTab(container, product, isSupplier) {
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Adı</label>
-                                    <input type="text" id="edit-product-name" value="${t(product.name)}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <input type="text" id="edit-product-name" value="${product.isNew ? '' : t(product.name)}" placeholder="Ürün adını girin..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">${t('sku_header')}</label>
@@ -20242,7 +20350,7 @@ function renderGeneralTab(container, product, isSupplier) {
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Ailesi</label>
-                                    <input type="text" id="edit-product-family" value="${t(product.family)}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <input type="text" id="edit-product-family" value="${product.isNew ? '' : t(product.family)}" placeholder="Ürün ailesini girin..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Durum</label>
@@ -20552,12 +20660,12 @@ function saveSupplierProductInfo(productId){
 function renderStockPriceTab(container, product, isSupplier) {
     
     try {
-        const price = getProductPrice(product.id);
-        const stock = getProductStock(product.id);
+        const price = product.isNew ? 0 : getProductPrice(product.id);
+        const stock = product.isNew ? 0 : getProductStock(product.id);
         
     
-        // Check if this is a draft product that can be edited
-        const isDraftEditable = isSupplier && product.status === 'draft' && !product.supplierSubmission;
+        // Check if this is a draft product or new product that can be edited
+        const isDraftEditable = isSupplier && ((product.status === 'draft' && !product.supplierSubmission) || product.isNew);
         
         if (isDraftEditable) {
             // Editable version for draft products
