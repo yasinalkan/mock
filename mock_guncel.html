@@ -2501,7 +2501,7 @@
                 { id: 4, name: 'season', label: { tr: 'Sezon', en: 'Season'}, type: 'Select', options: ['İlkbahar/Yaz', 'Sonbahar/Kış', 'Dört Mevsim'], scopeable: false, default: 'Dört Mevsim', lastUpdated: '2025-01-12T16:45:00Z' },
                 { id: 5, name: 'style', label: { tr: 'Stil', en: 'Style'}, type: 'Text', scopeable: false, default: '', lastUpdated: '2025-01-11T11:30:00Z' },
                 { id: 6, name: 'heel_height', label: { tr: 'Topuk Yüksekliği', en: 'Heel Height'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-10T13:20:00Z' },
-                { id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
+                //{ id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
             ],
             channels: [
                 { id: 1, name: 'Trendyol', status: 'active', productCount: 6293, currency: 'TRY' },
@@ -2807,6 +2807,79 @@
                     processedAt: '2025-07-05T16:45:00Z'
                 }
             ],
+            // Main Products - Products that have variants
+            mainProducts: [
+                {
+                    id: 1,
+                    name: { tr: 'Taş Pamuk Elastan Dümeli Bermuda', en: 'Stone Cotton Elastane Buttoned Bermuda' },
+                    categoryId: 1,
+                    brandId: 1,
+                    family: { tr: 'Gömlek', en: 'Shirt' },
+                    status: 'active',
+                    health: 95,
+                    originalityScore: 92,
+                    taxRate: 20,
+                    commissionRate: 12,
+                    imageUrl: 'https://images.unsplash.com/photo-1591130195539-07f03d520858?w=500&auto=format&fit=crop&q=60',
+                    description: { tr: 'Yüksek kaliteli pamuk elastan karışımından üretilmiş, rahat ve şık bermuda şort.', en: 'High-quality cotton elastane blend bermuda shorts, comfortable and stylish.' },
+                    variants: [
+                        { id: 1, sku: '8683822183852', attributes: { 1: 'Taş', 2: 'L' }, status: 'active', stock: 45, price: 299.99 },
+                        { id: 101, sku: '8683822183852-S', attributes: { 1: 'Taş', 2: 'S' }, status: 'active', stock: 32, price: 299.99 },
+                        { id: 102, sku: '8683822183852-M', attributes: { 1: 'Taş', 2: 'M' }, status: 'active', stock: 67, price: 299.99 },
+                        { id: 103, sku: '8683822183852-XL', attributes: { 1: 'Taş', 2: 'XL' }, status: 'active', stock: 28, price: 299.99 }
+                    ],
+                    totalStock: 172,
+                    priceRange: { min: 299.99, max: 299.99 },
+                    lastUpdated: '2025-07-30T14:30:00Z'
+                },
+                {
+                    id: 2,
+                    name: { tr: 'Siyah Deri Ayakkabı', en: 'Black Leather Shoes' },
+                    categoryId: 2,
+                    brandId: 2,
+                    family: { tr: 'Ayakkabı', en: 'Shoes' },
+                    status: 'active',
+                    health: 80,
+                    originalityScore: 78,
+                    taxRate: 20,
+                    commissionRate: 15,
+                    imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=60',
+                    description: { tr: 'Gerçek deri malzemeden üretilmiş, klasik ve şık erkek ayakkabısı.', en: 'Classic and elegant men\'s shoes made from genuine leather material.' },
+                    variants: [
+                        { id: 2, sku: '8683822429771', attributes: { 1: 'Siyah', 2: '42' }, status: 'active', stock: 15, price: 1299.00 },
+                        { id: 201, sku: '8683822429771-40', attributes: { 1: 'Siyah', 2: '40' }, status: 'active', stock: 23, price: 1299.00 },
+                        { id: 202, sku: '8683822429771-41', attributes: { 1: 'Siyah', 2: '41' }, status: 'active', stock: 18, price: 1299.00 },
+                        { id: 203, sku: '8683822429771-43', attributes: { 1: 'Siyah', 2: '43' }, status: 'active', stock: 12, price: 1299.00 },
+                        { id: 204, sku: '8683822429771-44', attributes: { 1: 'Siyah', 2: '44' }, status: 'active', stock: 8, price: 1299.00 }
+                    ],
+                    totalStock: 76,
+                    priceRange: { min: 1299.00, max: 1299.00 },
+                    lastUpdated: '2025-07-29T10:00:00Z'
+                },
+                {
+                    id: 4,
+                    name: { tr: 'Mavi Gömlek', en: 'Blue Shirt' },
+                    categoryId: 3,
+                    brandId: 3,
+                    family: { tr: 'Gömlek', en: 'Shirt' },
+                    status: 'active',
+                    health: 85,
+                    originalityScore: 88,
+                    taxRate: 20,
+                    commissionRate: 12,
+                    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
+                    description: { tr: 'Klasik kesim mavi gömlek, iş ve günlük kullanım için ideal.', en: 'Classic cut blue shirt, ideal for work and daily use.' },
+                    variants: [
+                        { id: 401, sku: '8683822429559-M-MAVI', attributes: { 1: 'Mavi', 2: 'M' }, status: 'active', stock: 25, price: 199.99 },
+                        { id: 402, sku: '8683822429559-L-MAVI', attributes: { 1: 'Mavi', 2: 'L' }, status: 'active', stock: 35, price: 199.99 },
+                        { id: 403, sku: '8683822429559-XL-MAVI', attributes: { 1: 'Mavi', 2: 'XL' }, status: 'active', stock: 20, price: 199.99 },
+                        { id: 404, sku: '8683822429559-S-MAVI', attributes: { 1: 'Mavi', 2: 'S' }, status: 'active', stock: 15, price: 199.99 }
+                    ],
+                    totalStock: 95,
+                    priceRange: { min: 199.99, max: 199.99 },
+                    lastUpdated: '2025-07-31T11:00:00Z'
+                }
+            ],
             // Supplier-specific finance data
             supplierPayouts: [
                 { 
@@ -2825,7 +2898,24 @@
                     description: 'Ağustos 2025 dönemi hakediş ödemesi',
                     processedBy: 'Finans Departmanı',
                     processedAt: '2025-09-15T11:30:00Z',
-                    paymentMethod: 'Banka Havalesi'
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 16500.00,
+                        carrierCosts: 450.00,
+                        commissionCosts: 1875.00,
+                        platformFees: 125.00,
+                        returnDeductions: 150.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 2600.00,
+                        netAmount: 13900.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-101', amount: 1299.00, commission: 129.90, carrierCost: 15.50, status: 'completed' },
+                        { orderId: 'ORD-102', amount: 1150.00, commission: 138.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-103', amount: 650.00, commission: 97.50, carrierCost: 8.50, status: 'completed' },
+                        { orderId: 'ORD-104', amount: 850.00, commission: 127.50, carrierCost: 10.00, status: 'completed' },
+                        { orderId: 'ORD-105', amount: 1200.00, commission: 180.00, carrierCost: 15.00, status: 'completed' }
+                    ]
                 },
                 { 
                     id: 'PO-002', 
@@ -2843,7 +2933,23 @@
                     description: 'Temmuz 2025 dönemi hakediş ödemesi',
                     processedBy: 'Sistem Otomatik',
                     processedAt: '2025-08-15T09:45:00Z',
-                    paymentMethod: 'Banka Havalesi'
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 12800.00,
+                        carrierCosts: 380.00,
+                        commissionCosts: 1470.00,
+                        platformFees: 100.00,
+                        returnDeductions: 200.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 2150.00,
+                        netAmount: 10650.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-201', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-202', amount: 1200.00, commission: 144.00, carrierCost: 15.00, status: 'completed' },
+                        { orderId: 'ORD-203', amount: 750.00, commission: 90.00, carrierCost: 9.50, status: 'completed' },
+                        { orderId: 'ORD-204', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' }
+                    ]
                 },
                 { 
                     id: 'PO-003', 
@@ -2861,7 +2967,23 @@
                     description: 'Haziran 2025 dönemi hakediş ödemesi',
                     processedBy: 'Finans Departmanı',
                     processedAt: '2025-07-15T14:20:00Z',
-                    paymentMethod: 'Banka Havalesi'
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 14500.00,
+                        carrierCosts: 420.00,
+                        commissionCosts: 1680.00,
+                        platformFees: 145.00,
+                        returnDeductions: 75.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 2320.00,
+                        netAmount: 12180.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-301', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' },
+                        { orderId: 'ORD-302', amount: 850.00, commission: 102.00, carrierCost: 11.00, status: 'completed' },
+                        { orderId: 'ORD-303', amount: 1300.00, commission: 156.00, carrierCost: 16.50, status: 'completed' },
+                        { orderId: 'ORD-304', amount: 750.00, commission: 90.00, carrierCost: 9.50, status: 'completed' }
+                    ]
                 },
                 { 
                     id: 'PO-004', 
@@ -2879,7 +3001,24 @@
                     description: 'Eylül 2025 dönemi hakediş ödemesi (beklemede)',
                     expectedDate: '2025-10-05',
                     paymentMethod: 'Banka Havalesi',
-                    approvalStatus: 'Finans onayı bekleniyor'
+                    approvalStatus: 'Finans onayı bekleniyor',
+                    breakdown: {
+                        orderRevenue: 19800.00,
+                        carrierCosts: 520.00,
+                        commissionCosts: 2340.00,
+                        platformFees: 198.00,
+                        returnDeductions: 142.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 3200.00,
+                        netAmount: 16600.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-401', amount: 1350.00, commission: 162.00, carrierCost: 17.00, status: 'completed' },
+                        { orderId: 'ORD-402', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-403', amount: 1200.00, commission: 144.00, carrierCost: 15.00, status: 'completed' },
+                        { orderId: 'ORD-404', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' },
+                        { orderId: 'ORD-405', amount: 850.00, commission: 102.00, carrierCost: 11.00, status: 'completed' }
+                    ]
                 },
                 { 
                     id: 'PO-005', 
@@ -4232,12 +4371,20 @@
                 }
                 
                 const backLink = isSupplier ? '#products/onaylanan' : '#products/yeni-gelenler';
+                
+                // Check if this product has a main product ID (is a variant)
+                const mainProduct = product.mainProductId ? mockData.mainProducts.find(mp => mp.id === product.mainProductId) : null;
+                const mainProductLink = mainProduct ? `<a href="#main-product/${mainProduct.id}" class="text-green-600 hover:underline ml-4">📦 Ana Ürünü Görüntüle</a>` : '';
+                
                 const mainContentHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <div>
-                            <a href="${backLink}" class="text-blue-600 hover:underline">&larr; ${t('products')} Geri Dön</a>
+                            <div class="flex items-center">
+                                <a href="${backLink}" class="text-blue-600 hover:underline">&larr; ${t('products')} Geri Dön</a>
+                                ${mainProductLink}
+                            </div>
                             <h2 class="text-2xl font-bold mt-1">${t(product.name)}</h2>
-                            <p class="text-gray-500">SKU: ${product.sku}</p>
+                            <p class="text-gray-500">SKU: ${product.sku}${mainProduct ? ` | Ana Ürün: ${t(mainProduct.name)}` : ''}</p>
                         </div>
                         <div class="flex space-x-2">${headerButtons}</div>
                     </div>
@@ -10445,12 +10592,24 @@
                     // Supplier completed payments
                     const completedPayouts = mockData.supplierPayouts.filter(p => p.status === 'completed');
                     const completedRows = completedPayouts.map(p => {
+                        const breakdown = p.breakdown || {};
                         return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
                             <td class="p-3 text-sm text-gray-500">${p.id}</td>
                             <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
                             <td class="p-3 text-sm">${p.period}</td>
                             <td class="p-3 text-sm">${p.orders} sipariş</td>
-                            <td class="p-3 text-sm font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td class="p-3 text-sm">
+                                <div class="space-y-1">
+                                    <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    ${breakdown.orderRevenue ? `<div class="text-xs text-gray-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                                </div>
+                            </td>
+                            <td class="p-3 text-sm">
+                                <div class="space-y-1">
+                                    <div class="text-xs text-red-600">Komisyon: -${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    <div class="text-xs text-red-600">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                </div>
+                            </td>
                             <td class="p-3 text-sm">${p.bank}</td>
                             <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tamamlandı</span></td>
                             <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
@@ -10460,22 +10619,35 @@
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                             <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
-                            <th class="p-3 text-sm font-semibold">Tutar</th><th class="p-3 text-sm font-semibold">Banka</th>
-                            <th class="p-3 text-sm font-semibold">Durum</th><th class="p-3 text-sm font-semibold text-right">Detay</th>
+                            <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
+                            <th class="p-3 text-sm font-semibold">Banka</th><th class="p-3 text-sm font-semibold">Durum</th>
+                            <th class="p-3 text-sm font-semibold text-right">Detay</th>
                         </tr></thead>
-                        <tbody>${completedRows || '<tr><td colspan="8" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>'}</tbody>
+                        <tbody>${completedRows || '<tr><td colspan="9" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>'}</tbody>
                     </table></div>`;
                     break;
                 case 'pending':
                     // Supplier pending payments
                     const pendingPayouts = mockData.supplierPayouts.filter(p => p.status === 'pending');
                     const pendingRows = pendingPayouts.map(p => {
+                        const breakdown = p.breakdown || {};
                         return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
                             <td class="p-3 text-sm text-gray-500">${p.id}</td>
                             <td class="p-3 text-sm">${p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi'}</td>
                             <td class="p-3 text-sm">${p.period}</td>
                             <td class="p-3 text-sm">${p.orders} sipariş</td>
-                            <td class="p-3 text-sm font-medium text-yellow-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td class="p-3 text-sm">
+                                <div class="space-y-1">
+                                    <div class="font-medium text-yellow-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    ${breakdown.orderRevenue ? `<div class="text-xs text-gray-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                                </div>
+                            </td>
+                            <td class="p-3 text-sm">
+                                <div class="space-y-1">
+                                    <div class="text-xs text-red-600">Komisyon: -${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    <div class="text-xs text-red-600">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                </div>
+                            </td>
                             <td class="p-3 text-sm">${p.bank}</td>
                             <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Beklemede</span></td>
                             <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
@@ -10485,10 +10657,11 @@
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">BEKLENEN TARİH</th>
                             <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
-                            <th class="p-3 text-sm font-semibold">Tutar</th><th class="p-3 text-sm font-semibold">Banka</th>
-                            <th class="p-3 text-sm font-semibold">Durum</th><th class="p-3 text-sm font-semibold text-right">Detay</th>
+                            <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
+                            <th class="p-3 text-sm font-semibold">Banka</th><th class="p-3 text-sm font-semibold">Durum</th>
+                            <th class="p-3 text-sm font-semibold text-right">Detay</th>
                         </tr></thead>
-                        <tbody>${pendingRows || '<tr><td colspan="8" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>'}</tbody>
+                        <tbody>${pendingRows || '<tr><td colspan="9" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>'}</tbody>
                     </table></div>`;
                     break;
                 case 'revenue-trend':
@@ -10685,6 +10858,46 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        ${payment.breakdown ? `
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-3">Gelir Dağılımı</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Toplam Sipariş Geliri:</span>
+                                        <span class="font-medium text-green-600">+${payment.breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Kargo Maliyetleri:</span>
+                                        <span class="text-red-600">-${payment.breakdown.carrierCosts.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Komisyon Maliyetleri:</span>
+                                        <span class="text-red-600">-${payment.breakdown.commissionCosts.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Platform Ücretleri:</span>
+                                        <span class="text-red-600">-${payment.breakdown.platformFees.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">İade Kesintileri:</span>
+                                        <span class="text-red-600">-${payment.breakdown.returnDeductions.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                    ${payment.breakdown.otherDeductions > 0 ? `
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Diğer Kesintiler:</span>
+                                            <span class="text-red-600">-${payment.breakdown.otherDeductions.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                        </div>
+                                    ` : ''}
+                                    <hr class="my-2">
+                                    <div class="flex justify-between font-semibold">
+                                        <span class="text-gray-800">Net Ödeme Tutarı:</span>
+                                        <span class="text-lg text-green-600">${payment.breakdown.netAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
                     ` : ''}
                     
                     ${payment.description ? `
@@ -14499,6 +14712,278 @@
                 </div>
             `;
         };
+
+        // --- MAIN PRODUCT DETAIL PAGE RENDERER ---
+        renderers.mainProduct = (mainProductId) => {
+            console.log('Main product renderer called with ID:', mainProductId);
+            console.log('Available main products:', mockData.mainProducts);
+            
+            const mainProduct = mockData.mainProducts.find(mp => mp.id == mainProductId);
+            console.log('Found main product:', mainProduct);
+            
+            if (!mainProduct) {
+                console.log('Main product not found, showing error message');
+                pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Ana Ürün Bulunamadı</h2><p class="text-gray-500">Aradığınız ana ürün mevcut değil.</p><button onclick="navigateTo(\'#products\')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ürünlere Dön</button></div>';
+                pageTitle.textContent = 'Ana Ürün Detayları';
+                return;
+            }
+
+            const category = mockData.categories.find(c => c.id === mainProduct.categoryId);
+            const brand = mockData.brands.find(b => b.id === mainProduct.brandId);
+            
+            pageTitle.textContent = `Ana Ürün: ${t(mainProduct.name)}`;
+            
+            // Calculate variant statistics
+            const activeVariants = mainProduct.variants.filter(v => v.status === 'active');
+            const totalStock = mainProduct.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+            const outOfStockVariants = mainProduct.variants.filter(v => (v.stock || 0) === 0).length;
+            
+            console.log('Setting page content...');
+            
+            try {
+                pageContent.innerHTML = `
+                <!-- Main Product Detail Page Info -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="main-product-detail-info">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-400"></i>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <h3 class="text-sm font-medium text-blue-800">Ana Ürün Detayları</h3>
+                            <div class="mt-2 text-sm text-blue-700">
+                                <p>Bu sayfada ana ürünün tüm varyantlarını görüntüleyebilir ve yönetebilirsiniz. Ana ürün, farklı boyut, renk veya özelliklerdeki varyantların gruplandırıldığı üst seviye üründür.</p>
+                            </div>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <!-- Breadcrumb -->
+                    <nav class="flex items-center space-x-2 text-sm text-gray-500">
+                        <a href="#products" class="hover:text-blue-600">Ürünler</a>
+                        <i class="fas fa-chevron-right text-xs"></i>
+                        <span class="text-gray-900 font-medium">${t(mainProduct.name)}</span>
+                    </nav>
+                    
+                    <!-- Header with Actions -->
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">${t(mainProduct.name)}</h1>
+                            <p class="mt-2 text-gray-600">Ana ürün detayları ve varyant yönetimi</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="navigateTo('#products')" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 flex items-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Geri Dön</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Left Column - Product Info -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Product Information -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <h2 class="text-xl font-semibold mb-4 text-gray-800">Ürün Bilgileri</h2>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-4">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Ana Ürün ID:</span>
+                                            <span class="font-medium">${mainProduct.id}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Türkçe Ad:</span>
+                                            <span class="font-medium">${mainProduct.name.tr}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">İngilizce Ad:</span>
+                                            <span class="font-medium">${mainProduct.name.en}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Kategori:</span>
+                                            <span class="font-medium">${category ? t(category.name) : 'Kategorisiz'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-4">
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Marka:</span>
+                                            <span class="font-medium">${brand ? brand.name : 'Markasız'}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Aile:</span>
+                                            <span class="font-medium">${t(mainProduct.family)}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Durum:</span>
+                                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${mainProduct.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${mainProduct.status === 'active' ? 'Aktif' : 'Pasif'}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span class="text-gray-600">Sağlık Skoru:</span>
+                                            <span class="font-medium ${mainProduct.health >= 90 ? 'text-green-600' : mainProduct.health >= 70 ? 'text-yellow-600' : 'text-red-600'}">${mainProduct.health}%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                ${mainProduct.description ? `
+                                    <div class="mt-6 pt-6 border-t">
+                                        <h3 class="text-lg font-semibold mb-2 text-gray-800">Açıklama</h3>
+                                        <p class="text-gray-600">${t(mainProduct.description)}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <!-- Variants Table -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-xl font-semibold text-gray-800">Varyantlar (${mainProduct.variants.length})</h2>
+                                    <div class="flex space-x-2">
+                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                                            ${activeVariants.length} Aktif
+                                        </span>
+                                        <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
+                                            ${outOfStockVariants} Stok Yok
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">Varyant ID</th>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">SKU</th>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">Özellikler</th>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">Stok</th>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">Fiyat</th>
+                                                <th class="p-3 text-sm font-semibold text-gray-700">Durum</th>
+                                                <th class="p-3 text-sm font-semibold text-right">İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${mainProduct.variants.map(variant => {
+                                                const attributesText = Object.entries(variant.attributes || {})
+                                                    .map(([attrId, value]) => {
+                                                        try {
+                                                            const attr = mockData.attributes.find(a => a.id == attrId);
+                                                            return attr ? `${t(attr.label)}: ${value}` : `${value}`;
+                                                        } catch (e) {
+                                                            return `${value}`;
+                                                        }
+                                                    })
+                                                    .join(', ');
+                                                
+                                                return `
+                                                    <tr class="border-b hover:bg-gray-50">
+                                                        <td class="p-3 text-sm text-gray-500">${variant.id}</td>
+                                                        <td class="p-3 text-sm font-mono">${variant.sku}</td>
+                                                        <td class="p-3 text-sm">${attributesText || '-'}</td>
+                                                        <td class="p-3 text-sm">
+                                                            <span class="${(variant.stock || 0) > 0 ? 'text-green-600' : 'text-red-600'}">
+                                                                ${variant.stock || 0}
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-3 text-sm font-medium">
+                                                            ${(variant.price || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                                        </td>
+                                                        <td class="p-3">
+                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${variant.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                                                ${variant.status === 'active' ? 'Aktif' : 'Pasif'}
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-3 text-right">
+                                                            <button onclick="navigateTo('#products/detail/${variant.id}')" class="p-2 text-gray-400 hover:text-blue-600" title="Varyant Detayı">
+                                                                <i class="fas fa-eye"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column - Statistics & Actions -->
+                        <div class="space-y-6">
+                            <!-- Statistics -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <h3 class="text-lg font-semibold mb-4 text-gray-800">İstatistikler</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Toplam Varyant:</span>
+                                        <span class="font-medium">${mainProduct.variants.length}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Aktif Varyant:</span>
+                                        <span class="font-medium text-green-600">${activeVariants.length}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Toplam Stok:</span>
+                                        <span class="font-medium">${totalStock}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Stok Yok:</span>
+                                        <span class="font-medium text-red-600">${outOfStockVariants}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Fiyat Aralığı:</span>
+                                        <span class="font-medium">
+                                            ${mainProduct.priceRange.min.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                            ${mainProduct.priceRange.min !== mainProduct.priceRange.max ? `- ${mainProduct.priceRange.max.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : ''}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product Image -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <h3 class="text-lg font-semibold mb-4 text-gray-800">Ürün Görseli</h3>
+                                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                    <img src="${mainProduct.imageUrl}" alt="${t(mainProduct.name)}" class="w-full h-full object-cover">
+                                </div>
+                            </div>
+                            
+                            <!-- Quick Actions -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <h3 class="text-lg font-semibold mb-4 text-gray-800">Hızlı İşlemler</h3>
+                                <div class="space-y-3">
+                                    <button onclick="navigateTo('#products')" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center space-x-2">
+                                        <i class="fas fa-list"></i>
+                                        <span>Tüm Ürünleri Görüntüle</span>
+                                    </button>
+                                    <button onclick="navigateTo('#products/detail/${mainProduct.variants[0]?.id || ''}')" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center space-x-2">
+                                        <i class="fas fa-eye"></i>
+                                        <span>İlk Varyantı Görüntüle</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+                console.log('Main product page content set successfully');
+            } catch (error) {
+                console.error('Error setting main product page content:', error);
+                pageContent.innerHTML = `
+                    <div class="text-center p-10">
+                        <h2 class="text-2xl font-bold text-red-600">Hata Oluştu</h2>
+                        <p class="text-gray-500 mt-2">Ana ürün sayfası yüklenirken bir hata oluştu.</p>
+                        <p class="text-sm text-gray-400 mt-2">Hata: ${error.message}</p>
+                        <button onclick="navigateTo('#products')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            Ürünlere Dön
+                        </button>
+                    </div>
+                `;
+            }
+        };
+
         function showAddIntegrationModal() { const title = 'Yeni Entegrasyon Ekle'; const body = `<div class="space-y-4"><div><label for="int_type" class="block text-sm font-medium text-gray-700">Entegrasyon Tipi</label><select id="int_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="ERP">ERP</option><option value="Marketplace">Pazaryeri</option><option value="Shipping">Kargo</option><option value="Other">Diğer</option></select></div><div><label for="int_name" class="block text-sm font-medium text-gray-700">Entegrasyon Adı</label><input type="text" id="int_name" placeholder="Örn: Aras Kargo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="int_desc" class="block text-sm font-medium text-gray-700">Açıklama</label><textarea id="int_desc" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Kısa bir açıklama girin..."></textarea></div><div class="flex items-start"><div class="flex items-center h-5"><input id="int_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="int_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Entegrasyon Ekle', () => { const name = document.getElementById('int_name').value; const newIntegration = { id: Math.max(...(mockData.integrations.map(i => i.id) || [0])) + 1, name: name, type: document.getElementById('int_type').value, status: document.getElementById('int_active').checked ? 'active' : 'passive', description: { tr: document.getElementById('int_desc').value, en: document.getElementById('int_desc').value }, logo: `https://placehold.co/48x48/cccccc/ffffff?text=${name.substring(0, 2).toUpperCase()}` }; mockData.integrations.push(newIntegration); closeModal(); handleRouteChange(); }); }
         function showAddVariantModal(productId) { const product = mockData.products.find(p => p.id === productId); const category = mockData.categories.find(c => c.id === product.categoryId); if (!category) return; const variantAttributeIds = category.variantAttributes || []; if (variantAttributeIds.length === 0) { showModal('Varyant Eklenemiyor', '<p>Bu ürünün kategorisi için varyant oluşturacak nitelikler tanımlanmamış. Lütfen önce kategori ayarlarından varyant niteliklerini seçin.</p>'); return; } const attributeInputs = variantAttributeIds.map(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (!attribute) return ''; if (attribute.type === 'Select') { const optionsHtml = attribute.options.map(opt => `<option value="${opt}">${opt}</option>`).join(''); return `<div><label for="variant_attr_${attrId}" class="block text-sm font-medium text-gray-700">${t(attribute.label)}</label><select id="variant_attr_${attrId}" data-attr-id="${attrId}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm variant-attribute-input">${optionsHtml}</select></div>`; } return `<div><label for="variant_attr_${attrId}" class="block text-sm font-medium text-gray-700">${t(attribute.label)}</label><input type="text" id="variant_attr_${attrId}" data-attr-id="${attrId}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm variant-attribute-input"></div>`; }).join(''); const body = `<div class="space-y-4">${attributeInputs}<div class="pt-4 border-t"><div><label for="variant_sku" class="block text-sm font-medium text-gray-700">Varyant SKU</label><input type="text" id="variant_sku" placeholder="${product.sku}-VARYANT" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div></div><div><label for="variant_price" class="block text-sm font-medium text-gray-700">Fiyat (TRY)</label><input type="number" id="variant_price" placeholder="0.00" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="variant_stock" class="block text-sm font-medium text-gray-700">Stok</label><input type="number" id="variant_stock" placeholder="0" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div></div>`; showModal('Yeni Varyant Ekle', body, 'Varyantı Oluştur', () => { saveVariant(productId); closeModal(); }); }
         function saveVariant(productId) { const product = mockData.products.find(p => p.id === productId); if (!product) return; const attributes = {}; document.querySelectorAll('.variant-attribute-input').forEach(input => { const attrId = input.dataset.attrId; attributes[attrId] = input.value; }); const newVariant = { id: Date.now(), sku: document.getElementById('variant_sku').value, attributes: attributes }; if (!product.variants) { product.variants = []; } product.variants.push(newVariant); renderProductTab('variants', product); }
@@ -16731,6 +17216,9 @@
             const hash = location.hash.substring(1) || 'dashboard';
             const [page, subpage, id1, id2] = hash.split('/');
             
+            console.log('Route change - Hash:', hash);
+            console.log('Route change - Parsed:', { page, subpage, id1, id2 });
+            
             document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
             document.querySelectorAll('.sidebar-submenu').forEach(submenu => submenu.classList.add('hidden'));
             document.querySelectorAll('.sidebar-chevron').forEach(chevron => chevron.classList.remove('rotate-180'));
@@ -16779,6 +17267,11 @@
                 renderers.productDetail(subpage);
             }
             else if (page === 'products') { renderers.products(subpage || 'yeni-gelenler'); } 
+            else if (page === 'main-product' && (id1 || subpage)) { 
+                const mainProductId = id1 || subpage;
+                console.log('Main product route matched, calling renderer with ID:', mainProductId);
+                renderers.mainProduct(parseInt(mainProductId)); 
+            }
             else if (page === 'suppliers' && subpage === 'detail' && id1) { renderers.supplierProductDetail(id1); } 
             else if (page === 'categories' && subpage === 'detail' && id1) { renderers.categoryDetail(id1); }
             else if (page === 'categories') { renderers.categoriesPage(subpage || 'master'); }
@@ -16839,10 +17332,26 @@ const pinnedHTML = '';
 
 // --- TWO-SECTION MENU ---
 const navLinksSupplier = [
-  { href: '#products/draft', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
-  { href: '#bulk-upload', icon: 'fa-upload', text: 'Toplu İşlemler', role: 'supplier' },
-  { href: '#supplier-orders', icon: 'fa-shopping-basket', text: 'Siparişler', role: 'supplier' },
-    { href: '#returns', icon: 'fa-undo', text: 'İade İşlemleri', role: 'supplier' },
+  { 
+    type: 'parent', 
+    icon: 'fa-box', 
+    text: 'Ürünler', 
+    role: 'supplier',
+    children: [
+      { href: '#products/draft', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
+      { href: '#bulk-upload', icon: 'fa-upload', text: 'Toplu İşlemler', role: 'supplier' }
+    ]
+  },
+  { 
+    type: 'parent', 
+    icon: 'fa-shopping-basket', 
+    text: 'Siparişler', 
+    role: 'supplier',
+    children: [
+      { href: '#supplier-orders', icon: 'fa-shopping-basket', text: 'Siparişler', role: 'supplier' },
+      { href: '#returns', icon: 'fa-undo', text: 'İade İşlemleri', role: 'supplier' }
+    ]
+  },
   { href: '#finance', icon: 'fa-coins', text: 'Finans', role: 'supplier' },
   { 
     type: 'parent', 
@@ -16906,7 +17415,7 @@ function renderGroup(title, links) {
       // Create collapsible parent item
       const children = link.children.map(child => {
         const childLabel = child.text || '';
-        return `<a href="${child.href}" class="sidebar-link flex items-center w-full px-4 py-2 gap-3 hover:bg-gray-50 text-gray-700 pl-16" data-role="${child.role}">
+        return `<a href="${child.href}" class="sidebar-link flex items-center w-full px-4 py-2 gap-3 hover:bg-gray-50 text-gray-700 pl-24" data-role="${child.role}">
           <i class="fas ${child.icon} w-4 text-sm"></i>
           <span class="sidebar-text text-sm">${childLabel}</span>
         </a>`;
