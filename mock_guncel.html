@@ -4211,8 +4211,8 @@
                             <button id="submit-product-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Gönder</button>
                         `;
                     } else {
-                        // Other products - show stock/price update button
-                        headerButtons = `<button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>`;
+                        // Other products - no header buttons (moved to specific tabs)
+                        headerButtons = '';
                     }
                 } else {
                     // Admins have full access
@@ -11320,11 +11320,6 @@
                     <td class="p-3 text-sm font-medium">
                         <div class="flex items-center">
                             <span>${priceText}</span>
-                            ${p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.length > 0 ? 
-                                `<button onclick="showPriceReviewModal(${p.id})" class="ml-2 p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded" title="${t('review_price')}">
-                                    <i class="fas fa-search-plus text-sm"></i>
-                                </button>` : ''
-                            }
                         </div>
                     </td>
                     <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
@@ -20089,13 +20084,25 @@ function renderStockPriceTab(container, product, isSupplier) {
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
-                                    <input type="number" step="0.01" id="edit-product-list-price" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı</p>
+                                    <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
                                 </div>
                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (USD)</label>
+                                    <input type="number" step="0.01" id="edit-product-list-price-usd" value="${product.listPriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Amerikan Doları)</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">İndirimli Fiyat (TRY)</label>
-                                    <input type="number" step="0.01" id="edit-product-sale-price" value="${product.salePrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat</p>
+                                    <input type="number" step="0.01" id="edit-product-sale-price-try" value="${product.salePrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat (Türk Lirası)</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">İndirimli Fiyat (USD)</label>
+                                    <input type="number" step="0.01" id="edit-product-sale-price-usd" value="${product.salePriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat (Amerikan Doları)</p>
                                 </div>
                             </div>
                             <div class="bg-yellow-50 p-3 rounded-lg">
@@ -20125,12 +20132,24 @@ function renderStockPriceTab(container, product, isSupplier) {
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
                                     <input type="number" step="0.01" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı</p>
+                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
                                 </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (USD)</label>
+                                    <input type="number" step="0.01" value="${product.listPriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Amerikan Doları)</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">İndirimli Fiyat (TRY)</label>
                                     <input type="number" step="0.01" value="${product.salePrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat</p>
+                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat (Türk Lirası)</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">İndirimli Fiyat (USD)</label>
+                                    <input type="number" step="0.01" value="${product.salePriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <p class="text-xs text-gray-500 mt-1">İsteğe bağlı indirimli fiyat (Amerikan Doları)</p>
                                 </div>
                             </div>
                             ${product.salePrice && product.salePrice > 0 ? `
@@ -20149,7 +20168,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                                 </div>
                             </div>
                             ` : ''}
-                            <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Güncelle</button>
+                            <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
                         </div>
                     </div>
                 </div>
@@ -20190,7 +20209,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                                                     <p class="text-sm font-medium">${new Date(sp.lastUpdated || Date.now()).toLocaleDateString('tr-TR')}</p>
                                                 </div>
                                             </div>
-                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div class="bg-gray-50 p-3 rounded-lg">
                                                     <div class="flex items-center justify-between">
                                                         <span class="text-sm text-gray-600">Stok Miktarı</span>
@@ -20200,19 +20219,47 @@ function renderStockPriceTab(container, product, isSupplier) {
                                                 </div>
                                                 <div class="bg-gray-50 p-3 rounded-lg">
                                                     <div class="flex items-center justify-between">
-                                                        <span class="text-sm text-gray-600">Liste Fiyatı</span>
+                                                        <span class="text-sm text-gray-600">Son Güncelleme</span>
+                                                        <span class="text-sm font-medium text-gray-700">${new Date(sp.lastUpdated || Date.now()).toLocaleDateString('tr-TR')}</span>
+                                                    </div>
+                                                    <p class="text-xs text-gray-500 mt-1">Tedarikçi güncellemesi</p>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <span class="text-sm font-medium text-blue-800">Liste Fiyatı (TRY)</span>
                                                         <span class="text-lg font-semibold text-blue-600">${sp.listPrice ? sp.listPrice.toFixed(2) + ' ₺' : 'Belirtilmemiş'}</span>
                                                     </div>
-                                                    <p class="text-xs text-gray-500 mt-1">Normal fiyat</p>
+                                                    <p class="text-xs text-blue-600">Normal fiyat (Türk Lirası)</p>
                                                 </div>
-                                                <div class="bg-gray-50 p-3 rounded-lg">
-                                                    <div class="flex items-center justify-between">
-                                                        <span class="text-sm text-gray-600">İndirimli Fiyat</span>
-                                                        <span class="text-lg font-semibold ${sp.salePrice && sp.salePrice > 0 ? 'text-green-600' : 'text-gray-500'}">${sp.salePrice && sp.salePrice > 0 ? sp.salePrice.toFixed(2) + ' ₺' : 'Yok'}</span>
+                                                <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <span class="text-sm font-medium text-green-800">Liste Fiyatı (USD)</span>
+                                                        <span class="text-lg font-semibold text-green-600">${sp.listPriceUSD ? sp.listPriceUSD.toFixed(2) + ' $' : 'Belirtilmemiş'}</span>
+                                                    </div>
+                                                    <p class="text-xs text-green-600">Normal fiyat (Amerikan Doları)</p>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                <div class="bg-orange-50 p-3 rounded-lg border border-orange-200">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <span class="text-sm font-medium text-orange-800">İndirimli Fiyat (TRY)</span>
+                                                        <span class="text-lg font-semibold ${sp.salePrice && sp.salePrice > 0 ? 'text-orange-600' : 'text-gray-500'}">${sp.salePrice && sp.salePrice > 0 ? sp.salePrice.toFixed(2) + ' ₺' : 'Yok'}</span>
                                                     </div>
                                                     ${sp.salePrice && sp.salePrice > 0 ? 
-                                                        `<p class="text-xs text-green-600 mt-1">İndirim: ${((sp.listPrice - sp.salePrice) / sp.listPrice * 100).toFixed(1)}%</p>` : 
-                                                        '<p class="text-xs text-gray-500 mt-1">İndirim yok</p>'
+                                                        `<p class="text-xs text-orange-600">İndirim: ${((sp.listPrice - sp.salePrice) / sp.listPrice * 100).toFixed(1)}%</p>` : 
+                                                        '<p class="text-xs text-gray-500">İndirim yok</p>'
+                                                    }
+                                                </div>
+                                                <div class="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                                                    <div class="flex items-center justify-between mb-2">
+                                                        <span class="text-sm font-medium text-purple-800">İndirimli Fiyat (USD)</span>
+                                                        <span class="text-lg font-semibold ${sp.salePriceUSD && sp.salePriceUSD > 0 ? 'text-purple-600' : 'text-gray-500'}">${sp.salePriceUSD && sp.salePriceUSD > 0 ? sp.salePriceUSD.toFixed(2) + ' $' : 'Yok'}</span>
+                                                    </div>
+                                                    ${sp.salePriceUSD && sp.salePriceUSD > 0 ? 
+                                                        `<p class="text-xs text-purple-600">İndirim: ${((sp.listPriceUSD - sp.salePriceUSD) / sp.listPriceUSD * 100).toFixed(1)}%</p>` : 
+                                                        '<p class="text-xs text-gray-500">İndirim yok</p>'
                                                     }
                                                 </div>
                                             </div>
@@ -20220,6 +20267,9 @@ function renderStockPriceTab(container, product, isSupplier) {
                                     `;
                                 }).join('');
                             })()}
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-blue-200">
+                            <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
                         </div>
                     </div>
                 </div>
