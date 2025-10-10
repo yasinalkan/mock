@@ -14715,14 +14715,9 @@
 
         // --- MAIN PRODUCT DETAIL PAGE RENDERER ---
         renderers.mainProduct = (mainProductId) => {
-            console.log('Main product renderer called with ID:', mainProductId);
-            console.log('Available main products:', mockData.mainProducts);
-            
             const mainProduct = mockData.mainProducts.find(mp => mp.id == mainProductId);
-            console.log('Found main product:', mainProduct);
             
             if (!mainProduct) {
-                console.log('Main product not found, showing error message');
                 pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Ana Ürün Bulunamadı</h2><p class="text-gray-500">Aradığınız ana ürün mevcut değil.</p><button onclick="navigateTo(\'#products\')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ürünlere Dön</button></div>';
                 pageTitle.textContent = 'Ana Ürün Detayları';
                 return;
@@ -14738,10 +14733,7 @@
             const totalStock = mainProduct.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
             const outOfStockVariants = mainProduct.variants.filter(v => (v.stock || 0) === 0).length;
             
-            console.log('Setting page content...');
-            
-            try {
-                pageContent.innerHTML = `
+            pageContent.innerHTML = `
                 <!-- Main Product Detail Page Info -->
                 <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="main-product-detail-info">
                     <div class="flex">
@@ -14968,20 +14960,6 @@
                     </div>
                 </div>
             `;
-                console.log('Main product page content set successfully');
-            } catch (error) {
-                console.error('Error setting main product page content:', error);
-                pageContent.innerHTML = `
-                    <div class="text-center p-10">
-                        <h2 class="text-2xl font-bold text-red-600">Hata Oluştu</h2>
-                        <p class="text-gray-500 mt-2">Ana ürün sayfası yüklenirken bir hata oluştu.</p>
-                        <p class="text-sm text-gray-400 mt-2">Hata: ${error.message}</p>
-                        <button onclick="navigateTo('#products')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                            Ürünlere Dön
-                        </button>
-                    </div>
-                `;
-            }
         };
 
         function showAddIntegrationModal() { const title = 'Yeni Entegrasyon Ekle'; const body = `<div class="space-y-4"><div><label for="int_type" class="block text-sm font-medium text-gray-700">Entegrasyon Tipi</label><select id="int_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="ERP">ERP</option><option value="Marketplace">Pazaryeri</option><option value="Shipping">Kargo</option><option value="Other">Diğer</option></select></div><div><label for="int_name" class="block text-sm font-medium text-gray-700">Entegrasyon Adı</label><input type="text" id="int_name" placeholder="Örn: Aras Kargo" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="int_desc" class="block text-sm font-medium text-gray-700">Açıklama</label><textarea id="int_desc" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Kısa bir açıklama girin..."></textarea></div><div class="flex items-start"><div class="flex items-center h-5"><input id="int_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="int_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Entegrasyon Ekle', () => { const name = document.getElementById('int_name').value; const newIntegration = { id: Math.max(...(mockData.integrations.map(i => i.id) || [0])) + 1, name: name, type: document.getElementById('int_type').value, status: document.getElementById('int_active').checked ? 'active' : 'passive', description: { tr: document.getElementById('int_desc').value, en: document.getElementById('int_desc').value }, logo: `https://placehold.co/48x48/cccccc/ffffff?text=${name.substring(0, 2).toUpperCase()}` }; mockData.integrations.push(newIntegration); closeModal(); handleRouteChange(); }); }
@@ -17216,8 +17194,6 @@
             const hash = location.hash.substring(1) || 'dashboard';
             const [page, subpage, id1, id2] = hash.split('/');
             
-            console.log('Route change - Hash:', hash);
-            console.log('Route change - Parsed:', { page, subpage, id1, id2 });
             
             document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
             document.querySelectorAll('.sidebar-submenu').forEach(submenu => submenu.classList.add('hidden'));
@@ -17269,7 +17245,6 @@
             else if (page === 'products') { renderers.products(subpage || 'yeni-gelenler'); } 
             else if (page === 'main-product' && (id1 || subpage)) { 
                 const mainProductId = id1 || subpage;
-                console.log('Main product route matched, calling renderer with ID:', mainProductId);
                 renderers.mainProduct(parseInt(mainProductId)); 
             }
             else if (page === 'suppliers' && subpage === 'detail' && id1) { renderers.supplierProductDetail(id1); } 
