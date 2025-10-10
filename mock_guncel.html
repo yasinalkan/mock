@@ -920,9 +920,9 @@
                 { id: 1, name: 'ModaTedarik', status: 'approved', email: 'info@modatedarik.com', phone: '+90 212 555 0101', registrationDate: '2024-01-15', lastActivity: '2025-01-15T10:30:00Z' },
                 { id: 2, name: 'Ayakkabı A.Ş.', status: 'approved', email: 'iletisim@ayakkabi.com', phone: '+90 216 555 0202', registrationDate: '2024-02-20', lastActivity: '2025-01-14T15:45:00Z' },
                 { id: 3, name: 'Ana Depo', status: 'approved', email: 'depo@anadepo.com', phone: '+90 312 555 0303', registrationDate: '2024-03-10', lastActivity: '2025-01-13T09:20:00Z' },
-                { id: 4, name: 'Tekstil Dünyası', status: 'pending', email: 'basvuru@tekstildunyasi.com', phone: '+90 232 555 0404', registrationDate: '2025-01-10', lastActivity: '2025-01-10T14:00:00Z' },
+                { id: 4, name: 'Tekstil Dünyası', status: 'application_received', email: 'basvuru@tekstildunyasi.com', phone: '+90 232 555 0404', registrationDate: '2025-01-10', lastActivity: '2025-01-10T14:00:00Z' },
                 { id: 5, name: 'Giyim Merkezi', status: 'application_received', email: 'info@giyimmerkezi.com', phone: '+90 242 555 0505', registrationDate: '2025-01-12', lastActivity: '2025-01-12T11:30:00Z' },
-                { id: 6, name: 'Spor Malzemeleri', status: 'suspended', email: 'admin@spormalzemeleri.com', phone: '+90 352 555 0606', registrationDate: '2024-11-05', lastActivity: '2024-12-20T16:15:00Z' },
+                { id: 6, name: 'Spor Malzemeleri', status: 'application_received', email: 'admin@spormalzemeleri.com', phone: '+90 352 555 0606', registrationDate: '2024-11-05', lastActivity: '2024-12-20T16:15:00Z' },
                 { id: 7, name: 'Ev Tekstili', status: 'rejected', email: 'basvuru@evtekstili.com', phone: '+90 262 555 0707', registrationDate: '2025-01-08', lastActivity: '2025-01-08T13:45:00Z' }
             ],
             brands: [
@@ -3322,7 +3322,7 @@
                     name: 'Ana Depo',
                     email: 'depo@anadepo.com',
                     phone: '+90 312 555 0303',
-                    status: 'pending',
+                    status: 'application_received',
                     registrationDate: '2024-12-01T11:15:00Z',
                     lastActivity: '2025-01-18T12:00:00Z',
                     address: {
@@ -3372,7 +3372,7 @@
                     name: 'Spor Giyim Ltd.',
                     email: 'spor@sporgiyim.com',
                     phone: '+90 242 555 0505',
-                    status: 'suspended',
+                    status: 'application_received',
                     registrationDate: '2024-06-15T13:20:00Z',
                     lastActivity: '2024-12-20T10:30:00Z',
                     address: {
@@ -10963,9 +10963,7 @@
                         <label class="block text-sm font-medium text-gray-700">Yeni Durum</label>
                         <select id="new-status" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="approved" ${supplier.status === 'approved' ? 'selected' : ''}>Onaylandı</option>
-                            <option value="pending" ${supplier.status === 'pending' ? 'selected' : ''}>Bekliyor</option>
                             <option value="application_received" ${supplier.status === 'application_received' ? 'selected' : ''}>Başvuru Alındı</option>
-                            <option value="suspended" ${supplier.status === 'suspended' ? 'selected' : ''}>Askıya Alındı</option>
                             <option value="rejected" ${supplier.status === 'rejected' ? 'selected' : ''}>Reddedildi</option>
                         </select>
                     </div>
@@ -11058,8 +11056,8 @@
                             <label class="block text-sm font-medium text-gray-700">Başlangıç Durumu</label>
                             <select id="supplier-status" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                 <option value="application_received">Başvuru Alındı</option>
-                                <option value="pending">Bekliyor</option>
                                 <option value="approved">Onaylandı</option>
+                                <option value="rejected">Reddedildi</option>
                             </select>
                         </div>
                     </div>
@@ -16250,10 +16248,9 @@
             const sidebarNav = document.getElementById('sidebar-nav');
             
             
-// --- PINNED: Ürünler (admin only) ---
+// --- PINNED: No pinned items ---
 const currentRole = (window.currentUser||{}).role;
-const productsLink = currentRole === 'supplier' ? '#products/draft' : '#products';
-const pinnedHTML = currentRole === 'supplier' ? '' : `<div class="px-4 pt-3"><a href="${productsLink}" class="sidebar-link flex items-center w-full px-4 py-2 gap-3 bg-indigo-50 text-indigo-700 font-medium rounded-md hover:bg-indigo-100"><i class="fas fa-cloud-upload-alt w-5"></i><span class="sidebar-text">Ürünler</span></a></div>`;
+const pinnedHTML = '';
 
 // --- TWO-SECTION MENU ---
 const navLinksSupplier = [
@@ -16275,12 +16272,31 @@ const navLinksSupplier = [
   { href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' }
 ];
 const navLinksAdmin = [
+  { 
+    type: 'parent', 
+    icon: 'fa-box', 
+    text: 'Ürün Yönetimi', 
+    role: 'admin',
+    children: [
+      { href: '#products', icon: 'fa-box', text: 'Ürünler', role: 'admin' },
+      { href: '#categories', icon: 'fa-sitemap', text: 'Kategoriler', role: 'admin' },
+      { href: '#attributes', icon: 'fa-tags', text: 'Özellikler', role: 'admin' },
+      { href: '#settings/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' }
+    ]
+  },
   { href: '#dashboard', icon: 'fa-tachometer-alt', text: 'Dashboard', role: 'admin' },
   { href: '#orders', icon: 'fa-shopping-bag', text: 'Siparişler', role: 'admin' },
   { href: '#returns', icon: 'fa-undo', text: 'İade İşlemleri', role: 'admin' },
-  { href: '#finance', icon: 'fa-wallet', text: 'Finans', role: 'admin' },
-  { href: '#categories', icon: 'fa-sitemap', text: 'Kategoriler', role: 'admin' },
-  { href: '#attributes', icon: 'fa-tags', text: 'Özellikler', role: 'admin' },
+  { 
+    type: 'parent', 
+    icon: 'fa-wallet', 
+    text: 'Finans', 
+    role: 'admin',
+    children: [
+      { href: '#finance', icon: 'fa-chart-line', text: 'Finans Dashboard', role: 'admin' },
+      { href: '#settings/commissions', icon: 'fa-percentage', text: 'Komisyon Yönetimi', role: 'admin' }
+    ]
+  },
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden
   { 
     type: 'parent', 
@@ -16291,8 +16307,6 @@ const navLinksAdmin = [
       { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçiler', role: 'admin' },
       { href: '#settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'admin' },
       { href: '#settings/api', icon: 'fa-key', text: 'API Anahtarları', role: 'admin' },
-      { href: '#settings/commissions', icon: 'fa-percentage', text: 'Komisyon Yönetimi', role: 'admin' },
-      { href: '#settings/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' },
       { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
     ]
   }
@@ -18574,9 +18588,7 @@ renderers['adminSuppliers'] = () => {
     const supplierRows = mockData.suppliers.map(supplier => {
         const statusInfo = {
             approved: { text: 'Onaylandı', class: 'bg-green-100 text-green-800' },
-            pending: { text: 'Bekliyor', class: 'bg-yellow-100 text-yellow-800' },
             application_received: { text: 'Başvuru Alındı', class: 'bg-blue-100 text-blue-800' },
-            suspended: { text: 'Askıya Alındı', class: 'bg-orange-100 text-orange-800' },
             rejected: { text: 'Reddedildi', class: 'bg-red-100 text-red-800' }
         }[supplier.status] || { text: supplier.status, class: 'bg-gray-100 text-gray-800' };
         
