@@ -13595,7 +13595,183 @@
             }
         }
 
-        function handleProductSearch() { const sku = document.getElementById('product-search-sku').value.trim(); if (!sku) return; const product = mockData.products.find(p => p.sku === sku); const container = document.getElementById('product-form-container'); if (product) { container.innerHTML = `<div data-product-id="${product.id}"><div class="flex items-center bg-gray-50 p-4 rounded-md"><img src="${product.imageUrl}" alt="${t(product.name)}" class="w-16 h-16 rounded-md mr-4 object-cover"><div><h4 class="font-semibold">${t(product.name)}</h4><p class="text-sm text-gray-500">${t('sku_header')}: ${product.sku}</p></div></div><p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">Bu alandan sadece ürünün temel bilgileri güncellenir. Tedarikçi stok/fiyat bilgileri için <strong>Tedarikçi Paneli</strong>'ni kullanın.</p></div>`; } else { 
+        function addProductToSupplierInventory(productId, supplierId) {
+            // Check if product is already in supplier's inventory
+            const existingEntry = mockData.supplierProducts.find(sp => 
+                sp.productId === productId && sp.supplierId === supplierId
+            );
+            
+            if (existingEntry) {
+                showToast('Bu ürün zaten envanterinizde mevcut.');
+                return;
+            }
+            
+            // Add product to supplier's inventory with default values
+            mockData.supplierProducts.push({
+                productId: productId,
+                supplierId: supplierId,
+                stock: 0,
+                price: 0
+            });
+            
+            // Show success message
+            showToast('Ürün envanterinize eklendi. Stok ve fiyat bilgilerini Tedarikçi Paneli\'nden güncelleyebilirsiniz.');
+            
+            // Refresh the search results to show updated inventory status
+            handleProductSearch();
+        }
+
+        function showStockUpdateModal(productId, supplierId) {
+            const product = mockData.products.find(p => p.id === productId);
+            const supplierProduct = mockData.supplierProducts.find(sp => 
+                sp.productId === productId && sp.supplierId === supplierId
+            );
+            
+            if (!product || !supplierProduct) {
+                showToast('Ürün bilgisi bulunamadı.');
+                return;
+            }
+            
+            const title = `Stok Güncelle: ${t(product.name)}`;
+            const body = `
+                <div class="space-y-4">
+                    <div class="flex items-center bg-gray-50 p-3 rounded-md">
+                        <img src="${product.imageUrl}" alt="${t(product.name)}" class="w-12 h-12 rounded-md mr-3 object-cover">
+                        <div>
+                            <h4 class="font-semibold text-sm">${t(product.name)}</h4>
+                            <p class="text-xs text-gray-500">SKU: ${product.sku}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="stock-amount" class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
+                            <input type="number" id="stock-amount" value="${supplierProduct.stock}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   min="0" placeholder="Stok miktarı">
+                        </div>
+                        <div>
+                            <label for="price-amount" class="block text-sm font-medium text-gray-700 mb-1">Fiyat (₺)</label>
+                            <input type="number" id="price-amount" value="${supplierProduct.price}" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   min="0" step="0.01" placeholder="Fiyat">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showModal(title, body, 'Güncelle', () => {
+                const newStock = parseInt(document.getElementById('stock-amount').value) || 0;
+                const newPrice = parseFloat(document.getElementById('price-amount').value) || 0;
+                
+                if (newStock < 0 || newPrice < 0) {
+                    showToast('Stok ve fiyat değerleri 0 veya daha büyük olmalıdır.');
+                    return;
+                }
+                
+                // Update supplier product data
+                supplierProduct.stock = newStock;
+                supplierProduct.price = newPrice;
+                
+                showToast('Stok ve fiyat bilgileri güncellendi.');
+                closeModal();
+                
+                // Refresh the search results to show updated information
+                handleProductSearch();
+            });
+        }
+
+        function handleProductSearch() { 
+            const sku = document.getElementById('product-search-sku').value.trim(); 
+            if (!sku) return; 
+            
+            const product = mockData.products.find(p => p.sku === sku); 
+            const container = document.getElementById('product-form-container'); 
+            const user = window.currentUser || {};
+            const isSupplier = user.role === 'supplier';
+            const currentSupplierId = user.supplierId;
+            
+            if (product) { 
+                let stockInfo = '';
+                
+                if (isSupplier && currentSupplierId) {
+                    // Check if supplier has this product in their inventory
+                    const supplierProduct = mockData.supplierProducts.find(sp => 
+                        sp.productId === product.id && sp.supplierId === currentSupplierId
+                    );
+                    
+                    if (supplierProduct) {
+                        // Supplier has stock - show current stock with update option
+                        stockInfo = `
+                            <div class="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                                        <div>
+                                            <h5 class="font-semibold text-green-800">Envanterinizde Mevcut</h5>
+                                            <p class="text-sm text-green-700">Mevcut Stok: <span class="font-bold">${supplierProduct.stock} adet</span></p>
+                                            <p class="text-sm text-green-700">Fiyatınız: <span class="font-bold">${supplierProduct.price.toFixed(2)} ₺</span></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="update-stock-btn" class="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 text-sm">
+                                        <i class="fas fa-edit mr-1"></i>Stok Güncelle
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Supplier doesn't have this product - show add to inventory option
+                        stockInfo = `
+                            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-plus-circle text-blue-600 mr-2"></i>
+                                        <div>
+                                            <h5 class="font-semibold text-blue-800">Envanterinizde Yok</h5>
+                                            <p class="text-sm text-blue-700">Bu ürünü envanterinize ekleyebilirsiniz</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="add-to-inventory-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
+                                        <i class="fas fa-plus mr-1"></i>Envanterime Ekle
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                container.innerHTML = `
+                    <div data-product-id="${product.id}">
+                        <div class="flex items-center bg-gray-50 p-4 rounded-md">
+                            <img src="${product.imageUrl}" alt="${t(product.name)}" class="w-16 h-16 rounded-md mr-4 object-cover">
+                            <div>
+                                <h4 class="font-semibold">${t(product.name)}</h4>
+                                <p class="text-sm text-gray-500">${t('sku_header')}: ${product.sku}</p>
+                            </div>
+                        </div>
+                        ${stockInfo}
+                        <p class="text-sm text-yellow-700 bg-yellow-50 p-3 rounded-md mt-4">
+                            Bu alandan sadece ürünün temel bilgileri güncellenir. Tedarikçi stok/fiyat bilgileri için <strong>Tedarikçi Paneli</strong>'ni kullanın.
+                        </p>
+                    </div>
+                `; 
+                
+                // Add event listener for "Add to Inventory" button if it exists
+                const addToInventoryBtn = document.getElementById('add-to-inventory-btn');
+                if (addToInventoryBtn) {
+                    addToInventoryBtn.addEventListener('click', () => {
+                        addProductToSupplierInventory(product.id, currentSupplierId);
+                    });
+                }
+                
+                // Add event listener for "Update Stock" button if it exists
+                const updateStockBtn = document.getElementById('update-stock-btn');
+                if (updateStockBtn) {
+                    updateStockBtn.addEventListener('click', () => {
+                        showStockUpdateModal(product.id, currentSupplierId);
+                    });
+                }
+            } else { 
                 // Build collapsible category tree
                 const categoryTreeContent = buildCollapsibleCategoryTree(mockData.categories);
                 
