@@ -1640,6 +1640,72 @@
                     variants: [], 
                     lastUpdated: '2025-01-13T09:15:00Z' 
                 },
+                // Archived products
+                { 
+                    id: 12, 
+                    sku: 'ARCH-001', 
+                    name: { tr: 'Eski Klasik Gömlek', en: 'Old Classic Shirt'}, 
+                    categoryId: 1, 
+                    brandId: 1, 
+                    family: { tr: 'Gömlek', en: 'Shirt'}, 
+                    status: 'archived', 
+                    health: 60, 
+                    originalityScore: 70, 
+                    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
+                    attributes: { 
+                        1: { value: 'Beyaz', validationStatus: 'approved', rejectionReason: '' }, 
+                        2: { value: 'L', validationStatus: 'approved', rejectionReason: '' }, 
+                        3: { value: 'Pamuk', validationStatus: 'approved', rejectionReason: '' } 
+                    }, 
+                    variants: [], 
+                    lastUpdated: '2024-12-15T10:30:00Z',
+                    archivedAt: '2025-01-10T14:20:00Z',
+                    archivedBy: 'Admin User',
+                    archivedReason: 'Seasonal product - out of season'
+                },
+                { 
+                    id: 13, 
+                    sku: 'ARCH-002', 
+                    name: { tr: 'Eski Spor Ayakkabı', en: 'Old Sports Shoes'}, 
+                    categoryId: 2, 
+                    brandId: 2, 
+                    family: { tr: 'Ayakkabı', en: 'Shoes'}, 
+                    status: 'archived', 
+                    health: 55, 
+                    originalityScore: 65, 
+                    imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
+                    attributes: { 
+                        1: { value: 'Siyah', validationStatus: 'approved', rejectionReason: '' }, 
+                        2: { value: '42', validationStatus: 'approved', rejectionReason: '' }, 
+                        6: { value: '2cm', validationStatus: 'approved', rejectionReason: '' } 
+                    }, 
+                    variants: [], 
+                    lastUpdated: '2024-11-20T16:45:00Z',
+                    archivedAt: '2025-01-05T09:15:00Z',
+                    archivedBy: 'Admin User',
+                    archivedReason: 'Low performance - discontinued model'
+                },
+                { 
+                    id: 14, 
+                    sku: 'ARCH-003', 
+                    name: { tr: 'Eski Çanta Modeli', en: 'Old Bag Model'}, 
+                    categoryId: 1, 
+                    brandId: 3, 
+                    family: { tr: 'Çanta', en: 'Bag'}, 
+                    status: 'archived', 
+                    health: 45, 
+                    originalityScore: 50, 
+                    imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
+                    attributes: { 
+                        1: { value: 'Kahverengi', validationStatus: 'approved', rejectionReason: '' }, 
+                        3: { value: 'Deri', validationStatus: 'approved', rejectionReason: '' } 
+                    }, 
+                    variants: [], 
+                    lastUpdated: '2024-10-30T12:20:00Z',
+                    archivedAt: '2024-12-28T11:30:00Z',
+                    archivedBy: 'Admin User',
+                    archivedReason: 'Supplier request - no longer available'
+                },
                 // Mock products for "Gönderilenler" tab - products sent by suppliers for review
                 { 
                     id: 7, 
@@ -2502,6 +2568,78 @@
                 { id: 5, name: 'style', label: { tr: 'Stil', en: 'Style'}, type: 'Text', scopeable: false, default: '', lastUpdated: '2025-01-11T11:30:00Z' },
                 { id: 6, name: 'heel_height', label: { tr: 'Topuk Yüksekliği', en: 'Heel Height'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-10T13:20:00Z' },
                 //{ id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
+            ],
+            supplierProducts: [
+                { productId: 1, supplierId: 1, stock: 100, price: 499.99 },
+                { productId: 1, supplierId: 2, stock: 50, price: 510.00 },
+                { productId: 2, supplierId: 3, stock: 0, price: 1299.00 },
+                { productId: 3, supplierId: 1, stock: 30, price: 1150.00 },
+                { productId: 3, supplierId: 3, stock: 52, price: 1199.00 },
+                { productId: 4, supplierId: 2, stock: 205, price: 650.00 },
+                { productId: 5, supplierId: 1, stock: 200, price: 299.50 },
+                { productId: 5, supplierId: 2, stock: 150, price: 295.00 },
+                { productId: 5, supplierId: 3, stock: 150, price: 310.00 },
+                { productId: 6, supplierId: 1, stock: 5, price: 0 },
+                { productId: 6, supplierId: 2, stock: 0, price: 0 },
+                { productId: 6, supplierId: 3, stock: 0, price: 0 },
+                { productId: 7, supplierId: 1, stock: 75, price: 299.99 },
+                { productId: 7, supplierId: 2, stock: 45, price: 310.00 },
+                { productId: 8, supplierId: 2, stock: 25, price: 899.99 },
+                { productId: 8, supplierId: 3, stock: 15, price: 920.00 },
+                { productId: 9, supplierId: 1, stock: 0, price: 199.99 },
+                { productId: 10, supplierId: 3, stock: 60, price: 450.00 },
+                { productId: 10, supplierId: 1, stock: 40, price: 465.00 },
+                { productId: 11, supplierId: 2, stock: 80, price: 89.99 },
+                { productId: 11, supplierId: 1, stock: 65, price: 85.00 },
+                { productId: 12, supplierId: 4, stock: 120, price: 599.99 },
+                { productId: 12, supplierId: 1, stock: 90, price: 610.00 },
+                { productId: 13, supplierId: 3, stock: 0, price: 199.99 },
+                { productId: 14, supplierId: 5, stock: 30, price: 1299.99 },
+                { productId: 14, supplierId: 1, stock: 20, price: 1320.00 },
+                { productId: 15, supplierId: 1, stock: 100, price: 49.99 },
+                { productId: 15, supplierId: 2, stock: 85, price: 52.00 },
+                { productId: 16, supplierId: 2, stock: 60, price: 79.99 },
+                { productId: 16, supplierId: 1, stock: 45, price: 82.00 },
+                { productId: 17, supplierId: 1, stock: 35, price: 199.99 },
+                { productId: 17, supplierId: 3, stock: 25, price: 210.00 },
+                { productId: 18, supplierId: 3, stock: 0, price: 179.99 },
+                { productId: 19, supplierId: 4, stock: 40, price: 899.99 },
+                { productId: 19, supplierId: 1, stock: 30, price: 920.00 },
+                { productId: 20, supplierId: 3, stock: 55, price: 599.99 },
+                { productId: 20, supplierId: 2, stock: 40, price: 610.00 },
+                { productId: 21, supplierId: 4, stock: 80, price: 299.99 },
+                { productId: 21, supplierId: 1, stock: 65, price: 310.00 },
+                { productId: 22, supplierId: 2, stock: 70, price: 129.99 },
+                { productId: 22, supplierId: 1, stock: 55, price: 135.00 },
+                { productId: 23, supplierId: 1, stock: 0, price: 89.99 },
+                { productId: 24, supplierId: 2, stock: 45, price: 399.99 },
+                { productId: 24, supplierId: 3, stock: 35, price: 410.00 },
+                { productId: 25, supplierId: 3, stock: 50, price: 249.99 },
+                { productId: 25, supplierId: 1, stock: 40, price: 260.00 },
+                // Supplier products for "Gönderilenler" tab
+                { productId: 7, supplierId: 1, stock: 25, price: 199.99 },
+                { productId: 8, supplierId: 1, stock: 40, price: 450.00 },
+                { productId: 9, supplierId: 1, stock: 15, price: 350.00 },
+                { productId: 10, supplierId: 1, stock: 30, price: 180.00 },
+                { productId: 11, supplierId: 1, stock: 20, price: 220.00 },
+                { productId: 7, supplierId: 2, stock: 25, price: 199.99 },
+                { productId: 8, supplierId: 1, stock: 0, price: 0 },
+                // New arrivals supplier data
+                { productId: 9, supplierId: 1, stock: 45, price: 899.99 },
+                { productId: 10, supplierId: 2, stock: 30, price: 599.99 },
+                { productId: 11, supplierId: 1, stock: 60, price: 399.99 },
+                // Supplier products for testing filtering
+                { productId: 12, supplierId: 2, stock: 20, price: 280.00 },
+                { productId: 13, supplierId: 3, stock: 12, price: 420.00 },
+                // Supplier data for variant products
+                { productId: 101, supplierId: 1, stock: 15, price: 499.99 },
+                { productId: 102, supplierId: 1, stock: 20, price: 499.99 },
+                { productId: 201, supplierId: 2, stock: 8, price: 1299.00 },
+                { productId: 202, supplierId: 2, stock: 12, price: 1299.00 },
+                // Archived products supplier data
+                { productId: 12, supplierId: 1, stock: 0, price: 0 },
+                { productId: 13, supplierId: 2, stock: 0, price: 0 },
+                { productId: 14, supplierId: 1, stock: 0, price: 0 }
             ],
             channels: [
                 { id: 1, name: 'Trendyol', status: 'active', productCount: 6293, currency: 'TRY' },
@@ -4201,7 +4339,7 @@
             products: (activeTab = 'yeni-gelenler', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
-                     if (activeTab !== 'onaylanan' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler') {
+                     if (activeTab !== 'onaylanan' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler' && activeTab !== 'archived') {
                         navigateTo('#products/draft');
                         return;
                     }
@@ -4223,6 +4361,9 @@
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission).length;
                 const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
                 const priceUpdateRequestsCount = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
+                const archivedCount = isCurrentUserSupplier && currentUserSupplierId ? 
+                    mockData.products.filter(p => p.status === 'archived' && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === currentUserSupplierId)).length :
+                    mockData.products.filter(p => p.status === 'archived').length;
 
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
@@ -4247,6 +4388,10 @@
                             <span>Reddedilen</span>
                             <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full">${reddedilenCount}</span>
                         </a>
+                        <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                            <span>Arşivlenen</span>
+                            <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
+                        </a>
                     </nav>` :
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
                                 <a href="#products/yeni-gelenler" class="tab-button flex items-center space-x-2 ${activeTab === 'yeni-gelenler' ? 'active' : 'text-gray-500'} font-medium py-4">
@@ -4264,6 +4409,10 @@
                                 <a href="#products/onaylanan" class="tab-button flex items-center space-x-2 ${activeTab === 'onaylanan' ? 'active' : 'text-gray-500'} font-medium py-4">
                                     <span>${t('onaylanan')}</span>
                                     <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
+                                </a>
+                                <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                    <span>Arşivlenen</span>
+                                    <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
                                 </a>
                     </nav>`;
 
@@ -7882,33 +8031,156 @@
         function downloadSpecificTemplate(templateType) {
             closeTemplateDropdown();
             
+            // For add_update template, show category selection first
+            if (templateType === 'add_update') {
+                showCategorySelectionModal(templateType);
+            } else {
+                // For other templates, download directly
+                downloadTemplateWithCategory(templateType, null);
+            }
+        }
+        
+        function showCategorySelectionModal(templateType) {
+            // Build category options
+            const categoryOptions = mockData.categories
+                .filter(cat => cat.active)
+                .map(cat => {
+                    const attributes = cat.attributes ? cat.attributes.map(attrId => {
+                        const attr = mockData.attributes.find(a => a.id === attrId);
+                        return attr ? t(attr.label) : '';
+                    }).filter(Boolean) : [];
+                    
+                    return `
+                        <div class="category-option border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors" 
+                             onclick="selectCategoryForTemplate(${cat.id}, '${templateType}')">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">${t(cat.name)}</h4>
+                                    <p class="text-sm text-gray-500 mt-1">ID: ${cat.id}</p>
+                                    ${attributes.length > 0 ? `
+                                        <div class="mt-2">
+                                            <p class="text-xs text-gray-600 font-medium">Gerekli Özellikler:</p>
+                                            <div class="flex flex-wrap gap-1 mt-1">
+                                                ${attributes.map(attr => `
+                                                    <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${attr}</span>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    ` : '<p class="text-xs text-gray-500 mt-1">Özel özellik gerektirmez</p>'}
+                                </div>
+                                <i class="fas fa-chevron-right text-gray-400"></i>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            
+            const modalBody = `
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-start">
+                            <i class="fas fa-info-circle text-blue-500 mt-0.5 mr-3"></i>
+                            <div>
+                                <h4 class="font-medium text-blue-900">Kategori Seçimi</h4>
+                                <p class="text-sm text-blue-700 mt-1">
+                                    Hangi kategori için şablon indirmek istediğinizi seçin. Her kategorinin farklı özellik gereksinimleri olabilir.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 max-h-96 overflow-y-auto">
+                        ${categoryOptions}
+                    </div>
+                </div>
+            `;
+            
+            showModal('Kategori Seçin', modalBody, 'İptal', closeModal);
+        }
+        
+        function selectCategoryForTemplate(categoryId, templateType) {
+            closeModal();
+            downloadTemplateWithCategory(templateType, categoryId);
+        }
+        
+        function downloadTemplateWithCategory(templateType, categoryId) {
             let csvContent = '';
             let filename = '';
+            let categoryName = '';
+
+            if (categoryId) {
+                const category = mockData.categories.find(c => c.id === categoryId);
+                categoryName = category ? t(category.name) : 'Kategori';
+            }
 
             switch (templateType) {
                 case 'add_update':
-                    csvContent = 'name,description,price,stock,category\n' +
-                        'Örnek Ürün 1,Bu bir örnek ürün açıklamasıdır,99.99,50,Elektronik\n' +
-                        'Örnek Ürün 2,Bu da başka bir örnek ürün açıklamasıdır,149.50,25,Giyim\n' +
-                        'Örnek Ürün 3,Üçüncü örnek ürün açıklaması,75.00,30,Spor';
-                    filename = 'urun_ekleme_sablonu.csv';
+                    // Build CSV content based on category attributes
+                    let headers = ['sku', 'name', 'categoryId', 'stock', 'price_TRY'];
+                    let sampleData = [];
+                    
+                    if (categoryId) {
+                        const category = mockData.categories.find(c => c.id === categoryId);
+                        if (category && category.attributes) {
+                            // Add attribute columns
+                            category.attributes.forEach(attrId => {
+                                const attr = mockData.attributes.find(a => a.id === attrId);
+                                if (attr) {
+                                    headers.push(attr.name);
+                                }
+                            });
+                        }
+                        
+                        // Create sample data
+                        sampleData = [
+                            `BULK-001,Örnek ${categoryName} Ürün 1,${categoryId},50,99.99`,
+                            `BULK-002,Örnek ${categoryName} Ürün 2,${categoryId},25,149.50`,
+                            `BULK-003,Örnek ${categoryName} Ürün 3,${categoryId},30,75.00`
+                        ];
+                        
+                        // Add attribute sample values
+                        if (category && category.attributes) {
+                            category.attributes.forEach(attrId => {
+                                const attr = mockData.attributes.find(a => a.id === attrId);
+                                if (attr) {
+                                    const sampleValue = attr.options && attr.options.length > 0 ? attr.options[0] : 'Örnek Değer';
+                                    sampleData = sampleData.map(row => row + `,${sampleValue}`);
+                                }
+                            });
+                        }
+                    } else {
+                        sampleData = [
+                            'BULK-001,Örnek Ürün 1,1,50,99.99',
+                            'BULK-002,Örnek Ürün 2,2,25,149.50',
+                            'BULK-003,Örnek Ürün 3,3,30,75.00'
+                        ];
+                    }
+                    
+                    csvContent = headers.join(',') + '\n' + sampleData.join('\n');
+                    filename = categoryId ? `urun_ekleme_sablonu_${categoryName.replace(/[^a-zA-Z0-9]/g, '_')}.csv` : 'urun_ekleme_sablonu.csv';
                     break;
+                    
                 case 'stock_price':
-                    csvContent = 'id,new_price,new_stock\n' +
-                        '1,89.99,100\n' +
-                        '2,199.50,75\n' +
-                        '3,125.00,50';
+                    csvContent = 'sku,new_price,new_stock\n' +
+                        'BULK-001,89.99,100\n' +
+                        'BULK-002,199.50,75\n' +
+                        'BULK-003,125.00,50';
                     filename = 'stok_fiyat_guncelleme_sablonu.csv';
                     break;
+                    
                 case 'archive':
-                    csvContent = 'id,archive_status\n' +
-                        '1,archive\n' +
-                        '2,unarchive\n' +
-                        '3,archive';
+                    csvContent = 'sku,action\n' +
+                        'BULK-001,archive\n' +
+                        'BULK-002,unarchive\n' +
+                        'BULK-003,archive';
                     filename = 'arsivleme_sablonu.csv';
                     break;
+                    
+                default:
+                    showToast('Geçersiz şablon tipi', 'error');
+                    return;
             }
-            
+
+            // Create and download the file
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
@@ -7919,7 +8191,10 @@
             link.click();
             document.body.removeChild(link);
             
-            showToast(`${filename} indirildi`, 'success');
+            const successMessage = categoryId ? 
+                `${categoryName} kategorisi için şablon başarıyla indirildi` : 
+                'Şablon başarıyla indirildi';
+            showToast(successMessage, 'success');
         }
 
         function downloadTemplate() {
@@ -8067,6 +8342,14 @@
                          p.supplierSubmission.supplierId === currentUserSupplierId && 
                          p.supplierSubmission.status === 'pending'
                      );
+                } else if (activeTab === 'archived') {
+                    // Show archived products for current supplier
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    filteredProducts = mockData.products.filter(p => 
+                        p.status === 'archived' && 
+                        p.supplierProducts && 
+                        p.supplierProducts.some(sp => sp.supplierId === currentUserSupplierId)
+                    );
                 }
             } else {
                 // Admin users can see all product tabs
@@ -8076,6 +8359,8 @@
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
                 } else if (activeTab === 'onaylanan') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
+                } else if (activeTab === 'archived') {
+                    filteredProducts = mockData.products.filter(p => p.status === 'archived');
                 }
             }
             
@@ -8153,8 +8438,8 @@
                 if (activeTab === 'gonderilenler' && product.status === 'draft' && product.supplierSubmission) {
                     statusText = 'Gönderildi';
                     statusClass = 'bg-blue-100 text-blue-800';
-                } else if (activeTab === 'guncelleme-bekleyenler' && product.status === 'active' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
-                    statusText = 'Güncelleme Bekliyor';
+                } else if (activeTab === 'guncelleme-bekleyenler' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
+                    statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
                 } else {
                     statusClass = {
@@ -8326,8 +8611,8 @@
                 if (activeTab === 'gonderilenler' && product.status === 'draft' && product.supplierSubmission) {
                     statusText = 'Gönderildi';
                     statusClass = 'bg-blue-100 text-blue-800';
-                } else if (activeTab === 'guncelleme-bekleyenler' && product.status === 'active' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
-                    statusText = 'Güncelleme Bekliyor';
+                } else if (activeTab === 'guncelleme-bekleyenler' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
+                    statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
                 } else {
                     statusClass = {
@@ -11499,8 +11784,8 @@
                 }
 
                 const isRejected = p.status === 'rejected';
-                const rowClass = isRejected ? 'border-b hover:bg-gray-50 cursor-pointer' : 'border-b hover:bg-gray-50';
-                const clickHandler = isRejected ? `onclick="showRejectionDetailModal(${p.id})"` : '';
+                const rowClass = 'border-b hover:bg-gray-50 cursor-pointer';
+                const clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
 
                 return `
                 <tr class="${rowClass}" ${clickHandler}>
@@ -11607,10 +11892,9 @@
                     <td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>
                     <td class="p-3 text-sm text-gray-500">${formatTimeAgo(p.lastUpdated)}</td>
                     <td class="p-3 text-right">
-                        ${isRejected ? 
-                            `<button onclick="event.stopPropagation(); showRejectionDetailModal(${p.id})" class="p-2 text-gray-500 hover:text-red-600" title="Red Detayları"><i class="fas fa-info-circle"></i></button>` :
-                            `<a href="#products/detail/${p.id}" class="p-2 text-gray-500 hover:text-blue-600"><i class="fas fa-edit"></i></a>`
-                        }
+                        <a href="#products/detail/${p.id}" class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation();">
+                            <i class="fas fa-edit"></i>
+                        </a>
                     </td>
                 </tr>
                 `;
@@ -12639,29 +12923,6 @@
                         <button id="clearAllFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Tümünü Temizle</button>
                     </div>
 
-                    <!-- Filter Presets -->
-                    <div class="filter-section">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="font-semibold text-sm text-gray-700 flex items-center">
-                                <i class="fas fa-bookmark text-blue-600 mr-2"></i>
-                                Hızlı Filtreler
-                            </label>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <button class="filter-preset text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors" data-preset="new-products">
-                                <i class="fas fa-star mr-1"></i>Yeni Ürünler
-                            </button>
-                            <button class="filter-preset text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors" data-preset="low-stock">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>Düşük Stok
-                            </button>
-                            <button class="filter-preset text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors" data-preset="draft-products">
-                                <i class="fas fa-edit mr-1"></i>Taslak Ürünler
-                            </button>
-                            <button class="filter-preset text-xs px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors" data-preset="high-value">
-                                <i class="fas fa-gem mr-1"></i>Yüksek Değer
-                            </button>
-                        </div>
-                    </div>
 
                     <!-- Product Status Filter -->
                     <div class="filter-section">
@@ -12762,57 +13023,18 @@
                         </select>
                     </div>
 
-                    <!-- Date Range Filter -->
-                    <div class="filter-section">
-                        <div class="flex items-center justify-between mb-3">
-                            <label class="font-semibold text-sm text-gray-700 flex items-center">
-                                <i class="fas fa-calendar text-blue-600 mr-2"></i>
-                                Güncelleme Tarihi
-                            </label>
-                        </div>
-                        <div class="space-y-2">
-                            <input type="date" id="f_date_from" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                            <input type="date" id="f_date_to" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                        </div>
-                    </div>
 
-                    <!-- Product Health Filter -->
+
+                    <!-- Attribute Filters -->
                     <div class="filter-section">
                         <div class="flex items-center justify-between mb-3">
                             <label class="font-semibold text-sm text-gray-700 flex items-center">
-                                <i class="fas fa-heartbeat text-blue-600 mr-2"></i>
-                                Ürün Sağlığı
+                                <i class="fas fa-list-ul text-blue-600 mr-2"></i>
+                                Ürün Özellikleri
                             </label>
                         </div>
-                        <div class="space-y-2">
-                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                                <input type="checkbox" id="f_health_excellent" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
-                                <span class="flex items-center">
-                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                                    Mükemmel (90-100%)
-                                </span>
-                            </label>
-                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                                <input type="checkbox" id="f_health_good" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
-                                <span class="flex items-center">
-                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                                    İyi (70-89%)
-                                </span>
-                            </label>
-                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                                <input type="checkbox" id="f_health_poor" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
-                                <span class="flex items-center">
-                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                                    Zayıf (50-69%)
-                                </span>
-                            </label>
-                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                                <input type="checkbox" id="f_health_critical" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
-                                <span class="flex items-center">
-                                    <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
-                                    Kritik (0-49%)
-                                </span>
-                            </label>
+                        <div class="space-y-4" id="attribute-filters-container">
+                            ${generateAttributeFilters()}
                         </div>
                     </div>
                 </div>
@@ -12823,6 +13045,136 @@
             filterPanel.classList.remove('translate-x-full'); 
         }
         function closeFilterPanel() { filterPanel.classList.add('translate-x-full'); }
+        
+        // Generate attribute filters dynamically
+        function generateAttributeFilters() {
+            const attributes = mockData.attributes || [];
+            let attributeFiltersHTML = '';
+            
+            // Get selected category to filter relevant attributes
+            const selectedCategoryId = document.getElementById('f_category')?.value;
+            let relevantAttributes = attributes;
+            
+            if (selectedCategoryId) {
+                const category = mockData.categories.find(c => c.id == selectedCategoryId);
+                if (category && category.attributes) {
+                    relevantAttributes = attributes.filter(attr => category.attributes.includes(attr.id));
+                }
+            }
+            
+            relevantAttributes.forEach(attribute => {
+                const attributeId = attribute.id;
+                const attributeName = t(attribute.label);
+                const attributeType = attribute.type;
+                
+                // Get unique values for this attribute from all products (or filtered by category)
+                let productsToCheck = mockData.products;
+                if (selectedCategoryId) {
+                    productsToCheck = productsToCheck.filter(product => product.categoryId == selectedCategoryId);
+                }
+                
+                const uniqueValues = [...new Set(
+                    productsToCheck
+                        .filter(product => product.attributes && product.attributes[attributeId])
+                        .map(product => product.attributes[attributeId].value)
+                        .filter(value => value && value.trim() !== '')
+                )].sort();
+                
+                if (uniqueValues.length === 0) return; // Skip attributes with no values
+                
+                let filterHTML = `
+                    <div class="attribute-filter" data-attribute-id="${attributeId}">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="text-sm font-medium text-gray-600">${attributeName}</label>
+                            <span class="text-xs text-gray-400">${uniqueValues.length} seçenek</span>
+                        </div>
+                `;
+                
+                if (attributeType === 'Select' && attribute.options && attribute.options.length > 0) {
+                    // Use predefined options for Select type attributes
+                    filterHTML += `
+                        <select id="f_attr_${attributeId}" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                            <option value="">Tümü</option>
+                            ${attribute.options.map(option => 
+                                `<option value="${option}">${option}</option>`
+                            ).join('')}
+                        </select>
+                    `;
+                } else if (attributeType === 'Number') {
+                    // Number range inputs for numeric attributes
+                    filterHTML += `
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="number" id="f_attr_${attributeId}_min" placeholder="Min" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                                <input type="number" id="f_attr_${attributeId}_max" placeholder="Max" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Text input or multi-select for other types
+                    if (uniqueValues.length <= 10) {
+                        // Show checkboxes for attributes with few unique values
+                        filterHTML += `
+                            <div class="space-y-1 max-h-32 overflow-y-auto">
+                                ${uniqueValues.map(value => {
+                                    const count = productsToCheck.filter(product => 
+                                        product.attributes && 
+                                        product.attributes[attributeId] && 
+                                        product.attributes[attributeId].value === value
+                                    ).length;
+                                    return `
+                                        <label class="flex items-center justify-between p-1 rounded hover:bg-gray-50 cursor-pointer transition-colors">
+                                            <div class="flex items-center">
+                                                <input type="checkbox" id="f_attr_${attributeId}_${value.replace(/[^a-zA-Z0-9]/g, '_')}" value="${value}" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-2 text-xs">
+                                                <span class="text-xs text-gray-700">${value}</span>
+                                            </div>
+                                            <span class="text-xs text-gray-400">(${count})</span>
+                                        </label>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `;
+                    } else {
+                        // Show text input for attributes with many unique values
+                        filterHTML += `
+                            <input type="text" id="f_attr_${attributeId}" placeholder="${attributeName} ara..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                        `;
+                    }
+                }
+                
+                filterHTML += '</div>';
+                attributeFiltersHTML += filterHTML;
+            });
+            
+            return attributeFiltersHTML || '<p class="text-sm text-gray-500 text-center py-4">Henüz ürün özelliği bulunmuyor.</p>';
+        }
+        
+        // Refresh attribute filters when category changes
+        function refreshAttributeFilters() {
+            const container = document.getElementById('attribute-filters-container');
+            if (container) {
+                container.innerHTML = generateAttributeFilters();
+                // Re-attach event listeners to new attribute filter elements
+                document.querySelectorAll('#attribute-filters-container input, #attribute-filters-container select').forEach(input => {
+                    if (input.type === 'number') {
+                        input.addEventListener('input', debounce(() => {
+                            updateActiveFiltersCount();
+                            applyFilters();
+                        }, 300));
+                    } else if (input.type === 'checkbox') {
+                        input.addEventListener('change', () => {
+                            updateActiveFiltersCount();
+                            applyFilters();
+                        });
+                    } else {
+                        input.addEventListener('input', debounce(() => {
+                            updateActiveFiltersCount();
+                            applyFilters();
+                        }, 300));
+                    }
+                });
+            }
+        }
         
         // Filter event listeners and logic
         function setupFilterEventListeners() {
@@ -12844,13 +13196,6 @@
                 applyBtn.addEventListener('click', applyFilters);
             }
             
-            // Filter preset buttons
-            document.querySelectorAll('.filter-preset').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const preset = e.target.dataset.preset;
-                    applyFilterPreset(preset);
-                });
-            });
             
             // Price preset buttons
             document.querySelectorAll('.price-preset').forEach(btn => {
@@ -12881,17 +13226,14 @@
             document.querySelectorAll('select[id^="f_"]').forEach(select => {
                 select.addEventListener('change', () => {
                     updateActiveFiltersCount();
+                    // Refresh attribute filters when category changes
+                    if (select.id === 'f_category') {
+                        refreshAttributeFilters();
+                    }
                     applyFilters();
                 });
             });
             
-            // Date inputs
-            document.querySelectorAll('input[type="date"]').forEach(input => {
-                input.addEventListener('change', () => {
-                    updateActiveFiltersCount();
-                    applyFilters();
-                });
-            });
             
             // Number inputs
             document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -12899,6 +13241,26 @@
                     updateActiveFiltersCount();
                     applyFilters();
                 }, 300));
+            });
+            
+            // Attribute filter inputs
+            document.querySelectorAll('#attribute-filters-container input, #attribute-filters-container select').forEach(input => {
+                if (input.type === 'number') {
+                    input.addEventListener('input', debounce(() => {
+                        updateActiveFiltersCount();
+                        applyFilters();
+                    }, 300));
+                } else if (input.type === 'checkbox') {
+                    input.addEventListener('change', () => {
+                        updateActiveFiltersCount();
+                        applyFilters();
+                    });
+                } else {
+                    input.addEventListener('input', debounce(() => {
+                        updateActiveFiltersCount();
+                        applyFilters();
+                    }, 300));
+                }
             });
         }
         
@@ -12923,12 +13285,22 @@
             activeCount += Array.from(selects).filter(select => select.value !== '').length;
             
             // Count filled inputs
-            const inputs = document.querySelectorAll('input[type="date"], input[type="number"]');
+            const inputs = document.querySelectorAll('input[type="number"]');
             activeCount += Array.from(inputs).filter(input => input.value !== '').length;
             
-            // Count health filters
-            const healthCheckboxes = document.querySelectorAll('input[id^="f_health_"]');
-            activeCount += Array.from(healthCheckboxes).filter(cb => cb.checked).length;
+            // Count attribute filters
+            const attributeInputs = document.querySelectorAll('#attribute-filters-container input, #attribute-filters-container select');
+            attributeInputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    if (input.checked) activeCount++;
+                } else if (input.type === 'number') {
+                    if (input.value !== '') activeCount++;
+                } else if (input.tagName === 'SELECT') {
+                    if (input.value !== '') activeCount++;
+                } else if (input.type === 'text') {
+                    if (input.value.trim() !== '') activeCount++;
+                }
+            });
             
             const activeFiltersCountEl = document.getElementById('active-filters-count');
             if (activeFiltersCountEl) {
@@ -12948,8 +13320,17 @@
             });
             
             // Clear all inputs
-            document.querySelectorAll('input[type="date"], input[type="number"]').forEach(input => {
+            document.querySelectorAll('input[type="number"]').forEach(input => {
                 input.value = '';
+            });
+            
+            // Clear attribute filters
+            document.querySelectorAll('#attribute-filters-container input, #attribute-filters-container select').forEach(input => {
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
             });
             
             // Clear price preset active states
@@ -12982,7 +13363,7 @@
         }
         
         function getCurrentFilters() {
-            return {
+            const filters = {
                 status: {
                     active: document.getElementById('f_active')?.checked || false,
                     passive: document.getElementById('f_passive')?.checked || false,
@@ -12993,15 +13374,49 @@
                 priceMin: document.getElementById('f_price_min')?.value || '',
                 priceMax: document.getElementById('f_price_max')?.value || '',
                 supplier: document.getElementById('f_supplier')?.value || '',
-                dateFrom: document.getElementById('f_date_from')?.value || '',
-                dateTo: document.getElementById('f_date_to')?.value || '',
-                health: {
-                    excellent: document.getElementById('f_health_excellent')?.checked || false,
-                    good: document.getElementById('f_health_good')?.checked || false,
-                    poor: document.getElementById('f_health_poor')?.checked || false,
-                    critical: document.getElementById('f_health_critical')?.checked || false
-                }
+                attributes: {}
             };
+            
+            // Get attribute filters
+            const attributes = mockData.attributes || [];
+            attributes.forEach(attribute => {
+                const attributeId = attribute.id;
+                const attributeType = attribute.type;
+                
+                if (attributeType === 'Select' && attribute.options && attribute.options.length > 0) {
+                    // Select dropdown
+                    const selectValue = document.getElementById(`f_attr_${attributeId}`)?.value;
+                    if (selectValue) {
+                        filters.attributes[attributeId] = { type: 'select', value: selectValue };
+                    }
+                } else if (attributeType === 'Number') {
+                    // Number range
+                    const minValue = document.getElementById(`f_attr_${attributeId}_min`)?.value;
+                    const maxValue = document.getElementById(`f_attr_${attributeId}_max`)?.value;
+                    if (minValue || maxValue) {
+                        filters.attributes[attributeId] = { 
+                            type: 'number', 
+                            min: minValue ? parseFloat(minValue) : null,
+                            max: maxValue ? parseFloat(maxValue) : null
+                        };
+                    }
+                } else {
+                    // Text input or checkboxes
+                    const textValue = document.getElementById(`f_attr_${attributeId}`)?.value;
+                    if (textValue && textValue.trim()) {
+                        filters.attributes[attributeId] = { type: 'text', value: textValue.trim() };
+                    } else {
+                        // Check for checkboxes
+                        const checkboxes = document.querySelectorAll(`input[id^="f_attr_${attributeId}_"]:checked`);
+                        if (checkboxes.length > 0) {
+                            const values = Array.from(checkboxes).map(cb => cb.value);
+                            filters.attributes[attributeId] = { type: 'checkbox', values: values };
+                        }
+                    }
+                }
+            });
+            
+            return filters;
         }
         
         function filterProducts(products, filters) {
@@ -13050,22 +13465,43 @@
                     if (!hasSupplier) return false;
                 }
                 
-                // Date filter
-                if (filters.dateFrom || filters.dateTo) {
-                    const productDate = new Date(product.lastUpdated);
-                    if (filters.dateFrom && productDate < new Date(filters.dateFrom)) return false;
-                    if (filters.dateTo && productDate > new Date(filters.dateTo)) return false;
-                }
                 
-                // Health filter
-                if (filters.health.excellent || filters.health.good || filters.health.poor || filters.health.critical) {
-                    const health = product.health || 0;
-                    const healthMatch = 
-                        (filters.health.excellent && health >= 90) ||
-                        (filters.health.good && health >= 70 && health < 90) ||
-                        (filters.health.poor && health >= 50 && health < 70) ||
-                        (filters.health.critical && health < 50);
-                    if (!healthMatch) return false;
+                // Attribute filters
+                for (const [attributeId, attributeFilter] of Object.entries(filters.attributes)) {
+                    const productAttribute = product.attributes && product.attributes[attributeId];
+                    if (!productAttribute || !productAttribute.value) {
+                        return false; // Product doesn't have this attribute
+                    }
+                    
+                    const attributeValue = productAttribute.value;
+                    
+                    if (attributeFilter.type === 'select') {
+                        // Exact match for select attributes
+                        if (attributeValue !== attributeFilter.value) {
+                            return false;
+                        }
+                    } else if (attributeFilter.type === 'number') {
+                        // Number range filter
+                        const numValue = parseFloat(attributeValue);
+                        if (isNaN(numValue)) return false;
+                        
+                        if (attributeFilter.min !== null && numValue < attributeFilter.min) {
+                            return false;
+                        }
+                        if (attributeFilter.max !== null && numValue > attributeFilter.max) {
+                            return false;
+                        }
+                    } else if (attributeFilter.type === 'text') {
+                        // Text search (case-insensitive)
+                        if (!attributeValue.toLowerCase().includes(attributeFilter.value.toLowerCase())) {
+                            return false;
+                        }
+                    } else if (attributeFilter.type === 'checkbox') {
+                        // Multiple value selection
+                        if (!attributeFilter.values.includes(attributeValue)) {
+                            return false;
+                        }
+                    }
                 }
                 
                 return true;
@@ -13080,38 +13516,6 @@
             }
         }
         
-        function applyFilterPreset(preset) {
-            // Clear all filters first
-            clearAllFilters();
-            
-            switch(preset) {
-                case 'new-products':
-                    // Show products added in the last 7 days
-                    const weekAgo = new Date();
-                    weekAgo.setDate(weekAgo.getDate() - 7);
-                    document.getElementById('f_date_from').value = weekAgo.toISOString().split('T')[0];
-                    break;
-                    
-                case 'low-stock':
-                    // Show products with low stock
-                    document.getElementById('f_stock').value = 'low_stock';
-                    break;
-                    
-                case 'draft-products':
-                    // Show only draft products
-                    document.getElementById('f_draft').checked = true;
-                    break;
-                    
-                case 'high-value':
-                    // Show products with price > 1000
-                    document.getElementById('f_price_min').value = '1000';
-                    break;
-            }
-            
-            updateStatusCount();
-            updateActiveFiltersCount();
-            applyFilters();
-        }
         function navigateTo(hash) { location.hash = hash; }
         function showBulkImportModal(type) { const isUpdate = type === 'update'; const title = isUpdate ? t('update_with_file') : t('import_with_file'); const body = `<div id="drop-zone" class="drop-zone p-10 text-center rounded-lg cursor-pointer"><input type="file" id="bulk-file-input" class="hidden" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"><i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i><p class="mt-4 text-gray-600">Dosyanızı buraya sürükleyin veya seçmek için tıklayın.</p><p id="file-name-display" class="mt-2 text-sm font-semibold text-blue-600"></p></div><div class="mt-4 text-xs text-gray-500 bg-gray-50 p-3 rounded-md"><h4 class="font-semibold mb-1">Dosya Formatı Talimatları:</h4><p>Lütfen bir CSV dosyası kullanın. Sütunlar şu sırada olmalıdır:</p><p class="font-mono mt-1">${isUpdate ? 'sku,stock,price_TRY' : 'sku,name,categoryId,stock,price_TRY'}</p><p class="mt-1">${isUpdate ? 'Güncellenecek ürünleri SKU ile eşleştirir.' : 'Yeni ürünler ekler. `name` alanı hem Türkçe hem İngilizce için kullanılacaktır.'}</p></div>`; showModal(title, body, 'Dosyayı İşle', () => { const fileInput = document.getElementById('bulk-file-input'); if (fileInput.files.length > 0) { processBulkFile(type, fileInput.files[0]); } else { showModal('Hata', '<p>Lütfen işleme devam etmek için bir dosya seçin.</p>', 'Tamam', closeModal); } }); const dropZone = document.getElementById('drop-zone'); const fileInput = document.getElementById('bulk-file-input'); const fileNameDisplay = document.getElementById('file-name-display'); dropZone.addEventListener('click', () => fileInput.click()); fileInput.addEventListener('change', () => { if (fileInput.files.length > 0) { fileNameDisplay.textContent = fileInput.files[0].name; } }); dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); }); dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); }); dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('dragover'); if (e.dataTransfer.files.length > 0) { fileInput.files = e.dataTransfer.files; fileNameDisplay.textContent = fileInput.files[0].name; } }); }
         function processBulkFile(type, file) { showModal('İşleniyor...', '<div class="text-center"><i class="fas fa-spinner fa-spin text-4xl text-blue-600"></i><p class="mt-4">Toplu işlem gerçekleştiriliyor, lütfen bekleyin...</p></div>'); document.getElementById('modal-footer').classList.add('hidden'); setTimeout(() => { document.getElementById('modal-footer').classList.remove('hidden'); let successCount = 0; if (type === 'update') { successCount = 2; } else { 
@@ -17373,7 +17777,7 @@ const navLinksAdmin = [
     text: 'Ayarlar', 
     role: 'admin',
     children: [
-      { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçiler', role: 'admin' },
+      { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçi Listesi', role: 'admin' },
       { href: '#settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'admin' },
       { href: '#settings/api', icon: 'fa-key', text: 'API Anahtarları', role: 'admin' },
       { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
@@ -20870,11 +21274,31 @@ function renderGeneralTab(container, product, isSupplier) {
                     const attrData = productAttributes[attribute.id] || productAttributes[String(attribute.id)] || {};
                     const value = typeof attrData.value !== 'undefined' && attrData.value !== null ? String(attrData.value) : '';
                     const inputType = attribute.type === 'number' ? 'number' : 'text';
+                    
+                    // Check if this attribute was rejected
+                    const isRejected = attrData.validationStatus === 'rejected';
+                    const rejectionReason = attrData.rejectionReason || '';
+                    const borderClass = isRejected ? 'border-red-300 bg-red-50' : 'border-gray-300';
+                    const inputClass = isRejected ? 'border-red-300 bg-red-50' : 'border-gray-300';
+                    
                     return `
-                        <div class="grid grid-cols-3 gap-4 p-3 border rounded-md">
-                            <div><label class="font-medium">${t(attribute.label)}</label></div>
-                            <div><input type="${inputType}" value="${value.replace(/"/g, '&quot;')}" class="w-full px-2 py-1 border rounded text-sm supplier-attr-input" data-attr-id="${attribute.id}" placeholder="${t(attribute.label)}"></div>
-                            <div class="text-right"><span class="text-xs text-gray-500">Düzenlenebilir</span></div>
+                        <div class="grid grid-cols-3 gap-4 p-3 border rounded-md ${borderClass}">
+                            <div>
+                                <label class="font-medium flex items-center">
+                                    ${t(attribute.label)}
+                                    ${isRejected ? '<i class="fas fa-exclamation-triangle text-red-500 ml-2" title="Bu alan reddedildi"></i>' : ''}
+                                </label>
+                                ${isRejected && rejectionReason ? `<div class="text-xs text-red-600 mt-1">${rejectionReason}</div>` : ''}
+                            </div>
+                            <div>
+                                <input type="${inputType}" value="${value.replace(/"/g, '&quot;')}" class="w-full px-2 py-1 border rounded text-sm supplier-attr-input ${inputClass}" data-attr-id="${attribute.id}" placeholder="${t(attribute.label)}">
+                            </div>
+                            <div class="text-right">
+                                ${isRejected ? 
+                                    '<span class="text-xs text-red-600 font-medium">Reddedildi</span>' : 
+                                    '<span class="text-xs text-gray-500">Düzenlenebilir</span>'
+                                }
+                            </div>
                         </div>`;
                 }).join('');
             })();
@@ -21017,6 +21441,38 @@ function renderGeneralTab(container, product, isSupplier) {
                             </div>
                         </div>
                         
+                        ${product.status === 'rejected' && isSupplier ? `
+                        <!-- Rejection Information Section -->
+                        <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4 flex items-center text-red-800">
+                                <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+                                Red Bilgileri
+                            </h3>
+                            <div class="space-y-3">
+                                ${product.rejectionReasons && product.rejectionReasons.length > 0 ? `
+                                <div>
+                                    <h4 class="font-medium text-red-700 mb-2">Red Sebepleri:</h4>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        ${product.rejectionReasons.map(reason => `
+                                            <li class="text-sm text-red-600">${reason}</li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                                ` : ''}
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="font-semibold text-red-700">Red Tarihi:</span>
+                                        <span class="ml-2 text-red-600">${product.rejectedAt ? new Date(product.rejectedAt).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold text-red-700">Red Eden:</span>
+                                        <span class="ml-2 text-red-600">${product.rejectedBy || 'Bilinmiyor'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
                         <!-- Attributes Section -->
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <h3 class="text-lg font-semibold mb-4 flex items-center">
@@ -21036,10 +21492,23 @@ function renderGeneralTab(container, product, isSupplier) {
                                             const attrData = productAttributes[attribute.id] || productAttributes[String(attribute.id)];
                                             const value = attrData && typeof attrData.value !== 'undefined' && attrData.value !== null && String(attrData.value).trim() !== '' ? attrData.value : '-';
                                             
+                                            // Check if this attribute was rejected (for suppliers viewing rejected products)
+                                            const isRejected = attrData && attrData.validationStatus === 'rejected';
+                                            const rejectionReason = attrData && attrData.rejectionReason || '';
+                                            const borderClass = isRejected ? 'border-red-200 bg-red-50' : 'border-gray-200';
+                                            const textClass = isRejected ? 'text-red-600' : 'text-gray-600';
+                                            const valueClass = isRejected ? 'text-red-800 font-semibold' : 'font-medium';
+                                            
                                             return `
-                                                <div class="flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0">
-                                                    <span class="text-gray-600 font-medium">${t(attribute.label)}:</span>
-                                                    <span class="font-medium">${value}</span>
+                                                <div class="flex justify-between items-center py-2 border-b ${borderClass} last:border-b-0">
+                                                    <div class="flex items-center">
+                                                        <span class="${textClass} font-medium flex items-center">
+                                                            ${t(attribute.label)}:
+                                                            ${isRejected ? '<i class="fas fa-exclamation-triangle text-red-500 ml-2" title="Bu alan reddedildi"></i>' : ''}
+                                                        </span>
+                                                        ${isRejected && rejectionReason ? `<div class="text-xs text-red-600 ml-2">(${rejectionReason})</div>` : ''}
+                                                    </div>
+                                                    <span class="${valueClass}">${value}</span>
                                                 </div>
                                             `;
                                         }).join('');
@@ -23597,7 +24066,7 @@ function renderNavigation() {
             <div class="pl-4">
                 <a href="#adminSuppliers" class="sidebar-link">
                     <i class="fas fa-handshake"></i>
-                    <span>Tedarikçiler</span>
+                    <span>Tedarikçi Listesi</span>
                 </a>
                 <a href="#settings/users" class="sidebar-link">
                     <i class="fas fa-users"></i>
