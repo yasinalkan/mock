@@ -601,7 +601,7 @@
             incomplete_variants: { tr: 'Eksik varyantlar', en: 'Incomplete variants' },
             guncelleme_bekleyenler: { tr: 'Güncelleme Bekleyenler', en: 'Pending Updates' },
             yeni_gelenler: { tr: 'Yeni Gelenler', en: 'New Arrivals' },
-            onaylanan: { tr: 'Onaylanan', en: 'Approved' },
+            onaylanan: { tr: 'Aktif', en: 'Active' },
             similar_products: { tr: 'Benzer Ürünler', en: 'Similar Products' },
             compare: { tr: 'Karşılaştır', en: 'Compare' },
             product_comparison: { tr: 'Ürün Karşılaştırma', en: 'Product Comparison' },
@@ -918,12 +918,7 @@
         let mockData = {
             suppliers: [
                 { id: 1, name: 'ModaTedarik', status: 'approved', email: 'info@modatedarik.com', phone: '+90 212 555 0101', registrationDate: '2024-01-15', lastActivity: '2025-01-15T10:30:00Z' },
-                { id: 2, name: 'Ayakkabı A.Ş.', status: 'approved', email: 'iletisim@ayakkabi.com', phone: '+90 216 555 0202', registrationDate: '2024-02-20', lastActivity: '2025-01-14T15:45:00Z' },
-                { id: 3, name: 'Ana Depo', status: 'approved', email: 'depo@anadepo.com', phone: '+90 312 555 0303', registrationDate: '2024-03-10', lastActivity: '2025-01-13T09:20:00Z' },
-                { id: 4, name: 'Tekstil Dünyası', status: 'application_received', email: 'basvuru@tekstildunyasi.com', phone: '+90 232 555 0404', registrationDate: '2025-01-10', lastActivity: '2025-01-10T14:00:00Z' },
-                { id: 5, name: 'Giyim Merkezi', status: 'application_received', email: 'info@giyimmerkezi.com', phone: '+90 242 555 0505', registrationDate: '2025-01-12', lastActivity: '2025-01-12T11:30:00Z' },
-                { id: 6, name: 'Spor Malzemeleri', status: 'application_received', email: 'admin@spormalzemeleri.com', phone: '+90 352 555 0606', registrationDate: '2024-11-05', lastActivity: '2024-12-20T16:15:00Z' },
-                { id: 7, name: 'Ev Tekstili', status: 'rejected', email: 'basvuru@evtekstili.com', phone: '+90 262 555 0707', registrationDate: '2025-01-08', lastActivity: '2025-01-08T13:45:00Z' }
+                { id: 2, name: 'Ayakkabı A.Ş.', status: 'approved', email: 'iletisim@ayakkabi.com', phone: '+90 216 555 0202', registrationDate: '2024-02-20', lastActivity: '2025-01-14T15:45:00Z' }
             ],
             brands: [
                 { id: 1, name: 'Marka' },
@@ -2042,7 +2037,6 @@
                         '3': { value: '38', validationStatus: 'pending', rejectionReason: '' }
                     },
                     supplierSubmission: {
-                        supplierId: 3, // Başka Tedarikçi (not current supplier)
                         submittedAt: '2025-01-09T12:10:00Z',
                         name: {
                             value: { tr: 'Kadın Ayakkabı', en: 'Women\'s Shoes' },
@@ -2420,70 +2414,118 @@
                 },
             ],
             supplierProducts: [
-                { productId: 1, supplierId: 1, stock: 100, price: 499.99 },
-                { productId: 1, supplierId: 2, stock: 50, price: 510.00 },
-                { productId: 2, supplierId: 3, stock: 0, price: 1299.00 },
-                { productId: 3, supplierId: 1, stock: 30, price: 1150.00 },
-                { productId: 3, supplierId: 3, stock: 52, price: 1199.00 },
-                { productId: 4, supplierId: 2, stock: 205, price: 650.00 },
-                { productId: 5, supplierId: 1, stock: 200, price: 299.50 },
-                { productId: 5, supplierId: 2, stock: 150, price: 295.00 },
-                { productId: 5, supplierId: 3, stock: 150, price: 310.00 },
-                { productId: 6, supplierId: 1, stock: 5, price: 0 },
-                { productId: 7, supplierId: 1, stock: 75, price: 299.99 },
-                { productId: 7, supplierId: 2, stock: 45, price: 310.00 },
-                { productId: 8, supplierId: 2, stock: 25, price: 899.99 },
-                { productId: 8, supplierId: 3, stock: 15, price: 920.00 },
-                { productId: 9, supplierId: 1, stock: 0, price: 199.99 },
-                { productId: 10, supplierId: 3, stock: 60, price: 450.00 },
-                { productId: 10, supplierId: 1, stock: 40, price: 465.00 },
-                { productId: 11, supplierId: 2, stock: 80, price: 89.99 },
-                { productId: 11, supplierId: 1, stock: 65, price: 85.00 },
-                { productId: 12, supplierId: 4, stock: 120, price: 599.99 },
-                { productId: 12, supplierId: 1, stock: 90, price: 610.00 },
-                { productId: 13, supplierId: 3, stock: 0, price: 199.99 },
-                { productId: 14, supplierId: 5, stock: 30, price: 1299.99 },
-                { productId: 14, supplierId: 1, stock: 20, price: 1320.00 },
-                { productId: 15, supplierId: 1, stock: 100, price: 49.99 },
-                { productId: 15, supplierId: 2, stock: 85, price: 52.00 },
-                { productId: 16, supplierId: 2, stock: 60, price: 79.99 },
-                { productId: 16, supplierId: 1, stock: 45, price: 82.00 },
-                { productId: 17, supplierId: 1, stock: 35, price: 199.99 },
-                { productId: 17, supplierId: 3, stock: 25, price: 210.00 },
-                { productId: 18, supplierId: 3, stock: 0, price: 179.99 },
-                { productId: 19, supplierId: 4, stock: 40, price: 899.99 },
-                { productId: 19, supplierId: 1, stock: 30, price: 920.00 },
-                { productId: 20, supplierId: 3, stock: 55, price: 599.99 },
-                { productId: 20, supplierId: 2, stock: 40, price: 610.00 },
-                { productId: 21, supplierId: 4, stock: 80, price: 299.99 },
-                { productId: 21, supplierId: 1, stock: 65, price: 310.00 },
-                { productId: 22, supplierId: 2, stock: 70, price: 129.99 },
-                { productId: 22, supplierId: 1, stock: 55, price: 135.00 },
-                { productId: 23, supplierId: 1, stock: 0, price: 89.99 },
-                { productId: 24, supplierId: 2, stock: 45, price: 399.99 },
-                { productId: 24, supplierId: 3, stock: 35, price: 410.00 },
-                { productId: 25, supplierId: 3, stock: 50, price: 249.99 },
-                { productId: 25, supplierId: 1, stock: 40, price: 260.00 },
-                // Supplier products for "Gönderilenler" tab
-                { productId: 7, supplierId: 1, stock: 25, price: 199.99 },
-                { productId: 8, supplierId: 1, stock: 40, price: 450.00 },
-                { productId: 9, supplierId: 1, stock: 15, price: 350.00 },
-                { productId: 10, supplierId: 1, stock: 30, price: 180.00 },
-                { productId: 11, supplierId: 1, stock: 20, price: 220.00 },
-                { productId: 7, supplierId: 2, stock: 25, price: 199.99 },
-                { productId: 8, supplierId: 1, stock: 0, price: 0 },
-                // New arrivals supplier data
-                { productId: 9, supplierId: 1, stock: 45, price: 899.99 },
-                { productId: 10, supplierId: 2, stock: 30, price: 599.99 },
-                { productId: 11, supplierId: 1, stock: 60, price: 399.99 },
-                // Supplier products for testing filtering
-                { productId: 12, supplierId: 2, stock: 20, price: 280.00 },
-                { productId: 13, supplierId: 3, stock: 12, price: 420.00 },
+                // Product 1 - Taş Pamuk Elastan Dümeli Bermuda
+                { productId: 1, supplierId: 1, stock: 100, price: 499.99, isArchived: false, isBanned: false },
+                { productId: 1, supplierId: 2, stock: 50, price: 510.00, isArchived: false, isBanned: true },
+                
+                // Product 2 - Siyah Deri Ayakkabı
+                { productId: 2, supplierId: 1, stock: 25, price: 1250.00, isArchived: false, isBanned: true },
+                { productId: 2, supplierId: 2, stock: 40, price: 1299.00, isArchived: false, isBanned: false },
+                
+                // Product 3 - Mavi Gömlek
+                { productId: 3, supplierId: 1, stock: 30, price: 1150.00, isArchived: false, isBanned: false },
+                { productId: 3, supplierId: 2, stock: 45, price: 1120.00, isArchived: false, isBanned: false },
+                
+                // Product 4 - Beyaz T-Shirt
+                { productId: 4, supplierId: 1, stock: 80, price: 620.00, isArchived: false, isBanned: true },
+                { productId: 4, supplierId: 2, stock: 205, price: 650.00, isArchived: false, isBanned: false },
+                
+                // Product 5 - Kahverengi Pantolon
+                { productId: 5, supplierId: 1, stock: 200, price: 299.50, isArchived: false, isBanned: false },
+                { productId: 5, supplierId: 2, stock: 150, price: 295.00, isArchived: false, isBanned: true },
+                
+                // Product 6 - Kırmızı Elbise
+                { productId: 6, supplierId: 1, stock: 5, price: 450.00, isArchived: false, isBanned: false },
+                { productId: 6, supplierId: 2, stock: 0, price: 460.00, isArchived: false, isBanned: false },
+                
+                // Product 7 - Siyah Ceket
+                { productId: 7, supplierId: 1, stock: 75, price: 299.99, isArchived: false, isBanned: false },
+                { productId: 7, supplierId: 2, stock: 45, price: 310.00, isArchived: false, isBanned: true },
+                
+                // Product 8 - Beyaz Ayakkabı
+                { productId: 8, supplierId: 1, stock: 40, price: 850.00, isArchived: false, isBanned: false },
+                { productId: 8, supplierId: 2, stock: 25, price: 899.99, isArchived: false, isBanned: false },
+                
+                // Product 9 - Siyah Deri Ceket
+                { productId: 9, supplierId: 1, stock: 0, price: 199.99, isArchived: false, isBanned: false },
+                { productId: 9, supplierId: 2, stock: 15, price: 210.00, isArchived: false, isBanned: true },
+                
+                // Product 10 - Kırmızı Elbise
+                { productId: 10, supplierId: 1, stock: 40, price: 465.00, isArchived: false, isBanned: false },
+                { productId: 10, supplierId: 2, stock: 30, price: 470.00, isArchived: false, isBanned: false },
+                
+                // Product 11 - Mavi Jean Pantolon
+                { productId: 11, supplierId: 1, stock: 65, price: 85.00, isArchived: false, isBanned: true },
+                { productId: 11, supplierId: 2, stock: 80, price: 89.99, isArchived: false, isBanned: false },
+                
+                // Product 12 - Gri Sweatshirt
+                { productId: 12, supplierId: 1, stock: 90, price: 610.00, isArchived: false, isBanned: false },
+                { productId: 12, supplierId: 2, stock: 20, price: 620.00, isArchived: false, isBanned: true },
+                
+                // Product 13 - Siyah Bot
+                { productId: 13, supplierId: 1, stock: 25, price: 180.00, isArchived: false, isBanned: false },
+                { productId: 13, supplierId: 2, stock: 15, price: 185.00, isArchived: false, isBanned: false },
+                
+                // Product 14 - Beyaz Spor Ayakkabı
+                { productId: 14, supplierId: 1, stock: 20, price: 1320.00, isArchived: false, isBanned: true },
+                { productId: 14, supplierId: 2, stock: 35, price: 1300.00, isArchived: false, isBanned: false },
+                
+                // Product 15 - Siyah Çanta
+                { productId: 15, supplierId: 1, stock: 100, price: 49.99, isArchived: false, isBanned: false },
+                { productId: 15, supplierId: 2, stock: 85, price: 52.00, isArchived: false, isBanned: false },
+                
+                // Product 16 - Mavi Çanta
+                { productId: 16, supplierId: 1, stock: 45, price: 82.00, isArchived: false, isBanned: false },
+                { productId: 16, supplierId: 2, stock: 60, price: 79.99, isArchived: false, isBanned: false },
+                
+                // Product 17 - Kahverengi Çanta
+                { productId: 17, supplierId: 1, stock: 35, price: 199.99, isArchived: false, isBanned: false },
+                { productId: 17, supplierId: 2, stock: 25, price: 205.00, isArchived: false, isBanned: true },
+                
+                // Product 18 - Siyah Bot
+                { productId: 18, supplierId: 1, stock: 20, price: 170.00, isArchived: false, isBanned: true },
+                { productId: 18, supplierId: 2, stock: 15, price: 175.00, isArchived: false, isBanned: false },
+                
+                // Product 19 - Beyaz Spor Ayakkabı
+                { productId: 19, supplierId: 1, stock: 30, price: 920.00, isArchived: false, isBanned: false },
+                { productId: 19, supplierId: 2, stock: 25, price: 930.00, isArchived: false, isBanned: false },
+                
+                // Product 20 - Siyah Spor Ayakkabı
+                { productId: 20, supplierId: 1, stock: 35, price: 590.00, isArchived: false, isBanned: false },
+                { productId: 20, supplierId: 2, stock: 40, price: 610.00, isArchived: false, isBanned: false },
+                
+                // Product 21 - Beyaz T-Shirt
+                { productId: 21, supplierId: 1, stock: 65, price: 310.00, isArchived: false, isBanned: false },
+                { productId: 21, supplierId: 2, stock: 50, price: 315.00, isArchived: false, isBanned: false },
+                
+                // Product 22 - Siyah T-Shirt
+                { productId: 22, supplierId: 1, stock: 55, price: 135.00, isArchived: false, isBanned: false },
+                { productId: 22, supplierId: 2, stock: 70, price: 129.99, isArchived: false, isBanned: false },
+                
+                // Product 23 - Mavi T-Shirt
+                { productId: 23, supplierId: 1, stock: 0, price: 89.99, isArchived: false, isBanned: false },
+                { productId: 23, supplierId: 2, stock: 15, price: 92.00, isArchived: false, isBanned: true },
+                
+                // Product 24 - Kırmızı T-Shirt
+                { productId: 24, supplierId: 1, stock: 30, price: 395.00, isArchived: false, isBanned: true },
+                { productId: 24, supplierId: 2, stock: 45, price: 399.99, isArchived: false, isBanned: false },
+                
+                // Product 25 - Yeşil T-Shirt
+                { productId: 25, supplierId: 1, stock: 40, price: 260.00, isArchived: false, isBanned: false },
+                { productId: 25, supplierId: 2, stock: 35, price: 265.00, isArchived: false, isBanned: false },
+                
                 // Supplier data for variant products
-                { productId: 101, supplierId: 1, stock: 15, price: 499.99 },
-                { productId: 102, supplierId: 1, stock: 20, price: 499.99 },
-                { productId: 201, supplierId: 2, stock: 8, price: 1299.00 },
-                { productId: 202, supplierId: 2, stock: 12, price: 1299.00 },
+                { productId: 101, supplierId: 1, stock: 15, price: 499.99, isArchived: false, isBanned: false },
+                { productId: 101, supplierId: 2, stock: 20, price: 510.00, isArchived: false, isBanned: true },
+                
+                { productId: 102, supplierId: 1, stock: 20, price: 499.99, isArchived: false, isBanned: false },
+                { productId: 102, supplierId: 2, stock: 15, price: 510.00, isArchived: false, isBanned: false },
+                
+                { productId: 201, supplierId: 1, stock: 12, price: 1250.00, isArchived: false, isBanned: true },
+                { productId: 201, supplierId: 2, stock: 8, price: 1299.00, isArchived: false, isBanned: false },
+                
+                { productId: 202, supplierId: 1, stock: 15, price: 1250.00, isArchived: false, isBanned: false },
+                { productId: 202, supplierId: 2, stock: 12, price: 1299.00, isArchived: false, isBanned: false },
                 // Variant products for main product 1 (Bermuda)
                 { 
                     id: 101, 
@@ -2569,78 +2611,6 @@
                 { id: 6, name: 'heel_height', label: { tr: 'Topuk Yüksekliği', en: 'Heel Height'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-10T13:20:00Z' },
                 //{ id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
             ],
-            supplierProducts: [
-                { productId: 1, supplierId: 1, stock: 100, price: 499.99 },
-                { productId: 1, supplierId: 2, stock: 50, price: 510.00 },
-                { productId: 2, supplierId: 3, stock: 0, price: 1299.00 },
-                { productId: 3, supplierId: 1, stock: 30, price: 1150.00 },
-                { productId: 3, supplierId: 3, stock: 52, price: 1199.00 },
-                { productId: 4, supplierId: 2, stock: 205, price: 650.00 },
-                { productId: 5, supplierId: 1, stock: 200, price: 299.50 },
-                { productId: 5, supplierId: 2, stock: 150, price: 295.00 },
-                { productId: 5, supplierId: 3, stock: 150, price: 310.00 },
-                { productId: 6, supplierId: 1, stock: 5, price: 0 },
-                { productId: 6, supplierId: 2, stock: 0, price: 0 },
-                { productId: 6, supplierId: 3, stock: 0, price: 0 },
-                { productId: 7, supplierId: 1, stock: 75, price: 299.99 },
-                { productId: 7, supplierId: 2, stock: 45, price: 310.00 },
-                { productId: 8, supplierId: 2, stock: 25, price: 899.99 },
-                { productId: 8, supplierId: 3, stock: 15, price: 920.00 },
-                { productId: 9, supplierId: 1, stock: 0, price: 199.99 },
-                { productId: 10, supplierId: 3, stock: 60, price: 450.00 },
-                { productId: 10, supplierId: 1, stock: 40, price: 465.00 },
-                { productId: 11, supplierId: 2, stock: 80, price: 89.99 },
-                { productId: 11, supplierId: 1, stock: 65, price: 85.00 },
-                { productId: 12, supplierId: 4, stock: 120, price: 599.99 },
-                { productId: 12, supplierId: 1, stock: 90, price: 610.00 },
-                { productId: 13, supplierId: 3, stock: 0, price: 199.99 },
-                { productId: 14, supplierId: 5, stock: 30, price: 1299.99 },
-                { productId: 14, supplierId: 1, stock: 20, price: 1320.00 },
-                { productId: 15, supplierId: 1, stock: 100, price: 49.99 },
-                { productId: 15, supplierId: 2, stock: 85, price: 52.00 },
-                { productId: 16, supplierId: 2, stock: 60, price: 79.99 },
-                { productId: 16, supplierId: 1, stock: 45, price: 82.00 },
-                { productId: 17, supplierId: 1, stock: 35, price: 199.99 },
-                { productId: 17, supplierId: 3, stock: 25, price: 210.00 },
-                { productId: 18, supplierId: 3, stock: 0, price: 179.99 },
-                { productId: 19, supplierId: 4, stock: 40, price: 899.99 },
-                { productId: 19, supplierId: 1, stock: 30, price: 920.00 },
-                { productId: 20, supplierId: 3, stock: 55, price: 599.99 },
-                { productId: 20, supplierId: 2, stock: 40, price: 610.00 },
-                { productId: 21, supplierId: 4, stock: 80, price: 299.99 },
-                { productId: 21, supplierId: 1, stock: 65, price: 310.00 },
-                { productId: 22, supplierId: 2, stock: 70, price: 129.99 },
-                { productId: 22, supplierId: 1, stock: 55, price: 135.00 },
-                { productId: 23, supplierId: 1, stock: 0, price: 89.99 },
-                { productId: 24, supplierId: 2, stock: 45, price: 399.99 },
-                { productId: 24, supplierId: 3, stock: 35, price: 410.00 },
-                { productId: 25, supplierId: 3, stock: 50, price: 249.99 },
-                { productId: 25, supplierId: 1, stock: 40, price: 260.00 },
-                // Supplier products for "Gönderilenler" tab
-                { productId: 7, supplierId: 1, stock: 25, price: 199.99 },
-                { productId: 8, supplierId: 1, stock: 40, price: 450.00 },
-                { productId: 9, supplierId: 1, stock: 15, price: 350.00 },
-                { productId: 10, supplierId: 1, stock: 30, price: 180.00 },
-                { productId: 11, supplierId: 1, stock: 20, price: 220.00 },
-                { productId: 7, supplierId: 2, stock: 25, price: 199.99 },
-                { productId: 8, supplierId: 1, stock: 0, price: 0 },
-                // New arrivals supplier data
-                { productId: 9, supplierId: 1, stock: 45, price: 899.99 },
-                { productId: 10, supplierId: 2, stock: 30, price: 599.99 },
-                { productId: 11, supplierId: 1, stock: 60, price: 399.99 },
-                // Supplier products for testing filtering
-                { productId: 12, supplierId: 2, stock: 20, price: 280.00 },
-                { productId: 13, supplierId: 3, stock: 12, price: 420.00 },
-                // Supplier data for variant products
-                { productId: 101, supplierId: 1, stock: 15, price: 499.99 },
-                { productId: 102, supplierId: 1, stock: 20, price: 499.99 },
-                { productId: 201, supplierId: 2, stock: 8, price: 1299.00 },
-                { productId: 202, supplierId: 2, stock: 12, price: 1299.00 },
-                // Archived products supplier data
-                { productId: 12, supplierId: 1, stock: 0, price: 0 },
-                { productId: 13, supplierId: 2, stock: 0, price: 0 },
-                { productId: 14, supplierId: 1, stock: 0, price: 0 }
-            ],
             channels: [
                 { id: 1, name: 'Trendyol', status: 'active', productCount: 6293, currency: 'TRY' },
                 { id: 2, name: 'Hepsiburada', status: 'active', productCount: 5840, currency: 'TRY' },
@@ -2724,7 +2694,6 @@
                 },
                 { 
                     id: 'REV-003', 
-                    supplierId: 3, 
                     supplierName: 'Ana Depo',
                     date: '2025-01-15', 
                     period: 'Ocak 2025', 
@@ -2763,7 +2732,6 @@
                 },
                 { 
                     id: 'REV-006', 
-                    supplierId: 3, 
                     supplierName: 'Ana Depo',
                     date: '2024-12-15', 
                     period: 'Aralık 2024', 
@@ -2802,7 +2770,6 @@
                 },
                 { 
                     id: 'REV-009', 
-                    supplierId: 3, 
                     supplierName: 'Ana Depo',
                     date: '2024-11-15', 
                     period: 'Kasım 2024', 
@@ -4319,7 +4286,7 @@
                                 <ul>${pendingItems || '<li class=\\"py-4 text-center text-gray-500\\">Bekleyen iade yok</li>'}</ul>
                             </div>
                             <div class=\"bg-white p-6 rounded-lg shadow\">
-                                <div class=\"flex items-center justify-between mb-4\"><h3 class=\"text-gray-900 font-semibold\">Düşük Stoklu Ürünler</h3><a href=\"#products/onaylanan\" class=\"text-blue-600 text-sm\">Ürünler</a></div>
+                                <div class=\"flex items-center justify-between mb-4\"><h3 class=\"text-gray-900 font-semibold\">Düşük Stoklu Ürünler</h3><a href=\"#products/aktif\" class=\"text-blue-600 text-sm\">Ürünler</a></div>
                                 <ul>${lowStockItems || '<li class=\\"py-4 text-center text-gray-500\\">Düşük stoklu ürün yok</li>'}</ul>
                             </div>
                         </div>
@@ -4339,7 +4306,7 @@
             products: (activeTab = 'yeni-gelenler', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
-                     if (activeTab !== 'onaylanan' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler' && activeTab !== 'archived') {
+                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler') {
                         navigateTo('#products/draft');
                         return;
                     }
@@ -4362,8 +4329,32 @@
                 const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
                 const priceUpdateRequestsCount = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
                 const archivedCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => p.status === 'archived' && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === currentUserSupplierId)).length :
+                    mockData.products.filter(p => p.status === 'archived' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length :
                     mockData.products.filter(p => p.status === 'archived').length;
+                
+                // Count out-of-stock products (stock: 0)
+                const outOfStockCount = isCurrentUserSupplier && currentUserSupplierId ? 
+                    mockData.products.filter(p => {
+                        const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
+                        const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.stock === 0);
+                        return hasSupplierProduct && isOutOfStock;
+                    }).length :
+                    mockData.products.filter(p => {
+                        const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.stock === 0);
+                        return isOutOfStock;
+                    }).length;
+                
+                // Count banned products
+                const bannedCount = isCurrentUserSupplier && currentUserSupplierId ? 
+                    mockData.products.filter(p => {
+                        const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === true);
+                        return hasSupplierProduct && isBanned;
+                    }).length :
+                    mockData.products.filter(p => {
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true);
+                        return isBanned;
+                    }).length;
 
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
@@ -4380,7 +4371,11 @@
                              <span>Güncelleme Bekleyenler</span>
                              <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">${guncellemeBekleyenlerCount}</span>
                         </a>
-                        <a href="#products/onaylanan" class="tab-button flex items-center space-x-2 ${activeTab === 'onaylanan' ? 'active' : 'text-gray-500'} font-medium py-4">
+                        <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' ? 'active' : 'text-gray-500'} font-medium py-4">
+                            <span>Talepler</span>
+                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
+                        </a>
+                        <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                             <span>${t('onaylanan')}</span>
                             <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
                         </a>
@@ -4388,10 +4383,27 @@
                             <span>Reddedilen</span>
                             <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full">${reddedilenCount}</span>
                         </a>
-                        <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>Arşivlenen</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
-                        </a>
+                        <div class="relative group">
+                            <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <span>Pasif</span>
+                                <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
+                                <i class="fas fa-chevron-down text-xs ml-1"></i>
+                            </a>
+                            <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                <a href="#products/archived" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                    <span>Tümü</span>
+                                    <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedCount}</span>
+                                </a>
+                                <a href="#products/out-of-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                    <span>Stoğu Bitenler</span>
+                                    <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
+                                </a>
+                                <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <span>Yasaklananlar</span>
+                                    <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
+                                </a>
+                            </div>
+                        </div>
                     </nav>` :
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
                                 <a href="#products/yeni-gelenler" class="tab-button flex items-center space-x-2 ${activeTab === 'yeni-gelenler' ? 'active' : 'text-gray-500'} font-medium py-4">
@@ -4406,14 +4418,35 @@
                                     <span>Fiyat Güncelleme İstekleri</span>
                                     <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full">${priceUpdateRequestsCount}</span>
                                 </a>
-                                <a href="#products/onaylanan" class="tab-button flex items-center space-x-2 ${activeTab === 'onaylanan' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                    <span>Talepler</span>
+                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
+                                </a>
+                                <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                                     <span>${t('onaylanan')}</span>
                                     <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
                                 </a>
-                                <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>Arşivlenen</span>
-                                    <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
-                                </a>
+                                <div class="relative group">
+                                    <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                        <span>Pasif</span>
+                                        <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
+                                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                                    </a>
+                                    <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                        <a href="#products/archived" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                            <span>Tümü</span>
+                                            <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedCount}</span>
+                                        </a>
+                                        <a href="#products/out-of-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                            <span>Stoğu Bitenler</span>
+                                            <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
+                                        </a>
+                                        <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <span>Yasaklananlar</span>
+                                            <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
+                                        </a>
+                                    </div>
+                                </div>
                     </nav>`;
 
                 pageContent.innerHTML = `
@@ -4519,7 +4552,7 @@
                     }
                 }
                 
-                const backLink = isSupplier ? '#products/onaylanan' : '#products/yeni-gelenler';
+                const backLink = isSupplier ? '#products/aktif' : '#products/yeni-gelenler';
                 
                 // Check if this product has a main product ID (is a variant)
                 const mainProduct = product.mainProductId ? mockData.mainProducts.find(mp => mp.id === product.mainProductId) : null;
@@ -5360,13 +5393,10 @@
                         const sampleRevenueData = [
                             { id: 'REV-001', supplierId: 1, supplierName: 'ModaTedarik', date: '2025-01-15', period: 'Ocak 2025', totalSales: 25000.00, commissionEarned: 3750.00, commissionRate: 15, orderCount: 85, avgOrderValue: 294.12, status: 'completed' },
                             { id: 'REV-002', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2025-01-15', period: 'Ocak 2025', totalSales: 18000.00, commissionEarned: 2160.00, commissionRate: 12, orderCount: 62, avgOrderValue: 290.32, status: 'completed' },
-                            { id: 'REV-003', supplierId: 3, supplierName: 'Ana Depo', date: '2025-01-15', period: 'Ocak 2025', totalSales: 32000.00, commissionEarned: 4800.00, commissionRate: 15, orderCount: 120, avgOrderValue: 266.67, status: 'completed' },
                             { id: 'REV-004', supplierId: 1, supplierName: 'ModaTedarik', date: '2024-12-15', period: 'Aralık 2024', totalSales: 22000.00, commissionEarned: 3300.00, commissionRate: 15, orderCount: 78, avgOrderValue: 282.05, status: 'completed' },
                             { id: 'REV-005', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2024-12-15', period: 'Aralık 2024', totalSales: 19500.00, commissionEarned: 2340.00, commissionRate: 12, orderCount: 68, avgOrderValue: 286.76, status: 'completed' },
-                            { id: 'REV-006', supplierId: 3, supplierName: 'Ana Depo', date: '2024-12-15', period: 'Aralık 2024', totalSales: 28000.00, commissionEarned: 4200.00, commissionRate: 15, orderCount: 105, avgOrderValue: 266.67, status: 'completed' },
                             { id: 'REV-007', supplierId: 1, supplierName: 'ModaTedarik', date: '2024-11-15', period: 'Kasım 2024', totalSales: 19000.00, commissionEarned: 2850.00, commissionRate: 15, orderCount: 65, avgOrderValue: 292.31, status: 'completed' },
                             { id: 'REV-008', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2024-11-15', period: 'Kasım 2024', totalSales: 16500.00, commissionEarned: 1980.00, commissionRate: 12, orderCount: 58, avgOrderValue: 284.48, status: 'completed' },
-                            { id: 'REV-009', supplierId: 3, supplierName: 'Ana Depo', date: '2024-11-15', period: 'Kasım 2024', totalSales: 24000.00, commissionEarned: 3600.00, commissionRate: 15, orderCount: 90, avgOrderValue: 266.67, status: 'completed' }
                         ];
                         mockData.adminRevenue = sampleRevenueData;
                     }
@@ -7277,6 +7307,12 @@
                                 <div>
                                     <p class="text-lg font-medium text-gray-900">${t('select_file')}</p>
                                     <p class="text-sm text-gray-500">${t('csv_excel_formats')}</p>
+                                    <div id="action-type-warning" class="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md hidden">
+                                        <p class="text-sm text-yellow-800">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Önce yukarıdan bir işlem tipi seçin
+                                        </p>
+                                    </div>
                                 </div>
                                 <input type="file" id="file-input" accept=".csv,.xlsx,.xls" class="hidden" onchange="handleFileSelect(event)">
                                 <button onclick="document.getElementById('file-input').click()" 
@@ -7326,6 +7362,28 @@
                                         <li>• Lütfen önce bir işlem tipi seçin</li>
                                     </ul>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Test Error Scenarios -->
+                        <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                            <h3 class="font-medium text-yellow-800 mb-3">
+                                <i class="fas fa-flask mr-2"></i>
+                                Test Senaryoları
+                            </h3>
+                            <p class="text-sm text-yellow-700 mb-3">
+                                Farklı hata türlerini test etmek için aşağıdaki butonları kullanabilirsiniz:
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <button onclick="testMissingColumns()" class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Eksik Sütunlar
+                                </button>
+                                <button onclick="testInvalidValues()" class="px-3 py-1 text-xs bg-orange-100 text-orange-800 rounded-full hover:bg-orange-200">
+                                    <i class="fas fa-times-circle mr-1"></i>Geçersiz Değerler
+                                </button>
+                                <button onclick="testExtraColumns()" class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200">
+                                    <i class="fas fa-info-circle mr-1"></i>Fazla Sütunlar
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -7391,6 +7449,12 @@
             
             // Update required columns display
             updateRequiredColumns(actionType);
+            
+            // Hide the action type warning
+            const warning = document.getElementById('action-type-warning');
+            if (warning) {
+                warning.classList.add('hidden');
+            }
         }
 
         function updateRequiredColumns(actionType) {
@@ -7444,6 +7508,9 @@
             
             const files = event.dataTransfer.files;
             if (files.length > 0) {
+                if (!selectedActionType) {
+                    showActionTypeWarning();
+                }
                 processFile(files[0]);
             }
         }
@@ -7451,14 +7518,55 @@
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
+                if (!selectedActionType) {
+                    showActionTypeWarning();
+                }
                 processFile(file);
             }
+        }
+
+        function showActionTypeWarning() {
+            const warning = document.getElementById('action-type-warning');
+            if (warning) {
+                warning.classList.remove('hidden');
+            }
+        }
+
+        // Test functions for different error scenarios
+        function testMissingColumns() {
+            if (!selectedActionType) {
+                showToast('Lütfen önce bir işlem tipi seçin', 'error');
+                return;
+            }
+            
+            const mockCSV = 'sku,name,stock\nSKU001,Test Product,10';
+            parseCSV(mockCSV);
+        }
+
+        function testInvalidValues() {
+            if (!selectedActionType) {
+                showToast('Lütfen önce bir işlem tipi seçin', 'error');
+                return;
+            }
+            
+            const mockCSV = 'sku,name,categoryId,stock,price_TRY,color,size,material,season,style\nSKU001,Test Product,invalid_category,-5,invalid_price,Red,M,Cotton,Summer,Casual';
+            parseCSV(mockCSV);
+        }
+
+        function testExtraColumns() {
+            if (!selectedActionType) {
+                showToast('Lütfen önce bir işlem tipi seçin', 'error');
+                return;
+            }
+            
+            const mockCSV = 'sku,name,categoryId,stock,price_TRY,color,size,material,season,style,extra_column1,extra_column2\nSKU001,Test Product,1,10,299.99,Red,M,Cotton,Summer,Casual,Extra1,Extra2';
+            parseCSV(mockCSV);
         }
 
         function processFile(file) {
             // Check if action type is selected
             if (!selectedActionType) {
-                showToast(t('action_type_required'), 'error');
+                showToast('Lütfen önce bir işlem tipi seçin (Ürün Ekleme/Güncelleme, Stok/Fiyat Güncelleme, veya Arşivleme)', 'error');
                 return;
             }
 
@@ -7526,57 +7634,318 @@
         }
 
         function parseCSV(csvText) {
+            console.log('Parsing CSV with action type:', selectedActionType);
             const lines = csvText.split('\n');
             const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            console.log('CSV Headers:', headers);
             
             // Get required columns based on action type
             const requiredColumns = getRequiredColumns(selectedActionType);
+            console.log('Required columns:', requiredColumns);
             const missingColumns = requiredColumns.filter(col => !headers.includes(col));
             
-            if (missingColumns.length > 0) {
-                showToast(`Eksik sütunlar: ${missingColumns.join(', ')}`, 'error');
-                return;
-            }
+            // Check for column issues
+            const columnIssues = validateColumns(headers, requiredColumns);
+            
+            // Generate mock data with realistic validation errors
+            const mockData = generateMockDataWithValidation(selectedActionType, lines.length - 1, headers, columnIssues);
+            uploadedData = mockData.data;
+            
+            console.log('Generated mock data:', mockData.data);
+            console.log('Mock errors:', mockData.errors);
+            console.log('About to call showPreview...');
+            showPreview(mockData.data, mockData.errors);
+            console.log('showPreview called');
+        }
 
+        function validateColumns(headers, requiredColumns) {
+            const issues = [];
+            
+            // Check for missing required columns
+            const missingColumns = requiredColumns.filter(col => !headers.includes(col));
+            if (missingColumns.length > 0) {
+                issues.push({
+                    type: 'missing_columns',
+                    message: `Eksik sütunlar: ${missingColumns.join(', ')}`,
+                    severity: 'error'
+                });
+            }
+            
+            // Check for extra columns (warnings)
+            const extraColumns = headers.filter(header => !requiredColumns.includes(header));
+            if (extraColumns.length > 0) {
+                issues.push({
+                    type: 'extra_columns',
+                    message: `Kullanılmayan sütunlar: ${extraColumns.join(', ')}`,
+                    severity: 'warning'
+                });
+            }
+            
+            // Check for common column name variations
+            const columnVariations = {
+                'price': ['price_TRY', 'price_try', 'fiyat', 'price_tl'],
+                'name': ['product_name', 'urun_adi', 'productName'],
+                'stock': ['stok', 'quantity', 'qty'],
+                'sku': ['product_sku', 'product_code', 'code']
+            };
+            
+            Object.keys(columnVariations).forEach(requiredCol => {
+                if (!headers.includes(requiredCol) && requiredColumns.includes(requiredCol)) {
+                    const variations = columnVariations[requiredCol];
+                    const foundVariation = variations.find(variation => headers.includes(variation));
+                    if (foundVariation) {
+                        issues.push({
+                            type: 'column_name_variation',
+                            message: `Sütun adı önerisi: '${requiredCol}' yerine '${foundVariation}' kullanılmış`,
+                            severity: 'info'
+                        });
+                    }
+                }
+            });
+            
+            return issues;
+        }
+
+        function generateMockDataWithValidation(actionType, rowCount, headers, columnIssues) {
+            console.log('generateMockDataWithValidation called with actionType:', actionType, 'rowCount:', rowCount);
             const data = [];
             const errors = [];
-
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (!line) continue;
-
-                const values = parseCSVLine(line);
-                if (values.length !== headers.length) {
+            
+            // Add column-level errors first
+            columnIssues.forEach(issue => {
+                if (issue.severity === 'error') {
                     errors.push({
-                        row: i + 1,
-                        error: 'Sütun sayısı uyumsuz'
+                        row: 0, // Column-level error
+                        error: issue.message,
+                        data: null,
+                        type: 'column_error'
                     });
-                    continue;
                 }
-
-                const row = {};
-                headers.forEach((header, index) => {
-                    row[header] = values[index] ? values[index].trim() : '';
-                });
-
-                // Validate row data based on action type
-                const validationError = validateRowData(row, i + 1, selectedActionType);
-                if (validationError) {
-                    errors.push(validationError);
-                    continue;
+            });
+            
+            // Sample data based on action type
+            const sampleData = getSampleData(actionType);
+            console.log('Sample data:', sampleData);
+            
+            for (let i = 1; i <= rowCount; i++) {
+                // Simulate 70% success rate (more errors for demonstration)
+                const isSuccess = Math.random() > 0.3;
+                
+                if (isSuccess) {
+                    // Generate successful row data
+                    const rowData = generateRowData(sampleData, i);
+                    data.push({
+                        ...rowData,
+                        rowNumber: i,
+                        status: 'success'
+                    });
+                } else {
+                    // Generate failed row with realistic validation error
+                    const validationError = generateValidationError(actionType, i, headers);
+                    errors.push({
+                        row: i,
+                        error: validationError.message,
+                        data: validationError.data,
+                        type: validationError.type
+                    });
                 }
-
-                data.push(row);
             }
+            
+            console.log('Generated data length:', data.length, 'errors length:', errors.length);
+            return { data, errors };
+        }
 
-            uploadedData = data;
-            showPreview(data, errors);
+        function generateValidationError(actionType, rowNumber, headers) {
+            const errorTypes = getValidationErrorTypes(actionType);
+            const randomErrorType = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+            
+            // Generate sample data for the error row
+            const sampleData = getSampleData(actionType);
+            const rowData = generateRowData(sampleData, rowNumber);
+            
+            // Apply specific error based on type
+            switch (randomErrorType.type) {
+                case 'missing_required_field':
+                    const requiredFields = getRequiredColumns(actionType);
+                    const missingField = requiredFields[Math.floor(Math.random() * requiredFields.length)];
+                    rowData[missingField] = '';
+                    return {
+                        message: `Gerekli alan boş: ${missingField}`,
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'invalid_price':
+                    rowData.price_TRY = 'invalid_price';
+                    return {
+                        message: 'Geçersiz fiyat formatı (sayısal değer gerekli)',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'negative_stock':
+                    rowData.stock = -5;
+                    return {
+                        message: 'Stok miktarı negatif olamaz',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'invalid_category':
+                    rowData.categoryId = 'invalid_category';
+                    return {
+                        message: 'Geçersiz kategori ID (sayısal değer gerekli)',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'duplicate_sku':
+                    rowData.sku = 'DUPLICATE_SKU';
+                    return {
+                        message: 'Bu SKU zaten kullanılıyor',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'invalid_sku_format':
+                    rowData.sku = 'invalid_sku_format_123!@#';
+                    return {
+                        message: 'Geçersiz SKU formatı (özel karakterler kullanılamaz)',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'price_too_high':
+                    rowData.price_TRY = 999999.99;
+                    return {
+                        message: 'Fiyat çok yüksek (maksimum 100,000₺)',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                case 'stock_too_high':
+                    rowData.stock = 999999;
+                    return {
+                        message: 'Stok miktarı çok yüksek (maksimum 10,000)',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+                    
+                default:
+                    return {
+                        message: 'Bilinmeyen veri hatası',
+                        data: rowData,
+                        type: 'validation_error'
+                    };
+            }
+        }
+
+        function getValidationErrorTypes(actionType) {
+            switch (actionType) {
+                case 'add_update':
+                    return [
+                        { type: 'missing_required_field' },
+                        { type: 'invalid_price' },
+                        { type: 'negative_stock' },
+                        { type: 'invalid_category' },
+                        { type: 'duplicate_sku' },
+                        { type: 'invalid_sku_format' },
+                        { type: 'price_too_high' },
+                        { type: 'stock_too_high' }
+                    ];
+                case 'stock_price':
+                    return [
+                        { type: 'missing_required_field' },
+                        { type: 'invalid_price' },
+                        { type: 'negative_stock' },
+                        { type: 'price_too_high' },
+                        { type: 'stock_too_high' }
+                    ];
+                case 'archive':
+                    return [
+                        { type: 'missing_required_field' },
+                        { type: 'invalid_category' }
+                    ];
+                default:
+                    return [{ type: 'missing_required_field' }];
+            }
+        }
+
+        function getSampleData(actionType) {
+            switch (actionType) {
+                case 'add_update':
+                    return {
+                        sku: ['SKU001', 'SKU002', 'SKU003', 'SKU004', 'SKU005'],
+                        name: ['Kırmızı Elbise', 'Mavi Gömlek', 'Siyah Pantolon', 'Beyaz T-Shirt', 'Kahverengi Ceket'],
+                        categoryId: [1, 2, 3, 4, 5],
+                        stock: [25, 50, 15, 100, 30],
+                        price_TRY: [299.99, 199.50, 450.00, 89.99, 599.99],
+                        color: ['Kırmızı', 'Mavi', 'Siyah', 'Beyaz', 'Kahverengi'],
+                        size: ['M', 'L', 'XL', 'S', 'M'],
+                        material: ['Pamuk', 'Polyester', 'Denim', 'Pamuk', 'Deri'],
+                        season: ['Yaz', 'Dört Mevsim', 'Dört Mevsim', 'Yaz', 'Sonbahar/Kış'],
+                        style: ['Günlük', 'Klasik', 'Casual', 'Spor', 'Şık']
+                    };
+                case 'stock_price':
+                    return {
+                        id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        new_price: [299.99, 199.50, 450.00, 89.99, 599.99, 350.00, 120.00, 280.00, 180.00, 420.00],
+                        new_stock: [25, 50, 15, 100, 30, 40, 75, 20, 60, 35]
+                    };
+                case 'archive':
+                    return {
+                        id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        archive_status: ['archive', 'unarchive', 'archive', 'unarchive', 'archive']
+                    };
+                default:
+                    return {};
+            }
+        }
+
+        function generateRowData(sampleData, rowNumber) {
+            const row = {};
+            Object.keys(sampleData).forEach(key => {
+                const values = sampleData[key];
+                row[key] = values[Math.floor(Math.random() * values.length)];
+            });
+            return row;
+        }
+
+        function getErrorTypes(actionType) {
+            switch (actionType) {
+                case 'add_update':
+                    return [
+                        { message: 'Ürün adı boş olamaz' },
+                        { message: 'Geçersiz fiyat formatı' },
+                        { message: 'Stok miktarı negatif olamaz' },
+                        { message: 'Kategori bulunamadı' },
+                        { message: 'Açıklama çok uzun' }
+                    ];
+                case 'stock_price':
+                    return [
+                        { message: 'Ürün ID bulunamadı' },
+                        { message: 'Geçersiz fiyat formatı' },
+                        { message: 'Stok miktarı negatif olamaz' },
+                        { message: 'Fiyat çok yüksek' },
+                        { message: 'Stok miktarı çok düşük' }
+                    ];
+                case 'archive':
+                    return [
+                        { message: 'Ürün ID bulunamadı' },
+                        { message: 'Geçersiz arşiv durumu' },
+                        { message: 'Ürün zaten arşivli' },
+                        { message: 'Ürün zaten aktif' },
+                        { message: 'Yetki hatası' }
+                    ];
+                default:
+                    return [{ message: 'Bilinmeyen hata' }];
+            }
         }
 
         function getRequiredColumns(actionType) {
             switch (actionType) {
                 case 'add_update':
-                    return ['name', 'description', 'price', 'stock', 'category'];
+                    return ['sku', 'name', 'categoryId', 'stock', 'price_TRY'];
                 case 'stock_price':
                     return ['id', 'new_price', 'new_stock'];
                 case 'archive':
@@ -7693,88 +8062,156 @@
         }
 
         function showPreview(data, errors) {
+            console.log('showPreview called with data:', data, 'errors:', errors);
             const previewSection = document.getElementById('preview-section');
             const tableContainer = document.getElementById('preview-table-container');
+            
+            console.log('previewSection found:', previewSection);
+            console.log('tableContainer found:', tableContainer);
+            
+            // Create a comprehensive list of all rows (both valid and invalid)
+            const allRows = [];
+            const errorMap = new Map();
+            
+            // Map errors by row number for quick lookup
+            errors.forEach(error => {
+                errorMap.set(error.row, error);
+            });
+            
+            // Add all data rows
+            data.forEach((row, index) => {
+                const rowNumber = index + 1;
+                allRows.push({
+                    rowNumber: rowNumber,
+                    data: row,
+                    status: 'success',
+                    error: null
+                });
+            });
+            
+            // Add error rows that don't have corresponding data
+            errors.forEach(error => {
+                if (!allRows.find(row => row.rowNumber === error.row)) {
+                    allRows.push({
+                        rowNumber: error.row,
+                        data: error.data,
+                        status: 'error',
+                        error: error.error
+                    });
+                } else {
+                    // Update existing row with error
+                    const existingRow = allRows.find(row => row.rowNumber === error.row);
+                    if (existingRow) {
+                        existingRow.status = 'error';
+                        existingRow.error = error.error;
+                    }
+                }
+            });
+            
+            // Sort by row number
+            allRows.sort((a, b) => a.rowNumber - b.rowNumber);
+            
+            const validCount = allRows.filter(row => row.status === 'success').length;
+            const errorCount = allRows.filter(row => row.status === 'error').length;
             
             let html = `
                 <div class="mb-4 flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <span class="text-sm text-gray-600">Toplam ${data.length} ürün</span>
-                        ${errors.length > 0 ? `<span class="text-sm text-red-600">${errors.length} hata</span>` : ''}
+                        <span class="text-sm text-gray-600">Toplam ${allRows.length} satır</span>
+                        <span class="text-sm text-green-600">${validCount} geçerli</span>
+                        ${errorCount > 0 ? `<span class="text-sm text-red-600">${errorCount} hatalı</span>` : ''}
                     </div>
                 </div>
             `;
 
-            if (data.length > 0) {
+            if (allRows.length > 0) {
+                const tableHeaders = getPreviewTableHeaders(selectedActionType);
+                console.log('Table headers:', tableHeaders);
+                
                 html += `
                     <div class="overflow-x-auto">
                         <table class="min-w-full bg-white border border-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    ${getPreviewTableHeaders(selectedActionType)}
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                    ${tableHeaders}
+                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
                 `;
-
-                data.slice(0, 10).forEach((row, index) => {
+                
+                allRows.forEach((row, index) => {
+                    console.log(`Processing row ${index}:`, row);
+                    const statusIcon = row.status === 'success' 
+                        ? '<i class="fas fa-check-circle text-green-500"></i>' 
+                        : '<i class="fas fa-times-circle text-red-500"></i>';
+                    const statusColor = row.status === 'success' 
+                        ? 'text-green-800 bg-green-100' 
+                        : 'text-red-800 bg-red-100';
+                    const statusText = row.status === 'success' ? 'Geçerli' : 'Hatalı';
+                    
+                    const tableRow = row.data ? getPreviewTableRow(row.data, selectedActionType) : '<td colspan="' + getColumnCount(selectedActionType) + '" class="px-4 py-3 text-sm text-gray-500">Veri yok</td>';
+                    console.log(`Table row HTML for row ${index}:`, tableRow);
+                    
                     html += `
-                        <tr>
-                            ${getPreviewTableRow(row, selectedActionType)}
+                        <tr class="hover:bg-gray-50 ${row.status === 'error' ? 'bg-red-50' : ''}">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.rowNumber}</td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                                    ${statusIcon} ${statusText}
+                                </span>
+                            </td>
+                            ${tableRow}
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                ${row.status === 'success' ? '<span class="text-green-600">✓ Geçerli</span>' : `<span class="text-red-600">✗ ${row.error}</span>`}
+                            </td>
                         </tr>
                     `;
                 });
-
+                
                 html += `
                             </tbody>
                         </table>
                     </div>
                 `;
-
-                if (data.length > 10) {
-                    html += `<p class="text-sm text-gray-500 mt-2">... ve ${data.length - 10} ürün daha</p>`;
-                }
             }
 
-            if (errors.length > 0) {
-                html += `
-                    <div class="mt-6">
-                        <h4 class="font-medium text-red-600 mb-2">${t('validation_errors')}</h4>
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                            <div class="space-y-2">
-                `;
-                
-                errors.slice(0, 5).forEach(error => {
-                    html += `
-                        <div class="text-sm text-red-700">
-                            <span class="font-medium">Satır ${error.row}:</span> ${error.error}
-                        </div>
-                    `;
-                });
-                
-                if (errors.length > 5) {
-                    html += `<p class="text-sm text-red-600">... ve ${errors.length - 5} hata daha</p>`;
-                }
-                
-                html += `
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
+            console.log('Setting tableContainer.innerHTML, HTML length:', html.length);
             tableContainer.innerHTML = html;
+            console.log('Removing hidden class from previewSection');
             previewSection.classList.remove('hidden');
+            console.log('Preview section shown, HTML length:', html.length);
+        }
+
+        function getColumnCount(actionType) {
+            switch (actionType) {
+                case 'add_update':
+                    return 10; // sku, name, categoryId, stock, price_TRY, color, size, material, season, style
+                case 'stock_price':
+                    return 5; // id, current_price, new_price, current_stock, new_stock
+                case 'archive':
+                    return 4; // id, name, current_status, new_status
+                default:
+                    return 1;
+            }
         }
 
         function getPreviewTableHeaders(actionType) {
             switch (actionType) {
                 case 'add_update':
                     return `
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fiyat</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori ID</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fiyat (₺)</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Renk</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Beden</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Materyal</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sezon</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stil</th>
                     `;
                 case 'stock_price':
                     return `
@@ -7800,10 +8237,16 @@
             switch (actionType) {
                 case 'add_update':
                     return `
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.sku}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">${row.name}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">₺${parseFloat(row.price).toFixed(2)}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.categoryId}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">${row.stock}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.category}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">₺${parseFloat(row.price_TRY).toFixed(2)}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.color}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.size}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.material}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.season}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.style}</td>
                     `;
                 case 'stock_price':
                     const product = mockData.products.find(p => p.id === parseInt(row.id));
@@ -7866,33 +8309,68 @@
                 total: data.length,
                 successful: 0,
                 failed: 0,
-                errors: []
+                errors: [],
+                rowResults: [] // New: detailed results for each row
             };
 
             data.forEach((row, index) => {
-                // Simulate random success/failure
-                if (Math.random() > 0.1) { // 90% success rate
+                const rowResult = {
+                    rowNumber: index + 1,
+                    data: row,
+                    status: 'pending',
+                    message: '',
+                    action: selectedActionType
+                };
+
+                // Simulate random success/failure with more realistic scenarios
+                const randomValue = Math.random();
+                let success = false;
+                let message = '';
+
+                if (randomValue > 0.15) { // 85% success rate
+                    success = true;
                     results.successful++;
                     
-                    // Process based on action type
+                    // Process based on action type and provide specific feedback
                     switch (selectedActionType) {
                         case 'add_update':
-                            processAddUpdate(row);
+                            const addUpdateResult = processAddUpdate(row);
+                            message = addUpdateResult.message;
                             break;
                         case 'stock_price':
-                            processStockPriceUpdate(row);
+                            const stockPriceResult = processStockPriceUpdate(row);
+                            message = stockPriceResult.message;
                             break;
                         case 'archive':
-                            processArchiveUpdate(row);
+                            const archiveResult = processArchiveUpdate(row);
+                            message = archiveResult.message;
                             break;
                     }
                 } else {
+                    success = false;
                     results.failed++;
+                    
+                    // Simulate different types of errors
+                    const errorTypes = [
+                        'SKU bulunamadı',
+                        'Geçersiz fiyat formatı',
+                        'Stok miktarı negatif olamaz',
+                        'Kategori bulunamadı',
+                        'Sunucu hatası - tekrar deneyin',
+                        'Yetki hatası',
+                        'Veri doğrulama hatası'
+                    ];
+                    message = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+                    
                     results.errors.push({
                         row: index + 1,
-                        error: 'Sunucu hatası - tekrar deneyin'
+                        error: message
                     });
                 }
+
+                rowResult.status = success ? 'success' : 'error';
+                rowResult.message = message;
+                results.rowResults.push(rowResult);
             });
 
             return results;
@@ -7909,6 +8387,7 @@
                 existingProduct.stock = parseInt(row.stock);
                 existingProduct.category = row.category;
                 existingProduct.updatedAt = new Date().toISOString();
+                return { message: `Ürün güncellendi: ${row.name}` };
             } else {
                 // Add new product
                 const newProduct = {
@@ -7925,6 +8404,7 @@
                 };
                 
                 mockData.products.push(newProduct);
+                return { message: `Yeni ürün eklendi: ${row.name}` };
             }
         }
 
@@ -7934,15 +8414,20 @@
                 product.price = parseFloat(row.new_price);
                 product.stock = parseInt(row.new_stock);
                 product.updatedAt = new Date().toISOString();
+                return { message: `Stok/Fiyat güncellendi: ${product.name} (Stok: ${row.new_stock}, Fiyat: ${row.new_price}₺)` };
             }
+            return { message: 'Ürün bulunamadı' };
         }
 
         function processArchiveUpdate(row) {
             const product = mockData.products.find(p => p.id === parseInt(row.id));
             if (product) {
-                product.archived = row.archive_status.toLowerCase() === 'archive';
+                const isArchiving = row.archive_status.toLowerCase() === 'archive';
+                product.archived = isArchiving;
                 product.updatedAt = new Date().toISOString();
+                return { message: `Ürün ${isArchiving ? 'arşivlendi' : 'arşivden çıkarıldı'}: ${product.name}` };
             }
+            return { message: 'Ürün bulunamadı' };
         }
 
         function showResults(results) {
@@ -7983,10 +8468,85 @@
                 </div>
             `;
 
+            // Add detailed row-by-row feedback table
+            if (results.rowResults && results.rowResults.length > 0) {
+                html += `
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-medium text-gray-900 flex items-center">
+                                <i class="fas fa-list-alt text-blue-500 mr-2"></i>
+                                Satır Bazında İşlem Detayları
+                            </h4>
+                            <div class="flex gap-2">
+                                <button onclick="filterResults('all')" class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200">
+                                    Tümü (${results.total})
+                                </button>
+                                <button onclick="filterResults('success')" class="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200">
+                                    Başarılı (${results.successful})
+                                </button>
+                                <button onclick="filterResults('error')" class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200">
+                                    Hata (${results.failed})
+                                </button>
+                                <button onclick="exportResults()" class="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200">
+                                    <i class="fas fa-download mr-1"></i>Dışa Aktar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table id="results-table" class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                `;
+                
+                results.rowResults.forEach(rowResult => {
+                    const statusIcon = rowResult.status === 'success' 
+                        ? '<i class="fas fa-check-circle text-green-500"></i>' 
+                        : '<i class="fas fa-times-circle text-red-500"></i>';
+                    const statusColor = rowResult.status === 'success' 
+                        ? 'text-green-800 bg-green-100' 
+                        : 'text-red-800 bg-red-100';
+                    const statusText = rowResult.status === 'success' ? 'Başarılı' : 'Hata';
+                    
+                    html += `
+                        <tr class="hover:bg-gray-50 result-row" data-status="${rowResult.status}">
+                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                                ${rowResult.rowNumber}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                                    ${statusIcon} ${statusText}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                                ${getActionTypeText(rowResult.action)}
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-900">
+                                ${rowResult.message}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Keep the old error summary for backward compatibility
             if (results.errors.length > 0) {
                 html += `
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <h4 class="font-medium text-red-800 mb-2">Hata Detayları</h4>
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
+                        <h4 class="font-medium text-red-800 mb-2">Hata Özeti</h4>
                         <div class="space-y-1">
                 `;
                 
@@ -8008,6 +8568,75 @@
             resultsSection.classList.remove('hidden');
             
             showToast(t('upload_completed'), 'success');
+        }
+
+        function getActionTypeText(actionType) {
+            switch (actionType) {
+                case 'add_update':
+                    return 'Ürün Ekleme/Güncelleme';
+                case 'stock_price':
+                    return 'Stok/Fiyat Güncelleme';
+                case 'archive':
+                    return 'Arşivleme';
+                default:
+                    return 'Bilinmeyen İşlem';
+            }
+        }
+
+        function filterResults(filter) {
+            const rows = document.querySelectorAll('.result-row');
+            const buttons = document.querySelectorAll('button[onclick^="filterResults"]');
+            
+            // Update button styles
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-blue-200', 'bg-green-200', 'bg-red-200');
+                btn.classList.add('bg-blue-100', 'bg-green-100', 'bg-red-100');
+            });
+            
+            // Highlight active button
+            const activeButton = document.querySelector(`button[onclick="filterResults('${filter}')"]`);
+            if (activeButton) {
+                activeButton.classList.remove('bg-blue-100', 'bg-green-100', 'bg-red-100');
+                if (filter === 'all') activeButton.classList.add('bg-blue-200');
+                else if (filter === 'success') activeButton.classList.add('bg-green-200');
+                else if (filter === 'error') activeButton.classList.add('bg-red-200');
+            }
+            
+            // Filter rows
+            rows.forEach(row => {
+                if (filter === 'all' || row.dataset.status === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function exportResults() {
+            const rows = document.querySelectorAll('.result-row:not([style*="display: none"])');
+            let csvContent = 'Satır,Durum,İşlem,Mesaj\n';
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowNumber = cells[0].textContent.trim();
+                const status = cells[1].textContent.trim();
+                const action = cells[2].textContent.trim();
+                const message = cells[3].textContent.trim().replace(/,/g, ';'); // Replace commas to avoid CSV issues
+                
+                csvContent += `${rowNumber},"${status}","${action}","${message}"\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `bulk_upload_results_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('Sonuçlar CSV dosyası olarak indirildi', 'success');
         }
 
         function toggleTemplateDropdown() {
@@ -8329,7 +8958,7 @@
             
             if (isSupplier) {
                  // Suppliers can see approved, rejected, and their update requests
-                if (activeTab === 'onaylanan') {
+                if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
                 } else if (activeTab === 'reddedilen') {
                     filteredProducts = mockData.products.filter(p => p.status === 'rejected');
@@ -8347,9 +8976,27 @@
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => 
                         p.status === 'archived' && 
-                        p.supplierProducts && 
-                        p.supplierProducts.some(sp => sp.supplierId === currentUserSupplierId)
+                        mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true)
                     );
+                } else if (activeTab === 'out-of-stock') {
+                    // Show out-of-stock products for current supplier
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    filteredProducts = mockData.products.filter(p => {
+                        const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
+                        const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.stock === 0);
+                        return hasSupplierProduct && isOutOfStock;
+                    });
+                } else if (activeTab === 'banned') {
+                    // Show banned products for current supplier
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    filteredProducts = mockData.products.filter(p => {
+                        const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === true);
+                        return hasSupplierProduct && isBanned;
+                    });
+                } else if (activeTab === 'talepler') {
+                    // Show requests - empty for now
+                    filteredProducts = [];
                 }
             } else {
                 // Admin users can see all product tabs
@@ -8357,10 +9004,28 @@
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
                 } else if (activeTab === 'yeni-gelenler') {
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
-                } else if (activeTab === 'onaylanan') {
+                } else if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                 } else if (activeTab === 'archived') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'archived');
+                    filteredProducts = mockData.products.filter(p => 
+                        p.status === 'archived' && 
+                        mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true)
+                    );
+                } else if (activeTab === 'out-of-stock') {
+                    // Show out-of-stock products for admin
+                    filteredProducts = mockData.products.filter(p => {
+                        const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.stock === 0);
+                        return isOutOfStock;
+                    });
+                } else if (activeTab === 'banned') {
+                    // Show banned products for admin
+                    filteredProducts = mockData.products.filter(p => {
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true);
+                        return isBanned;
+                    });
+                } else if (activeTab === 'talepler') {
+                    // Show requests - empty for now
+                    filteredProducts = [];
                 }
             }
             
@@ -11682,7 +12347,7 @@
             // Re-attach event listeners for buttons that might be missing after tab switches
             reattachProductPageEventListeners(activeTab, isSupplier);
             
-             if (isSupplier && activeTab !== 'onaylanan' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler') {
+             if (isSupplier && activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler') {
                 activeTab = 'draft';
             }
 
@@ -11711,7 +12376,7 @@
                         filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
                     }
                     break;
-                case 'onaylanan':
+                case 'aktif':
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                     break;
                 case 'reddedilen':
@@ -13923,7 +14588,7 @@
             document.body.removeChild(link);
             closeModal();
         }
-        function approveProduct(productId) { const productToApprove = mockData.products.find(p => p.id === productId); if (!productToApprove) return; productToApprove.status = 'active'; productToApprove.lastUpdated = new Date().toISOString(); navigateTo('#products/onaylanan'); }
+        function approveProduct(productId) { const productToApprove = mockData.products.find(p => p.id === productId); if (!productToApprove) return; productToApprove.status = 'active'; productToApprove.lastUpdated = new Date().toISOString(); navigateTo('#products/aktif'); }
         // Category validation functions
         function hasProductsInCategory(categoryId) {
             return mockData.products.some(p => p.categoryId === categoryId);
@@ -18712,7 +19377,7 @@ window.mockData.orders = window.mockData.orders || [
             const user = window.currentUser || {};
             if (user.role !== 'supplier') {
                 showModal('Erişim Yok', '<p>Bu sayfa sadece tedarikçiler içindir.</p>', 'Kapat', closeModal);
-                navigateTo('#products/onaylanan'); return;
+                navigateTo('#products/aktif'); return;
             }
 
             pageTitle.textContent = 'Finans - Tedarikçi';
@@ -19066,7 +19731,7 @@ window.mockData.orders = window.mockData.orders || [
             const user = window.currentUser || {};
             if (user.role !== 'supplier') {
                 showModal('Erişim Yok', '<p>Bu sayfa sadece tedarikçiler içindir.</p>', 'Kapat', closeModal);
-                navigateTo('#products/onaylanan'); return;
+                navigateTo('#products/aktif'); return;
             }
 
             pageTitle.textContent = 'Mağaza Yönetimi';
@@ -19240,7 +19905,7 @@ window.mockData.orders = window.mockData.orders || [
             const user = window.currentUser || {};
             if (user.role !== 'supplier') {
                 showModal('Erişim Yok', '<p>Bu sayfa sadece tedarikçiler içindir.</p>', 'Kapat', closeModal);
-                navigateTo('#products/onaylanan'); return;
+                navigateTo('#products/aktif'); return;
             }
 
             pageTitle.textContent = 'Kullanıcı Yönetimi';
@@ -23035,7 +23700,7 @@ function filterAdminFinanceData(startDate, endDate) {
                     '<div class="border-t border-gray-100 my-1"></div>',
                     '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
                 ];
-            } else if (activeTab === 'onaylanan') {
+            } else if (activeTab === 'aktif') {
                 if (isSupplier) {
                     // Approved Products - Supplier view
                     actions = [
@@ -23150,7 +23815,7 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<a href="#" id="action-export-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Gönderilenleri Dışa Aktar</a>'
                     ];
                 }
-            } else if (activeTab === 'onaylanan' || activeTab === 'approved') {
+            } else if (activeTab === 'aktif' || activeTab === 'approved') {
                 if (isSupplier) {
                     // Approved products - Supplier view
                     actions = [
@@ -23159,7 +23824,7 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<div class="border-t border-gray-100 my-1"></div>',
                         '<a href="#" id="action-request-price-update" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Fiyat Güncelleme Talebi</a>',
                         '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Onaylananları Dışa Aktar</a>'
+                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Aktif Ürünleri Dışa Aktar</a>'
                     ];
                 } else {
                     // Approved products - Admin view
@@ -23170,7 +23835,7 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<a href="#" id="action-update-stock-price" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Stok/Fiyat Güncelle</a>',
                         '<a href="#" id="action-assign-supplier" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-handshake w-4 mr-2 text-indigo-500"></i>Tedarikçi Ata</a>',
                         '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Onaylananları Dışa Aktar</a>'
+                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Aktif Ürünleri Dışa Aktar</a>'
                     ];
                 }
             } else if (activeTab === 'reddedilen' || activeTab === 'rejected') {
@@ -23507,7 +24172,7 @@ function filterAdminFinanceData(startDate, endDate) {
                     break;
                     
                 case 'export-approved':
-                    showToast(`${selectedCount} onaylanan ürün dışa aktarılıyor...`);
+                    showToast(`${selectedCount} aktif ürün dışa aktarılıyor...`);
                     break;
                     
                 case 'activate-products':
@@ -23650,7 +24315,7 @@ function filterAdminFinanceData(startDate, endDate) {
     if (supplierStock !== null && supplierStock !== undefined) {
         let supplierProduct = mockData.supplierProducts.find(sp => sp.productId == productId && sp.supplierId == supplierId);
         if (!supplierProduct) {
-            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0 };
+            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0, isArchived: false, isBanned: false };
             mockData.supplierProducts.push(supplierProduct);
         }
         supplierProduct.stock = parseInt(supplierStock) || 0;
@@ -23659,7 +24324,7 @@ function filterAdminFinanceData(startDate, endDate) {
     if (supplierPrice !== null && supplierPrice !== undefined) {
         let supplierProduct = mockData.supplierProducts.find(sp => sp.productId == productId && sp.supplierId == supplierId);
         if (!supplierProduct) {
-            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0 };
+            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0, isArchived: false, isBanned: false };
             mockData.supplierProducts.push(supplierProduct);
         }
         supplierProduct.price = parseFloat(supplierPrice) || 0;
@@ -23862,7 +24527,7 @@ renderers['supplierProductDetail'] = (productId) => {
     const user = window.currentUser || {};
     if (user.role !== 'supplier') {
         showModal('Erişim Yok', '<p>Bu sayfa sadece tedarikçiler içindir.</p>', 'Kapat', closeModal);
-        navigateTo('#products/onaylanan');
+        navigateTo('#products/aktif');
         return;
     }
 
@@ -23879,7 +24544,7 @@ renderers['supplierProductDetail'] = (productId) => {
     
     if (!hasAccess) {
         showModal('Erişim Yok', '<p>Bu ürüne erişim yetkiniz bulunmuyor.</p>', 'Kapat', closeModal);
-        navigateTo('#products/onaylanan');
+        navigateTo('#products/aktif');
         return;
     }
 
@@ -23987,7 +24652,7 @@ function renderNavigation() {
     let navigationHTML = '';
 
     if (isSupplier) {
-        // Supplier navigation - removed "Onaylanan Ürünler" as it's redundant with "Ürünler"
+        // Supplier navigation - removed "Aktif Ürünler" as it's redundant with "Ürünler"
         navigationHTML = `
             <div class="px-4 py-2">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ana Menü</h3>
@@ -24118,7 +24783,7 @@ function switchUser(userId) {
         
         // Navigate to appropriate dashboard
         if (user.role === 'supplier') {
-            navigateTo('#products/onaylanan');
+            navigateTo('#products/aktif');
         } else {
             navigateTo('#dashboard');
         }
@@ -24337,7 +25002,7 @@ window.mockData.orders = window.mockData.orders || [
     ],
     note: 'Hızlı teslimat istendi.'
   },
-  { id: 'ORD-1004', supplierId: 3, date: '2025-09-18', status: 'beklemede', total: 899.50,
+  { id: 'ORD-1004', supplierId: 1, date: '2025-09-18', status: 'teslim edildi', total: 899.50,
     items: [{ sku: '8683822429966', name: 'Gri Pamuklu Tişört', qty: 3, total: 899.50 }],
     shippingAddress: { name: 'Ayşe Özkan', line1: 'Çiçek Sk. No:23', city: 'Bursa', postalCode: '16000', country: 'TR' },
     payment: { method: 'Kapıda Ödeme', status: 'beklemede' },
@@ -24370,7 +25035,7 @@ window.mockData.orders = window.mockData.orders || [
       { date: '2025-09-20T14:45:00', message: 'Hazırlanıyor' }
     ]
   },
-  { id: 'ORD-1007', supplierId: 3, date: '2025-09-21', status: 'kargolandı', total: 675.00,
+  { id: 'ORD-1007', supplierId: 1, date: '2025-09-21', status: 'kargoda', total: 675.00,
     items: [{ sku: '8683822429970', name: 'Mavi Denim Pantolon', qty: 1, total: 675.00 }],
     shippingAddress: { name: 'Ali Veli', line1: 'Cumhuriyet Cd. No:89', city: 'Trabzon', postalCode: '61000', country: 'TR' },
     payment: { method: 'Kredi Kartı', status: 'ödendi' },
