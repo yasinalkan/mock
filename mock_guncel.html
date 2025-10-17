@@ -856,16 +856,9 @@
             restriction_active: { tr: 'Aktif', en: 'Active' },
             restriction_inactive: { tr: 'Pasif', en: 'Inactive' },
             restriction_type_category: { tr: 'Kategori Kısıtlaması', en: 'Category Restriction' },
-            restriction_type_max_products: { tr: 'Maksimum Ürün Sayısı', en: 'Maximum Product Count' },
-            restriction_type_price_range: { tr: 'Fiyat Aralığı', en: 'Price Range' },
             restriction_type_brand: { tr: 'Marka Kısıtlaması', en: 'Brand Restriction' },
-            restriction_type_attributes: { tr: 'Özellik Kısıtlaması', en: 'Attribute Restriction' },
             allowed_categories: { tr: 'İzin Verilen Kategoriler', en: 'Allowed Categories' },
-            max_product_count: { tr: 'Maksimum Ürün Sayısı', en: 'Maximum Product Count' },
-            min_price: { tr: 'Minimum Fiyat', en: 'Minimum Price' },
-            max_price: { tr: 'Maksimum Fiyat', en: 'Maximum Price' },
             allowed_brands: { tr: 'İzin Verilen Markalar', en: 'Allowed Brands' },
-            restricted_attributes: { tr: 'Kısıtlı Özellikler', en: 'Restricted Attributes' },
             restriction_added: { tr: 'Kısıtlama eklendi', en: 'Restriction added' },
             restriction_updated: { tr: 'Kısıtlama güncellendi', en: 'Restriction updated' },
             restriction_deleted: { tr: 'Kısıtlama silindi', en: 'Restriction deleted' },
@@ -895,6 +888,7 @@
             price_review: { tr: 'Fiyat İnceleme', en: 'Price Review' },
             review_price: { tr: 'Fiyatı İncele', en: 'Review Price' },
             price_requests: { tr: 'Fiyat Talepleri', en: 'Price Requests' },
+            price_stock_requests: { tr: 'Fiyat ve Stok İstekleri', en: 'Price and Stock Requests' },
             current_price: { tr: 'Mevcut Fiyat', en: 'Current Price' },
             requested_price: { tr: 'Talep Edilen Fiyat', en: 'Requested Price' },
             price_change: { tr: 'Fiyat Değişimi', en: 'Price Change' },
@@ -2431,7 +2425,7 @@
                 { productId: 4, supplierId: 2, stock: 205, price: 650.00, isArchived: false, isBanned: false },
                 
                 // Product 5 - Kahverengi Pantolon
-                { productId: 5, supplierId: 1, stock: 200, price: 299.50, isArchived: false, isBanned: false },
+                { productId: 5, supplierId: 1, stock: 200, price: 299.50, isArchived: true, isBanned: false },
                 { productId: 5, supplierId: 2, stock: 150, price: 295.00, isArchived: false, isBanned: true },
                 
                 // Product 6 - Kırmızı Elbise
@@ -2444,7 +2438,7 @@
                 
                 // Product 8 - Beyaz Ayakkabı
                 { productId: 8, supplierId: 1, stock: 40, price: 850.00, isArchived: false, isBanned: false },
-                { productId: 8, supplierId: 2, stock: 25, price: 899.99, isArchived: false, isBanned: false },
+                { productId: 8, supplierId: 2, stock: 25, price: 899.99, isArchived: true, isBanned: false },
                 
                 // Product 9 - Siyah Deri Ceket
                 { productId: 9, supplierId: 1, stock: 0, price: 199.99, isArchived: false, isBanned: false },
@@ -2471,7 +2465,7 @@
                 { productId: 14, supplierId: 2, stock: 35, price: 1300.00, isArchived: false, isBanned: false },
                 
                 // Product 15 - Siyah Çanta
-                { productId: 15, supplierId: 1, stock: 100, price: 49.99, isArchived: false, isBanned: false },
+                { productId: 15, supplierId: 1, stock: 100, price: 49.99, isArchived: true, isBanned: false },
                 { productId: 15, supplierId: 2, stock: 85, price: 52.00, isArchived: false, isBanned: false },
                 
                 // Product 16 - Mavi Çanta
@@ -4080,6 +4074,15 @@
                 return 'Onay Bekliyor';
             }
             
+            // Special handling for "Yeni Ürün Talepleri" tab
+            if (activeTab === 'yeni-urun-talepleri' && product.status === 'draft') {
+                if (product.supplierSubmission) {
+                    return 'Onay Bekliyor';
+                } else {
+                    return 'Yeni Ürün';
+                }
+            }
+            
             // Handle different product statuses
             switch (product.status) {
                 case 'active':
@@ -4303,10 +4306,10 @@
                     `;
                 }
             },
-            products: (activeTab = 'yeni-gelenler', view = 'list') => {
+            products: (activeTab = 'yeni-urun-talepleri', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
-                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler') {
+                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'draft' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
                         navigateTo('#products/draft');
                         return;
                     }
@@ -4344,15 +4347,15 @@
                         return isOutOfStock;
                     }).length;
                 
-                // Count banned products
+                // Count non-banned products
                 const bannedCount = isCurrentUserSupplier && currentUserSupplierId ? 
                     mockData.products.filter(p => {
                         const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === true);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === false);
                         return hasSupplierProduct && isBanned;
                     }).length :
                     mockData.products.filter(p => {
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === false);
                         return isBanned;
                     }).length;
 
@@ -4363,18 +4366,31 @@
                             <span>Taslak</span>
                             <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${draftCount}</span>
                         </a>
-                        <a href="#products/gonderilenler" class="tab-button flex items-center space-x-2 ${activeTab === 'gonderilenler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>Gönderilenler</span>
-                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${gonderilenlerCount}</span>
-                        </a>
-                         <a href="#products/guncelleme-bekleyenler" class="tab-button flex items-center space-x-2 ${activeTab === 'guncelleme-bekleyenler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                             <span>Güncelleme Bekleyenler</span>
-                             <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">${guncellemeBekleyenlerCount}</span>
-                        </a>
-                        <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>Talepler</span>
-                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
-                        </a>
+                        <div class="relative group">
+                            <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <span>Talepler</span>
+                                <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${gonderilenlerCount}</span>
+                                <i class="fas fa-chevron-down text-xs ml-1"></i>
+                            </a>
+                            <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                    <span>Tüm Talepler</span>
+                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                </a>
+                                <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                    <span>${t('price_stock_requests')}</span>
+                                    <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                </a>
+                                <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                    <span>Ürün Güncelleme İstekleri</span>
+                                    <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                </a>
+                                <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <span>Yeni Ürün Talepleri</span>
+                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniGelenlerCount + gonderilenlerCount}</span>
+                                </a>
+                            </div>
+                        </div>
                         <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                             <span>${t('onaylanan')}</span>
                             <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
@@ -4398,30 +4414,43 @@
                                     <span>Stoğu Bitenler</span>
                                     <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
                                 </a>
-                                <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                     <span>Yasaklananlar</span>
                                     <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
+                                </a>
+                                <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <span>Arşivlenenler</span>
+                                    <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
                                 </a>
                             </div>
                         </div>
                     </nav>` :
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
-                                <a href="#products/yeni-gelenler" class="tab-button flex items-center space-x-2 ${activeTab === 'yeni-gelenler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>${t('yeni_gelenler')}</span>
-                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${yeniGelenlerCount}</span>
+                                <div class="relative group">
+                                    <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                        <span>Talepler</span>
+                                        <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${yeniGelenlerCount}</span>
+                                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                                    </a>
+                                    <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                                        <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                            <span>Tüm Talepler</span>
+                                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                        </a>
+                                        <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                            <span>${t('price_stock_requests')}</span>
+                                            <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                        </a>
+                                        <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
+                                            <span>Ürün Güncelleme İstekleri</span>
+                                            <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                        </a>
+                                <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <span>Yeni Ürün Talepleri</span>
+                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniGelenlerCount + gonderilenlerCount}</span>
                                 </a>
-                                <a href="#products/guncelleme-bekleyenler" class="tab-button flex items-center space-x-2 ${activeTab === 'guncelleme-bekleyenler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>${t('guncelleme_bekleyenler')}</span>
-                                    <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full">${guncellemeBekleyenlerCount}</span>
-                                </a>
-                                <a href="#products/fiyat-guncelleme-istekleri" class="tab-button flex items-center space-x-2 ${activeTab === 'fiyat-guncelleme-istekleri' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>Fiyat Güncelleme İstekleri</span>
-                                    <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full">${priceUpdateRequestsCount}</span>
-                                </a>
-                                <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>Talepler</span>
-                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">0</span>
-                                </a>
+                                    </div>
+                                </div>
                                 <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                                     <span>${t('onaylanan')}</span>
                                     <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
@@ -4441,9 +4470,13 @@
                                             <span>Stoğu Bitenler</span>
                                             <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
                                         </a>
-                                        <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                             <span>Yasaklananlar</span>
                                             <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
+                                        </a>
+                                        <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <span>Arşivlenenler</span>
+                                            <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
                                         </a>
                                     </div>
                                 </div>
@@ -4552,7 +4585,7 @@
                     }
                 }
                 
-                const backLink = isSupplier ? '#products/aktif' : '#products/yeni-gelenler';
+                const backLink = isSupplier ? '#products/aktif' : '#products/yeni-urun-talepleri';
                 
                 // Check if this product has a main product ID (is a variant)
                 const mainProduct = product.mainProductId ? mockData.mainProducts.find(mp => mp.id === product.mainProductId) : null;
@@ -4976,7 +5009,7 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white rounded-lg shadow"><div class="border-b border-gray-200"><nav id="main-tabs" class="-mb-px flex space-x-6 px-6"><button data-tab="master" class="tab-button ${initialTab === 'master' ? 'active' : 'text-gray-500'} font-medium py-4">${t('master_category_tree')}</button><button data-tab="mapping" class="tab-button ${initialTab === 'mapping' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_mapping')}</button></nav></div><div id="main-tab-content" class="p-0 sm:p-6"></div></div>`;
+                    <div class="bg-white rounded-lg shadow"><div class="border-b border-gray-200"><nav id="main-tabs" class="-mb-px flex space-x-6 px-6"><button data-tab="master" class="tab-button ${initialTab === 'master' ? 'active' : 'text-gray-500'} font-medium py-4">${t('master_category_tree')}</button><!-- <button data-tab="mapping" class="tab-button ${initialTab === 'mapping' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_mapping')}</button> --></nav></div><div id="main-tab-content" class="p-0 sm:p-6"></div></div>`;
                 const tabs = document.querySelectorAll('#main-tabs .tab-button');
                 tabs.forEach(tab => {
                     tab.addEventListener('click', () => {
@@ -8962,7 +8995,7 @@
                     filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
                 } else if (activeTab === 'reddedilen') {
                     filteredProducts = mockData.products.filter(p => p.status === 'rejected');
-                 } else if (activeTab === 'guncelleme-bekleyenler') {
+                 } else if (activeTab === 'urun-guncelleme') {
                      // Show products where current supplier has pending update requests
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
                      filteredProducts = mockData.products.filter(p => 
@@ -8975,7 +9008,6 @@
                     // Show archived products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => 
-                        p.status === 'archived' && 
                         mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true)
                     );
                 } else if (activeTab === 'out-of-stock') {
@@ -8987,28 +9019,31 @@
                         return hasSupplierProduct && isOutOfStock;
                     });
                 } else if (activeTab === 'banned') {
-                    // Show banned products for current supplier
+                    // Show non-banned products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
                         const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === true);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === false);
                         return hasSupplierProduct && isBanned;
                     });
                 } else if (activeTab === 'talepler') {
                     // Show requests - empty for now
                     filteredProducts = [];
+                } else if (activeTab === 'fiyat-stok-istekleri') {
+                    // Show price and stock requests - empty for now
+                    filteredProducts = [];
                 }
             } else {
                 // Admin users can see all product tabs
-                if (activeTab === 'guncelleme-bekleyenler') {
+                if (activeTab === 'urun-guncelleme') {
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
-                } else if (activeTab === 'yeni-gelenler') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
+                } else if (activeTab === 'yeni-urun-talepleri') {
+                    // Show both new arrivals (no supplierSubmission) and submitted products (with supplierSubmission)
+                    filteredProducts = mockData.products.filter(p => p.status === 'draft');
                 } else if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                 } else if (activeTab === 'archived') {
                     filteredProducts = mockData.products.filter(p => 
-                        p.status === 'archived' && 
                         mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true)
                     );
                 } else if (activeTab === 'out-of-stock') {
@@ -9018,13 +9053,16 @@
                         return isOutOfStock;
                     });
                 } else if (activeTab === 'banned') {
-                    // Show banned products for admin
+                    // Show non-banned products for admin
                     filteredProducts = mockData.products.filter(p => {
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true);
+                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === false);
                         return isBanned;
                     });
                 } else if (activeTab === 'talepler') {
                     // Show requests - empty for now
+                    filteredProducts = [];
+                } else if (activeTab === 'fiyat-stok-istekleri') {
+                    // Show price and stock requests - empty for now
                     filteredProducts = [];
                 }
             }
@@ -9059,7 +9097,7 @@
             `;
             
             // Add Supplier column for specific tabs (before category)
-            if (activeTab === 'guncelleme-bekleyenler' || activeTab === 'yeni-gelenler') {
+            if (activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri') {
                 headers += `<th class="p-3 text-sm font-semibold text-left sortable-header sort-none">Tedarikçi</th>`;
             }
             
@@ -9071,7 +9109,7 @@
             `;
             
             // Add Originality Score column for new arrivals
-            if (activeTab === 'yeni-gelenler') {
+            if (activeTab === 'yeni-urun-talepleri') {
                 headers += `<th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('originality_header')}</th>`;
             }
             
@@ -9103,23 +9141,43 @@
                 if (activeTab === 'gonderilenler' && product.status === 'draft' && product.supplierSubmission) {
                     statusText = 'Gönderildi';
                     statusClass = 'bg-blue-100 text-blue-800';
-                } else if (activeTab === 'guncelleme-bekleyenler' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
+                } else if (activeTab === 'yeni-urun-talepleri' && product.status === 'draft') {
+                    if (product.supplierSubmission) {
+                        statusText = 'Gönderildi';
+                        statusClass = 'bg-blue-100 text-blue-800';
+                    } else {
+                        statusText = 'Yeni Ürün';
+                        statusClass = 'bg-green-100 text-green-800';
+                    }
+                } else if (activeTab === 'urun-guncelleme' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
                     statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
                 } else {
-                    statusClass = {
-                        'active': 'bg-green-100 text-green-800',
-                        'passive': 'bg-gray-100 text-gray-800',
-                        'draft': 'bg-yellow-100 text-yellow-800',
-                        'rejected': 'bg-red-100 text-red-800'
-                    }[product.status] || 'bg-gray-100 text-gray-800';
+                    // Check for archive/ban status per supplier
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === currentUserSupplierId);
                     
-                    statusText = {
-                        'active': t('status_active'),
-                        'passive': t('status_passive'),
-                        'draft': t('status_draft'),
-                        'rejected': 'Reddedildi'
-                    }[product.status] || product.status;
+                    if (supplierProduct && supplierProduct.isBanned) {
+                        statusText = 'Yasaklı';
+                        statusClass = 'bg-red-100 text-red-800';
+                    } else if (supplierProduct && supplierProduct.isArchived) {
+                        statusText = 'Arşivli';
+                        statusClass = 'bg-gray-100 text-gray-800';
+                    } else {
+                        statusClass = {
+                            'active': 'bg-green-100 text-green-800',
+                            'passive': 'bg-gray-100 text-gray-800',
+                            'draft': 'bg-yellow-100 text-yellow-800',
+                            'rejected': 'bg-red-100 text-red-800'
+                        }[product.status] || 'bg-gray-100 text-gray-800';
+                        
+                        statusText = {
+                            'active': t('status_active'),
+                            'passive': t('status_passive'),
+                            'draft': t('status_draft'),
+                            'rejected': 'Reddedildi'
+                        }[product.status] || product.status;
+                    }
                 }
 
                 // Health/completeness bar color
@@ -9147,7 +9205,7 @@
                 `;
                 
                 // Add Supplier column for specific tabs (before category)
-                if (activeTab === 'guncelleme-bekleyenler' || activeTab === 'yeni-gelenler') {
+                if (activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri') {
                     const supplierName = getSupplierName(product);
                     row += `
                         <td class="p-3 text-sm">
@@ -9158,7 +9216,7 @@
                                 <span class="font-medium">${supplierName}</span>
                             </div>
                         </td>
-                    `;
+                `;
                 }
                 
                 row += `
@@ -9168,8 +9226,8 @@
                             <div class="flex items-center">
                                 <span>${priceText}</span>
                                 ${(() => {
-                                    // Only show price review icon in "Fiyat Güncelleme İstekleri" tab
-                                    const showIcon = activeTab === 'fiyat-guncelleme-istekleri' && 
+                                    // Only show price review icon in "Fiyat ve Stok İstekleri" tab
+                                    const showIcon = activeTab === 'fiyat-stok-istekleri' && 
                                                    product.supplierSubmission && 
                                                    product.supplierSubmission.priceRequests && 
                                                    product.supplierSubmission.priceRequests.length > 0;
@@ -9192,7 +9250,7 @@
                 `;
                 
                 // Add Originality Score column for new arrivals
-                if (activeTab === 'yeni-gelenler') {
+                if (activeTab === 'yeni-urun-talepleri') {
                     row += `
                         <td class="p-3">
                             <div class="flex items-center">
@@ -9202,7 +9260,7 @@
                                 <span class="text-sm font-medium">${originalityScore}%</span>
                             </div>
                         </td>
-                    `;
+                `;
                 }
                 
                 row += `
@@ -9231,18 +9289,43 @@
                 return row;
             }).join('');
 
-            displayEl.innerHTML = `
-                <div class="overflow-x-auto">
-                    <table id="products-table" class="w-full text-left">
-                        <thead class="table-header">
-                            <tr>${headers}</tr>
-                        </thead>
-                        <tbody>
-                            ${rows || `<tr><td colspan="${activeTab === 'yeni-gelenler' ? '13' : (activeTab === 'guncelleme-bekleyenler' ? '12' : '11')}" class="text-center p-6 text-gray-500">Ürün bulunamadı.</td></tr>`}
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            // Handle empty state for "talepler" tabs and "archived-items"
+            let content = '';
+            if (activeTab === 'talepler' || activeTab === 'archived-items') {
+                // Show empty state for requests and archived items
+                const emptyStateHTML = `
+                    <div class="bg-white rounded-lg shadow-sm border">
+                        <div class="p-6">
+                            <div class="text-center py-12 text-gray-500">
+                                <i class="fas fa-inbox text-4xl mb-4"></i>
+                                <h3 class="text-lg font-medium mb-2">
+                                    ${activeTab === 'archived-items' ? 'Henüz arşivlenen ürün bulunmuyor' : 'Henüz talep bulunmuyor'}
+                                </h3>
+                                <p class="text-sm">
+                                    ${activeTab === 'archived-items' ? 'Bu bölümde arşivlenen ürünler görüntülenecek.' : 'Bu bölümde tedarikçilerden gelen talepler görüntülenecek.'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                content = emptyStateHTML;
+            } else {
+                // Regular table view for other tabs
+                content = `
+                    <div class="overflow-x-auto">
+                        <table id="products-table" class="w-full text-left">
+                            <thead class="table-header">
+                                <tr>${headers}</tr>
+                            </thead>
+                            <tbody>
+                                ${rows || `<tr><td colspan="${activeTab === 'yeni-urun-talepleri' ? '13' : (activeTab === 'urun-guncelleme' ? '12' : '11')}" class="text-center p-6 text-gray-500">Ürün bulunamadı.</td></tr>`}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            displayEl.innerHTML = content;
             
             // Make the products table sortable
             setTimeout(() => makeTableSortable('products-table'), 100);
@@ -9276,23 +9359,43 @@
                 if (activeTab === 'gonderilenler' && product.status === 'draft' && product.supplierSubmission) {
                     statusText = 'Gönderildi';
                     statusClass = 'bg-blue-100 text-blue-800';
-                } else if (activeTab === 'guncelleme-bekleyenler' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
+                } else if (activeTab === 'yeni-urun-talepleri' && product.status === 'draft') {
+                    if (product.supplierSubmission) {
+                        statusText = 'Gönderildi';
+                        statusClass = 'bg-blue-100 text-blue-800';
+                    } else {
+                        statusText = 'Yeni Ürün';
+                        statusClass = 'bg-green-100 text-green-800';
+                    }
+                } else if (activeTab === 'urun-guncelleme' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
                     statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
                 } else {
-                    statusClass = {
-                        'active': 'bg-green-100 text-green-800',
-                        'passive': 'bg-gray-100 text-gray-800',
-                        'draft': 'bg-yellow-100 text-yellow-800',
-                        'rejected': 'bg-red-100 text-red-800'
-                    }[product.status] || 'bg-gray-100 text-gray-800';
+                    // Check for archive/ban status per supplier
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === currentUserSupplierId);
                     
-                    statusText = {
-                        'active': t('status_active'),
-                        'passive': t('status_passive'),
-                        'draft': t('status_draft'),
-                        'rejected': 'Reddedildi'
-                    }[product.status] || product.status;
+                    if (supplierProduct && supplierProduct.isBanned) {
+                        statusText = 'Yasaklı';
+                        statusClass = 'bg-red-100 text-red-800';
+                    } else if (supplierProduct && supplierProduct.isArchived) {
+                        statusText = 'Arşivli';
+                        statusClass = 'bg-gray-100 text-gray-800';
+                    } else {
+                        statusClass = {
+                            'active': 'bg-green-100 text-green-800',
+                            'passive': 'bg-gray-100 text-gray-800',
+                            'draft': 'bg-yellow-100 text-yellow-800',
+                            'rejected': 'bg-red-100 text-red-800'
+                        }[product.status] || 'bg-gray-100 text-gray-800';
+                        
+                        statusText = {
+                            'active': t('status_active'),
+                            'passive': t('status_passive'),
+                            'draft': t('status_draft'),
+                            'rejected': 'Reddedildi'
+                        }[product.status] || product.status;
+                    }
                 }
 
                 const healthColor = completeness > 90 ? 'bg-green-500' : completeness > 70 ? 'bg-yellow-500' : 'bg-red-500';
@@ -9300,7 +9403,7 @@
 
                 // Supplier section for specific tabs
                 let supplierSection = '';
-                if (activeTab === 'guncelleme-bekleyenler' || activeTab === 'yeni-gelenler') {
+                if (activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri') {
                     const supplierName = getSupplierName(product);
                     supplierSection = `
                         <div class="mb-3">
@@ -9315,7 +9418,7 @@
                 }
                 
                 let originalitySection = '';
-                if (activeTab === 'yeni-gelenler') {
+                if (activeTab === 'yeni-urun-talepleri') {
                     originalitySection = `
                         <div class="mb-3">
                             <div class="flex justify-between items-center mb-1">
@@ -12347,22 +12450,15 @@
             // Re-attach event listeners for buttons that might be missing after tab switches
             reattachProductPageEventListeners(activeTab, isSupplier);
             
-             if (isSupplier && activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'gonderilenler' && activeTab !== 'draft' && activeTab !== 'guncelleme-bekleyenler') {
+             if (isSupplier && activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'draft' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
                 activeTab = 'draft';
             }
 
             let filteredProducts = [];
             switch (activeTab) {
-                case 'guncelleme-bekleyenler':
-                    // Show products submitted by suppliers for review
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
-                    break;
                 case 'yeni-gelenler':
                     // Show products created by admins (not submitted by suppliers)
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
-                    break;
-                case 'fiyat-guncelleme-istekleri':
-                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
                     break;
                 case 'draft':
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId));
@@ -12376,11 +12472,53 @@
                         filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
                     }
                     break;
+                case 'yeni-urun-talepleri':
+                    if (isSupplier && currentSupplierId) {
+                        // For suppliers: show both their submitted products and new arrivals they can see
+                        filteredProducts = mockData.products.filter(p => 
+                            p.status === 'draft' && (
+                                (p.supplierSubmission && p.supplierSubmission.supplierId === currentSupplierId) ||
+                                (!p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId))
+                            )
+                        );
+                    } else {
+                        // For admins: show all draft products (both new arrivals and submitted)
+                        filteredProducts = mockData.products.filter(p => p.status === 'draft');
+                    }
+                    break;
                 case 'aktif':
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                     break;
                 case 'reddedilen':
                     filteredProducts = mockData.products.filter(p => p.status === 'rejected');
+                    break;
+                case 'talepler':
+                    filteredProducts = [];
+                    break;
+                case 'fiyat-stok-istekleri':
+                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
+                    break;
+                case 'archived':
+                    filteredProducts = mockData.products.filter(p => p.status === 'archived');
+                    break;
+                case 'out-of-stock':
+                    filteredProducts = mockData.products.filter(p => {
+                        const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentSupplierId);
+                        return supplierProduct && supplierProduct.stock === 0;
+                    });
+                    break;
+                case 'banned':
+                    filteredProducts = mockData.products.filter(p => p.isBanned === true);
+                    break;
+                case 'archived-items':
+                    filteredProducts = [];
+                    break;
+                case 'urun-guncelleme':
+                    // Show products submitted by suppliers for review
+                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
+                    break;
+                case 'yeni-urun-talepleri':
+                    filteredProducts = [];
                     break;
                 default:
                     filteredProducts = mockData.products;
@@ -12395,7 +12533,10 @@
                 });
             }
 
-            if (view === 'list') {
+            // Special handling for talepler tabs and archived-items - use renderProductListView
+            if (activeTab === 'talepler' || activeTab === 'archived-items') {
+                renderProductListView(filteredProducts, activeTab, isSupplier);
+            } else if (view === 'list') {
                 renderProductList(filteredProducts, displayEl);
             } else {
                 renderProductGrid(filteredProducts, displayEl);
@@ -12411,8 +12552,8 @@
             // Check if we're in specific tabs by looking at the current URL hash
             const currentHash = window.location.hash;
             const isNewArrivalsTab = currentHash.includes('yeni-gelenler');
-            const isAwaitingApprovalTab = currentHash.includes('guncelleme-bekleyenler');
-            const isPriceUpdateRequestsTab = currentHash.includes('fiyat-guncelleme-istekleri');
+            const isAwaitingApprovalTab = currentHash.includes('urun-guncelleme');
+            const isPriceUpdateRequestsTab = currentHash.includes('fiyat-stok-istekleri');
             const isSentTab = currentHash.includes('gonderilenler');
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
@@ -13242,7 +13383,8 @@
                     document.getElementById('expand-all-categories').addEventListener('click', expandAllCategories);
                     document.getElementById('collapse-all-categories').addEventListener('click', collapseAllCategories);
                     document.getElementById('clear-category-filters').addEventListener('click', clearCategoryFilters);
-                    break; case 'mapping': const renderMappingView = (masterSearch = '', channelSearch = '') => { const channelSelect = document.getElementById('channel-select'); const selectedChannelId = channelSelect ? channelSelect.value : mockData.channels[0]?.id; const channelCategories = mockData.channelCategories[selectedChannelId] || []; const mappingsForChannel = mockData.categoryMappings[selectedChannelId] || {}; tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('category_mapping')}</h3><p class="mt-1 text-sm text-gray-500">Ana kategorilerinizi satış kanalı kategorileriyle eşleştirin.</p></div><div><label for="channel-select" class="text-sm font-medium mr-2">Kanal Seç:</label><select id="channel-select" class="rounded-md border-gray-300 shadow-sm">${mockData.channels.map(ch => `<option value="${ch.id}" ${ch.id == selectedChannelId ? 'selected' : ''}>${ch.name}</option>`).join('')}</select></div></div><div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center"><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">${t('master_category_tree')}</h4><input type="text" id="master-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${masterSearch}"><div id="master-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(mockData.categories, null, false, mappingsForChannel, selectedChannelId, masterSearch)}</div></div><div class="flex flex-col items-center"><button id="map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-link mr-2"></i> Eşle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">Kanal Kategori Ağacı</h4><input type="text" id="channel-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${channelSearch}"><div id="channel-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(channelCategories, null, true, {}, null, channelSearch)}</div></div></div>`; document.getElementById('channel-select').addEventListener('change', () => renderMappingView()); document.getElementById('master-search').addEventListener('input', (e) => renderMappingView(e.target.value, document.getElementById('channel-search').value)); document.getElementById('channel-search').addEventListener('input', (e) => renderMappingView(document.getElementById('master-search').value, e.target.value)); document.querySelectorAll('.master-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.master-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.querySelectorAll('.channel-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.channel-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.getElementById('map-btn').addEventListener('click', () => { const selectedMaster = document.querySelector('.master-category-check:checked'); const selectedChannel = document.querySelector('.channel-category-check:checked'); if (selectedMaster && selectedChannel) { const masterId = parseInt(selectedMaster.dataset.id); const channelId = parseInt(selectedChannel.dataset.id); if (!mockData.categoryMappings[selectedChannelId]) { mockData.categoryMappings[selectedChannelId] = {}; } mockData.categoryMappings[selectedChannelId][masterId] = channelId; renderMappingView(document.getElementById('master-search').value, document.getElementById('channel-search').value); } else { alert('Lütfen her iki ağaçtan da bir kategori seçin.'); } }); }; renderMappingView(); break; } }
+                    break; 
+                    /* case 'mapping': const renderMappingView = (masterSearch = '', channelSearch = '') => { const channelSelect = document.getElementById('channel-select'); const selectedChannelId = channelSelect ? channelSelect.value : mockData.channels[0]?.id; const channelCategories = mockData.channelCategories[selectedChannelId] || []; const mappingsForChannel = mockData.categoryMappings[selectedChannelId] || {}; tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('category_mapping')}</h3><p class="mt-1 text-sm text-gray-500">Ana kategorilerinizi satış kanalı kategorileriyle eşleştirin.</p></div><div><label for="channel-select" class="text-sm font-medium mr-2">Kanal Seç:</label><select id="channel-select" class="rounded-md border-gray-300 shadow-sm">${mockData.channels.map(ch => `<option value="${ch.id}" ${ch.id == selectedChannelId ? 'selected' : ''}>${ch.name}</option>`).join('')}</select></div></div><div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center"><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">${t('master_category_tree')}</h4><input type="text" id="master-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${masterSearch}"><div id="master-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(mockData.categories, null, false, mappingsForChannel, selectedChannelId, masterSearch)}</div></div><div class="flex flex-col items-center"><button id="map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-link mr-2"></i> Eşle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">Kanal Kategori Ağacı</h4><input type="text" id="channel-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${channelSearch}"><div id="channel-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(channelCategories, null, true, {}, null, channelSearch)}</div></div></div>`; document.getElementById('channel-select').addEventListener('change', () => renderMappingView()); document.getElementById('master-search').addEventListener('input', (e) => renderMappingView(e.target.value, document.getElementById('channel-search').value)); document.getElementById('channel-search').addEventListener('input', (e) => renderMappingView(document.getElementById('master-search').value, e.target.value)); document.querySelectorAll('.master-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.master-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.querySelectorAll('.channel-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.channel-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.getElementById('map-btn').addEventListener('click', () => { const selectedMaster = document.querySelector('.master-category-check:checked'); const selectedChannel = document.querySelector('.channel-category-check:checked'); if (selectedMaster && selectedChannel) { const masterId = parseInt(selectedMaster.dataset.id); const channelId = parseInt(selectedChannel.dataset.id); if (!mockData.categoryMappings[selectedChannelId]) { mockData.categoryMappings[selectedChannelId] = {}; } mockData.categoryMappings[selectedChannelId][masterId] = channelId; renderMappingView(document.getElementById('master-search').value, document.getElementById('channel-search').value); } else { alert('Lütfen her iki ağaçtan da bir kategori seçin.'); } }); }; renderMappingView(); break; */ } }
         function renderProductTab(tabName, product) { 
             const contentEl = document.getElementById('product-tab-content'); 
             let content = ''; 
@@ -15282,7 +15424,7 @@
                     // Show success message and redirect
                     showModal('Başarılı', '<p>Ürün başarıyla gönderildi ve inceleme için yöneticilere iletildi.</p>', 'Tamam', () => {
                         closeModal();
-                        navigateTo('#products/gonderilenler');
+                        navigateTo('#products/yeni-urun-talepleri');
                     });
                 } else {
                     // Save as draft - just update the timestamp
@@ -15740,43 +15882,6 @@
                             ` : ''}
                         </div>
                         
-                        <!-- Right Column - Products -->
-                        <div class="space-y-6">
-                            ${productsInCategory.length > 0 ? `
-                            <!-- Products in Category -->
-                            <div class="bg-white p-6 rounded-lg shadow-sm border">
-                                <h2 class="text-xl font-semibold mb-4 text-yellow-800">Bu Kategorideki Ürünler</h2>
-                                <div class="max-h-96 overflow-y-auto space-y-3">
-                                    ${productsInCategory.slice(0, 20).map(product => `
-                                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
-                                            <div class="flex items-center space-x-3">
-                                                <img src="${product.imageUrl}" alt="${t(product.name)}" class="w-10 h-10 rounded object-cover">
-                                                <div>
-                                                    <div class="text-sm font-medium">${t(product.name)}</div>
-                                                    <div class="text-xs text-gray-500">${product.sku}</div>
-                                                </div>
-                                            </div>
-                                            <span class="px-2 py-1 text-xs rounded-full ${product.status === 'active' ? 'bg-green-100 text-green-800' : product.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}">${product.status === 'active' ? 'Aktif' : product.status === 'draft' ? 'Taslak' : 'Pasif'}</span>
-                                        </div>
-                                    `).join('')}
-                                    ${productsInCategory.length > 20 ? `
-                                        <div class="text-center text-sm text-gray-500 mt-3 p-2 bg-gray-100 rounded">
-                                            ... ve ${productsInCategory.length - 20} ürün daha
-                                        </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                            ` : `
-                            <!-- No Products -->
-                            <div class="bg-white p-6 rounded-lg shadow-sm border">
-                                <h2 class="text-xl font-semibold mb-4 text-gray-800">Ürünler</h2>
-                                <div class="text-center py-8 text-gray-500">
-                                    <i class="fas fa-box-open text-4xl mb-3"></i>
-                                    <p>Bu kategoride henüz ürün bulunmuyor.</p>
-                                </div>
-                            </div>
-                            `}
-                        </div>
                     </div>
                 </div>
             `;
@@ -16136,6 +16241,68 @@
                             break; 
                         case 'deactivate': 
                             product.status = 'passive'; 
+                            break;
+                        case 'archive':
+                            // Archive products for current supplier
+                            const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                            if (currentUserSupplierId) {
+                                let supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === currentUserSupplierId);
+                                if (supplierProduct) {
+                                    supplierProduct.isArchived = true;
+                                    supplierProduct.isBanned = false; // Unban when archiving
+                                } else {
+                                    // Create supplier product record if it doesn't exist
+                                    mockData.supplierProducts.push({
+                                        productId: id,
+                                        supplierId: currentUserSupplierId,
+                                        stock: 0,
+                                        price: 0,
+                                        isArchived: true,
+                                        isBanned: false
+                                    });
+                                }
+                            }
+                            break;
+                        case 'unarchive':
+                            // Unarchive products for current supplier
+                            const currentUserSupplierIdUnarchive = (window.currentUser||{}).supplierId;
+                            if (currentUserSupplierIdUnarchive) {
+                                let supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === currentUserSupplierIdUnarchive);
+                                if (supplierProduct) {
+                                    supplierProduct.isArchived = false;
+                                }
+                            }
+                            break;
+                        case 'ban':
+                            // Ban products for current supplier
+                            const currentUserSupplierIdBan = (window.currentUser||{}).supplierId;
+                            if (currentUserSupplierIdBan) {
+                                let supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === currentUserSupplierIdBan);
+                                if (supplierProduct) {
+                                    supplierProduct.isBanned = true;
+                                    supplierProduct.isArchived = false; // Unarchive when banning
+                                } else {
+                                    // Create supplier product record if it doesn't exist
+                                    mockData.supplierProducts.push({
+                                        productId: id,
+                                        supplierId: currentUserSupplierIdBan,
+                                        stock: 0,
+                                        price: 0,
+                                        isArchived: false,
+                                        isBanned: true
+                                    });
+                                }
+                            }
+                            break;
+                        case 'unban':
+                            // Unban products for current supplier
+                            const currentUserSupplierIdUnban = (window.currentUser||{}).supplierId;
+                            if (currentUserSupplierIdUnban) {
+                                let supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === currentUserSupplierIdUnban);
+                                if (supplierProduct) {
+                                    supplierProduct.isBanned = false;
+                                }
+                            }
                             break; 
                     } 
                     if (action !== 'delete') { 
@@ -16538,7 +16705,6 @@
                 // Prohibited Words management tab
                 const words = mockData.prohibitedWords || [];
                 const rows = words.map(word => {
-                    const categoryLabel = t(`category_${word.category}`) || word.category;
                     const appliesTo = word.appliesTo.map(field => {
                         if (field === 'name') return t('applies_to_name');
                         if (field === 'description') return t('applies_to_description');
@@ -16549,7 +16715,6 @@
                     return `
                         <tr class="border-b hover:bg-gray-50">
                             <td class="p-3 text-sm font-medium">${word.word}</td>
-                            <td class="p-3 text-sm">${categoryLabel}</td>
                             <td class="p-3 text-sm text-gray-600 text-xs">${appliesTo}</td>
                             <td class="p-3 text-sm">${word.addedBy}</td>
                             <td class="p-3 text-right">
@@ -16591,13 +16756,12 @@
                             <thead class="table-header">
                                 <tr>
                                     <th class="p-3 text-sm font-semibold">${t('word_phrase')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('category')}</th>
                                     <th class="p-3 text-sm font-semibold">${t('applies_to')}</th>
                                     <th class="p-3 text-sm font-semibold">${t('added_by')}</th>
                                     <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                                 </tr>
                             </thead>
-                            <tbody>${rows || `<tr><td colspan="5" class="p-6 text-center text-gray-500">Henüz yasaklı kelime tanımlanmamış.</td></tr>`}</tbody>
+                            <tbody>${rows || `<tr><td colspan="4" class="p-6 text-center text-gray-500">Henüz yasaklı kelime tanımlanmamış.</td></tr>`}</tbody>
                         </table>
                     </div>
                 `;
@@ -17035,17 +17199,6 @@
                         <p class="mt-1 text-xs text-gray-500">Birden fazla kelime içeren ifadeler girebilirsiniz</p>
                     </div>
                     <div>
-                        <label for="word-category" class="block text-sm font-medium text-gray-700">${t('category')}</label>
-                        <select id="word-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="pricing" ${word?.category === 'pricing' ? 'selected' : ''}>${t('category_pricing')}</option>
-                            <option value="quality" ${word?.category === 'quality' ? 'selected' : ''}>${t('category_quality')}</option>
-                            <option value="spam" ${word?.category === 'spam' ? 'selected' : ''}>${t('category_spam')}</option>
-                            <option value="misleading" ${word?.category === 'misleading' ? 'selected' : ''}>${t('category_misleading')}</option>
-                            <option value="offensive" ${word?.category === 'offensive' ? 'selected' : ''}>${t('category_offensive')}</option>
-                            <option value="other" ${word?.category === 'other' ? 'selected' : ''}>${t('category_other')}</option>
-                        </select>
-                    </div>
-                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">${t('applies_to')}</label>
                         <div class="space-y-2">
                             <div class="flex items-center">
@@ -17074,7 +17227,6 @@
 
         function saveProhibitedWord(editId) {
             const wordText = document.getElementById('word-text').value.trim();
-            const category = document.getElementById('word-category').value;
             const reason = document.getElementById('word-reason').value.trim();
             
             const appliesTo = [];
@@ -17087,10 +17239,6 @@
                 return;
             }
             
-            if (!category) {
-                alert(t('category_required'));
-                return;
-            }
             
             if (appliesTo.length === 0) {
                 alert('Lütfen en az bir uygulama alanı seçin');
@@ -17104,7 +17252,6 @@
                 const wordItem = mockData.prohibitedWords.find(x => x.id === editId);
                 if (wordItem) {
                     wordItem.word = wordText;
-                    wordItem.category = category;
                     wordItem.appliesTo = appliesTo;
                     wordItem.reason = reason;
                 }
@@ -17117,7 +17264,6 @@
                 const newWord = {
                     id: newId,
                     word: wordText,
-                    category,
                     appliesTo,
                     addedBy: user.name || 'Admin',
                     addedAt: now,
@@ -17169,10 +17315,7 @@
                         <select id="restriction-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                             <option value="">${t('select_restriction_type')}</option>
                             <option value="category" ${restriction?.restrictionType === 'category' ? 'selected' : ''}>${t('restriction_type_category')}</option>
-                            <option value="max_products" ${restriction?.restrictionType === 'max_products' ? 'selected' : ''}>${t('restriction_type_max_products')}</option>
-                            <option value="price_range" ${restriction?.restrictionType === 'price_range' ? 'selected' : ''}>${t('restriction_type_price_range')}</option>
                             <option value="brand" ${restriction?.restrictionType === 'brand' ? 'selected' : ''}>${t('restriction_type_brand')}</option>
-                            <option value="attributes" ${restriction?.restrictionType === 'attributes' ? 'selected' : ''}>${t('restriction_type_attributes')}</option>
                         </select>
                     </div>
                     
@@ -17190,31 +17333,6 @@
                         </div>
                     </div>
                     
-                    <!-- Max Products Restriction -->
-                    <div id="max-products-restriction" class="hidden">
-                        <label for="restriction-max-products" class="block text-sm font-medium text-gray-700">${t('max_product_count')}</label>
-                        <input type="number" id="restriction-max-products" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" 
-                               value="${restriction?.restrictionType === 'max_products' ? restriction.restrictionValue : ''}" 
-                               placeholder="${t('enter_max_products')}" min="1">
-                    </div>
-                    
-                    <!-- Price Range Restriction -->
-                    <div id="price-range-restriction" class="hidden">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label for="restriction-min-price" class="block text-sm font-medium text-gray-700">${t('min_price')}</label>
-                                <input type="number" id="restriction-min-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" 
-                                       value="${restriction?.restrictionType === 'price_range' ? restriction.restrictionValue?.min : ''}" 
-                                       placeholder="${t('enter_min_price')}" min="0" step="0.01">
-                            </div>
-                            <div>
-                                <label for="restriction-max-price" class="block text-sm font-medium text-gray-700">${t('max_price')}</label>
-                                <input type="number" id="restriction-max-price" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" 
-                                       value="${restriction?.restrictionType === 'price_range' ? restriction.restrictionValue?.max : ''}" 
-                                       placeholder="${t('enter_max_price')}" min="0" step="0.01">
-                            </div>
-                        </div>
-                    </div>
                     
                     <div class="flex items-center">
                         <input type="checkbox" id="restriction-active" class="h-4 w-4 text-blue-600 border-gray-300 rounded" ${restriction?.isActive !== false ? 'checked' : ''}>
@@ -17242,16 +17360,10 @@
             
             // Hide all restriction fields
             document.getElementById('category-restriction').classList.add('hidden');
-            document.getElementById('max-products-restriction').classList.add('hidden');
-            document.getElementById('price-range-restriction').classList.add('hidden');
             
             // Show relevant field
             if (restrictionType === 'category') {
                 document.getElementById('category-restriction').classList.remove('hidden');
-            } else if (restrictionType === 'max_products') {
-                document.getElementById('max-products-restriction').classList.remove('hidden');
-            } else if (restrictionType === 'price_range') {
-                document.getElementById('price-range-restriction').classList.remove('hidden');
             }
         }
 
@@ -17292,25 +17404,6 @@
                     const category = mockData.categories.find(c => c.id === id);
                     return category ? t(category.name) : '';
                 }).join(', ');
-            } else if (restrictionType === 'max_products') {
-                const maxProducts = parseInt(document.getElementById('restriction-max-products').value);
-                if (!maxProducts || maxProducts < 1) {
-                    alert('Geçerli bir maksimum ürün sayısı girin');
-                    return;
-                }
-                restrictionValue = maxProducts;
-                restrictionLabel = `Maksimum ${maxProducts} ürün`;
-            } else if (restrictionType === 'price_range') {
-                const minPrice = parseFloat(document.getElementById('restriction-min-price').value);
-                const maxPrice = parseFloat(document.getElementById('restriction-max-price').value);
-                
-                if (isNaN(minPrice) || isNaN(maxPrice) || minPrice < 0 || maxPrice < 0 || minPrice >= maxPrice) {
-                    alert('Geçerli bir fiyat aralığı girin (minimum < maksimum)');
-                    return;
-                }
-                
-                restrictionValue = { min: minPrice, max: maxPrice };
-                restrictionLabel = `${minPrice}₺ - ${maxPrice}₺ arası`;
             }
             
             const user = window.currentUser || {};
@@ -18423,8 +18516,16 @@ const navLinksAdmin = [
     ]
   },
   { href: '#dashboard', icon: 'fa-tachometer-alt', text: 'Dashboard', role: 'admin' },
-  { href: '#orders', icon: 'fa-shopping-bag', text: 'Siparişler', role: 'admin' },
-  { href: '#returns', icon: 'fa-undo', text: 'İade İşlemleri', role: 'admin' },
+  { 
+    type: 'parent', 
+    icon: 'fa-shopping-bag', 
+    text: 'Siparişler', 
+    role: 'admin',
+    children: [
+      { href: '#orders', icon: 'fa-shopping-bag', text: 'Siparişler', role: 'admin' },
+      { href: '#returns', icon: 'fa-undo', text: 'İade İşlemleri', role: 'admin' }
+    ]
+  },
   { 
     type: 'parent', 
     icon: 'fa-wallet', 
@@ -23674,13 +23775,13 @@ function filterAdminFinanceData(startDate, endDate) {
         function generateBulkActionsDropdown(activeTab, isSupplier) {
             let actions = [];
             
-            if (activeTab === 'fiyat-guncelleme-istekleri') {
+            if (activeTab === 'fiyat-stok-istekleri') {
                 // Price Update Requests - Admin only
                 actions = [
                     '<a href="#" id="bulk-approve-prices" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Fiyat Taleplerini Onayla</a>',
                     '<a href="#" id="bulk-reject-prices" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Fiyat Taleplerini Reddet</a>'
                 ];
-            } else if (activeTab === 'guncelleme-bekleyenler') {
+            } else if (activeTab === 'urun-guncelleme') {
                 // Awaiting Updates - Admin only
                 actions = [
                     '<a href="#" id="bulk-approve" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Güncellemeleri Onayla</a>',
@@ -23689,23 +23790,37 @@ function filterAdminFinanceData(startDate, endDate) {
                     '<a href="#" id="bulk-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
                     '<a href="#" id="bulk-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>'
                 ];
-            } else if (activeTab === 'yeni-gelenler') {
-                // New Arrivals - Admin only
-                actions = [
-                    '<a href="#" id="bulk-approve" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Ürünleri Onayla</a>',
-                    '<a href="#" id="bulk-reject" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Ürünleri Reddet</a>',
-                    '<div class="border-t border-gray-100 my-1"></div>',
-                    '<a href="#" id="bulk-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
-                    '<a href="#" id="bulk-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>',
-                    '<div class="border-t border-gray-100 my-1"></div>',
-                    '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
-                ];
+            } else if (activeTab === 'yeni-urun-talepleri') {
+                // New Product Requests - Combined view for both admins and suppliers
+                if (isSupplier) {
+                    // Supplier view - can withdraw submissions and edit
+                    actions = [
+                        '<a href="#" id="bulk-withdraw-submission" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Gönderimleri Geri Çek</a>',
+                        '<a href="#" id="bulk-edit-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Gönderilenleri Düzenle</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                } else {
+                    // Admin view - can approve, reject, assign reviewer, etc.
+                    actions = [
+                        '<a href="#" id="bulk-approve" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Ürünleri Onayla</a>',
+                        '<a href="#" id="bulk-reject" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Ürünleri Reddet</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
+                        '<a href="#" id="bulk-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                }
             } else if (activeTab === 'aktif') {
                 if (isSupplier) {
                     // Approved Products - Supplier view
                     actions = [
                         '<a href="#" id="bulk-update-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-boxes w-4 mr-2 text-blue-500"></i>Stok Güncelle</a>',
                         '<a href="#" id="bulk-update-price" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-tag w-4 mr-2 text-green-500"></i>Fiyat Güncelle</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-archive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-archive w-4 mr-2 text-orange-500"></i>Arşivle</a>',
+                        '<a href="#" id="bulk-ban" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-ban w-4 mr-2 text-red-500"></i>Yasakla</a>',
                         '<div class="border-t border-gray-100 my-1"></div>',
                         '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
                     ];
@@ -23738,6 +23853,42 @@ function filterAdminFinanceData(startDate, endDate) {
                     actions = [
                         '<a href="#" id="bulk-reapprove" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Tekrar Onayla</a>',
                         '<a href="#" id="bulk-delete" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Seçilenleri Sil</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                }
+            } else if (activeTab === 'archived') {
+                if (isSupplier) {
+                    // Archived Products - Supplier view
+                    actions = [
+                        '<a href="#" id="bulk-unarchive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-green-500"></i>Arşivden Çıkar</a>',
+                        '<a href="#" id="bulk-ban" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-ban w-4 mr-2 text-red-500"></i>Yasakla</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                } else {
+                    // Archived Products - Admin view
+                    actions = [
+                        '<a href="#" id="bulk-unarchive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-green-500"></i>Arşivden Çıkar</a>',
+                        '<a href="#" id="bulk-ban" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-ban w-4 mr-2 text-red-500"></i>Yasakla</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                }
+            } else if (activeTab === 'banned') {
+                if (isSupplier) {
+                    // Non-banned Products - Supplier view
+                    actions = [
+                        '<a href="#" id="bulk-ban" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-ban w-4 mr-2 text-red-500"></i>Yasakla</a>',
+                        '<a href="#" id="bulk-archive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-archive w-4 mr-2 text-orange-500"></i>Arşivle</a>',
+                        '<div class="border-t border-gray-100 my-1"></div>',
+                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
+                    ];
+                } else {
+                    // Non-banned Products - Admin view
+                    actions = [
+                        '<a href="#" id="bulk-ban" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-ban w-4 mr-2 text-red-500"></i>Yasakla</a>',
+                        '<a href="#" id="bulk-archive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-archive w-4 mr-2 text-orange-500"></i>Arşivle</a>',
                         '<div class="border-t border-gray-100 my-1"></div>',
                         '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
                     ];
@@ -23858,7 +24009,7 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<a href="#" id="action-export-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Reddedilenleri Dışa Aktar</a>'
                     ];
                 }
-            } else if (activeTab === 'fiyat-guncelleme-istekleri') {
+            } else if (activeTab === 'fiyat-stok-istekleri') {
                 // Price update requests - Admin only
                 actions = [
                     '<a href="#" id="action-approve-price-requests" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Fiyat Taleplerini Onayla</a>',
@@ -23942,6 +24093,16 @@ function filterAdminFinanceData(startDate, endDate) {
             // Export action
             const bulkExport = document.getElementById('bulk-export');
             if (bulkExport) bulkExport.addEventListener('click', (e) => { e.preventDefault(); handleBulkAction('export'); bulkActionsDropdown.classList.add('hidden'); });
+
+            // Archive/Ban actions
+            const bulkArchive = document.getElementById('bulk-archive');
+            const bulkUnarchive = document.getElementById('bulk-unarchive');
+            const bulkBan = document.getElementById('bulk-ban');
+            const bulkUnban = document.getElementById('bulk-unban');
+            if (bulkArchive) bulkArchive.addEventListener('click', (e) => { e.preventDefault(); handleBulkAction('archive'); bulkActionsDropdown.classList.add('hidden'); });
+            if (bulkUnarchive) bulkUnarchive.addEventListener('click', (e) => { e.preventDefault(); handleBulkAction('unarchive'); bulkActionsDropdown.classList.add('hidden'); });
+            if (bulkBan) bulkBan.addEventListener('click', (e) => { e.preventDefault(); handleBulkAction('ban'); bulkActionsDropdown.classList.add('hidden'); });
+            if (bulkUnban) bulkUnban.addEventListener('click', (e) => { e.preventDefault(); handleBulkAction('unban'); bulkActionsDropdown.classList.add('hidden'); });
 
             // File operations
             const bulkAddFile = document.getElementById('bulk-add-file');
@@ -25068,7 +25229,7 @@ window.mockData.orders = window.mockData.orders || [
              closeModal();
              
              // Navigate back to the products list
-             navigateTo('#products/guncelleme-bekleyenler');
+             navigateTo('#products/urun-guncelleme');
          }
      );
  }
