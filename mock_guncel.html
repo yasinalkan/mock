@@ -4287,6 +4287,10 @@
             }
         }
 
+        function getProductDetailHash(productId) {
+            return `#products/detail/${productId}`;
+        }
+
         function getProductStatusDescription(product, activeTab = null) {
             // Special handling for "Gönderilenler" tab
             if (activeTab === 'gonderilenler' && product.status === 'draft' && product.supplierSubmission) {
@@ -4528,8 +4532,8 @@
             products: (activeTab = 'yeni-urun-talepleri', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
-                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'draft' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
-                        navigateTo('#products/draft');
+                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
+                        navigateTo('#products/yeni-urun-talepleri');
                         return;
                     }
                 }
@@ -4584,10 +4588,6 @@
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
-                        <a href="#products/draft" class="tab-button flex items-center space-x-2 ${activeTab === 'draft' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>Taslak</span>
-                            <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${draftCount}</span>
-                        </a>
                         <div class="relative group">
                             <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Talepler</span>
@@ -9353,6 +9353,7 @@
                 }
                 return 'Tedarikçi Atanmamış';
             };
+            const getProductDetailLink = (productId) => `#products/detail/${productId}`;
             
             // Build table headers - include Originality Score for new arrivals and Supplier for specific tabs
             let headers = `
@@ -9464,7 +9465,7 @@
                             <div class="flex items-center">
                                 <img src="${product.imageUrl}" alt="${t(product.name)}" class="w-12 h-12 rounded-md mr-4 object-cover">
                                 <div>
-                                    <a href="#products/detail/${product.id}" class="font-semibold text-blue-600 hover:underline">${t(product.name)}</a>
+                                    <button class="font-semibold text-blue-600 hover:underline" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">${t(product.name)}</button>
                                     <p class="text-xs text-gray-500">${product.sku}</p>
                                 </div>
                             </div>
@@ -9543,11 +9544,11 @@
                 // Only show actions column for admins, not for suppliers
                 if (!isSupplier) {
                     row += `
-                        <td class="p-3 text-right">
-                            <a href="#products/detail/${product.id}" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200">
-                                Detay <i class="fas fa-chevron-right ml-1"></i>
-                            </a>
-                        </td>
+                    <td class="p-3 text-right">
+                        <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
+                            Detay <i class="fas fa-chevron-right ml-1"></i>
+                        </button>
+                    </td>
                 `;
                 }
                 
@@ -9712,7 +9713,7 @@
                         </div>
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 mb-1">
-                                <a href="#products/detail/${product.id}" class="hover:text-blue-600">${t(product.name)}</a>
+                                <button class="hover:text-blue-600" onclick="navigateTo('${getProductDetailHash(product.id)}')">${t(product.name)}</button>
                             </h3>
                             <p class="text-sm text-gray-500 mb-2">${product.sku}</p>
                             <p class="text-sm text-gray-600 mb-3">${t(category.name)}</p>
@@ -9736,9 +9737,9 @@
                             ${originalitySection}
                             
                             <div class="flex justify-end">
-                                <a href="#products/detail/${product.id}" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200">
+                                <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="navigateTo('${getProductDetailHash(product.id)}')">
                                     Detay <i class="fas fa-chevron-right ml-1"></i>
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -12730,8 +12731,19 @@
             // Re-attach event listeners for buttons that might be missing after tab switches
             reattachProductPageEventListeners(activeTab, isSupplier);
             
-             if (isSupplier && activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'draft' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
-                activeTab = 'draft';
+            const allowedSupplierTabs = new Set([
+                'aktif',
+                'reddedilen',
+                'urun-guncelleme',
+                'yeni-urun-talepleri',
+                'archived',
+                'out-of-stock',
+                'banned',
+                'archived-items'
+            ]);
+
+            if (isSupplier && !allowedSupplierTabs.has(activeTab)) {
+                activeTab = 'yeni-urun-talepleri';
             }
 
             let filteredProducts = [];
@@ -12741,7 +12753,15 @@
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
                     break;
                 case 'draft':
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId));
+                    filteredProducts = mockData.products.filter(p => {
+                        const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentSupplierId);
+                        if (!supplierProduct) {
+                            return false;
+                        }
+                        const isSupplierDraft = p.status === 'draft' && p.supplierSubmission && p.supplierSubmission.supplierId === currentSupplierId;
+                        const isPendingActive = p.status === 'active' && p.supplierSubmission && p.supplierSubmission.supplierId === currentSupplierId && p.supplierSubmission.status === 'pending';
+                        return isSupplierDraft || (p.status === 'draft' && !p.supplierSubmission) || isPendingActive;
+                    });
                     break;
                 case 'gonderilenler':
                     if (isSupplier && currentSupplierId) {
@@ -12786,10 +12806,14 @@
                     });
                     break;
                 case 'out-of-stock':
-                    filteredProducts = mockData.products.filter(p => {
-                        const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentSupplierId);
-                        return supplierProduct && supplierProduct.stock === 0;
-                    });
+                    if (isSupplier && currentSupplierId) {
+                        filteredProducts = mockData.products.filter(p => {
+                            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentSupplierId);
+                            return supplierProduct && Number(supplierProduct.stock) === 0;
+                        });
+                    } else {
+                        filteredProducts = mockData.products.filter(p => Number(getProductStock(p.id)) === 0);
+                    }
                     break;
                 case 'banned':
                     filteredProducts = mockData.products.filter(p => mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId && sp.isBanned === true));
@@ -12801,14 +12825,28 @@
                                 .filter(sp => sp.supplierId === currentSupplierId && sp.isArchived === true)
                                 .map(sp => sp.productId)
                         );
-                        filteredProducts = mockData.products.filter(p => archivedProductIds.has(p.id));
+                        filteredProducts = mockData.products
+                            .filter(p => archivedProductIds.has(p.id))
+                            .map(p => {
+                                return {
+                                    ...p,
+                                    archivedSupplierId: currentSupplierId
+                                };
+                            });
                     } else {
-                        const archivedProductIds = new Set(
-                            mockData.supplierProducts
-                                .filter(sp => sp.isArchived === true)
-                                .map(sp => sp.productId)
-                        );
-                        filteredProducts = mockData.products.filter(p => archivedProductIds.has(p.id));
+                        filteredProducts = mockData.supplierProducts
+                            .filter(sp => sp.isArchived === true)
+                            .map(sp => {
+                                const baseProduct = mockData.products.find(p => p.id === sp.productId);
+                                if (!baseProduct) {
+                                    return null;
+                                }
+                                return {
+                                    ...baseProduct,
+                                    archivedSupplierId: sp.supplierId
+                                };
+                            })
+                            .filter(Boolean);
                     }
                     break;
                 case 'urun-guncelleme':
@@ -12826,7 +12864,7 @@
             if (isSupplier && currentSupplierId) {
                 filteredProducts = filteredProducts.filter(p => {
                     return mockData.supplierProducts.some(sp => 
-                        sp.productId === p.id && sp.supplierId === currentSupplierId
+                        sp.productId === p.id && sp.supplierId === (p.archivedSupplierId || currentSupplierId)
                     );
                 });
             }
@@ -12912,7 +12950,7 @@
                     <td class="p-3 flex items-center">
                         <img src="${p.imageUrl}" alt="${t(p.name)}" class="w-12 h-12 rounded-md mr-4 object-cover">
                         <div>
-                            <a href="#products/detail/${p.id}" class="font-semibold text-blue-600 hover:underline">${t(p.name)}</a>
+                            <button class="font-semibold text-blue-600 hover:underline" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');">${t(p.name)}</button>
                             <p class="text-xs text-gray-500">${p.sku}</p>
                         </div>
                     </td>
@@ -13011,9 +13049,9 @@
                     <td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>
                     <td class="p-3 text-sm text-gray-500">${formatTimeAgo(p.lastUpdated)}</td>
                     <td class="p-3 text-right">
-                        <a href="#products/detail/${p.id}" class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation();">
+                        <button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');">
                             <i class="fas fa-edit"></i>
-                        </a>
+                        </button>
                     </td>
                 </tr>
                 `;
@@ -13501,12 +13539,12 @@
 
                 return `
                 <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                     <a href="#products/detail/${p.id}">
+                     <button class="w-full" onclick="navigateTo('${getProductDetailHash(p.id)}')">
                         <img src="${p.imageUrl}" alt="${t(p.name)}" class="h-48 w-full object-cover">
-                     </a>
+                     </button>
                     <div class="p-4">
                         <div class="flex justify-between items-start">
-                           <h3 class="font-semibold mb-1"><a href="#products/detail/${p.id}" class="hover:text-blue-600">${t(p.name)}</a></h3>
+                           <h3 class="font-semibold mb-1"><button class="hover:text-blue-600" onclick="navigateTo('${getProductDetailHash(p.id)}')">${t(p.name)}</button></h3>
                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
                         </div>
                         <p class="text-xs text-gray-500 mb-2">${p.sku}</p>
@@ -13566,11 +13604,11 @@
                 const priceText = price ? `${price.toFixed(2)} ₺` : '-';
                 return `
                 <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
-                    <a href="#products/detail/${p.id}">
+                    <button class="w-full" onclick="navigateTo('${getProductDetailHash(p.id)}')">
                         <img src="${p.imageUrl}" alt="${t(p.name)}" class="h-40 w-full object-cover">
-                    </a>
+                    </button>
                     <div class="p-3 flex flex-col flex-grow">
-                        <h4 class="font-semibold text-sm mb-1 truncate flex-grow"><a href="#products/detail/${p.id}" class="hover:text-blue-600">${t(p.name)}</a></h4>
+                        <h4 class="font-semibold text-sm mb-1 truncate flex-grow"><button class="hover:text-blue-600" onclick="navigateTo('${getProductDetailHash(p.id)}')">${t(p.name)}</button></h4>
                         <div class="flex justify-between items-center mt-2">
                             <p class="text-md font-bold text-blue-600">${priceText}</p>
                             <button onclick="navigateTo('#products/compare/${product.id}/${p.id}')" class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md hover:bg-blue-100 hover:text-blue-700">
@@ -13879,13 +13917,13 @@
                                 
                                 return `<tr class="border-b hover:bg-gray-50">
                                     <td class="p-3">
-                                        <a href="#products/detail/${variant.id}" class="flex items-center space-x-3 hover:text-blue-600">
+                                        <button class="flex items-center space-x-3 hover:text-blue-600" onclick="navigateTo('${getProductDetailHash(variant.id)}')">
                                             <img src="${variant.imageUrl}" alt="${t(variant.name)}" class="w-10 h-10 rounded-md object-cover">
                                             <div>
                                                 <div class="font-medium text-sm">${t(variant.name)}</div>
                                                 <div class="text-xs text-gray-500">${variant.sku}</div>
                                             </div>
-                                        </a>
+                                        </button>
                                     </td>
                                     ${variantAttrs}
                                     <td class="p-3 text-sm">${priceText}</td>
@@ -13896,9 +13934,9 @@
                                         </span>
                                     </td>
                                     <td class="p-3 text-right">
-                                        <a href="#products/detail/${variant.id}" class="p-2 text-gray-500 hover:text-blue-600" title="Detayı Görüntüle">
+                                        <button class="p-2 text-gray-500 hover:text-blue-600" title="Detayı Görüntüle" onclick="navigateTo('${getProductDetailHash(variant.id)}')">
                                             <i class="fas fa-eye"></i>
-                                        </a>
+                                        </button>
                                     </td>
                                 </tr>`; 
                             }).join(''); 
@@ -15783,7 +15821,7 @@
                             navigateTo(`#product/${product.id}`);
                         } else {
                             // Navigate to products page
-                            navigateTo('#products/draft');
+                            navigateTo('#products/yeni-urun-talepleri');
                         }
                     });
                 }
@@ -19075,7 +19113,7 @@ const navLinksSupplier = [
     text: 'Ürünler', 
     role: 'supplier',
     children: [
-      { href: '#products/draft', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
+      { href: '#products/yeni-urun-talepleri', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
       { href: '#bulk-upload', icon: 'fa-upload', text: 'Toplu İşlemler', role: 'supplier' }
     ]
   },
@@ -24468,27 +24506,18 @@ function filterAdminFinanceData(startDate, endDate) {
         function generateActionsDropdown(activeTab, isSupplier) {
             let actions = [];
             
-            if (activeTab === 'draft' || activeTab === 'taslak') {
+            if (activeTab === 'yeni-urun-talepleri') {
                 if (isSupplier) {
-                    // Draft products - Supplier view
+                    // Supplier view - New product requests
                     actions = [
                         '<a href="#" id="action-submit-for-review" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-paper-plane w-4 mr-2 text-blue-500"></i>İnceleme için Gönder</a>',
-                        '<a href="#" id="action-edit-selected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Seçilenleri Düzenle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-delete-drafts" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Taslakları Sil</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-drafts" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Taslakları Dışa Aktar</a>'
+                        '<a href="#" id="action-edit-selected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Seçilenleri Düzenle</a>'
                     ];
                 } else {
-                    // Draft products - Admin view
+                    // Admin view - New product requests
                     actions = [
-                        '<a href="#" id="action-approve-drafts" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Taslakları Onayla</a>',
-                        '<a href="#" id="action-reject-drafts" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Taslakları Reddet</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
                         '<a href="#" id="action-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
-                        '<a href="#" id="action-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-delete-drafts" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Taslakları Sil</a>'
+                        '<a href="#" id="action-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>'
                     ];
                 }
             } else if (activeTab === 'gonderilenler' || activeTab === 'submitted') {
