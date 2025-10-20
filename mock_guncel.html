@@ -224,8 +224,19 @@
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
         .tab-button.active {
-            border-bottom: 2px solid rgb(33 137 227);
+            border-left: 3px solid rgb(33 137 227);
             color: rgb(33 137 227);
+            background-color: rgb(239 246 255);
+        }
+        .tab-button {
+            padding: 12px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            text-align: left;
+            width: 100%;
+        }
+        .tab-button:hover {
+            background-color: rgb(249 250 251);
         }
         .gemini-btn .fa-spinner {
             display: none;
@@ -932,7 +943,9 @@
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 95, 
                     originalityScore: 92, 
                       taxRate: 20, // %20 KDV
@@ -1102,7 +1115,9 @@
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'passive', 
+                    status: 'passive',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 80, 
                     originalityScore: 78, 
                     mainProductId: 2, // This is the main product
@@ -1269,7 +1284,9 @@
                     categoryId: 2, 
                     brandId: 1, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 100, 
                     originalityScore: 95, 
                       taxRate: 20, // %20 KDV
@@ -1374,7 +1391,9 @@
                     categoryId: 3, 
                     brandId: 3,
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 65, 
                     originalityScore: 88, 
                     imageUrl: 'https://images.unsplash.com/photo-1633939943422-1ea4a4e309a6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bGluZW4lMjBzaGlydHxlbnwwfHwwfHx8MA%3D%3D', 
@@ -1464,7 +1483,9 @@
                     categoryId: 4, 
                     brandId: 2, 
                     family: { tr: 'Üst Giyim', en: 'Tops'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 100, 
                     originalityScore: 85, 
                     imageUrl: 'https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2hpdGUlMjB0JTIwc2hpcnR8ZW58MHx8MHx8fDA%3D',
@@ -1523,9 +1544,15 @@
                     lastUpdated: '2025-07-28T18:45:00Z' 
                 },
                 // New arrivals (yeni-gelenler) - products with status 'draft' and no supplierSubmission
-                { id: 9, sku: '8683822185001', name: { tr: 'Siyah Deri Ceket', en: 'Black Leather Jacket'}, categoryId: 1, brandId: 1, family: { tr: 'Ceket', en: 'Jacket'}, status: 'draft', health: 75, originalityScore: 92, imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Siyah', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'L', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Deri', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-20T10:30:00Z' },
-                { id: 10, sku: '8683822185002', name: { tr: 'Kırmızı Elbise', en: 'Red Dress'}, categoryId: 1, brandId: 2, family: { tr: 'Elbise', en: 'Dress'}, status: 'draft', health: 80, originalityScore: 88, imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Kırmızı', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'M', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Polyester', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-19T14:15:00Z' },
-                { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, family: { tr: 'Pantolon', en: 'Pants'}, status: 'draft', health: 70, originalityScore: 75, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Mavi', validationStatus: 'approved', rejectionReason: '' }, 2: { value: '32', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Denim', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-18T16:45:00Z' },
+                { id: 9, sku: '8683822185001', name: { tr: 'Siyah Deri Ceket', en: 'Black Leather Jacket'}, categoryId: 1, brandId: 1, family: { tr: 'Ceket', en: 'Jacket'}, status: 'draft',
+                    isArchived: false,
+                    isBanned: false, health: 75, originalityScore: 92, imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Siyah', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'L', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Deri', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-20T10:30:00Z' },
+                { id: 10, sku: '8683822185002', name: { tr: 'Kırmızı Elbise', en: 'Red Dress'}, categoryId: 1, brandId: 2, family: { tr: 'Elbise', en: 'Dress'}, status: 'draft',
+                    isArchived: false,
+                    isBanned: false, health: 80, originalityScore: 88, imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Kırmızı', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'M', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Polyester', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-19T14:15:00Z' },
+                { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, family: { tr: 'Pantolon', en: 'Pants'}, status: 'draft',
+                    isArchived: false,
+                    isBanned: false, health: 70, originalityScore: 75, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Mavi', validationStatus: 'approved', rejectionReason: '' }, 2: { value: '32', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Denim', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-18T16:45:00Z' },
                 // Rejected products
                 { 
                     id: 6, 
@@ -1534,7 +1561,9 @@
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'rejected', 
+                    status: 'rejected',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 30, 
                     originalityScore: 45, 
                     imageUrl: 'https://placehold.co/300x300/10b981/ffffff?text=Yeşil+Polo', 
@@ -1568,7 +1597,9 @@
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'rejected', 
+                    status: 'rejected',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 25, 
                     originalityScore: 35, 
                     imageUrl: 'https://placehold.co/300x300/8b5cf6/ffffff?text=Spor+Ayakkabı', 
@@ -1602,7 +1633,9 @@
                     categoryId: 3, 
                     brandId: 3, 
                     family: { tr: 'Çanta', en: 'Bag'}, 
-                    status: 'rejected', 
+                    status: 'rejected',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 20, 
                     originalityScore: 25, 
                     imageUrl: 'https://placehold.co/300x300/374151/ffffff?text=Siyah+Çanta', 
@@ -1637,7 +1670,9 @@
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'archived', 
+                    status: 'archived',
+                    isArchived: true,
+                    isBanned: false, 
                     health: 60, 
                     originalityScore: 70, 
                     imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
@@ -1653,13 +1688,15 @@
                     archivedReason: 'Seasonal product - out of season'
                 },
                 { 
-                    id: 13, 
+                    id: 14, 
                     sku: 'ARCH-002', 
                     name: { tr: 'Eski Spor Ayakkabı', en: 'Old Sports Shoes'}, 
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'archived', 
+                    status: 'archived',
+                    isArchived: true,
+                    isBanned: false, 
                     health: 55, 
                     originalityScore: 65, 
                     imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
@@ -1675,13 +1712,15 @@
                     archivedReason: 'Low performance - discontinued model'
                 },
                 { 
-                    id: 14, 
+                    id: 19, 
                     sku: 'ARCH-003', 
                     name: { tr: 'Eski Çanta Modeli', en: 'Old Bag Model'}, 
                     categoryId: 1, 
                     brandId: 3, 
                     family: { tr: 'Çanta', en: 'Bag'}, 
-                    status: 'archived', 
+                    status: 'archived',
+                    isArchived: true,
+                    isBanned: false, 
                     health: 45, 
                     originalityScore: 50, 
                     imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
@@ -1697,13 +1736,15 @@
                 },
                 // Mock products for "Gönderilenler" tab - products sent by suppliers for review
                 { 
-                    id: 7, 
+                    id: 15, 
                     sku: 'GOND-001', 
                     name: { tr: 'Klasik Deri Cüzdan', en: 'Classic Leather Wallet'}, 
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Aksesuar', en: 'Accessory'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 85, 
                     originalityScore: 88, 
                     imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
@@ -1754,13 +1795,15 @@
                     lastUpdated: '2025-01-15T10:30:00Z' 
                 },
                 { 
-                    id: 8, 
+                    id: 17, 
                     sku: 'GOND-002', 
                     name: { tr: 'Spor Ayakkabı', en: 'Sports Shoes'}, 
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 78, 
                     originalityScore: 82, 
                     imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
@@ -1811,13 +1854,15 @@
                     lastUpdated: '2025-01-14T14:20:00Z' 
                 },
                 { 
-                    id: 9, 
+                    id: 21, 
                     sku: 'GOND-003', 
                     name: { tr: 'Yazlık Elbise', en: 'Summer Dress'}, 
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Elbise', en: 'Dress'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 92, 
                     originalityScore: 95, 
                     imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60',
@@ -1868,13 +1913,15 @@
                     lastUpdated: '2025-01-13T16:45:00Z' 
                 },
                 { 
-                    id: 10, 
+                    id: 25, 
                     sku: 'GOND-004', 
                     name: { tr: 'Erkek Gömlek', en: 'Men\'s Shirt'}, 
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 88, 
                     originalityScore: 90, 
                     imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
@@ -1925,13 +1972,15 @@
                     lastUpdated: '2025-01-12T11:15:00Z' 
                 },
                 { 
-                    id: 11, 
+                    id: 23, 
                     sku: 'GOND-005', 
                     name: { tr: 'Kadın Çanta', en: 'Women\'s Handbag'}, 
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Çanta', en: 'Handbag'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 85, 
                     originalityScore: 87, 
                     imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
@@ -1983,13 +2032,15 @@
                 },
                 // Mock products from other suppliers to test filtering
                 { 
-                    id: 12, 
+                    id: 26, 
                     sku: 'GOND-006', 
                     name: { tr: 'Erkek Pantolon', en: 'Men\'s Pants'}, 
                     categoryId: 1, 
                     brandId: 2, 
                     family: { tr: 'Giyim', en: 'Clothing'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 75, 
                     originalityScore: 82, 
                     imageUrl: 'https://images.unsplash.com/photo-1506629905607-3b3b2b2b2b2b?w=500&auto=format&fit=crop&q=60',
@@ -2015,13 +2066,15 @@
                     lastUpdated: '2025-01-10T15:20:00Z' 
                 },
                 { 
-                    id: 13, 
+                    id: 28, 
                     sku: 'GOND-007', 
                     name: { tr: 'Kadın Ayakkabı', en: 'Women\'s Shoes'}, 
                     categoryId: 2, 
                     brandId: 3, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 80, 
                     originalityScore: 85, 
                     imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=60',
@@ -2046,13 +2099,15 @@
                     lastUpdated: '2025-01-09T12:10:00Z' 
                 },
                 { 
-                    id: 7, 
+                    id: 16, 
                     sku: '8683822183857', 
                     name: { tr: 'Klasik Beyaz Gömlek', en: 'Classic White Shirt'}, 
                     categoryId: 3, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 88, 
                     originalityScore: 85, 
                     imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
@@ -2065,13 +2120,15 @@
                     lastUpdated: '2025-01-08T15:30:00Z' 
                 },
                 { 
-                    id: 8, 
+                    id: 18, 
                     sku: '8683822183858', 
                     name: { tr: 'Siyah Deri Ceket', en: 'Black Leather Jacket'}, 
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ceket', en: 'Jacket'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 92, 
                     originalityScore: 90, 
                     imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60',
@@ -2084,13 +2141,15 @@
                     lastUpdated: '2025-01-07T10:15:00Z' 
                 },
                 { 
-                    id: 9, 
+                    id: 22, 
                     sku: '8683822183859', 
                     name: { tr: 'Mavi Kot Pantolon', en: 'Blue Jeans'}, 
                     categoryId: 100, 
                     brandId: 1, 
                     family: { tr: 'Pantolon', en: 'Pants'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 75, 
                     originalityScore: 78, 
                     imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60',
@@ -2103,13 +2162,15 @@
                     lastUpdated: '2025-01-06T14:45:00Z' 
                 },
                 { 
-                    id: 10, 
+                    id: 13, 
                     sku: '8683822183860', 
                     name: { tr: 'Kırmızı Elbise', en: 'Red Dress'}, 
                     categoryId: 4, 
                     brandId: 3, 
                     family: { tr: 'Elbise', en: 'Dress'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 95, 
                     originalityScore: 93, 
                     imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60',
@@ -2122,13 +2183,15 @@
                     lastUpdated: '2025-01-05T09:20:00Z' 
                 },
                 { 
-                    id: 11, 
+                    id: 24, 
                     sku: '8683822183861', 
                     name: { tr: 'Gri Sweatshirt', en: 'Gray Sweatshirt'}, 
                     categoryId: 102, 
                     brandId: 2, 
                     family: { tr: 'Sweatshirt', en: 'Sweatshirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 82, 
                     originalityScore: 80, 
                     imageUrl: 'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=500&auto=format&fit=crop&q=60',
@@ -2141,13 +2204,15 @@
                     lastUpdated: '2025-01-04T16:30:00Z' 
                 },
                 { 
-                    id: 12, 
+                    id: 27, 
                     sku: '8683822183862', 
                     name: { tr: 'Spor Ayakkabı', en: 'Sports Shoes'}, 
                     categoryId: 101, 
                     brandId: 4, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 90, 
                     originalityScore: 88, 
                     imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
@@ -2160,13 +2225,15 @@
                     lastUpdated: '2025-01-03T11:45:00Z' 
                 },
                 { 
-                    id: 13, 
+                    id: 30, 
                     sku: '8683822183863', 
                     name: { tr: 'Kahverengi Çanta', en: 'Brown Bag'}, 
                     categoryId: 100, 
                     brandId: 3, 
                     family: { tr: 'Çanta', en: 'Bag'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 68, 
                     originalityScore: 72, 
                     imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
@@ -2179,13 +2246,15 @@
                     lastUpdated: '2025-01-02T13:15:00Z' 
                 },
                 { 
-                    id: 14, 
+                    id: 20, 
                     sku: '8683822183864', 
                     name: { tr: 'Siyah Saat', en: 'Black Watch'}, 
                     categoryId: 100, 
                     brandId: 5, 
                     family: { tr: 'Saat', en: 'Watch'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 96, 
                     originalityScore: 94, 
                     imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60',
@@ -2198,13 +2267,15 @@
                     lastUpdated: '2025-01-01T08:30:00Z' 
                 },
                 { 
-                    id: 15, 
+                    id: 29, 
                     sku: '8683822183865', 
                     name: { tr: 'Yeşil Tişört', en: 'Green T-Shirt'}, 
                     categoryId: 4, 
                     brandId: 1, 
                     family: { tr: 'Tişört', en: 'T-Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 85, 
                     originalityScore: 83, 
                     imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500&auto=format&fit=crop&q=60',
@@ -2217,13 +2288,15 @@
                     lastUpdated: '2024-12-31T17:20:00Z' 
                 },
                 { 
-                    id: 16, 
+                    id: 31, 
                     sku: '8683822183866', 
                     name: { tr: 'Siyah Polo Tişört', en: 'Black Polo Shirt'}, 
                     categoryId: 4, 
                     brandId: 2, 
                     family: { tr: 'Tişört', en: 'T-Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 90, 
                     originalityScore: 88, 
                     imageUrl: 'https://images.unsplash.com/photo-1583743814966-8936f37f0f01?w=500&auto=format&fit=crop&q=60',
@@ -2236,13 +2309,15 @@
                     lastUpdated: '2024-12-30T14:15:00Z' 
                 },
                 { 
-                    id: 17, 
+                    id: 32, 
                     sku: '8683822183867', 
                     name: { tr: 'Mavi Denim Gömlek', en: 'Blue Denim Shirt'}, 
                     categoryId: 3, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 87, 
                     originalityScore: 85, 
                     imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
@@ -2255,13 +2330,15 @@
                     lastUpdated: '2024-12-29T11:30:00Z' 
                 },
                 { 
-                    id: 18, 
+                    id: 33, 
                     sku: '8683822183868', 
                     name: { tr: 'Kırmızı Kadın Gömleği', en: 'Red Women Shirt'}, 
                     categoryId: 3, 
                     brandId: 3, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 75, 
                     originalityScore: 78, 
                     imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=60',
@@ -2274,13 +2351,15 @@
                     lastUpdated: '2024-12-28T16:45:00Z' 
                 },
                 { 
-                    id: 19, 
+                    id: 34, 
                     sku: '8683822183869', 
                     name: { tr: 'Kahverengi Deri Ayakkabı', en: 'Brown Leather Shoes'}, 
                     categoryId: 2, 
                     brandId: 4, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 93, 
                     originalityScore: 91, 
                     imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
@@ -2293,13 +2372,15 @@
                     lastUpdated: '2024-12-27T09:20:00Z' 
                 },
                 { 
-                    id: 20, 
+                    id: 35, 
                     sku: '8683822183870', 
                     name: { tr: 'Siyah Topuklu Ayakkabı', en: 'Black High Heels'}, 
                     categoryId: 2, 
                     brandId: 3, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 89, 
                     originalityScore: 87, 
                     imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=60',
@@ -2318,7 +2399,9 @@
                     categoryId: 101, 
                     brandId: 4, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 91, 
                     originalityScore: 89, 
                     imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
@@ -2337,7 +2420,9 @@
                     categoryId: 102, 
                     brandId: 2, 
                     family: { tr: 'Hoodie', en: 'Hoodie'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 86, 
                     originalityScore: 84, 
                     imageUrl: 'https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=500&auto=format&fit=crop&q=60',
@@ -2356,7 +2441,9 @@
                     categoryId: 102, 
                     brandId: 1, 
                     family: { tr: 'Kazak', en: 'Sweater'}, 
-                    status: 'draft', 
+                    status: 'draft',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 78, 
                     originalityScore: 80, 
                     imageUrl: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&auto=format&fit=crop&q=60',
@@ -2375,7 +2462,9 @@
                     categoryId: 100, 
                     brandId: 2, 
                     family: { tr: 'Ceket', en: 'Jacket'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 88, 
                     originalityScore: 86, 
                     imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60',
@@ -2394,7 +2483,9 @@
                     categoryId: 100, 
                     brandId: 3, 
                     family: { tr: 'Elbise', en: 'Dress'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 92, 
                     originalityScore: 90, 
                     imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60',
@@ -2528,7 +2619,9 @@
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 95, 
                     originalityScore: 92, 
                     mainProductId: 1, // Variant of main product 1
@@ -2544,7 +2637,9 @@
                     categoryId: 1, 
                     brandId: 1, 
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 95, 
                     originalityScore: 92, 
                     mainProductId: 1, // Variant of main product 1
@@ -2561,7 +2656,9 @@
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 80, 
                     originalityScore: 78, 
                     mainProductId: 2, // Variant of main product 2
@@ -2577,7 +2674,9 @@
                     categoryId: 2, 
                     brandId: 2, 
                     family: { tr: 'Ayakkabı', en: 'Shoes'}, 
-                    status: 'active', 
+                    status: 'active',
+                    isArchived: false,
+                    isBanned: false, 
                     health: 80, 
                     originalityScore: 78, 
                     mainProductId: 2, // Variant of main product 2
@@ -2606,20 +2705,40 @@
                 //{ id: 7, name: 'commission_rate', label: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)'}, type: 'Number', scopeable: false, default: '', lastUpdated: '2025-01-09T08:45:00Z' }
             ],
             channels: [
-                { id: 1, name: 'Trendyol', status: 'active', productCount: 6293, currency: 'TRY' },
-                { id: 2, name: 'Hepsiburada', status: 'active', productCount: 5840, currency: 'TRY' },
-                { id: 3, name: 'Marka E-Commerce', status: 'passive', productCount: 0, currency: 'TRY' }
+                { id: 1, name: 'Trendyol', status: 'active',
+                    isArchived: false,
+                    isBanned: false, productCount: 6293, currency: 'TRY' },
+                { id: 2, name: 'Hepsiburada', status: 'active',
+                    isArchived: false,
+                    isBanned: false, productCount: 5840, currency: 'TRY' },
+                { id: 3, name: 'Marka E-Commerce', status: 'passive',
+                    isArchived: false,
+                    isBanned: false, productCount: 0, currency: 'TRY' }
             ],
             catalogs: [
-                { id: 1, name: { tr: 'Yaz 2025 Koleksiyonu', en: 'Summer 2025 Collection' }, status: 'active', categoryIds: [1, 4], channelIds: [3] },
-                { id: 2, name: { tr: 'Trendyol Ayakkabı', en: 'Trendyol Shoes' }, status: 'active', categoryIds: [2], channelIds: [1] },
-                { id: 3, name: { tr: 'Tüm Ürünler', en: 'All Products' }, status: 'passive', categoryIds: [1, 2, 3, 4], channelIds: [1, 2, 3] }
+                { id: 1, name: { tr: 'Yaz 2025 Koleksiyonu', en: 'Summer 2025 Collection' }, status: 'active',
+                    isArchived: false,
+                    isBanned: false, categoryIds: [1, 4], channelIds: [3] },
+                { id: 2, name: { tr: 'Trendyol Ayakkabı', en: 'Trendyol Shoes' }, status: 'active',
+                    isArchived: false,
+                    isBanned: false, categoryIds: [2], channelIds: [1] },
+                { id: 3, name: { tr: 'Tüm Ürünler', en: 'All Products' }, status: 'passive',
+                    isArchived: false,
+                    isBanned: false, categoryIds: [1, 2, 3, 4], channelIds: [1, 2, 3] }
             ],
             integrations: [
-                { id: 1, name: 'SAP ERP', type: 'ERP', status: 'active', description: {tr: 'Stok ve sipariş yönetimi için SAP entegrasyonu.', en: 'SAP integration for stock and order management.'}, logo: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=100&h=100&fit=crop' },
-                { id: 2, name: 'Trendyol Marketplace', type: 'Marketplace', status: 'active', description: {tr: 'Ürünlerinizi Trendyol\'da listeleyin ve satın.', en: 'List and sell your products on Trendyol.'}, logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&h=100&fit=crop' },
-                { id: 3, name: 'Hepsiburada Marketplace', type: 'Marketplace', status: 'passive', description: {tr: 'Ürünlerinizi Hepsiburada\'da listeleyin ve satın.', en: 'List and sell your products on Hepsiburada.'}, logo: 'https://images.unsplash.com/photo-1522204523234-8729aa6e3d54?w=100&h=100&fit=crop' },
-                { id: 4, name: 'Yurtiçi Kargo', type: 'Shipping', status: 'active', description: {tr: 'Siparişleriniz için kargo entegrasyonu.', en: 'Shipment integration for your orders.'}, logo: 'https://images.unsplash.com/photo-1586528116311-08dd4c747479?w=100&h=100&fit=crop' }
+                { id: 1, name: 'SAP ERP', type: 'ERP', status: 'active',
+                    isArchived: false,
+                    isBanned: false, description: {tr: 'Stok ve sipariş yönetimi için SAP entegrasyonu.', en: 'SAP integration for stock and order management.'}, logo: 'https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=100&h=100&fit=crop' },
+                { id: 2, name: 'Trendyol Marketplace', type: 'Marketplace', status: 'active',
+                    isArchived: false,
+                    isBanned: false, description: {tr: 'Ürünlerinizi Trendyol\'da listeleyin ve satın.', en: 'List and sell your products on Trendyol.'}, logo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=100&h=100&fit=crop' },
+                { id: 3, name: 'Hepsiburada Marketplace', type: 'Marketplace', status: 'passive',
+                    isArchived: false,
+                    isBanned: false, description: {tr: 'Ürünlerinizi Hepsiburada\'da listeleyin ve satın.', en: 'List and sell your products on Hepsiburada.'}, logo: 'https://images.unsplash.com/photo-1522204523234-8729aa6e3d54?w=100&h=100&fit=crop' },
+                { id: 4, name: 'Yurtiçi Kargo', type: 'Shipping', status: 'active',
+                    isArchived: false,
+                    isBanned: false, description: {tr: 'Siparişleriniz için kargo entegrasyonu.', en: 'Shipment integration for your orders.'}, logo: 'https://images.unsplash.com/photo-1586528116311-08dd4c747479?w=100&h=100&fit=crop' }
             ],
             channelCategories: {
                 1: [ // Trendyol
@@ -2909,12 +3028,16 @@
             // Main Products - Products that have variants
             mainProducts: [
                 {
-                    id: 1,
+                    id: 101,
                     name: { tr: 'Taş Pamuk Elastan Dümeli Bermuda', en: 'Stone Cotton Elastane Buttoned Bermuda' },
                     categoryId: 1,
                     brandId: 1,
                     family: { tr: 'Gömlek', en: 'Shirt' },
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     health: 95,
                     originalityScore: 92,
                     taxRate: 20,
@@ -2922,22 +3045,42 @@
                     imageUrl: 'https://images.unsplash.com/photo-1591130195539-07f03d520858?w=500&auto=format&fit=crop&q=60',
                     description: { tr: 'Yüksek kaliteli pamuk elastan karışımından üretilmiş, rahat ve şık bermuda şort.', en: 'High-quality cotton elastane blend bermuda shorts, comfortable and stylish.' },
                     variants: [
-                        { id: 1, sku: '8683822183852', attributes: { 1: 'Taş', 2: 'L' }, status: 'active', stock: 45, price: 299.99 },
-                        { id: 101, sku: '8683822183852-S', attributes: { 1: 'Taş', 2: 'S' }, status: 'active', stock: 32, price: 299.99 },
-                        { id: 102, sku: '8683822183852-M', attributes: { 1: 'Taş', 2: 'M' }, status: 'active', stock: 67, price: 299.99 },
-                        { id: 103, sku: '8683822183852-XL', attributes: { 1: 'Taş', 2: 'XL' }, status: 'active', stock: 28, price: 299.99 }
+                        { id: 1, sku: '8683822183852', attributes: { 1: 'Taş', 2: 'L' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 45, price: 299.99 },
+                        { id: 1001, sku: '8683822183852-S', attributes: { 1: 'Taş', 2: 'S' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 32, price: 299.99 },
+                        { id: 1002, sku: '8683822183852-M', attributes: { 1: 'Taş', 2: 'M' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 67, price: 299.99 },
+                        { id: 103, sku: '8683822183852-XL', attributes: { 1: 'Taş', 2: 'XL' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 28, price: 299.99 }
                     ],
                     totalStock: 172,
                     priceRange: { min: 299.99, max: 299.99 },
                     lastUpdated: '2025-07-30T14:30:00Z'
                 },
                 {
-                    id: 2,
+                    id: 102,
                     name: { tr: 'Siyah Deri Ayakkabı', en: 'Black Leather Shoes' },
                     categoryId: 2,
                     brandId: 2,
                     family: { tr: 'Ayakkabı', en: 'Shoes' },
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     health: 80,
                     originalityScore: 78,
                     taxRate: 20,
@@ -2945,23 +3088,47 @@
                     imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=60',
                     description: { tr: 'Gerçek deri malzemeden üretilmiş, klasik ve şık erkek ayakkabısı.', en: 'Classic and elegant men\'s shoes made from genuine leather material.' },
                     variants: [
-                        { id: 2, sku: '8683822429771', attributes: { 1: 'Siyah', 2: '42' }, status: 'active', stock: 15, price: 1299.00 },
-                        { id: 201, sku: '8683822429771-40', attributes: { 1: 'Siyah', 2: '40' }, status: 'active', stock: 23, price: 1299.00 },
-                        { id: 202, sku: '8683822429771-41', attributes: { 1: 'Siyah', 2: '41' }, status: 'active', stock: 18, price: 1299.00 },
-                        { id: 203, sku: '8683822429771-43', attributes: { 1: 'Siyah', 2: '43' }, status: 'active', stock: 12, price: 1299.00 },
-                        { id: 204, sku: '8683822429771-44', attributes: { 1: 'Siyah', 2: '44' }, status: 'active', stock: 8, price: 1299.00 }
+                        { id: 2, sku: '8683822429771', attributes: { 1: 'Siyah', 2: '42' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 15, price: 1299.00 },
+                        { id: 201, sku: '8683822429771-40', attributes: { 1: 'Siyah', 2: '40' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 23, price: 1299.00 },
+                        { id: 202, sku: '8683822429771-41', attributes: { 1: 'Siyah', 2: '41' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 18, price: 1299.00 },
+                        { id: 203, sku: '8683822429771-43', attributes: { 1: 'Siyah', 2: '43' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 12, price: 1299.00 },
+                        { id: 204, sku: '8683822429771-44', attributes: { 1: 'Siyah', 2: '44' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 8, price: 1299.00 }
                     ],
                     totalStock: 76,
                     priceRange: { min: 1299.00, max: 1299.00 },
                     lastUpdated: '2025-07-29T10:00:00Z'
                 },
                 {
-                    id: 4,
+                    id: 104,
                     name: { tr: 'Mavi Gömlek', en: 'Blue Shirt' },
                     categoryId: 3,
                     brandId: 3,
                     family: { tr: 'Gömlek', en: 'Shirt' },
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     health: 85,
                     originalityScore: 88,
                     taxRate: 20,
@@ -2969,10 +3136,26 @@
                     imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
                     description: { tr: 'Klasik kesim mavi gömlek, iş ve günlük kullanım için ideal.', en: 'Classic cut blue shirt, ideal for work and daily use.' },
                     variants: [
-                        { id: 401, sku: '8683822429559-M-MAVI', attributes: { 1: 'Mavi', 2: 'M' }, status: 'active', stock: 25, price: 199.99 },
-                        { id: 402, sku: '8683822429559-L-MAVI', attributes: { 1: 'Mavi', 2: 'L' }, status: 'active', stock: 35, price: 199.99 },
-                        { id: 403, sku: '8683822429559-XL-MAVI', attributes: { 1: 'Mavi', 2: 'XL' }, status: 'active', stock: 20, price: 199.99 },
-                        { id: 404, sku: '8683822429559-S-MAVI', attributes: { 1: 'Mavi', 2: 'S' }, status: 'active', stock: 15, price: 199.99 }
+                        { id: 401, sku: '8683822429559-M-MAVI', attributes: { 1: 'Mavi', 2: 'M' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 25, price: 199.99 },
+                        { id: 402, sku: '8683822429559-L-MAVI', attributes: { 1: 'Mavi', 2: 'L' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 35, price: 199.99 },
+                        { id: 403, sku: '8683822429559-XL-MAVI', attributes: { 1: 'Mavi', 2: 'XL' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 20, price: 199.99 },
+                        { id: 404, sku: '8683822429559-S-MAVI', attributes: { 1: 'Mavi', 2: 'S' }, status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, stock: 15, price: 199.99 }
                     ],
                     totalStock: 95,
                     priceRange: { min: 199.99, max: 199.99 },
@@ -3249,6 +3432,10 @@
                     registrationDate: '2024-03-15',
                     lastLoginDate: '2025-01-15T09:30:00Z',
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     totalOrders: 8,
                     totalSpent: 12500.00,
                     address: {
@@ -3272,6 +3459,10 @@
                     registrationDate: '2024-05-20',
                     lastLoginDate: '2025-01-14T16:45:00Z',
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     totalOrders: 5,
                     totalSpent: 8500.00,
                     address: {
@@ -3295,6 +3486,10 @@
                     registrationDate: '2024-07-10',
                     lastLoginDate: '2025-01-10T11:20:00Z',
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     totalOrders: 12,
                     totalSpent: 18900.00,
                     address: {
@@ -3318,6 +3513,10 @@
                     registrationDate: '2024-09-05',
                     lastLoginDate: '2025-01-12T14:15:00Z',
                     status: 'active',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     totalOrders: 3,
                     totalSpent: 4200.00,
                     address: {
@@ -3470,6 +3669,10 @@
                     customerName: 'Fatma Yıldız',
                     customerEmail: 'fatma.yildiz@email.com',
                     status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     reason: 'changed_mind',
                     description: 'Fikrim değişti, ürünü istemiyorum.',
                     refundAmount: 320.00,
@@ -3496,6 +3699,10 @@
                         {
                             date: '2025-09-19T10:45:00Z',
                             status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                             message: 'İade talebi reddedildi - İade süresi doldu',
                             user: 'Tedarikçi 1',
                             userRole: 'supplier'
@@ -3637,6 +3844,10 @@
                     email: 'kalite@kaliteurunler.com',
                     phone: '+90 352 555 0606',
                     status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     registrationDate: '2024-11-30T15:45:00Z',
                     lastActivity: '2024-12-05T11:20:00Z',
                     address: {
@@ -3759,6 +3970,10 @@
                     customerName: 'Mehmet Kaya',
                     customerEmail: 'mehmet@example.com',
                     status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     reason: 'changed_mind',
                     reasonText: 'Fikrim değişti',
                     description: 'Ürünü beğenmedim, iade etmek istiyorum',
@@ -3789,6 +4004,10 @@
                         {
                             date: '2025-01-18T11:20:00Z',
                             status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                             message: 'İade talebi reddedildi - Fikrim değişti sebebi kabul edilmiyor',
                             user: 'Admin User',
                             userRole: 'admin'
@@ -4331,9 +4550,19 @@
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission).length;
                 const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
                 const priceUpdateRequestsCount = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
-                const archivedCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => p.status === 'archived' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length :
-                    mockData.products.filter(p => p.status === 'archived').length;
+                // Pasif (unavailable for sale) count per supplier: stock==0 OR isArchived OR isBanned
+                const passiveCount = isCurrentUserSupplier && currentUserSupplierId ?
+                    mockData.products.filter(p => {
+                        const sp = mockData.supplierProducts.find(x => x.productId === p.id && x.supplierId === currentUserSupplierId);
+                        return sp && (sp.stock === 0 || sp.isArchived === true || sp.isBanned === true);
+                    }).length :
+                    mockData.products.filter(p => {
+                        // admin view: any supplier row makes it passive
+                        return mockData.supplierProducts.some(sp => sp.productId === p.id && (sp.stock === 0 || sp.isArchived === true || sp.isBanned === true));
+                    }).length;
+                const archivedItemsCount = isCurrentUserSupplier && currentUserSupplierId ?
+                    mockData.supplierProducts.filter(sp => sp.supplierId === currentUserSupplierId && sp.isArchived === true).length :
+                    mockData.supplierProducts.filter(sp => sp.isArchived === true).length;
                 
                 // Count out-of-stock products (stock: 0)
                 const outOfStockCount = isCurrentUserSupplier && currentUserSupplierId ? 
@@ -4347,17 +4576,10 @@
                         return isOutOfStock;
                     }).length;
                 
-                // Count non-banned products
+                // Count banned products per supplier
                 const bannedCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => {
-                        const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === false);
-                        return hasSupplierProduct && isBanned;
-                    }).length :
-                    mockData.products.filter(p => {
-                        const isBanned = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === false);
-                        return isBanned;
-                    }).length;
+                    mockData.products.filter(p => mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isBanned === true)).length :
+                    mockData.products.filter(p => mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true)).length;
 
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
@@ -4402,7 +4624,7 @@
                         <div class="relative group">
                             <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Pasif</span>
-                                <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
+                                <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
                             <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
@@ -4420,7 +4642,7 @@
                                 </a>
                                 <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <span>Arşivlenenler</span>
-                                    <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                    <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedItemsCount}</span>
                                 </a>
                             </div>
                         </div>
@@ -4458,7 +4680,7 @@
                                 <div class="relative group">
                                     <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Pasif</span>
-                                        <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${archivedCount}</span>
+                                        <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
                                     </a>
                                     <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
@@ -4476,7 +4698,7 @@
                                         </a>
                                         <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                             <span>Arşivlenenler</span>
-                                            <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                            <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedItemsCount}</span>
                                         </a>
                                     </div>
                                 </div>
@@ -4509,11 +4731,20 @@
                         </div>
                         <div class="p-4">
                             <div class="flex justify-between items-center mb-4">
-                                <div class="relative w-1/3"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" placeholder="${t('search_in_products')}" class="pl-10 p-2 border rounded-md w-full"></div>
+                                <div class="flex items-center space-x-3 w-2/3">
+                                    <div class="relative w-1/2"><i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" placeholder="${t('search_in_products')}" class="pl-10 p-2 border rounded-md w-full"></div>
+                                    <div class="relative w-1/2">
+                                        <select id="categoryFilter" class="w-full p-2 border rounded-md appearance-none bg-white">
+                                            <option value="">Tüm Kategoriler</option>
+                                            ${generateCategoryOptions()}
+                                        </select>
+                                        <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                                    </div>
+                                </div>
                                 <div class="flex items-center space-x-2">
                                     <div class="flex items-center border rounded-md">
-                                        <button id="listViewBtn" class="p-2 hover:bg-gray-100 rounded-l-md"><i class="fas fa-list"></i></button>
-                                        <button id="gridViewBtn" class="p-2 hover:bg-gray-100 rounded-r-md"><i class="fas fa-th-large"></i></button>
+                                        <button id="listViewBtn" class="p-2 hover:bg-gray-100 rounded-md"><i class="fas fa-list"></i></button>
+                                        <button id="gridViewBtn" class="p-2 hover:bg-gray-100 rounded-r-md hidden"><i class="fas fa-th-large"></i></button>
                                     </div>
                                     <button id="openFilterPanel" class="px-4 py-2 border rounded-md hover:bg-gray-100"><i class="fas fa-filter mr-2"></i> ${t('filters')}</button>
                                     <div class="relative">
@@ -4526,9 +4757,12 @@
                                 </div>
                             </div>
                             <div id="product-display"></div>
+                            <div id="product-pagination"></div>
                         </div>
                     </div>
                 `;
+                // Initialize pagination
+                initializePagination();
                 switchProductView(activeTab, view);
                 document.getElementById('listViewBtn').addEventListener('click', () => switchProductView(activeTab, 'list'));
                 document.getElementById('gridViewBtn').addEventListener('click', () => switchProductView(activeTab, 'grid'));
@@ -4604,8 +4838,12 @@
                         <div class="flex space-x-2">${headerButtons}</div>
                     </div>
                     <div class="bg-white rounded-lg shadow">
-                        <div class="border-b border-gray-200"><nav id="product-tabs" class="-mb-px flex space-x-6 px-6"></nav></div>
-                        <div id="product-tab-content" class="p-6"></div>
+                        <div class="flex">
+                            <div class="w-64 border-r border-gray-200">
+                                <nav id="product-tabs" class="flex flex-col space-y-2 px-6 py-4"></nav>
+                            </div>
+                            <div id="product-tab-content" class="flex-1 p-6"></div>
+                        </div>
                     </div>
                 `;
                 const similarProductsHTML = renderSimilarProducts(product);
@@ -8431,6 +8669,10 @@
                     stock: parseInt(row.stock),
                     category: row.category,
                     status: 'draft',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     supplierId: window.currentUser?.id || 1,
                     createdAt: new Date().toISOString(),
                     images: []
@@ -8972,6 +9214,17 @@
                 updateBulkActionsVisibility();
             }
             
+            // Re-attach category filter event listener
+            const categoryFilter = document.getElementById('categoryFilter');
+            if (categoryFilter) {
+                const newCategoryFilter = categoryFilter.cloneNode(true);
+                categoryFilter.parentNode.replaceChild(newCategoryFilter, categoryFilter);
+                newCategoryFilter.addEventListener('change', () => {
+                    updateCategoryFilterIndicator();
+                    switchProductView(activeTab, 'list');
+                });
+            }
+            
         }
 
         // --- PRODUCT VIEW SWITCHING FUNCTION ---
@@ -9068,11 +9321,26 @@
             }
             
 
+            // Apply category filter
+            filteredProducts = applyCategoryFilter(filteredProducts);
+            
+            // Update category filter indicator
+            updateCategoryFilterIndicator();
+            
+            // Apply pagination
+            const paginatedProducts = paginateData(filteredProducts, window.paginationState.currentPage);
+            
+            // Set render function for pagination
+            window.paginationState.renderFunction = () => switchProductView(activeTab, view);
+            
             if (view === 'list') {
-                renderProductListView(filteredProducts, activeTab, isSupplier);
+                renderProductListView(paginatedProducts, activeTab, isSupplier);
             } else {
-                renderProductGridView(filteredProducts, activeTab, isSupplier);
+                renderProductGridView(paginatedProducts, activeTab, isSupplier);
             }
+            
+            // Render pagination
+            renderPagination('product-pagination');
         }
 
         function renderProductListView(products, activeTab, isSupplier) {
@@ -10353,14 +10621,20 @@
                     return true;
                 });
 
+                // Apply pagination
+                const paginatedOrders = paginateData(filteredOrders, window.paginationState.currentPage);
+                
+                // Set render function for pagination
+                window.paginationState.renderFunction = renderFilteredOrders;
+                
                 // Update count
                 const countEl = document.getElementById('finance-order-count');
                 if (countEl) {
-                    countEl.textContent = `Görüntülenen: ${filteredOrders.length} / Toplam: ${mockData.orders.length} sipariş`;
+                    countEl.textContent = `Görüntülenen: ${paginatedOrders.length} / Toplam: ${filteredOrders.length} sipariş`;
                 }
 
                 // Render filtered orders
-                const orderRows = filteredOrders.map(order => {
+                const orderRows = paginatedOrders.map(order => {
                     const itemCount = order.items ? order.items.length : 0;
                     const totalAmount = order.total || 0;
                     const commissionRate = calculateWeightedAverageCommissionRate(order);
@@ -10401,6 +10675,9 @@
 
                 document.getElementById('finance-order-table-body').innerHTML = orderRows || 
                     `<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Filtreleme kriterlerine uygun sipariş bulunamadı.</td></tr>`;
+                
+                // Render pagination
+                renderPagination('finance-orders-pagination');
             }
 
             // Get suppliers for filter dropdown
@@ -10491,6 +10768,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <div id="finance-orders-pagination"></div>
                 </div>
             `;
 
@@ -10512,6 +10790,9 @@
             document.getElementById('finance-order-date-range')?.addEventListener('change', renderFilteredOrders);
             document.getElementById('finance-order-amount')?.addEventListener('change', renderFilteredOrders);
 
+            // Initialize pagination
+            initializePagination();
+            
             // Initial render
             renderFilteredOrders();
             
@@ -12499,7 +12780,11 @@
                     filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
                     break;
                 case 'archived':
-                    filteredProducts = mockData.products.filter(p => p.status === 'archived');
+                    // Pasif ana sekmesi: satışa kapalı ürünler (stok 0, arşivli, yasaklı)
+                    filteredProducts = mockData.products.filter(p => {
+                        const sp = mockData.supplierProducts.find(x => x.productId === p.id && x.supplierId === currentSupplierId);
+                        return sp && (sp.stock === 0 || sp.isArchived === true || sp.isBanned === true);
+                    });
                     break;
                 case 'out-of-stock':
                     filteredProducts = mockData.products.filter(p => {
@@ -12508,10 +12793,24 @@
                     });
                     break;
                 case 'banned':
-                    filteredProducts = mockData.products.filter(p => p.isBanned === true);
+                    filteredProducts = mockData.products.filter(p => mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId && sp.isBanned === true));
                     break;
                 case 'archived-items':
-                    filteredProducts = [];
+                    if (isSupplier && currentSupplierId) {
+                        const archivedProductIds = new Set(
+                            mockData.supplierProducts
+                                .filter(sp => sp.supplierId === currentSupplierId && sp.isArchived === true)
+                                .map(sp => sp.productId)
+                        );
+                        filteredProducts = mockData.products.filter(p => archivedProductIds.has(p.id));
+                    } else {
+                        const archivedProductIds = new Set(
+                            mockData.supplierProducts
+                                .filter(sp => sp.isArchived === true)
+                                .map(sp => sp.productId)
+                        );
+                        filteredProducts = mockData.products.filter(p => archivedProductIds.has(p.id));
+                    }
                     break;
                 case 'urun-guncelleme':
                     // Show products submitted by suppliers for review
@@ -12533,14 +12832,29 @@
                 });
             }
 
+            // Apply category filter
+            filteredProducts = applyCategoryFilter(filteredProducts);
+            
+            // Update category filter indicator
+            updateCategoryFilterIndicator();
+            
+            // Apply pagination
+            const paginatedProducts = paginateData(filteredProducts, window.paginationState.currentPage);
+            
+            // Set render function for pagination
+            window.paginationState.renderFunction = () => switchProductView(activeTab, view);
+            
             // Special handling for talepler tabs and archived-items - use renderProductListView
             if (activeTab === 'talepler' || activeTab === 'archived-items') {
-                renderProductListView(filteredProducts, activeTab, isSupplier);
+                renderProductListView(paginatedProducts, activeTab, isSupplier);
             } else if (view === 'list') {
-                renderProductList(filteredProducts, displayEl);
+                renderProductList(paginatedProducts, displayEl);
             } else {
-                renderProductGrid(filteredProducts, displayEl);
+                renderProductGrid(paginatedProducts, displayEl);
             }
+            
+            // Render pagination
+            renderPagination('product-pagination');
         }
 
         function renderProductList(products, container) {
@@ -13374,8 +13688,12 @@
                             <div id="category-tree-container">
                                 ${buildCategoryTree(mockData.categories, null, false)}
                             </div>
+                            <div id="category-pagination"></div>
                         </div>
                     `; 
+                    
+                    // Initialize pagination
+                    initializePagination();
                     
                     // Add event listeners
                     document.getElementById('addCategoryBtn').addEventListener('click', showAddCategoryModal);
@@ -14330,7 +14648,13 @@
                 const validCategory = mockData.categories.find(c => isLowestLevelCategory(c.id));
                 const categoryId = validCategory ? validCategory.id : 1; // fallback to first category
                 
-                const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft', health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft', health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
+                const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft',
+                        isArchived: false,
+                        isBanned: false, health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
         function buildMultiSelectCategoryTree(categories, parentId = null, level = 0) {
             const children = categories.filter(c => c.parentId === parentId);
             if (children.length === 0) return '';
@@ -14451,6 +14775,13 @@
                 return nameMatch;
             });
             
+            // Apply pagination to root categories (categories without parent)
+            const rootCategories = filteredCategories.filter(cat => !cat.parentId);
+            const paginatedRootCategories = paginateData(rootCategories, window.paginationState.currentPage);
+            
+            // Set render function for pagination
+            window.paginationState.renderFunction = filterCategories;
+            
             // Update the category tree with filtered results
             const container = document.getElementById('category-tree-container');
             if (container) {
@@ -14462,6 +14793,9 @@
             if (countElement) {
                 countElement.textContent = `Gösterilen: ${filteredCategories.length} / ${mockData.categories.length} kategori`;
             }
+            
+            // Render pagination
+            renderPagination('category-pagination');
         }
         
         
@@ -15137,6 +15471,10 @@
                 name: { tr: '', en: '' },
                 categoryId: null,
                 status: 'draft',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                 health: 0,
                 imageUrl: 'https://placehold.co/100x100?text=NEW',
                 attributes: {},
@@ -15308,7 +15646,11 @@
                     name: { tr: name, en: name }, 
                     categoryId: categoryId, 
                     family: { tr: 'Diğer', en: 'Other' }, 
-                    status: 'draft', 
+                    status: 'draft',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, 
                     health: 20, 
                     imageUrl: newProductImages[Math.floor(Math.random() * newProductImages.length)], 
                     attributes: attributes, 
@@ -15479,7 +15821,11 @@
                     name: { tr: name, en: name }, 
                     categoryId: categoryId, 
                     family: { tr: 'Diğer', en: 'Other' }, 
-                    status: 'draft', 
+                    status: 'draft',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false, 
                     health: 20, 
                     imageUrl: newProductImages[Math.floor(Math.random() * newProductImages.length)], 
                     attributes: attributes, 
@@ -16205,6 +16551,257 @@
         }
         function formatDateTime(isoString) { if (!isoString) return '-'; const date = new Date(isoString); const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }; return date.toLocaleString('tr-TR', options); }
         function getSelectedProductIds() { const selectedCheckboxes = document.querySelectorAll('#product-display .product-checkbox:checked'); return Array.from(selectedCheckboxes).map(cb => parseInt(cb.dataset.id)); }
+        
+        function generateCategoryOptions() {
+            return mockData.categories.map(category => {
+                const categoryName = typeof category.name === 'object' ? t(category.name) : category.name;
+                return `<option value="${category.id}">${categoryName}</option>`;
+            }).join('');
+        }
+        
+        function applyCategoryFilter(products) {
+            const categoryFilter = document.getElementById('categoryFilter');
+            if (!categoryFilter || !categoryFilter.value) {
+                return products;
+            }
+            
+            const selectedCategoryId = parseInt(categoryFilter.value);
+            return products.filter(product => product.categoryId === selectedCategoryId);
+        }
+        
+        function updateCategoryFilterIndicator() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            if (!categoryFilter) return;
+            
+            const selectedCategoryId = categoryFilter.value;
+            if (selectedCategoryId) {
+                const selectedCategory = mockData.categories.find(cat => cat.id == selectedCategoryId);
+                const categoryName = selectedCategory ? (typeof selectedCategory.name === 'object' ? t(selectedCategory.name) : selectedCategory.name) : 'Bilinmeyen';
+                
+                // Add a small indicator to show active filter
+                categoryFilter.style.borderColor = '#3b82f6';
+                categoryFilter.style.backgroundColor = '#eff6ff';
+                
+                // Update placeholder or add a small indicator
+                const filterContainer = categoryFilter.parentElement;
+                let indicator = filterContainer.querySelector('.category-filter-indicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.className = 'category-filter-indicator absolute -top-1 -right-1 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center';
+                    indicator.innerHTML = '1';
+                    filterContainer.appendChild(indicator);
+                }
+            } else {
+                // Remove indicator when no filter is active
+                categoryFilter.style.borderColor = '';
+                categoryFilter.style.backgroundColor = '';
+                const indicator = categoryFilter.parentElement.querySelector('.category-filter-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+        }
+        
+        // Pagination component
+        function generatePaginationHTML(currentPage, totalPages, totalItems, itemsPerPage) {
+            if (totalItems === 0) return '';
+            
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            
+            let paginationHTML = `
+                <div class="flex items-center justify-between px-4 py-3 bg-white border-t border-gray-200">
+                    <div class="flex items-center space-x-4 text-sm text-gray-700">
+                        <span>Toplam ${totalItems} öğeden ${startItem}-${endItem} arası gösteriliyor</span>
+                        <div class="flex items-center space-x-2">
+                            <label for="items-per-page" class="text-sm font-medium">Sayfa başına:</label>
+                            <select id="items-per-page" class="text-sm border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500" onchange="changeItemsPerPage(this.value)">
+                                <option value="10" ${itemsPerPage === 10 ? 'selected' : ''}>10</option>
+                                <option value="20" ${itemsPerPage === 20 ? 'selected' : ''}>20</option>
+                                <option value="50" ${itemsPerPage === 50 ? 'selected' : ''}>50</option>
+                                <option value="100" ${itemsPerPage === 100 ? 'selected' : ''}>100</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-1">
+            `;
+            
+            // Previous button
+            if (currentPage > 1) {
+                paginationHTML += `
+                    <button onclick="goToPage(${currentPage - 1})" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 hover:text-gray-700">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+            } else {
+                paginationHTML += `
+                    <button disabled class="px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-l-md cursor-not-allowed">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                `;
+            }
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            // First page and ellipsis
+            if (startPage > 1) {
+                paginationHTML += `
+                    <button onclick="goToPage(1)" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700">1</button>
+                `;
+                if (startPage > 2) {
+                    paginationHTML += `
+                        <span class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300">...</span>
+                    `;
+                }
+            }
+            
+            // Page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    paginationHTML += `
+                        <button class="px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600">${i}</button>
+                    `;
+                } else {
+                    paginationHTML += `
+                        <button onclick="goToPage(${i})" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700">${i}</button>
+                    `;
+                }
+            }
+            
+            // Last page and ellipsis
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `
+                        <span class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300">...</span>
+                    `;
+                }
+                paginationHTML += `
+                    <button onclick="goToPage(${totalPages})" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700">${totalPages}</button>
+                `;
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                paginationHTML += `
+                    <button onclick="goToPage(${currentPage + 1})" class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 hover:text-gray-700">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+            } else {
+                paginationHTML += `
+                    <button disabled class="px-3 py-2 text-sm font-medium text-gray-300 bg-white border border-gray-300 rounded-r-md cursor-not-allowed">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+            }
+            
+            paginationHTML += `
+                    </div>
+                </div>
+            `;
+            
+            return paginationHTML;
+        }
+        
+        // Global pagination state
+        window.paginationState = {
+            currentPage: 1,
+            itemsPerPage: 10,
+            totalItems: 0,
+            totalPages: 0,
+            currentData: [],
+            renderFunction: null
+        };
+        
+        // Initialize pagination state
+        function initializePagination() {
+            // Load saved preference or use default
+            const savedItemsPerPage = localStorage.getItem('paginationItemsPerPage');
+            const defaultItemsPerPage = savedItemsPerPage ? parseInt(savedItemsPerPage) : 10;
+            
+            window.paginationState.currentPage = 1;
+            window.paginationState.itemsPerPage = defaultItemsPerPage;
+            window.paginationState.totalItems = 0;
+            window.paginationState.totalPages = 0;
+            window.paginationState.currentData = [];
+            window.paginationState.renderFunction = null;
+        }
+        
+        function goToPage(page) {
+            if (page < 1 || page > window.paginationState.totalPages) return;
+            
+            window.paginationState.currentPage = page;
+            
+            // Re-render the current view with pagination
+            if (window.paginationState.renderFunction) {
+                window.paginationState.renderFunction();
+            }
+        }
+        
+        function changeItemsPerPage(newItemsPerPage) {
+            const itemsPerPage = parseInt(newItemsPerPage);
+            if (itemsPerPage === window.paginationState.itemsPerPage) return;
+            
+            // Save preference to localStorage
+            localStorage.setItem('paginationItemsPerPage', itemsPerPage.toString());
+            
+            // Update pagination state
+            window.paginationState.itemsPerPage = itemsPerPage;
+            window.paginationState.currentPage = 1; // Reset to first page
+            
+            // Re-render the current view with new pagination
+            if (window.paginationState.renderFunction) {
+                window.paginationState.renderFunction();
+            }
+        }
+        
+        function paginateData(data, page = 1, itemsPerPage = null) {
+            // Use provided itemsPerPage or current state
+            const currentItemsPerPage = itemsPerPage || window.paginationState.itemsPerPage;
+            const startIndex = (page - 1) * currentItemsPerPage;
+            const endIndex = startIndex + currentItemsPerPage;
+            
+            window.paginationState.currentPage = page;
+            window.paginationState.itemsPerPage = currentItemsPerPage;
+            window.paginationState.totalItems = data.length;
+            window.paginationState.totalPages = Math.ceil(data.length / currentItemsPerPage);
+            window.paginationState.currentData = data.slice(startIndex, endIndex);
+            
+            return window.paginationState.currentData;
+        }
+        
+        function renderPagination(containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.log('Pagination container not found:', containerId);
+                return;
+            }
+            
+            const paginationHTML = generatePaginationHTML(
+                window.paginationState.currentPage,
+                window.paginationState.totalPages,
+                window.paginationState.totalItems,
+                window.paginationState.itemsPerPage
+            );
+            
+            console.log('Rendering pagination:', {
+                containerId,
+                currentPage: window.paginationState.currentPage,
+                totalPages: window.paginationState.totalPages,
+                totalItems: window.paginationState.totalItems,
+                itemsPerPage: window.paginationState.itemsPerPage,
+                paginationHTML: paginationHTML.substring(0, 100) + '...'
+            });
+            
+            container.innerHTML = paginationHTML;
+        }
         function handleBulkAction(action) { 
             const selectedIds = getSelectedProductIds(); 
             if (selectedIds.length === 0) { 
@@ -18075,6 +18672,10 @@
                 returnItem.timeline.push({
                     date: new Date().toISOString(),
                     status: 'rejected',
+                        isArchived: false,
+                        isBanned: false,
+                    isArchived: false,
+                    isBanned: false,
                     message: `İade talebi reddedildi - ${rejectionReason}`,
                     user: user.name,
                     userRole: user.role
@@ -20397,6 +20998,7 @@ window.mockData.orders = window.mockData.orders || [
           </table>
         </div>
       </div>
+      <div id="supplier-orders-pagination"></div>
     </div>`;
 
   function numberTRY(x){ return (typeof x==='number') ? (x.toLocaleString('tr-TR',{style:'currency',currency:'TRY'})) : '-'; }
@@ -20497,14 +21099,20 @@ window.mockData.orders = window.mockData.orders || [
       return true;
     });
 
+    // Apply pagination
+    const paginatedOrders = paginateData(filteredOrders, window.paginationState.currentPage);
+    
+    // Set render function for pagination
+    window.paginationState.renderFunction = renderRows;
+    
     // Update count
     const countEl = document.getElementById('sord-count');
     if (countEl) {
-      countEl.textContent = `Görüntülenen: ${filteredOrders.length} / Toplam: ${orders.length} sipariş`;
+      countEl.textContent = `Görüntülenen: ${paginatedOrders.length} / Toplam: ${filteredOrders.length} sipariş`;
     }
 
     // Render filtered rows
-    const rows = filteredOrders.map(o => {
+    const rows = paginatedOrders.map(o => {
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
       const dateStr = o.date ? new Date(o.date).toLocaleDateString('tr-TR') : '-';
@@ -20522,6 +21130,9 @@ window.mockData.orders = window.mockData.orders || [
       </div>
     </td></tr>`;
     
+    // Render pagination
+    renderPagination('supplier-orders-pagination');
+    
     // Make the supplier orders table sortable
     setTimeout(() => makeTableSortable('supplier-orders-table'), 100);
   }
@@ -20537,6 +21148,9 @@ window.mockData.orders = window.mockData.orders || [
     }
   });
 
+  // Initialize pagination
+  initializePagination();
+  
   renderRows();
 
   // Add event listeners for filtering
