@@ -921,6 +921,64 @@
 
         // --- MOCK DATA (LOCALIZED) ---
         let mockData = {
+            // Centralized request system
+            requests: [
+                // Example requests - will be populated dynamically
+                {
+                    id: 1,
+                    type: 'stock_price_update', // 'stock_price_update', 'product_update', 'product_create'
+                    status: 'submitted', // 'submitted', 'toBeRevised', 'accepted'
+                    productId: 1,
+                    supplierId: 1,
+                    submittedAt: '2025-01-20T10:30:00Z',
+                    data: {
+                        currentPrice: 299.90,
+                        requestedPrice: 349.90,
+                        currentStock: 50,
+                        requestedStock: 100
+                    }
+                },
+                {
+                    id: 2,
+                    type: 'product_update',
+                    status: 'submitted',
+                    productId: 1,
+                    supplierId: 1,
+                    submittedAt: '2025-01-20T10:30:00Z',
+                    data: {
+                        name: { tr: 'Taş Pamuk Elastan Dümeli Bermuda - Güncellenmiş', en: 'Stone Cotton Elastane Buttoned Bermuda - Updated' },
+                        attributes: {
+                            1: { value: 'Taş', status: 'pending' },
+                            2: { value: 'L', status: 'pending' },
+                            3: { value: 'Pamuk', status: 'pending' }
+                        }
+                    }
+                },
+                {
+                    id: 3,
+                    type: 'product_create',
+                    status: 'submitted',
+                    productId: 20,
+                    supplierId: 1,
+                    submittedAt: '2025-10-21T10:30:00Z',
+                    data: {
+                        name: { tr: 'Test Yeni Ürün 1', en: 'Test New Product 1' },
+                        attributes: {}
+                    }
+                },
+                {
+                    id: 4,
+                    type: 'product_create',
+                    status: 'submitted',
+                    productId: 21,
+                    supplierId: 1,
+                    submittedAt: '2025-10-21T11:00:00Z',
+                    data: {
+                        name: { tr: 'Test Yeni Ürün 2', en: 'Test New Product 2' },
+                        attributes: {}
+                    }
+                }
+            ],
             suppliers: [
                 { id: 1, name: 'ModaTedarik', status: 'approved', email: 'info@modatedarik.com', phone: '+90 212 555 0101', registrationDate: '2024-01-15', lastActivity: '2025-01-15T10:30:00Z' },
                 { id: 2, name: 'Ayakkabı A.Ş.', status: 'approved', email: 'iletisim@ayakkabi.com', phone: '+90 216 555 0202', registrationDate: '2024-02-20', lastActivity: '2025-01-14T15:45:00Z' }
@@ -4226,6 +4284,328 @@
             ]
         };
 
+        // --- REQUEST MANAGEMENT SYSTEM ---
+        // Helper functions for managing requests
+        function createRequest(type, productId, supplierId, data) {
+            const newRequest = {
+                id: Math.max(...mockData.requests.map(r => r.id), 0) + 1,
+                type: type, // 'stock_price_update', 'product_update', 'product_create'
+                status: 'submitted', // 'submitted', 'toBeRevised', 'accepted'
+                productId: productId,
+                supplierId: supplierId,
+                submittedAt: new Date().toISOString(),
+                data: data
+            };
+            mockData.requests.push(newRequest);
+            return newRequest;
+        }
+
+        function getRequestsByType(type, supplierId = null) {
+            let requests = mockData.requests.filter(r => r.type === type);
+            if (supplierId) {
+                requests = requests.filter(r => r.supplierId === supplierId);
+            }
+            return requests;
+        }
+
+        function getRequestsByStatus(status, supplierId = null) {
+            let requests = mockData.requests.filter(r => r.status === status);
+            if (supplierId) {
+                requests = requests.filter(r => r.supplierId === supplierId);
+            }
+            return requests;
+        }
+
+        function updateRequestStatus(requestId, newStatus) {
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (request) {
+                request.status = newStatus;
+                request.updatedAt = new Date().toISOString();
+                return true;
+            }
+            return false;
+        }
+
+        function getRequestCounts(supplierId = null) {
+            const requests = supplierId ? 
+                mockData.requests.filter(r => r.supplierId === supplierId) : 
+                mockData.requests;
+            
+            return {
+                stockPriceUpdate: requests.filter(r => r.type === 'stock_price_update' && r.status === 'submitted').length,
+                productUpdate: requests.filter(r => r.type === 'product_update' && r.status === 'submitted').length,
+                productCreate: requests.filter(r => r.type === 'product_create' && r.status === 'submitted').length,
+                totalSubmitted: requests.filter(r => r.status === 'submitted').length
+            };
+        }
+
+        function showRequestDetailModal(requestId) {
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (!request) {
+                showToast('Talep bulunamadı.', 'error');
+                return;
+            }
+
+            const product = mockData.products.find(p => p.id === request.productId);
+            const supplier = mockData.suppliers.find(s => s.id === request.supplierId);
+            
+            if (!product) {
+                showToast('Ürün bulunamadı.', 'error');
+                return;
+            }
+
+            // Create a temporary container to generate the detailed comparison view
+            const tempContainer = document.createElement('div');
+            
+            // For stock/price update requests, show the simple comparison
+            if (request.type === 'stock_price_update') {
+                const modalContent = `
+                    <div class="space-y-6">
+                        <!-- Header -->
+                        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Stok ve Fiyat Güncelleme Talebi</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Bu ürün için gönderilen stok ve fiyat güncelleme talebi</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                                        <i class="fas fa-clock mr-1"></i>${request.status === 'submitted' ? 'Gönderildi' : request.status === 'toBeRevised' ? 'Revize Edilecek' : 'Kabul Edildi'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Request Info -->
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar-alt text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700">Gönderim Tarihi</p>
+                                        <p class="text-sm text-gray-600">${new Date(request.submittedAt).toLocaleDateString('tr-TR')}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-user text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700">Tedarikçi</p>
+                                        <p class="text-sm text-gray-600">${supplier?.name || 'Bilinmeyen Tedarikçi'}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-box text-orange-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-700">Ürün</p>
+                                        <p class="text-sm text-gray-600">${product.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stock and Price Comparison -->
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900">Stok ve Fiyat Değişiklikleri</h4>
+                                <p class="text-sm text-gray-600 mt-1">Mevcut değerler ile talep edilen değerler arasındaki fark</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Stock Comparison -->
+                                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                        <div class="flex items-center space-x-3 mb-3">
+                                            <i class="fas fa-boxes text-orange-600"></i>
+                                            <p class="font-medium text-gray-900">Stok Miktarı</p>
+                                            <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">Güncellendi</span>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="bg-white p-3 rounded-lg border">
+                                                <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
+                                                <div class="font-medium text-gray-800">${request.data.currentStock || 0}</div>
+                                            </div>
+                                            <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
+                                                <div class="text-sm text-orange-700 mb-1">Talep Edilen Değer</div>
+                                                <div class="font-medium text-orange-900">${request.data.requestedStock || 0}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Price Comparison -->
+                                    <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                        <div class="flex items-center space-x-3 mb-3">
+                                            <i class="fas fa-lira-sign text-orange-600"></i>
+                                            <p class="font-medium text-gray-900">Fiyat (TRY)</p>
+                                            <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">Güncellendi</span>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div class="bg-white p-3 rounded-lg border">
+                                                <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
+                                                <div class="font-medium text-gray-800">${request.data.currentPrice || 0} TRY</div>
+                                            </div>
+                                            <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
+                                                <div class="text-sm text-orange-700 mb-1">Talep Edilen Değer</div>
+                                                <div class="font-medium text-orange-900">${request.data.requestedPrice || 0} TRY</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        ${window.currentUser?.role === 'admin' && request.status === 'submitted' ? `
+                        <!-- Admin Action Buttons -->
+                        <div class="flex justify-end space-x-3 pt-4 border-t">
+                            <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
+                                    class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+                                Revize Et
+                            </button>
+                            <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
+                                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                Kabul Et
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                showModal('Stok ve Fiyat Güncelleme Talebi', modalContent, 'Kapat', () => {
+                    closeModal();
+                });
+                return;
+            }
+
+            // For product create/update requests, use the detailed comparison view
+            // First, we need to temporarily set up the product with the request data
+            const originalSubmission = product.supplierSubmission;
+            
+            // Create a temporary submission object from the request data
+            const tempSubmission = {
+                supplierId: request.supplierId,
+                status: request.status,
+                submittedAt: request.submittedAt,
+                name: request.data.name ? { value: request.data.name, status: 'pending' } : null,
+                attributes: request.data.attributes || {},
+                requestType: request.type  // Add request type to differentiate product_create vs product_update
+            };
+            
+            // Temporarily set the submission data
+            product.supplierSubmission = tempSubmission;
+            
+            // Generate the detailed comparison view
+            renderComparisonTab(tempContainer, product, window.currentUser?.role === 'supplier');
+            
+            // Restore original submission data
+            product.supplierSubmission = originalSubmission;
+            
+            // Get the generated HTML
+            const modalContent = tempContainer.innerHTML;
+            
+            // Add admin action buttons if needed
+            let finalContent = modalContent;
+            if (window.currentUser?.role === 'admin' && request.status === 'submitted') {
+                finalContent += `
+                    <div class="flex justify-end space-x-3 pt-4 border-t mt-6">
+                        <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
+                                class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+                            Revize Et
+                        </button>
+                        <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
+                                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                            Kabul Et
+                        </button>
+                    </div>
+                `;
+            }
+
+            const modalTitle = request.type === 'product_create' ? 'Yeni Ürün Talebi' : 'Ürün Güncelleme Talebi';
+            showModal(modalTitle, finalContent, 'Kapat', () => {
+                closeModal();
+            });
+        }
+
+        function handleRequestDecision(requestId, decision) {
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (!request) {
+                showToast('Talep bulunamadı.', 'error');
+                return;
+            }
+
+            if (decision === 'accepted') {
+                // Apply the request to the product
+                applyRequestToProduct(request);
+                updateRequestStatus(requestId, 'completed');
+                showToast('Talep kabul edildi ve uygulandı.', 'success');
+            } else if (decision === 'toBeRevised') {
+                updateRequestStatus(requestId, 'toBeRevised');
+                showToast('Talep revize edilmek üzere işaretlendi.', 'info');
+            }
+
+            closeModal();
+            
+            // Refresh the current view
+            if (window.location.hash.includes('products')) {
+                handleRouteChange();
+            }
+        }
+
+        function applyRequestToProduct(request) {
+            const product = mockData.products.find(p => p.id === request.productId);
+            if (!product) return;
+
+            if (request.type === 'stock_price_update') {
+                // Update stock and price
+                const supplierProduct = mockData.supplierProducts.find(sp => 
+                    sp.productId === request.productId && sp.supplierId === request.supplierId
+                );
+                if (supplierProduct) {
+                    if (request.data.requestedStock !== undefined) {
+                        supplierProduct.stock = request.data.requestedStock;
+                    }
+                    if (request.data.requestedPrice !== undefined) {
+                        supplierProduct.listPrice = request.data.requestedPrice;
+                    }
+                }
+            } else if (request.type === 'product_create') {
+                // For product_create requests, mark the draft product as active
+                // The product was already created when the supplier submitted it
+                if (product.status === 'draft') {
+                    product.status = 'active';
+                }
+                // Create a supplierProduct entry if it doesn't exist
+                if (!mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === request.supplierId)) {
+                    mockData.supplierProducts.push({
+                        productId: product.id,
+                        supplierId: request.supplierId,
+                        stock: 0,
+                        listPrice: product.listPrice || 0,
+                        description: '',
+                        isArchived: false,
+                        isBanned: false
+                    });
+                }
+                product.supplierSubmission = null; // Clear submission data
+            } else if (request.type === 'product_update') {
+                // Update product attributes
+                if (request.data.name) {
+                    product.name = request.data.name;
+                }
+                if (request.data.attributes) {
+                    Object.entries(request.data.attributes).forEach(([attrId, attr]) => {
+                        if (product.attributes) {
+                            product.attributes[attrId] = { value: attr.value };
+                        }
+                    });
+                }
+                product.supplierSubmission = null; // Clear submission data
+            }
+        }
+
         // --- USER DATA ---
         // Define available users for user switching
         window.availableUsers = [
@@ -4605,10 +4985,11 @@
                 const currentUserSupplierId = (window.currentUser||{}).supplierId;
                 const isCurrentUserSupplier = (window.currentUser||{}).role === 'supplier';
                 
+                // Use new request system for counts
+                const requestCounts = getRequestCounts(isCurrentUserSupplier ? currentUserSupplierId : null);
+                
                 // For suppliers: count products where they have pending update requests
-                const guncellemeBekleyenlerCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => p.status === 'active' && p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId && p.supplierSubmission.status === 'pending').length :
-                    mockData.products.filter(p => p.status === 'active' && p.supplierSubmission && p.supplierSubmission.status === 'pending').length;
+                const guncellemeBekleyenlerCount = requestCounts.productUpdate;
                 const yeniGelenlerCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission).length;
                 const onaylananCount = mockData.products.filter(p => p.status === 'active').length;
                 const reddedilenCount = mockData.products.filter(p => p.status === 'rejected').length;
@@ -4616,19 +4997,8 @@
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId).length :
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission).length;
                 
-                // Count for yeni-urun-talepleri tab (matches the filtering logic)
-                const yeniUrunTalepleriCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => 
-                        p.status === 'draft' && (
-                            (p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId) ||
-                            (!p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId))
-                        )
-                    ).length :
-                    mockData.products.filter(p => p.status === 'draft').length;
-                const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
-                const priceUpdateRequestsCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentUserSupplierId)).length :
-                    mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
+                const yeniUrunTalepleriCount = requestCounts.productCreate;
+                const priceUpdateRequestsCount = requestCounts.stockPriceUpdate;
                 console.log('Counter - isCurrentUserSupplier:', isCurrentUserSupplier, 'currentUserSupplierId:', currentUserSupplierId, 'priceUpdateRequestsCount:', priceUpdateRequestsCount);
                 // Pasif (unavailable for sale) count per supplier: stock==0 OR isArchived OR isBanned
                 const passiveCount = isCurrentUserSupplier && currentUserSupplierId ?
@@ -4940,10 +5310,31 @@
                                        product.supplierSubmission && 
                                        product.supplierSubmission.status === 'pending';
                 
+                // Check if this is a new product request (draft with supplierSubmission)
+                // For admins, we don't need to check supplierId since they can see all requests
+                // Check if this is a new product request using centralized request system
+                const hasProductCreateRequest = mockData.requests && mockData.requests.some(r => r.type === 'product_create' && r.productId === product.id && r.status === 'submitted');
+                const isNewProductRequest = hasProductCreateRequest || (product.status === 'draft' && product.supplierSubmission && (isSupplier ? product.supplierSubmission.supplierId === (window.currentUser||{}).supplierId : true));
+                
+                console.log('Product Detail View Debug:', {
+                    productId: product.id,
+                    productName: product.name,
+                    status: product.status,
+                    supplierSubmission: product.supplierSubmission,
+                    isPendingUpdate: isPendingUpdate,
+                    isNewProductRequest: isNewProductRequest,
+                    currentUser: window.currentUser
+                });
+                
                  if (isSupplier && isPendingUpdate) {
                      // Suppliers viewing pending updates see approval waiting status
                      tabs = [
                          { key: 'comparison', label: 'Güncelleme Onayı Bekleyen Ürün' }
+                     ];
+                 } else if (isSupplier && isNewProductRequest) {
+                     // Suppliers viewing their new product requests see new product request status
+                     tabs = [
+                         { key: 'comparison', label: 'Yeni Ürün Talebi - Onay Bekliyor' }
                      ];
                  } else if (isSupplier) {
                     // Suppliers can see general info with attributes, stock/price, and images
@@ -4964,7 +5355,7 @@
                 }
                 
                 // Determine which tab should be active by default
-                const defaultTabIndex = (isSupplier && isPendingUpdate) ? 0 : 0; // Both cases use index 0, but different tabs
+                const defaultTabIndex = (isSupplier && (isPendingUpdate || isNewProductRequest)) ? 0 : 0; // Both cases use index 0, but different tabs
                 tabsContainer.innerHTML = tabs.map((tab, index) => `<button data-tab="${tab.key}" class="tab-button ${index === defaultTabIndex ? 'active' : 'text-gray-500'} font-medium py-4">${tab.label}</button>`).join('');
                 tabsContainer.querySelectorAll('.tab-button').forEach(tab => {
                     tab.addEventListener('click', () => {
@@ -4975,8 +5366,8 @@
                     });
                 });
                 
-                // For suppliers viewing pending update products, show comparison tab by default
-                if (isSupplier && isPendingUpdate) {
+                // For suppliers viewing pending update products or new product requests, show comparison tab by default
+                if (isSupplier && (isPendingUpdate || isNewProductRequest)) {
                     renderProductTab('comparison', product);
                 } else {
                 renderProductTab('general', product);
@@ -9394,14 +9785,19 @@
                 if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
                  } else if (activeTab === 'urun-guncelleme') {
-                     // Show products where current supplier has pending update requests
+                    // Show update requests using new request system
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
-                     filteredProducts = mockData.products.filter(p => 
-                         p.status === 'active' && 
-                         p.supplierSubmission && 
-                         p.supplierSubmission.supplierId === currentUserSupplierId && 
-                         p.supplierSubmission.status === 'pending'
-                     );
+                    const updateRequests = getRequestsByType('product_update', currentUserSupplierId);
+                    filteredProducts = updateRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
+                } else if (activeTab === 'yeni-urun-talepleri') {
+                    // Show new product creation requests using new request system
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    const createRequests = getRequestsByType('product_create', currentUserSupplierId);
+                    filteredProducts = createRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                 } else if (activeTab === 'archived') {
                     // Show archived products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
@@ -9427,18 +9823,27 @@
                     // Show requests - empty for now
                     filteredProducts = [];
                 } else if (activeTab === 'fiyat-stok-istekleri') {
-                    // Show price and stock requests for suppliers
+                    // Show price and stock requests for suppliers using new request system
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
-                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentUserSupplierId));
-                    console.log('First switchProductView - fiyat-stok-istekleri - currentUserSupplierId:', currentUserSupplierId, 'filteredProducts:', filteredProducts.length);
+                    const stockPriceRequests = getRequestsByType('stock_price_update', currentUserSupplierId);
+                    filteredProducts = stockPriceRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                 }
             } else {
                 // Admin users can see all product tabs
                 if (activeTab === 'urun-guncelleme') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
+                    // Show update requests using new request system
+                    const updateRequests = getRequestsByType('product_update');
+                    filteredProducts = updateRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                 } else if (activeTab === 'yeni-urun-talepleri') {
-                    // Show both new arrivals (no supplierSubmission) and submitted products (with supplierSubmission)
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft');
+                    // Show new product creation requests using new request system
+                    const createRequests = getRequestsByType('product_create');
+                    filteredProducts = createRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                 } else if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                 } else if (activeTab === 'archived') {
@@ -9461,9 +9866,11 @@
                     // Show requests - empty for now
                     filteredProducts = [];
                 } else if (activeTab === 'fiyat-stok-istekleri') {
-                    // Show price and stock requests for admins
-                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
-                    console.log('First switchProductView - fiyat-stok-istekleri - Admin - filteredProducts:', filteredProducts.length);
+                    // Show price and stock requests for admins using new request system
+                    const stockPriceRequests = getRequestsByType('stock_price_update');
+                    filteredProducts = stockPriceRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                 }
             }
             
@@ -9691,13 +10098,35 @@
                 
                 // Only show actions column for admins, not for suppliers
                 if (!isSupplier) {
-                    row += `
-                    <td class="p-3 text-right">
-                        <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
-                            Detay <i class="fas fa-chevron-right ml-1"></i>
-                        </button>
-                    </td>
-                `;
+                    // For request tabs, show inspection buttons instead of detail buttons
+                    if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') {
+                        // Find the request for this product
+                        const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
+                        const request = mockData.requests.find(r => 
+                            r.type === requestType && r.productId === product.id && r.status === 'submitted'
+                        );
+                        if (request) {
+                            row += `
+                            <td class="p-3 text-right">
+                                <div class="flex gap-1 justify-end">
+                                    <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); showRequestDetailModal(${request.id});">
+                                        <i class="fas fa-search-plus mr-1"></i>İncele
+                                    </button>
+                                </div>
+                            </td>
+                            `;
+                        } else {
+                            row += `<td class="p-3 text-right"></td>`;
+                        }
+                    } else {
+                        row += `
+                        <td class="p-3 text-right">
+                            <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
+                                Detay <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </td>
+                        `;
+                    }
                 }
                 
                 row += `</tr>`;
@@ -12752,6 +13181,34 @@
                 supplier.status = newStatus;
                 supplier.lastActivity = new Date().toISOString();
                 
+                // Handle status change to approved
+                if (newStatus === 'approved') {
+                    // Check if supplier is already in availableUsers
+                    const existingUser = window.availableUsers.find(u => u.supplierId === supplier.id);
+                    if (!existingUser) {
+                        // Add to availableUsers for user switching
+                        const newUser = {
+                            id: `supplier${supplier.id}`,
+                            name: supplier.name,
+                            role: 'supplier',
+                            supplierId: supplier.id,
+                            email: supplier.email
+                        };
+                        window.availableUsers.push(newUser);
+                    }
+                    // Refresh user switcher
+                    if (typeof ensureUserSwitcher === 'function') {
+                        ensureUserSwitcher();
+                    }
+                } else if (newStatus === 'rejected' || newStatus === 'suspended') {
+                    // Remove from availableUsers if status is rejected or suspended
+                    window.availableUsers = window.availableUsers.filter(u => u.supplierId !== supplier.id);
+                    // Refresh user switcher
+                    if (typeof ensureUserSwitcher === 'function') {
+                        ensureUserSwitcher();
+                    }
+                }
+                
                 // Show success message
                 const statusTexts = {
                     approved: 'Onaylandı',
@@ -12849,6 +13306,22 @@
                 
                 mockData.suppliers.push(newSupplier);
                 
+                // Add to availableUsers if status is approved
+                if (status === 'approved') {
+                    const newUser = {
+                        id: `supplier${newSupplier.id}`,
+                        name: newSupplier.name,
+                        role: 'supplier',
+                        supplierId: newSupplier.id,
+                        email: newSupplier.email
+                    };
+                    window.availableUsers.push(newUser);
+                    // Refresh user switcher
+                    if (typeof ensureUserSwitcher === 'function') {
+                        ensureUserSwitcher();
+                    }
+                }
+                
                 alert('Tedarikçi başarıyla eklendi.');
                 
                 // Refresh the suppliers page
@@ -12924,16 +13397,17 @@
                     break;
                 case 'yeni-urun-talepleri':
                     if (isSupplier && currentSupplierId) {
-                        // For suppliers: show both their submitted products and new arrivals they can see
-                        filteredProducts = mockData.products.filter(p => 
-                            p.status === 'draft' && (
-                                (p.supplierSubmission && p.supplierSubmission.supplierId === currentSupplierId) ||
-                                (!p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId))
-                            )
-                        );
+                        // For suppliers: show their new product creation requests using new request system
+                        const createRequests = getRequestsByType('product_create', currentSupplierId).filter(r => r.status === 'submitted');
+                        filteredProducts = createRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     } else {
-                        // For admins: show all draft products (both new arrivals and submitted)
-                        filteredProducts = mockData.products.filter(p => p.status === 'draft');
+                        // For admins: show all new product creation requests using new request system
+                        const createRequests = getRequestsByType('product_create').filter(r => r.status === 'submitted');
+                        filteredProducts = createRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     }
                     break;
                 case 'aktif':
@@ -12953,15 +13427,17 @@
                     break;
                 case 'fiyat-stok-istekleri':
                     if (isSupplier && currentSupplierId) {
-                        // For suppliers: show only their own requests
-                        filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentSupplierId));
-                        console.log('Table - isSupplier:', isSupplier, 'currentSupplierId:', currentSupplierId, 'filteredProducts:', filteredProducts.length);
-                        console.log('All products with priceRequests:', mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests));
-                        console.log('Current user:', window.currentUser);
+                        // For suppliers: show only their own requests using new request system
+                        const stockPriceRequests = getRequestsByType('stock_price_update', currentSupplierId);
+                        filteredProducts = stockPriceRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     } else {
-                        // For admins: show all requests
-                        filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
-                        console.log('Table - Admin filtering - filteredProducts:', filteredProducts.length);
+                        // For admins: show all requests using new request system
+                        const stockPriceRequests = getRequestsByType('stock_price_update');
+                        filteredProducts = stockPriceRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     }
                     break;
                 case 'archived':
@@ -13017,18 +13493,19 @@
                     }
                     break;
                 case 'urun-guncelleme':
-                    // Show products submitted by suppliers for review
-                    filteredProducts = mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission);
-                    break;
-                case 'yeni-urun-talepleri':
-                    filteredProducts = [];
+                    // Show update requests using new request system
+                    const updateRequests = getRequestsByType('product_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted');
+                    filteredProducts = updateRequests.map(req => 
+                        mockData.products.find(p => p.id === req.productId)
+                    ).filter(Boolean);
                     break;
                 default:
                     filteredProducts = mockData.products;
             }
 
             // For suppliers, only show products they have stock/price data for
-            if (isSupplier && currentSupplierId) {
+            // Exception: for new product requests and update requests, show them even without supplierProducts
+            if (isSupplier && currentSupplierId && activeTab !== 'yeni-urun-talepleri' && activeTab !== 'urun-guncelleme') {
                 filteredProducts = filteredProducts.filter(p => {
                     return mockData.supplierProducts.some(sp => 
                         sp.productId === p.id && sp.supplierId === (p.archivedSupplierId || currentSupplierId)
@@ -13069,6 +13546,7 @@
             
             // Check if we're in specific tabs by looking at the current URL hash
             const currentHash = window.location.hash;
+            const isNewProductRequestsTab = currentHash.includes('yeni-urun-talepleri');
             const isNewArrivalsTab = currentHash.includes('yeni-gelenler');
             const isAwaitingApprovalTab = currentHash.includes('urun-guncelleme');
             const isPriceUpdateRequestsTab = currentHash.includes('fiyat-stok-istekleri');
@@ -13081,6 +13559,8 @@
             let activeTab = null;
             if (isArchivedTab) {
                 activeTab = 'archived';
+            } else if (isNewProductRequestsTab) {
+                activeTab = 'yeni-urun-talepleri';
             } else if (isNewArrivalsTab) {
                 activeTab = 'yeni-urun-talepleri';
             } else if (isAwaitingApprovalTab) {
@@ -13229,9 +13709,11 @@
                     <td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>
                     <td class="p-3 text-sm text-gray-500">${formatTimeAgo(p.lastUpdated)}</td>
                     <td class="p-3 text-right">
-                        <button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');">
-                            <i class="fas fa-edit"></i>
-                        </button>
+                        ${((activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') && !isSupplier) ? (() => {
+                            const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
+                            const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && r.status === 'submitted');
+                            return req ? `<button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); showRequestDetailModal(${req.id});"><i class="fas fa-search-plus mr-1"></i>İncele</button>` : '';
+                        })() : `<button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');"><i class="fas fa-edit"></i></button>`}
                     </td>
                 </tr>
                 `;
@@ -13291,35 +13773,27 @@
             const isSupplier = currentUser.role === 'supplier';
             const currentSupplierId = currentUser.supplierId;
 
-            // Flatten all price requests from all products
-            const allPriceRequests = [];
-            products.forEach(product => {
-                if (product.supplierSubmission && product.supplierSubmission.priceRequests) {
-                    product.supplierSubmission.priceRequests
-                        .filter(req => {
-                            // Filter by status
-                            if (req.status !== 'pending') return false;
-                            
-                            // For suppliers, only show their own requests
-                            if (isSupplier && currentSupplierId) {
-                                return req.supplierId === currentSupplierId;
-                            }
-                            
-                            // For admins, show all requests
-                            return true;
-                        })
-                        .forEach(request => {
-                            allPriceRequests.push({
+            // Get stock/price update requests using new request system
+            const stockPriceRequests = getRequestsByType('stock_price_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted');
+            
+            // Map requests to include product information
+            const allPriceRequests = stockPriceRequests.map(request => {
+                const product = mockData.products.find(p => p.id === request.productId);
+                if (!product || !request.data) return null;
+                
+                const supplier = mockData.suppliers.find(s => s.id === request.supplierId);
+                
+                return {
                                 ...request,
+                    ...request.data, // Include currentPrice, requestedPrice, etc.
                                 productId: product.id,
                                 productName: product.name,
                                 productSku: product.sku,
                                 productImage: product.imageUrl,
-                                category: mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } }
-                            });
-                        });
-                }
-            });
+                                category: mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } },
+                                supplierName: supplier ? supplier.name : 'Bilinmeyen Tedarikçi'
+                };
+            }).filter(Boolean);
 
             if (allPriceRequests.length === 0) {
                 container.innerHTML = `<div class="text-center p-10 text-gray-500">Bekleyen fiyat güncelleme talebi bulunmuyor.</div>`;
@@ -13327,7 +13801,9 @@
             }
 
             const requestRows = allPriceRequests.map((request, index) => {
-                const priceChange = ((request.requestedPrice - request.currentPrice) / request.currentPrice * 100).toFixed(1);
+                const currentPrice = request.currentPrice || 0;
+                const requestedPrice = request.requestedPrice || 0;
+                const priceChange = currentPrice > 0 ? ((requestedPrice - currentPrice) / currentPrice * 100).toFixed(1) : 0;
                 const changeColor = priceChange > 0 ? 'text-red-600' : 'text-green-600';
                 const changeIcon = priceChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
                 const recommendationColor = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
@@ -13359,13 +13835,13 @@
                         <td class="p-4 text-sm text-gray-600">${t(request.category.name)}</td>
                         <td class="p-4">
                             <div class="text-sm">
-                                <div class="font-medium text-gray-900">${request.currentPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                <div class="font-medium text-gray-900">${(request.currentPrice || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                                 <div class="text-gray-500">Mevcut</div>
                             </div>
                         </td>
                         <td class="p-4">
                             <div class="text-sm">
-                                <div class="font-medium text-gray-900">${request.requestedPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                <div class="font-medium text-gray-900">${(request.requestedPrice || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                                 <div class="text-gray-500">Talep Edilen</div>
                             </div>
                         </td>
@@ -13396,15 +13872,15 @@
                         </td>
                         <td class="p-4 text-right">
                             <div class="flex space-x-2">
-                                <button onclick="showPriceReviewModal(${request.productId})" 
+                                <button onclick="showRequestDetailModal(${request.id})" 
                                         class="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium">
                                     <i class="fas fa-search-plus mr-1"></i>İncele
                                 </button>
-                                <button onclick="handlePriceDecisionCustom(${request.productId}, ${request.supplierId}, 'approve')" 
+                                <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                         class="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 text-sm font-medium">
                                     <i class="fas fa-check mr-1"></i>Onayla
                                 </button>
-                                <button onclick="handlePriceDecisionCustom(${request.productId}, ${request.supplierId}, 'reject')" 
+                                <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
                                         class="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-sm font-medium">
                                     <i class="fas fa-times mr-1"></i>Reddet
                                 </button>
@@ -14233,11 +14709,19 @@
                 }
             } 
         }
+        // Initialize modal elements with error checking
         const modal = document.getElementById('modal-template');
         const modalContent = document.querySelector('.modal-content');
         const modalTitle = document.getElementById('modal-title');
         const modalBody = document.getElementById('modal-body');
         let modalConfirm = document.getElementById('modal-confirm');
+        
+        // Check if all modal elements are found
+        if (!modal) console.error('Modal template not found');
+        if (!modalContent) console.error('Modal content not found');
+        if (!modalTitle) console.error('Modal title not found');
+        if (!modalBody) console.error('Modal body not found');
+        if (!modalConfirm) console.error('Modal confirm button not found');
         
         console.log('Modal elements:', {
             modal: modal,
@@ -14248,13 +14732,38 @@
         });
         function showModal(title, body, confirmText = t('confirm'), onConfirm = () => {}) {
             console.log('showModal called with title:', title);
+            
+            // Add null checks for modal elements
+            if (!modalTitle) {
+                console.error('modalTitle element not found');
+                return;
+            }
+            if (!modalBody) {
+                console.error('modalBody element not found');
+                return;
+            }
+            if (!modalConfirm) {
+                console.error('modalConfirm element not found');
+                return;
+            }
+            
             modalTitle.textContent = title;
             modalBody.innerHTML = body;
+            
+            // Check if modalConfirm has a parent node before using replaceChild
+            if (modalConfirm.parentNode) {
             const newConfirm = modalConfirm.cloneNode(true);
             newConfirm.textContent = confirmText;
             modalConfirm.parentNode.replaceChild(newConfirm, modalConfirm);
             modalConfirm = newConfirm;
             modalConfirm.onclick = () => { onConfirm(); };
+            } else {
+                console.error('modalConfirm has no parent node');
+                // Fallback: just update the text content
+                modalConfirm.textContent = confirmText;
+                modalConfirm.onclick = () => { onConfirm(); };
+            }
+            
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -15392,20 +15901,58 @@
             } 
             showModal(title, body, t('delete'), onConfirm); 
         }
-        function renderCategoryAttributes(categoryId) { const container = document.getElementById('category-attributes-container'); if (!categoryId) { container.innerHTML = '<p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p>'; updateProductModalButtons(); return; } const category = mockData.categories.find(c => c.id == categoryId); if (!category || !category.attributes || category.attributes.length === 0) { container.innerHTML = '<p class="text-sm text-gray-500">Bu kategori için tanımlı bir nitelik bulunmuyor.</p>'; updateProductModalButtons(); return; } const variantAttributeIds = category.variantAttributes || []; const attributesHtml = category.attributes.map(attrId => { const attribute = mockData.attributes.find(a => a.id === attrId); if (!attribute) return ''; const isVariant = variantAttributeIds.includes(attrId); let inputHtml = ''; if (attribute.type === 'Text') { inputHtml = `<input type="text" id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="${t(attribute.label)}">`; } else if (attribute.type === 'Select') { const optionsHtml = attribute.options.map(opt => `<option value="${opt}">${opt}</option>`).join(''); inputHtml = `<select id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">${optionsHtml}</select>`; } return `<div><label for="attr_${attribute.name}" class="block text-sm font-medium text-gray-700 flex justify-between items-center"><span>${t(attribute.label)}</span> ${isVariant ? '<span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">VARYANT</span>' : ''}</label>${inputHtml}</div>`; }).join(''); container.innerHTML = `<div class="space-y-4">${attributesHtml}</div>`; 
-            // Add event listeners to attribute inputs to update buttons dynamically
+        function renderCategoryAttributes(categoryId) { 
+            const container = document.getElementById('category-attributes-container'); 
+            if (!container) {
+                console.error('category-attributes-container not found!');
+                return;
+            }
+            
+            if (!categoryId) { 
+                container.innerHTML = '<p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p>'; 
+                return; 
+            } 
+            
+            const category = mockData.categories.find(c => c.id == categoryId); 
+            if (!category || !category.attributes || category.attributes.length === 0) { 
+                container.innerHTML = '<p class="text-sm text-gray-500">Bu kategori için tanımlı bir nitelik bulunmuyor.</p>'; 
+                return; 
+            } 
+            
+            const variantAttributeIds = category.variantAttributes || []; 
+            const attributesHtml = category.attributes.map(attrId => { 
+                const attribute = mockData.attributes.find(a => a.id === attrId); 
+                if (!attribute) return ''; 
+                const isVariant = variantAttributeIds.includes(attrId); 
+                let inputHtml = ''; 
+                if (attribute.type === 'Text') { 
+                    inputHtml = `<input type="text" id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="${t(attribute.label)}">`; 
+                } else if (attribute.type === 'Select') { 
+                    const optionsHtml = attribute.options.map(opt => `<option value="${opt}">${opt}</option>`).join(''); 
+                    inputHtml = `<select id="attr_${attribute.name}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">${optionsHtml}</select>`; 
+                } 
+                return `<div><label for="attr_${attribute.name}" class="block text-sm font-medium text-gray-700 flex justify-between items-center"><span>${t(attribute.label)}</span> ${isVariant ? '<span class="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-full">VARYANT</span>' : ''}</label>${inputHtml}</div>`; 
+            }).join(''); 
+            
+            container.innerHTML = `<div class="space-y-4">${attributesHtml}</div>`; 
+            
+            // Add event listeners to attribute inputs
             setTimeout(() => {
                 category.attributes.forEach(attrId => {
                     const attribute = mockData.attributes.find(a => a.id === attrId);
                     if (attribute) {
                         const input = document.getElementById(`attr_${attribute.name}`);
                         if (input) {
-                            input.addEventListener('input', updateProductModalButtons);
-                            input.addEventListener('change', updateProductModalButtons);
+                            // Add event listeners for form validation or other functionality
+                            input.addEventListener('input', () => {
+                                // You can add form validation logic here if needed
+                            });
+                            input.addEventListener('change', () => {
+                                // You can add change handling logic here if needed
+                            });
                         }
                     }
                 });
-                updateProductModalButtons();
             }, 100);
         }
         function addPriceRow(containerId) { const container = document.getElementById(containerId); const currencyOptions = mockData.currencies.map(c => `<option value="${c.code}">${c.code} (${c.symbol})</option>`).join(''); const newRow = document.createElement('div'); newRow.className = 'flex items-center space-x-2 price-row'; newRow.innerHTML = `<select class="block w-1/3 rounded-md border-gray-300 shadow-sm">${currencyOptions}</select><input type="number" placeholder="0.00" class="block w-2/3 rounded-md border-gray-300 shadow-sm"><button type="button" class="text-red-500 hover:text-red-700 remove-price-btn">&times;</button>`; container.appendChild(newRow); newRow.querySelector('.remove-price-btn').addEventListener('click', () => newRow.remove()); }
@@ -15974,7 +16521,7 @@
                 
                 if (submitForReview) {
                     
-                    // Submit for review - add supplierSubmission data
+                    // Submit for review using new request system
                     const submissionAttributes = {};
                     Object.keys(product.attributes || {}).forEach(attrId => {
                         submissionAttributes[attrId] = { 
@@ -15983,8 +16530,18 @@
                         };
                     });
                     
+                    const requestData = {
+                        name: product.name,
+                        attributes: submissionAttributes
+                    };
+                    
+                    // Create request in centralized system
+                    createRequest('product_create', product.id, currentSupplierId, requestData);
+                    
+                    // Keep supplierSubmission for backward compatibility
                     product.supplierSubmission = {
                         supplierId: currentSupplierId,
+                        status: 'pending', // Add the missing status field
                         submittedAt: new Date().toISOString(),
                         name: { 
                             value: product.name, 
@@ -19492,7 +20049,12 @@
                 const user = window.currentUser || {};
                 const isSupplier = user.role === 'supplier';
                 
-                if (product && product.status === 'draft' && product.supplierSubmission && !isSupplier) { 
+                // Check if this is a new product_create request vs old product submission
+                const isNewProductCreateRequest = mockData.requests && mockData.requests.some(r => 
+                    r.type === 'product_create' && r.productId === product?.id && r.status === 'submitted'
+                );
+                
+                if (product && product.status === 'draft' && product.supplierSubmission && !isSupplier && !isNewProductCreateRequest) { 
                     // Product submitted by supplier for review - show manual review page (admin only)
                     renderers.manualReview(id1); 
                 } else { 
@@ -19509,7 +20071,7 @@
                 const mainProductId = id1 || subpage;
                 renderers.mainProduct(parseInt(mainProductId)); 
             }
-            else if (page === 'suppliers' && subpage === 'detail' && id1) { renderers.supplierProductDetail(id1); } 
+            else if (page === 'suppliers' && subpage === 'detail' && id1) { renderers.supplierProductDetail(id1); }
             else if (page === 'categories' && subpage === 'detail' && id1) { renderers.categoryDetail(id1); }
             else if (page === 'categories') { renderers.categoriesPage(subpage || 'master'); }
             else if (page === 'orderDetail' && (id1 || subpage)) { 
@@ -22934,6 +23496,19 @@ function renderProductTab(tabName, product) {
              return;
          }
          
+         // Determine if this is a new product request or update request
+         const isNewProductRequest = (product.status === 'draft' && submission) || (submission && submission.requestType === 'product_create');
+         const isUpdateRequest = (product.status === 'active' && submission && submission.status === 'pending') || (submission && submission.requestType === 'product_update');
+         
+         console.log('renderComparisonTab Debug:', {
+             productId: product.id,
+             productName: product.name,
+             status: product.status,
+             submission: submission,
+             isNewProductRequest: isNewProductRequest,
+             isUpdateRequest: isUpdateRequest
+         });
+         
          // Helper function to get attribute value
          const getAttributeValue = (attrId, isSubmission = false) => {
              if (isSubmission && submission.attributes && submission.attributes[attrId]) {
@@ -22963,8 +23538,8 @@ function renderProductTab(tabName, product) {
                  <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
                      <div class="flex items-center justify-between">
                          <div>
-                             <h3 class="text-lg font-semibold text-gray-900">Güncelleme Onayı Bekleyen Ürün</h3>
-                             <p class="text-sm text-gray-600 mt-1">Bu ürün için gönderdiğiniz güncelleme talebi admin onayı beklemektedir</p>
+                             <h3 class="text-lg font-semibold text-gray-900">${isNewProductRequest ? 'Yeni Ürün Talebi - Onay Bekliyor' : 'Güncelleme Onayı Bekleyen Ürün'}</h3>
+                             <p class="text-sm text-gray-600 mt-1">${isNewProductRequest ? 'Gönderdiğiniz yeni ürün talebi admin onayı beklemektedir' : 'Bu ürün için gönderdiğiniz güncelleme talebi admin onayı beklemektedir'}</p>
                          </div>
                          <div class="flex items-center space-x-2">
                              <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
@@ -23010,8 +23585,8 @@ function renderProductTab(tabName, product) {
                  <!-- Changes Overview -->
                  <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
                      <div class="px-6 py-4 border-b border-gray-200">
-                         <h4 class="text-lg font-semibold text-gray-900">Gönderilen Güncellemeler</h4>
-                         <p class="text-sm text-gray-600 mt-1">Admin onayı için gönderdiğiniz değişiklikler</p>
+                         <h4 class="text-lg font-semibold text-gray-900">${isNewProductRequest ? 'Gönderilen Ürün Bilgileri' : 'Gönderilen Güncellemeler'}</h4>
+                         <p class="text-sm text-gray-600 mt-1">${isNewProductRequest ? 'Admin onayı için gönderdiğiniz yeni ürün bilgileri' : 'Admin onayı için gönderdiğiniz değişiklikler'}</p>
                      </div>
                       <div class="p-6">
                           <div class="space-y-4">
@@ -23020,15 +23595,17 @@ function renderProductTab(tabName, product) {
                                   <div class="flex items-center space-x-3 mb-3">
                                       <i class="fas fa-tag text-orange-600"></i>
                                       <p class="font-medium text-gray-900">Ürün Adı</p>
-                                      <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">Güncellendi</span>
+                                      <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">${isNewProductRequest ? 'Yeni' : 'Güncellendi'}</span>
                                   </div>
-                                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  <div class="grid grid-cols-1 ${isNewProductRequest ? '' : 'md:grid-cols-2'} gap-4">
+                                      ${!isNewProductRequest ? `
                                       <div class="bg-white p-3 rounded-lg border">
                                           <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
                                           <div class="font-medium text-gray-800">${t(product.name)}</div>
                                       </div>
+                                      ` : ''}
                                       <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
-                                          <div class="text-sm text-orange-700 mb-1">Gönderdiğiniz Değer</div>
+                                          <div class="text-sm text-orange-700 mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Gönderdiğiniz Değer'}</div>
                                           <div class="font-medium text-orange-900">${t(submission.name.value)}</div>
                                       </div>
                                   </div>
@@ -23045,17 +23622,19 @@ function renderProductTab(tabName, product) {
                                       <div class="flex items-center space-x-3 mb-3">
                                           <i class="fas fa-cog text-orange-600"></i>
                                           <p class="font-medium text-gray-900">${attribute ? t(attribute.label) : 'Özellik'}</p>
-                                          <span class="px-2 py-1 ${isChanged ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600'} text-xs font-medium rounded-full">
-                                              ${isChanged ? 'Güncellendi' : 'Aynı'}
+                                          <span class="px-2 py-1 ${isNewProductRequest ? 'bg-orange-100 text-orange-800' : (isChanged ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600')} text-xs font-medium rounded-full">
+                                              ${isNewProductRequest ? 'Yeni' : (isChanged ? 'Güncellendi' : 'Aynı')}
                                           </span>
                                       </div>
-                                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div class="grid grid-cols-1 ${isNewProductRequest ? '' : 'md:grid-cols-2'} gap-4">
+                                          ${!isNewProductRequest ? `
                                           <div class="bg-white p-3 rounded-lg border">
                                               <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
                                               <div class="font-medium text-gray-800">${currentValue}</div>
                                           </div>
+                                          ` : ''}
                                           <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
-                                              <div class="text-sm text-orange-700 mb-1">Gönderdiğiniz Değer</div>
+                                              <div class="text-sm text-orange-700 mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Gönderdiğiniz Değer'}</div>
                                               <div class="font-medium text-orange-900">${attrData.value}</div>
                                           </div>
                                       </div>
@@ -23168,9 +23747,30 @@ function renderGeneralTab(container, product, isSupplier) {
                             </div>
                         </div>
                         
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-semibold mb-4">Kategori Özellikleri</h3>
+                            <div id="category-attributes-container">
+                                <p class="text-sm text-gray-500">Lütfen bir kategori seçerek başlayın.</p>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             `;
+            
+            // Add event listener for category change
+            const categorySelect = document.getElementById('edit-product-category');
+            if (categorySelect) {
+                categorySelect.addEventListener('change', (e) => {
+                    const selectedCategoryId = e.target.value;
+                    renderCategoryAttributes(selectedCategoryId);
+                });
+                
+                // Render attributes for the current category if one is selected
+                if (product.categoryId) {
+                    renderCategoryAttributes(product.categoryId);
+                }
+            }
         } else if (isSupplier) {
             // Editable version for suppliers on published products
             const categoryName = t(category.name);
@@ -23629,37 +24229,15 @@ function submitStockPriceUpdateRequestWithValues(productId) {
         return;
     }
     
-    // Create the request
-    const request = {
-        id: Date.now(),
-        supplierId: supplierId,
-        supplierName: mockData.suppliers.find(s => s.id === supplierId)?.name || 'Bilinmeyen Tedarikçi',
-        productId: productId,
+    // Create the request using new request system
+    const requestData = {
         currentPrice: currentPrice,
         requestedPrice: newPrice,
         currentStock: currentStock,
-        requestedStock: newStock,
-        status: 'pending',
-        requestDate: new Date().toISOString(),
-        requestType: 'stock_price_update'
+        requestedStock: newStock
     };
     
-    // Initialize supplierSubmission if it doesn't exist
-    if (!product.supplierSubmission) {
-        product.supplierSubmission = {
-            supplierId: supplierId,
-            status: 'pending',
-            submissionDate: new Date().toISOString()
-        };
-    }
-    
-    // Initialize priceRequests array if it doesn't exist
-    if (!product.supplierSubmission.priceRequests) {
-        product.supplierSubmission.priceRequests = [];
-    }
-    
-    // Add the request
-    product.supplierSubmission.priceRequests.push(request);
+    const newRequest = createRequest('stock_price_update', productId, supplierId, requestData);
     
     showToast('Stok ve fiyat güncelleme talebi başarıyla gönderildi.', 'success');
     
@@ -23722,21 +24300,21 @@ function renderStockPriceTab(container, product, isSupplier) {
                             <div class="bg-white p-4 rounded-lg border border-blue-200">
                                 <h4 class="font-medium text-gray-900 mb-3">Mevcut Değerler</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
+                            <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Mevcut Stok</label>
                                         <input type="number" value="${currentStock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                                    </div>
-                                    <div>
+                            </div>
+                                <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Mevcut Fiyat (TRY)</label>
                                         <input type="number" step="0.01" value="${currentPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                                    </div>
+                                </div>
                                 </div>
                             </div>
                             
                             <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                                 <h4 class="font-medium text-gray-900 mb-3">Yeni Değerler</h4>
                                 <div class="space-y-4">
-                                    <div>
+                                <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Yeni Stok Miktarı</label>
                                         <input type="number" id="new-stock-${product.id}" value="${currentStock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" min="0">
                                     </div>
