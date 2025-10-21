@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connect PIM - Ürün Yönetimi</title>
+    <title>Connect Dropshipping</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -350,7 +350,7 @@
                 <div class="flex-1 flex justify-center items-center gap-3">
                     <h1 class="text-2xl font-bold" style="color: rgb(63, 70, 173);">connect.</h1>
                     <div class="flex items-center justify-center w-12 h-8 bg-red-600 text-white font-bold text-sm rounded">
-                        CSA
+                        Vakko
                     </div>
                 </div>
                 
@@ -1391,7 +1391,7 @@
                     categoryId: 3, 
                     brandId: 3,
                     family: { tr: 'Gömlek', en: 'Shirt'}, 
-                    status: 'draft',
+                    status: 'active',
                     isArchived: false,
                     isBanned: false, 
                     health: 65, 
@@ -1550,9 +1550,29 @@
                 { id: 10, sku: '8683822185002', name: { tr: 'Kırmızı Elbise', en: 'Red Dress'}, categoryId: 1, brandId: 2, family: { tr: 'Elbise', en: 'Dress'}, status: 'draft',
                     isArchived: false,
                     isBanned: false, health: 80, originalityScore: 88, imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Kırmızı', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'M', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Polyester', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-19T14:15:00Z' },
-                { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, family: { tr: 'Pantolon', en: 'Pants'}, status: 'draft',
+                { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, family: { tr: 'Pantolon', en: 'Pants'}, status: 'active',
                     isArchived: false,
-                    isBanned: false, health: 70, originalityScore: 75, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Mavi', validationStatus: 'approved', rejectionReason: '' }, 2: { value: '32', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Denim', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-18T16:45:00Z' },
+                    isBanned: false, health: 70, originalityScore: 75, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Mavi', validationStatus: 'approved', rejectionReason: '' }, 2: { value: '32', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Denim', validationStatus: 'approved', rejectionReason: '' } }, 
+                    supplierSubmission: {
+                        priceRequests: [
+                            {
+                                supplierId: 1,
+                                supplierName: 'ModaTedarik',
+                                currentPrice: 500.00,
+                                requestedPrice: 550.00,
+                                reason: 'Test request',
+                                submittedAt: '2025-01-21T10:30:00Z',
+                                status: 'pending',
+                                validationInfo: {
+                                    platformAverage: 525.00,
+                                    uniqueProductPrices: [500.00, 550.00, 520.00],
+                                    marginAnalysis: 'Yeni fiyat %10 artış, platform ortalamasına uygun',
+                                    recommendation: 'approve'
+                                }
+                            }
+                        ]
+                    },
+                    variants: [], lastUpdated: '2025-01-18T16:45:00Z' },
                 // Rejected products
                 { 
                     id: 6, 
@@ -4232,7 +4252,7 @@
         ];
 
         // Set default current user
-        window.currentUser = window.availableUsers[0]; // Start with admin user
+        window.currentUser = window.availableUsers[1]; // Start with supplier user for testing
         
         // Initialize user switcher when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -4311,6 +4331,42 @@
                 }
             }
             
+            // Special handling for "Pasif" tab - show specific reason why product is passive
+            if (activeTab === 'archived') {
+                const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                const isSupplier = (window.currentUser||{}).role === 'supplier';
+                
+                if (isSupplier && currentUserSupplierId) {
+                    // For suppliers: check their specific supplier product data
+                    const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === currentUserSupplierId);
+                    if (supplierProduct) {
+                        if (supplierProduct.isBanned === true) {
+                            return 'Yasaklandı';
+                        } else if (supplierProduct.isArchived === true) {
+                            return 'Arşivlendi';
+                        } else if (supplierProduct.stock === 0) {
+                            return 'Stokta yok';
+                        }
+                    }
+                } else {
+                    // For admins: check all supplier products for this product
+                    const supplierProducts = mockData.supplierProducts.filter(sp => sp.productId === product.id);
+                    const reasons = [];
+                    
+                    if (supplierProducts.some(sp => sp.isBanned === true)) {
+                        reasons.push('Yasaklandı');
+                    }
+                    if (supplierProducts.some(sp => sp.isArchived === true)) {
+                        reasons.push('Arşivlendi');
+                    }
+                    if (supplierProducts.some(sp => sp.stock === 0)) {
+                        reasons.push('Stokta yok');
+                    }
+                    
+                    return reasons.length > 0 ? reasons.join(', ') : 'Pasif';
+                }
+            }
+            
             // Handle different product statuses
             switch (product.status) {
                 case 'active':
@@ -4370,7 +4426,9 @@
                 
                 pageTitle.textContent = t('dashboard');
                 if (isSupplier) {
+                const showSupplierInfo = shouldShowInfoBox('supplier-dashboard-info');
                 pageContent.innerHTML = `
+                    ${showSupplierInfo ? `
                     <!-- Dashboard Info -->
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="supplier-dashboard-info">
                         <div class="flex">
@@ -4384,12 +4442,11 @@
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
-                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                ${createInfoBoxCloseButton('supplier-dashboard-info', 'text-blue-400 hover:text-blue-600')}
                             </div>
                         </div>
                     </div>
+                    ` : ''}
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white p-6 rounded-lg shadow"><h3 class="text-gray-500">TOPLAM SİPARİŞ</h3><p class="text-3xl font-bold mt-2">1,022</p></div>
@@ -4454,7 +4511,9 @@
                     const lowStockTop = lowStockProducts.slice(0,5);
                     const lowStockItems = lowStockTop.map(p => `<li class=\"flex items-center justify-between py-2 border-b last:border-0\"><div><p class=\"text-sm font-medium text-gray-900\">${t(p.name)}</p><p class=\"text-xs text-gray-500\">SKU: ${p.sku}</p></div><span class=\"px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800\">${getProductStock(p.id)} adet</span></li>`).join('');
 
+                    const showAdminInfo = shouldShowInfoBox('admin-dashboard-info');
                     pageContent.innerHTML = `
+                        ${showAdminInfo ? `
                         <!-- Admin Dashboard Info -->
                         <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="admin-dashboard-info">
                             <div class="flex">
@@ -4468,12 +4527,11 @@
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
-                                        <i class="fas fa-times"></i>
-                                    </button>
+                                    ${createInfoBoxCloseButton('admin-dashboard-info', 'text-green-400 hover:text-green-600')}
                                 </div>
                             </div>
                         </div>
+                        ` : ''}
                         
                         <!-- KPI Cards -->
                         <div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6\">
@@ -4534,11 +4592,11 @@
                     `;
                 }
             },
-            products: (activeTab = 'yeni-urun-talepleri', view = 'list') => {
+            products: (activeTab = 'aktif', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
                      if (activeTab !== 'aktif' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
-                        navigateTo('#products/yeni-urun-talepleri');
+                        navigateTo('#products/aktif');
                         return;
                     }
                 }
@@ -4568,7 +4626,10 @@
                     ).length :
                     mockData.products.filter(p => p.status === 'draft').length;
                 const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
-                const priceUpdateRequestsCount = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
+                const priceUpdateRequestsCount = isCurrentUserSupplier && currentUserSupplierId ? 
+                    mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentUserSupplierId)).length :
+                    mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
+                console.log('Counter - isCurrentUserSupplier:', isCurrentUserSupplier, 'currentUserSupplierId:', currentUserSupplierId, 'priceUpdateRequestsCount:', priceUpdateRequestsCount);
                 // Pasif (unavailable for sale) count per supplier: stock==0 OR isArchived OR isBanned
                 const passiveCount = isCurrentUserSupplier && currentUserSupplierId ?
                     mockData.products.filter(p => {
@@ -4603,119 +4664,129 @@
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
+                        <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
+                            <span>${t('onaylanan')}</span>
+                            <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
+                        </a>
                         <div class="relative group flex-1">
                             <a href="#products/talepler" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Talepler</span>
                                 <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
-                            <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                                <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>Tüm Talepler</span>
-                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
-                                </a>
-                                <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>${t('price_stock_requests')}</span>
-                                    <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${priceUpdateRequestsCount}</span>
-                                </a>
-                                <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>Ürün Güncelleme İstekleri</span>
-                                    <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${guncellemeBekleyenlerCount}</span>
-                                </a>
-                                <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <span>Yeni Ürün Talepleri</span>
-                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniUrunTalepleriCount}</span>
-                                </a>
+                            <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
+                                <div class="py-2">
+                                    <a href="#products/talepler" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 border-l-4 border-transparent hover:border-blue-500">
+                                        <span class="font-medium">Tüm Talepler</span>
+                                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
+                                    </a>
+                                    <a href="#products/yeni-urun-talepleri" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 border-l-4 border-transparent hover:border-green-500">
+                                        <span class="font-medium">Yeni Ürün Talepleri</span>
+                                        <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">${yeniUrunTalepleriCount}</span>
+                                    </a>
+                                    <a href="#products/urun-guncelleme" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-all duration-200 border-l-4 border-transparent hover:border-yellow-500">
+                                        <span class="font-medium">Ürün Güncelleme İstekleri</span>
+                                        <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">${guncellemeBekleyenlerCount}</span>
+                                    </a>
+                                    <a href="#products/fiyat-stok-istekleri" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-all duration-200 border-l-4 border-transparent hover:border-purple-500">
+                                        <span class="font-medium">${t('price_stock_requests')}</span>
+                                        <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-1 rounded-full">${priceUpdateRequestsCount}</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
-                        <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>${t('onaylanan')}</span>
-                            <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
-                        </a>
                         <div class="relative group flex-1">
                             <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Pasif</span>
                                 <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
-                            <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                                <a href="#products/archived" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>Tümü</span>
-                                    <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${passiveCount}</span>
-                                </a>
-                                <a href="#products/out-of-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>Stoğu Bitenler</span>
-                                    <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
-                                </a>
-                                <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                    <span>Yasaklananlar</span>
-                                    <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
-                                </a>
-                                <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <span>Arşivlenenler</span>
-                                    <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedItemsCount}</span>
-                                </a>
+                            <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
+                                <div class="py-2">
+                                    <a href="#products/archived" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 border-l-4 border-transparent hover:border-gray-500">
+                                        <span class="font-medium">Tümü</span>
+                                        <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-full">${passiveCount}</span>
+                                    </a>
+                                    <a href="#products/out-of-stock" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-all duration-200 border-l-4 border-transparent hover:border-red-500">
+                                        <span class="font-medium">Stoğu Bitenler</span>
+                                        <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
+                                    </a>
+                                    <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
+                                        <span class="font-medium">Yasaklananlar</span>
+                                        <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">${bannedCount}</span>
+                                    </a>
+                                    <a href="#products/archived-items" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-slate-50 hover:text-slate-700 transition-all duration-200 border-l-4 border-transparent hover:border-slate-500">
+                                        <span class="font-medium">Arşivlenenler</span>
+                                        <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">${archivedItemsCount}</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </nav>` :
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
+                                <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                    <span>${t('onaylanan')}</span>
+                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
+                                </a>
                                 <div class="relative group flex-1">
                                     <a href="#products/talepler" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Talepler</span>
                                         <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${reddedilenCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
                                     </a>
-                                    <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                                        <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>Tüm Talepler</span>
-                                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${reddedilenCount}</span>
-                                        </a>
-                                        <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>${t('price_stock_requests')}</span>
-                                            <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${priceUpdateRequestsCount}</span>
-                                        </a>
-                                        <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>Ürün Güncelleme İstekleri</span>
-                                            <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${guncellemeBekleyenlerCount}</span>
-                                        </a>
-                                <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <span>Yeni Ürün Talepleri</span>
-                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniUrunTalepleriCount}</span>
-                                </a>
+                                    <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
+                                        <div class="py-2">
+                                            <a href="#products/talepler" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-all duration-200 border-l-4 border-transparent hover:border-blue-500">
+                                                <span class="font-medium">Tüm Talepler</span>
+                                                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">${reddedilenCount}</span>
+                                            </a>
+                                            <a href="#products/yeni-urun-talepleri" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-all duration-200 border-l-4 border-transparent hover:border-green-500">
+                                                <span class="font-medium">Yeni Ürün Talepleri</span>
+                                                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">${yeniUrunTalepleriCount}</span>
+                                            </a>
+                                            <a href="#products/urun-guncelleme" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700 transition-all duration-200 border-l-4 border-transparent hover:border-yellow-500">
+                                                <span class="font-medium">Ürün Güncelleme İstekleri</span>
+                                                <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">${guncellemeBekleyenlerCount}</span>
+                                            </a>
+                                            <a href="#products/fiyat-stok-istekleri" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-all duration-200 border-l-4 border-transparent hover:border-purple-500">
+                                                <span class="font-medium">${t('price_stock_requests')}</span>
+                                                <span class="bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-1 rounded-full">${priceUpdateRequestsCount}</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
-                                    <span>${t('onaylanan')}</span>
-                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
-                                </a>
                                 <div class="relative group flex-1">
                                     <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Pasif</span>
                                         <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
                                     </a>
-                                    <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-                                        <a href="#products/archived" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>Tümü</span>
-                                            <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${passiveCount}</span>
-                                        </a>
-                                        <a href="#products/out-of-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>Stoğu Bitenler</span>
-                                            <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${outOfStockCount}</span>
-                                        </a>
-                                        <a href="#products/banned" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
-                                            <span>Yasaklananlar</span>
-                                            <span class="bg-orange-200 text-orange-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${bannedCount}</span>
-                                        </a>
-                                        <a href="#products/archived-items" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                            <span>Arşivlenenler</span>
-                                            <span class="bg-gray-300 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${archivedItemsCount}</span>
-                                        </a>
+                                    <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
+                                        <div class="py-2">
+                                            <a href="#products/archived" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 border-l-4 border-transparent hover:border-gray-500">
+                                                <span class="font-medium">Tümü</span>
+                                                <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-full">${passiveCount}</span>
+                                            </a>
+                                            <a href="#products/out-of-stock" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-all duration-200 border-l-4 border-transparent hover:border-red-500">
+                                                <span class="font-medium">Stoğu Bitenler</span>
+                                                <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
+                                            </a>
+                                            <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
+                                                <span class="font-medium">Yasaklananlar</span>
+                                                <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">${bannedCount}</span>
+                                            </a>
+                                            <a href="#products/archived-items" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-slate-50 hover:text-slate-700 transition-all duration-200 border-l-4 border-transparent hover:border-slate-500">
+                                                <span class="font-medium">Arşivlenenler</span>
+                                                <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">${archivedItemsCount}</span>
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                     </nav>`;
 
+                const showProductsInfo = shouldShowInfoBox('products-page-info');
                 pageContent.innerHTML = `
+                    ${showProductsInfo ? `
                     <!-- Products Page Info -->
                     <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-6" id="products-page-info">
                         <div class="flex">
@@ -4729,12 +4800,11 @@
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
-                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-purple-400 hover:text-purple-600 focus:outline-none">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                ${createInfoBoxCloseButton('products-page-info', 'text-purple-400 hover:text-purple-600')}
                             </div>
                         </div>
                     </div>
+                    ` : ''}
                     
                     <div class="bg-white rounded-lg shadow">
                          <div class="border-b border-gray-200">
@@ -5211,7 +5281,9 @@
             integrations: () => {
                 pageTitle.textContent = t('integrations');
                 const integrationCards = mockData.integrations.map(int => `<div class="bg-white rounded-lg shadow p-4 flex flex-col justify-between"><div class="flex items-start"><img src="${int.logo}" alt="${int.name}" class="w-12 h-12 rounded-md mr-4 object-cover"><div><h3 class="font-semibold">${int.name}</h3><p class="text-sm text-gray-500">${t(int.description)}</p></div></div><div class="mt-4 flex justify-between items-center"><div class="flex items-center"><span class="w-2 h-2 rounded-full mr-2 ${int.status === 'active' ? 'bg-green-500' : 'bg-red-500'}"></span><span class="text-sm font-medium ${int.status === 'active' ? 'text-green-700' : 'text-red-700'}">${int.status === 'active' ? t('status_active') : t('status_passive')}</span></div><button class="px-3 py-1 text-sm rounded-md ${int.status === 'active' ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}">${int.status === 'active' ? 'Bağlantıyı Kes' : 'Bağlan'}</button></div></div>`).join('');
+                const showIntegrationsInfo = shouldShowInfoBox('integrations-page-info');
                 pageContent.innerHTML = `
+                    ${showIntegrationsInfo ? `
                     <!-- Integrations Page Info -->
                     <div class="bg-teal-50 border-l-4 border-teal-400 p-4 mb-6" id="integrations-page-info">
                         <div class="flex">
@@ -5225,19 +5297,20 @@
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
-                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-teal-400 hover:text-teal-600 focus:outline-none">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                ${createInfoBoxCloseButton('integrations-page-info', 'text-teal-400 hover:text-teal-600')}
                             </div>
                         </div>
                     </div>
+                    ` : ''}
                     
                     <div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('integrations')}</h2><p class="mt-1 text-sm text-gray-500">Sisteminizi diğer servislerle bağlayın ve yönetin.</p></div><button id="addIntegrationBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Entegrasyon Ekle</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${integrationCards}</div>`;
                 document.getElementById('addIntegrationBtn').addEventListener('click', showAddIntegrationModal);
             },
             categoriesPage: (initialTab = 'master') => {
                 pageTitle.textContent = t('categories');
+                const showCategoriesInfo = shouldShowInfoBox('categories-page-info');
                 pageContent.innerHTML = `
+                    ${showCategoriesInfo ? `
                     <!-- Categories Page Info -->
                     <div class="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6" id="categories-page-info">
                         <div class="flex">
@@ -5251,12 +5324,11 @@
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
-                                <button onclick="this.parentElement.parentElement.style.display='none'" class="text-indigo-400 hover:text-indigo-600 focus:outline-none">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                                ${createInfoBoxCloseButton('categories-page-info', 'text-indigo-400 hover:text-indigo-600')}
                             </div>
                         </div>
                     </div>
+                    ` : ''}
                     
                     <div class="bg-white rounded-lg shadow"><div class="border-b border-gray-200"><nav id="main-tabs" class="-mb-px flex space-x-6 px-6"><button data-tab="master" class="tab-button ${initialTab === 'master' ? 'active' : 'text-gray-500'} font-medium py-4">${t('master_category_tree')}</button><!-- <button data-tab="mapping" class="tab-button ${initialTab === 'mapping' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_mapping')}</button> --></nav></div><div id="main-tab-content" class="p-0 sm:p-6"></div></div>`;
                 const tabs = document.querySelectorAll('#main-tabs .tab-button');
@@ -5957,7 +6029,7 @@
                 `;
                 renderCommissionTable(activeTab);
             },
-            settings: (activeTab = 'users') => {
+            settings: (activeTab = 'suppliers') => {
                 pageTitle.textContent = t('settings');
                 pageContent.innerHTML = `
                     <!-- Settings Page Info -->
@@ -5983,6 +6055,7 @@
                     <div class="bg-white rounded-lg shadow">
                         <div class="border-b border-gray-200">
                             <nav id="settings-tabs" class="-mb-px flex space-x-6 px-6">
+                                <a href="#settings/suppliers" class="tab-button ${activeTab === 'suppliers' ? 'active' : 'text-gray-500'} font-medium py-4">Tedarikçi Listesi</a>
                                 <a href="#settings/users" class="tab-button ${activeTab === 'users' ? 'active' : 'text-gray-500'} font-medium py-4">${t('settings_users')}</a>
                                 <a href="#settings/api" class="tab-button ${activeTab === 'api' ? 'active' : 'text-gray-500'} font-medium py-4">${t('settings_api_keys')}</a>
                                 <a href="#settings/commissions" class="tab-button ${activeTab === 'commissions' ? 'active' : 'text-gray-500'} font-medium py-4">${t('commission_management')}</a>
@@ -6653,124 +6726,184 @@
                     </div>
 
                     <!-- Attribute Information Card -->
-                    <div class="bg-white rounded-lg shadow-sm border p-6">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-2xl font-bold text-gray-900 flex items-center">
-                                <i class="fas fa-tag text-blue-600 mr-3"></i>
-                                ${t(attribute.label)}
-                            </h2>
-                            <div class="flex space-x-2" id="attribute-actions">
-                                <button onclick="toggleEditMode(${attribute.id})" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center space-x-2">
-                                    <i class="fas fa-edit"></i>
-                                    <span>Düzenle</span>
-                                </button>
-                                <button onclick="showDeleteAttributeModal(${attribute.id})" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center space-x-2">
-                                    <i class="fas fa-trash"></i>
-                                    <span>Sil</span>
-                                </button>
+                    <div class="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/20 rounded-2xl shadow-xl border border-blue-100/50 overflow-hidden">
+                        <!-- Header Section -->
+                        <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-6 relative overflow-hidden">
+                            <div class="absolute inset-0 bg-black/5"></div>
+                            <div class="relative flex items-center justify-between">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                                        <i class="fas fa-tag text-white text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-3xl font-bold text-white mb-1">${t(attribute.label)}</h2>
+                                        <p class="text-blue-100 text-sm font-medium">Özellik Detayları</p>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-3" id="attribute-actions">
+                                    <button onclick="toggleEditMode(${attribute.id})" class="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-all duration-200 flex items-center space-x-2 border border-white/30 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-edit"></i>
+                                        <span class="font-medium">Düzenle</span>
+                                    </button>
+                                    <button onclick="showDeleteAttributeModal(${attribute.id})" class="px-6 py-3 bg-red-500/80 backdrop-blur-sm text-white rounded-xl hover:bg-red-500 transition-all duration-200 flex items-center space-x-2 border border-red-400/50 shadow-lg hover:shadow-xl">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="font-medium">Sil</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Basic Information -->
-                            <div class="space-y-4">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Temel Bilgiler</h3>
-                                
-                                <div class="space-y-4">
-                                    <!-- Code Field -->
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-code text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Kod</div>
-                                            <div id="attribute-name-display" class="font-medium text-gray-900">${attribute.name}</div>
-                                            <input type="text" id="attribute-name-edit" value="${attribute.name}" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <!-- Content Section -->
+                        <div class="p-8">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <!-- Left Column - Basic Information -->
+                                <div class="space-y-6">
+                                    <div class="flex items-center space-x-3 mb-6">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shadow-sm">
+                                            <i class="fas fa-info-circle text-blue-600 text-lg"></i>
                                         </div>
+                                        <h3 class="text-xl font-bold text-gray-900">Temel Bilgiler</h3>
                                     </div>
                                     
-                                    <!-- Label Fields -->
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-tag text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Etiket (Türkçe)</div>
-                                            <div id="attribute-label-tr-display" class="font-medium text-gray-900">${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}</div>
-                                            <input type="text" id="attribute-label-tr-edit" value="${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <div class="space-y-5">
+                                        <!-- Code Field -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-code text-gray-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Kod</div>
+                                                    <div id="attribute-name-display" class="text-lg font-semibold text-gray-900">${attribute.name}</div>
+                                                    <input type="text" id="attribute-name-edit" value="${attribute.name}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-tag text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Etiket (İngilizce)</div>
-                                            <div id="attribute-label-en-display" class="font-medium text-gray-900">${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}</div>
-                                            <input type="text" id="attribute-label-en-edit" value="${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        
+                                        <!-- Turkish Label -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
+                                                    <i class="fas fa-tag text-green-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Etiket (Türkçe)</div>
+                                                    <div id="attribute-label-tr-display" class="text-lg font-semibold text-gray-900">${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}</div>
+                                                    <input type="text" id="attribute-label-tr-edit" value="${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <!-- Type Field -->
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-cog text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Tip</div>
-                                            <div id="attribute-type-display" class="font-medium text-gray-900">${attribute.type}</div>
-                                            <select id="attribute-type-edit" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                <option value="Text" ${attribute.type === 'Text' ? 'selected' : ''}>Metin</option>
-                                                <option value="Select" ${attribute.type === 'Select' ? 'selected' : ''}>Seçim</option>
-                                                <option value="Number" ${attribute.type === 'Number' ? 'selected' : ''}>Sayı</option>
-                                            </select>
+                                        
+                                        <!-- English Label -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                                                    <i class="fas fa-tag text-purple-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Etiket (İngilizce)</div>
+                                                    <div id="attribute-label-en-display" class="text-lg font-semibold text-gray-900">${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}</div>
+                                                    <input type="text" id="attribute-label-en-edit" value="${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <!-- Default Value Field -->
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-star text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Varsayılan Değer</div>
-                                            <div id="attribute-default-display" class="font-medium text-gray-900">${attribute.default || 'Belirtilmemiş'}</div>
-                                            <input type="text" id="attribute-default-edit" value="${attribute.default || ''}" class="hidden w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Checkboxes -->
-                                    <div class="flex items-center space-x-3">
-                                    </div>
-                                    
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-filter text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Filtrelenebilir</div>
-                                            <div id="attribute-scopeable-display" class="font-medium text-gray-900">${attribute.scopeable ? 'Evet' : 'Hayır'}</div>
-                                            <div id="attribute-scopeable-edit" class="hidden">
-                                                <label class="flex items-center">
-                                                    <input type="checkbox" ${attribute.scopeable ? 'checked' : ''} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                    <span class="ml-2 text-sm text-gray-700">Filtrelenebilir</span>
-                                                </label>
+                                        
+                                        <!-- Type Field -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
+                                                    <i class="fas fa-cog text-orange-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Tip</div>
+                                                    <div id="attribute-type-display" class="text-lg font-semibold text-gray-900">${attribute.type}</div>
+                                                    <select id="attribute-type-edit" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                        <option value="Text" ${attribute.type === 'Text' ? 'selected' : ''}>Metin</option>
+                                                        <option value="Select" ${attribute.type === 'Select' ? 'selected' : ''}>Seçim</option>
+                                                        <option value="Number" ${attribute.type === 'Number' ? 'selected' : ''}>Sayı</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- Right Column - Additional Information -->
+                                <div class="space-y-6">
+                                    <div class="flex items-center space-x-3 mb-6">
+                                        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shadow-sm">
+                                            <i class="fas fa-cogs text-indigo-600 text-lg"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-gray-900">Ek Bilgiler</h3>
+                                    </div>
                                     
-                                    <!-- Last Updated (Read-only) -->
-                                    <div class="flex items-center space-x-3">
-                                        <i class="fas fa-clock text-gray-400 w-5"></i>
-                                        <div class="flex-1">
-                                            <div class="text-sm text-gray-500 mb-1">Son Güncelleme</div>
-                                            <div class="font-medium text-gray-900">${attribute.lastUpdated ? new Date(attribute.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</div>
+                                    <div class="space-y-5">
+                                        <!-- Default Value Field -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
+                                                    <i class="fas fa-star text-yellow-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Varsayılan Değer</div>
+                                                    <div id="attribute-default-display" class="text-lg font-semibold text-gray-900">${attribute.default || 'Belirtilmemiş'}</div>
+                                                    <input type="text" id="attribute-default-edit" value="${attribute.default || ''}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Filterable Field -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center group-hover:bg-teal-200 transition-colors">
+                                                    <i class="fas fa-filter text-teal-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Filtrelenebilir</div>
+                                                    <div id="attribute-scopeable-display" class="text-lg font-semibold text-gray-900">${attribute.scopeable ? 'Evet' : 'Hayır'}</div>
+                                                    <div id="attribute-scopeable-edit" class="hidden">
+                                                        <label class="flex items-center">
+                                                            <input type="checkbox" ${attribute.scopeable ? 'checked' : ''} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                            <span class="ml-2 text-sm text-gray-700">Filtrelenebilir</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Last Updated Field -->
+                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
+                                            <div class="flex items-center space-x-4">
+                                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
+                                                    <i class="fas fa-clock text-gray-600 text-lg"></i>
+                                                </div>
+                                                <div class="flex-1">
+                                                    <div class="text-sm font-medium text-gray-500 mb-2">Son Güncelleme</div>
+                                                    <div class="text-lg font-semibold text-gray-900">${attribute.lastUpdated ? new Date(attribute.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                        </div>
-
-                        <!-- Default Value -->
-                        ${attribute.default ? `
-                            <div class="mt-6 pt-6 border-t">
-                                <h3 class="text-lg font-semibold text-gray-900 mb-3">Varsayılan Değer</h3>
-                                <div class="bg-gray-50 p-3 rounded-md">
-                                    <span class="font-medium text-gray-900">${attribute.default}</span>
+                            <!-- Default Value Highlight Section (if exists) -->
+                            ${attribute.default ? `
+                                <div class="mt-8 pt-8 border-t border-gray-200">
+                                    <div class="bg-gradient-to-r from-yellow-50 via-orange-50 to-amber-50 rounded-2xl p-6 border border-yellow-200 shadow-sm">
+                                        <div class="flex items-center space-x-4 mb-4">
+                                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center shadow-sm">
+                                                <i class="fas fa-star text-yellow-600 text-lg"></i>
+                                            </div>
+                                            <h3 class="text-xl font-bold text-gray-900">Varsayılan Değer</h3>
+                                        </div>
+                                        <div class="bg-white rounded-xl p-4 border border-yellow-200 shadow-sm">
+                                            <span class="text-xl font-bold text-gray-900">${attribute.default}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        ` : ''}
-
+                            ` : ''}
+                        </div>
                     </div>
 
                     <!-- Options and Values Management -->
@@ -6872,7 +7005,8 @@
                         `}
                     </div>
 
-                    <!-- Recent Products Using This Attribute -->
+                    <!-- Recent Products Using This Attribute - COMMENTED OUT FOR NOW -->
+                    <!-- 
                     <div class="bg-white rounded-lg shadow-sm border p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <i class="fas fa-box text-orange-600 mr-2"></i>
@@ -6926,6 +7060,7 @@
                             </div>
                         `}
                     </div>
+                    -->
                 </div>
             `;
         };
@@ -9245,6 +9380,7 @@
                 return;
             }
 
+            console.log('First switchProductView called with activeTab:', activeTab, 'view:', view);
             const isSupplier = (window.currentUser||{}).role === 'supplier';
             
             // Re-attach event listeners for buttons that might be missing after tab switches
@@ -9291,8 +9427,10 @@
                     // Show requests - empty for now
                     filteredProducts = [];
                 } else if (activeTab === 'fiyat-stok-istekleri') {
-                    // Show price and stock requests - empty for now
-                    filteredProducts = [];
+                    // Show price and stock requests for suppliers
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentUserSupplierId));
+                    console.log('First switchProductView - fiyat-stok-istekleri - currentUserSupplierId:', currentUserSupplierId, 'filteredProducts:', filteredProducts.length);
                 }
             } else {
                 // Admin users can see all product tabs
@@ -9323,8 +9461,9 @@
                     // Show requests - empty for now
                     filteredProducts = [];
                 } else if (activeTab === 'fiyat-stok-istekleri') {
-                    // Show price and stock requests - empty for now
-                    filteredProducts = [];
+                    // Show price and stock requests for admins
+                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
+                    console.log('First switchProductView - fiyat-stok-istekleri - Admin - filteredProducts:', filteredProducts.length);
                 }
             }
             
@@ -12733,6 +12872,7 @@
             const displayEl = document.getElementById('product-display');
             if (!displayEl) return;
 
+            console.log('Second switchProductView called with activeTab:', activeTab, 'view:', view);
             // Suppliers can only see approved and rejected products
             const isSupplier = (window.currentUser||{}).role === 'supplier';
             const currentSupplierId = (window.currentUser||{}).supplierId;
@@ -12747,7 +12887,9 @@
                 'archived',
                 'out-of-stock',
                 'banned',
-                'archived-items'
+                'archived-items',
+                'fiyat-stok-istekleri',
+                'talepler'
             ]);
 
             if (isSupplier && !allowedSupplierTabs.has(activeTab)) {
@@ -12810,7 +12952,17 @@
                     }
                     break;
                 case 'fiyat-stok-istekleri':
-                    filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
+                    if (isSupplier && currentSupplierId) {
+                        // For suppliers: show only their own requests
+                        filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending' && req.supplierId === currentSupplierId));
+                        console.log('Table - isSupplier:', isSupplier, 'currentSupplierId:', currentSupplierId, 'filteredProducts:', filteredProducts.length);
+                        console.log('All products with priceRequests:', mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests));
+                        console.log('Current user:', window.currentUser);
+                    } else {
+                        // For admins: show all requests
+                        filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
+                        console.log('Table - Admin filtering - filteredProducts:', filteredProducts.length);
+                    }
                     break;
                 case 'archived':
                     // Pasif ana sekmesi: satışa kapalı ürünler (stok 0, arşivli, yasaklı)
@@ -12921,8 +13073,21 @@
             const isAwaitingApprovalTab = currentHash.includes('urun-guncelleme');
             const isPriceUpdateRequestsTab = currentHash.includes('fiyat-stok-istekleri');
             const isSentTab = currentHash.includes('gonderilenler');
+            const isArchivedTab = currentHash.includes('archived');
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
+            
+            // Determine the active tab for status description
+            let activeTab = null;
+            if (isArchivedTab) {
+                activeTab = 'archived';
+            } else if (isNewArrivalsTab) {
+                activeTab = 'yeni-urun-talepleri';
+            } else if (isAwaitingApprovalTab) {
+                activeTab = 'urun-guncelleme';
+            } else if (isSentTab) {
+                activeTab = 'gonderilenler';
+            }
             
             // Special handling for price update requests tab
             if (isPriceUpdateRequestsTab) {
@@ -12935,7 +13100,7 @@
                 const price = getProductPrice(p.id);
                 const priceText = price ? `${price.toFixed(2)} ₺` : '-';
                 const stock = getProductStock(p.id);
-                let statusDescription = getProductStatusDescription(p);
+                let statusDescription = getProductStatusDescription(p, activeTab);
                 
                 // Debug price requests
                 const hasPriceRequests = p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.length > 0;
@@ -13121,12 +13286,28 @@
                 return;
             }
 
+            // Get current user info for filtering
+            const currentUser = window.currentUser || {};
+            const isSupplier = currentUser.role === 'supplier';
+            const currentSupplierId = currentUser.supplierId;
+
             // Flatten all price requests from all products
             const allPriceRequests = [];
             products.forEach(product => {
                 if (product.supplierSubmission && product.supplierSubmission.priceRequests) {
                     product.supplierSubmission.priceRequests
-                        .filter(req => req.status === 'pending')
+                        .filter(req => {
+                            // Filter by status
+                            if (req.status !== 'pending') return false;
+                            
+                            // For suppliers, only show their own requests
+                            if (isSupplier && currentSupplierId) {
+                                return req.supplierId === currentSupplierId;
+                            }
+                            
+                            // For admins, show all requests
+                            return true;
+                        })
                         .forEach(request => {
                             allPriceRequests.push({
                                 ...request,
@@ -13149,8 +13330,8 @@
                 const priceChange = ((request.requestedPrice - request.currentPrice) / request.currentPrice * 100).toFixed(1);
                 const changeColor = priceChange > 0 ? 'text-red-600' : 'text-green-600';
                 const changeIcon = priceChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-                const recommendationColor = request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
-                const recommendationIcon = request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
+                const recommendationColor = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
+                const recommendationIcon = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
 
                 return `
                     <tr class="border-b hover:bg-gray-50">
@@ -13196,7 +13377,7 @@
                         </td>
                         <td class="p-4">
                             <div class="text-sm">
-                                <div class="font-medium text-gray-900">${request.validationInfo.platformAverage.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                <div class="font-medium text-gray-900">${request.validationInfo ? request.validationInfo.platformAverage.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : 'N/A'}</div>
                                 <div class="text-gray-500">Platform Ort.</div>
                             </div>
                         </td>
@@ -13204,7 +13385,7 @@
                             <div class="flex items-center">
                                 <i class="fas ${recommendationIcon} ${recommendationColor} mr-1"></i>
                                 <span class="font-medium ${recommendationColor}">
-                                    ${request.validationInfo.recommendation === 'approve' ? 'Onayla' : 'Reddet'}
+                                    ${request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'Onayla' : 'Reddet'}
                                 </span>
                             </div>
                         </td>
@@ -16287,7 +16468,36 @@
 
         // --- MAIN PRODUCT DETAIL PAGE RENDERER ---
         renderers.mainProduct = (mainProductId) => {
-            const mainProduct = mockData.mainProducts.find(mp => mp.id == mainProductId);
+            // First check if it's a main product
+            let mainProduct = mockData.mainProducts.find(mp => mp.id == mainProductId);
+            
+            // If not found in mainProducts, check if it's a regular product
+            if (!mainProduct) {
+                const product = mockData.products.find(p => p.id == mainProductId);
+                if (product) {
+                    // Create a virtual main product from the regular product
+                    mainProduct = {
+                        id: product.id,
+                        name: product.name,
+                        categoryId: product.categoryId,
+                        brandId: product.brandId,
+                        family: product.family,
+                        status: product.status,
+                        isArchived: product.isArchived,
+                        isBanned: product.isBanned,
+                        health: product.health,
+                        originalityScore: product.originalityScore,
+                        taxRate: product.taxRate,
+                        commissionRate: product.commissionRate,
+                        imageUrl: product.imageUrl,
+                        description: product.description || { tr: '', en: '' },
+                        variants: [product], // Include the product itself as a variant
+                        totalStock: 0,
+                        priceRange: { min: 0, max: 0 },
+                        lastUpdated: product.lastUpdated
+                    };
+                }
+            }
             
             if (!mainProduct) {
                 pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Ana Ürün Bulunamadı</h2><p class="text-gray-500">Aradığınız ana ürün mevcut değil.</p><button onclick="navigateTo(\'#products\')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ürünlere Dön</button></div>';
@@ -16300,12 +16510,90 @@
             
             pageTitle.textContent = `Ana Ürün: ${t(mainProduct.name)}`;
             
-            // Calculate variant statistics
-            const activeVariants = mainProduct.variants.filter(v => v.status === 'active');
-            const totalStock = mainProduct.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
-            const outOfStockVariants = mainProduct.variants.filter(v => (v.stock || 0) === 0).length;
+            // Find all variant products that belong to this main product
+            let variantProducts = [];
             
+            // Check if this is a real main product (from mainProducts array)
+            const realMainProduct = mockData.mainProducts.find(mp => mp.id === mainProduct.id);
+            if (realMainProduct) {
+                // For real main products, find variants by mainProductId
+                variantProducts = mockData.products.filter(p => p.mainProductId === mainProduct.id);
+                
+                // If no variants found by mainProductId, check if main product has variants array
+                if (variantProducts.length === 0 && realMainProduct.variants && realMainProduct.variants.length > 0) {
+                    // Convert main product variants to full product objects
+                    variantProducts = realMainProduct.variants.map(variant => ({
+                        id: variant.id,
+                        sku: variant.sku,
+                        name: mainProduct.name, // Use main product name
+                        categoryId: mainProduct.categoryId,
+                        brandId: mainProduct.brandId,
+                        family: mainProduct.family,
+                        status: variant.status || 'active',
+                        isArchived: variant.isArchived || false,
+                        isBanned: variant.isBanned || false,
+                        health: mainProduct.health,
+                        originalityScore: mainProduct.originalityScore,
+                        imageUrl: mainProduct.imageUrl,
+                        attributes: variant.attributes || {},
+                        variants: [],
+                        lastUpdated: mainProduct.lastUpdated,
+                        // Add stock and price from variant data
+                        stock: variant.stock || 0,
+                        price: variant.price || 0
+                    }));
+                }
+            } else {
+                // For virtual main products (regular products), include the product itself as the only variant
+                variantProducts = [mockData.products.find(p => p.id === mainProduct.id)].filter(Boolean);
+            }
+            
+            // Calculate comprehensive statistics
+            const activeVariants = variantProducts.filter(v => v.status === 'active');
+            const totalStock = variantProducts.reduce((sum, v) => {
+                // Check if variant has direct stock (from main product variants)
+                if (v.stock !== undefined) {
+                    return sum + (v.stock || 0);
+                }
+                // Otherwise get stock from supplierProducts
+                const supplierStocks = mockData.supplierProducts
+                    .filter(sp => sp.productId === v.id)
+                    .reduce((stockSum, sp) => stockSum + (sp.stock || 0), 0);
+                return sum + supplierStocks;
+            }, 0);
+            const outOfStockVariants = variantProducts.filter(v => {
+                // Check if variant has direct stock (from main product variants)
+                if (v.stock !== undefined) {
+                    return (v.stock || 0) === 0;
+                }
+                // Otherwise check stock from supplierProducts
+                const supplierStocks = mockData.supplierProducts
+                    .filter(sp => sp.productId === v.id)
+                    .reduce((stockSum, sp) => stockSum + (sp.stock || 0), 0);
+                return supplierStocks === 0;
+            }).length;
+            
+            // Calculate price range from variant products
+            const variantPrices = variantProducts.map(v => {
+                // Check if variant has direct price (from main product variants)
+                if (v.price !== undefined && v.price > 0) {
+                    return v.price;
+                }
+                // Otherwise get price from supplierProducts
+                const supplierPrices = mockData.supplierProducts
+                    .filter(sp => sp.productId === v.id && sp.price > 0)
+                    .map(sp => sp.price);
+                return supplierPrices.length > 0 ? Math.min(...supplierPrices) : null;
+            }).filter(price => price !== null);
+            
+            const priceRange = variantPrices.length > 0 ? {
+                min: Math.min(...variantPrices),
+                max: Math.max(...variantPrices)
+            } : { min: 0, max: 0 };
+            
+            const showMainProductInfo = shouldShowInfoBox('main-product-detail-info');
             pageContent.innerHTML = `
+                ${showMainProductInfo ? `
                 <!-- Main Product Detail Page Info -->
                 <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="main-product-detail-info">
                     <div class="flex">
@@ -16319,12 +16607,11 @@
                             </div>
                         </div>
                         <div class="flex-shrink-0">
-                            <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
-                                <i class="fas fa-times"></i>
-                            </button>
+                            ${createInfoBoxCloseButton('main-product-detail-info', 'text-blue-400 hover:text-blue-600')}
                         </div>
                     </div>
                 </div>
+                ` : ''}
                 
                 <div class="space-y-6">
                     <!-- Breadcrumb -->
@@ -16348,10 +16635,123 @@
                         </div>
                     </div>
                     
+                    <!-- Statistics Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="bg-white p-6 rounded-lg shadow-sm border">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-blue-100 rounded-full">
+                                    <i class="fas fa-layer-group text-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Toplam Varyant</p>
+                                    <p class="text-2xl font-semibold text-gray-900">${variantProducts.length}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-green-100 rounded-full">
+                                    <i class="fas fa-check-circle text-green-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Aktif Varyant</p>
+                                    <p class="text-2xl font-semibold text-gray-900">${activeVariants.length}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-purple-100 rounded-full">
+                                    <i class="fas fa-boxes text-purple-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Toplam Stok</p>
+                                    <p class="text-2xl font-semibold text-gray-900">${totalStock}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-lg shadow-sm border">
+                            <div class="flex items-center">
+                                <div class="p-3 bg-red-100 rounded-full">
+                                    <i class="fas fa-exclamation-triangle text-red-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="text-sm font-medium text-gray-600">Stok Yok</p>
+                                    <p class="text-2xl font-semibold text-gray-900">${outOfStockVariants}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Main Content Grid -->
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Left Column - Product Info -->
+                        <!-- Left Column - Variant Products Table -->
                         <div class="lg:col-span-2 space-y-6">
+                            <!-- Variant Products Table -->
+                            <div class="bg-white rounded-lg shadow-sm border">
+                                <div class="px-6 py-4 border-b border-gray-200">
+                                    <h2 class="text-xl font-semibold text-gray-800">Varyant Ürünler</h2>
+                                    <p class="text-sm text-gray-600 mt-1">Bu ana ürüne ait tüm varyant ürünler</p>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ürün Adı</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stok</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fiyat</th>
+                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            ${variantProducts.map(variant => {
+                                                // Calculate stock - check if variant has direct stock first
+                                                let variantStock = 0;
+                                                if (variant.stock !== undefined) {
+                                                    variantStock = variant.stock || 0;
+                                                } else {
+                                                    variantStock = mockData.supplierProducts
+                                                        .filter(sp => sp.productId === variant.id)
+                                                        .reduce((sum, sp) => sum + (sp.stock || 0), 0);
+                                                }
+                                                
+                                                // Calculate price - check if variant has direct price first
+                                                let minPrice = 0;
+                                                if (variant.price !== undefined && variant.price > 0) {
+                                                    minPrice = variant.price;
+                                                } else {
+                                                    const variantPrice = mockData.supplierProducts
+                                                        .filter(sp => sp.productId === variant.id && sp.price > 0)
+                                                        .map(sp => sp.price);
+                                                    minPrice = variantPrice.length > 0 ? Math.min(...variantPrice) : 0;
+                                                }
+                                                
+                                                return `
+                                                    <tr class="hover:bg-gray-50">
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${variant.sku}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${t(variant.name)}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap">
+                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${variant.status === 'active' ? 'bg-green-100 text-green-800' : variant.status === 'draft' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">
+                                                                ${variant.status === 'active' ? 'Aktif' : variant.status === 'draft' ? 'Taslak' : 'Pasif'}
+                                                            </span>
+                                                        </td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${variantStock}</td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            ${minPrice > 0 ? minPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : '-'}
+                                                        </td>
+                                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                            <a href="#products/detail/${variant.id}" class="text-blue-600 hover:text-blue-900">Görüntüle</a>
+                                                        </td>
+                                                    </tr>
+                                                `;
+                                            }).join('')}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
                             <!-- Product Information -->
                             <div class="bg-white p-6 rounded-lg shadow-sm border">
                                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Ürün Bilgileri</h2>
@@ -16359,7 +16759,7 @@
                                     <div class="space-y-4">
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Ana Ürün ID:</span>
-                                            <span class="font-medium">${mainProduct.id}</span>
+                                            <a href="#main-product/${mainProduct.id}" class="font-medium text-blue-600 hover:underline">${mainProduct.id}</a>
                                         </div>
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Türkçe Ad:</span>
@@ -16401,77 +16801,6 @@
                                     </div>
                                 ` : ''}
                             </div>
-                            
-                            <!-- Variants Table -->
-                            <div class="bg-white p-6 rounded-lg shadow-sm border">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl font-semibold text-gray-800">Varyantlar (${mainProduct.variants.length})</h2>
-                                    <div class="flex space-x-2">
-                                        <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                                            ${activeVariants.length} Aktif
-                                        </span>
-                                        <span class="px-3 py-1 bg-red-100 text-red-800 text-sm font-medium rounded-full">
-                                            ${outOfStockVariants} Stok Yok
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-left">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">Varyant ID</th>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">SKU</th>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">Özellikler</th>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">Stok</th>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">Fiyat</th>
-                                                <th class="p-3 text-sm font-semibold text-gray-700">Durum</th>
-                                                <th class="p-3 text-sm font-semibold text-right">İşlemler</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${mainProduct.variants.map(variant => {
-                                                const attributesText = Object.entries(variant.attributes || {})
-                                                    .map(([attrId, value]) => {
-                                                        try {
-                                                            const attr = mockData.attributes.find(a => a.id == attrId);
-                                                            return attr ? `${t(attr.label)}: ${value}` : `${value}`;
-                                                        } catch (e) {
-                                                            return `${value}`;
-                                                        }
-                                                    })
-                                                    .join(', ');
-                                                
-                                                return `
-                                                    <tr class="border-b hover:bg-gray-50">
-                                                        <td class="p-3 text-sm text-gray-500">${variant.id}</td>
-                                                        <td class="p-3 text-sm font-mono">${variant.sku}</td>
-                                                        <td class="p-3 text-sm">${attributesText || '-'}</td>
-                                                        <td class="p-3 text-sm">
-                                                            <span class="${(variant.stock || 0) > 0 ? 'text-green-600' : 'text-red-600'}">
-                                                                ${variant.stock || 0}
-                                                            </span>
-                                                        </td>
-                                                        <td class="p-3 text-sm font-medium">
-                                                            ${(variant.price || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                                                        </td>
-                                                        <td class="p-3">
-                                                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${variant.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                                                ${variant.status === 'active' ? 'Aktif' : 'Pasif'}
-                                                            </span>
-                                                        </td>
-                                                        <td class="p-3 text-right">
-                                                            <button onclick="navigateTo('#products/detail/${variant.id}')" class="p-2 text-gray-400 hover:text-blue-600" title="Varyant Detayı">
-                                                                <i class="fas fa-eye"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                `;
-                                            }).join('')}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
                         </div>
                         
                         <!-- Right Column - Statistics & Actions -->
@@ -16502,6 +16831,36 @@
                                             ${mainProduct.priceRange.min.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
                                             ${mainProduct.priceRange.min !== mainProduct.priceRange.max ? `- ${mainProduct.priceRange.max.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : ''}
                                         </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Identifiers -->
+                            <div class="bg-white p-6 rounded-lg shadow-sm border">
+                                <h3 class="text-lg font-semibold mb-4 text-gray-800">Tanımlayıcılar</h3>
+                                <div class="space-y-4">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Ana Ürün ID:</span>
+                                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${mainProduct.id}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Kategori ID:</span>
+                                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${mainProduct.categoryId}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Marka ID:</span>
+                                        <span class="font-mono text-sm bg-gray-100 px-2 py-1 rounded">${mainProduct.brandId}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Fiyat Aralığı:</span>
+                                        <span class="font-medium text-sm">
+                                            ${priceRange.min.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                            ${priceRange.min !== priceRange.max ? `- ${priceRange.max.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : ''}
+                                        </span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Son Güncelleme:</span>
+                                        <span class="font-medium text-sm">${mainProduct.lastUpdated ? new Date(mainProduct.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -17493,6 +17852,67 @@
                 document.getElementById('addRestrictionBtn')?.addEventListener('click', () => showAddSupplierRestrictionModal());
                 container.querySelectorAll('.edit-restriction').forEach(btn => btn.addEventListener('click', () => showAddSupplierRestrictionModal(parseInt(btn.dataset.id))));
                 container.querySelectorAll('.del-restriction').forEach(btn => btn.addEventListener('click', () => deleteSupplierRestriction(parseInt(btn.dataset.id))));
+            } else if (tabName === 'suppliers') {
+                // Suppliers management tab
+                const suppliers = mockData.suppliers || [];
+                const rows = suppliers.map(supplier => {
+                    const statusClass = supplier.status === 'approved' ? 'bg-green-100 text-green-800' : 
+                                       supplier.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                                       supplier.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800';
+                    const statusText = supplier.status === 'approved' ? 'Onaylandı' : 
+                                      supplier.status === 'pending' ? 'Bekliyor' : 
+                                      supplier.status === 'rejected' ? 'Reddedildi' : 'Bilinmiyor';
+                    
+                    return `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 text-sm font-medium">${supplier.name}</td>
+                            <td class="p-3 text-sm">${supplier.email}</td>
+                            <td class="p-3 text-sm">${supplier.phone || '-'}</td>
+                            <td class="p-3 text-sm">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="p-3 text-sm">${supplier.registrationDate ? new Date(supplier.registrationDate).toLocaleDateString('tr-TR') : '-'}</td>
+                            <td class="p-3 text-sm">${supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-'}</td>
+                            <td class="p-3 text-right">
+                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-supplier" data-id="${supplier.id}"><i class="fas fa-edit"></i></button>
+                                <button class="p-2 text-gray-500 hover:text-green-600 change-status" data-id="${supplier.id}"><i class="fas fa-toggle-on"></i></button>
+                                <button class="p-2 text-gray-500 hover:text-red-600 del-supplier" data-id="${supplier.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                container.innerHTML = `
+                    <div class="flex justify-between items-center mb-4">
+                        <div><h3 class="text-lg font-semibold">Tedarikçi Listesi</h3></div>
+                        <button id="addSupplierBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                            <i class="fas fa-truck-loading mr-2"></i> Yeni Tedarikçi Ekle
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="p-3 text-sm font-semibold">Tedarikçi Adı</th>
+                                    <th class="p-3 text-sm font-semibold">E-posta</th>
+                                    <th class="p-3 text-sm font-semibold">Telefon</th>
+                                    <th class="p-3 text-sm font-semibold">Durum</th>
+                                    <th class="p-3 text-sm font-semibold">Kayıt Tarihi</th>
+                                    <th class="p-3 text-sm font-semibold">Son Aktivite</th>
+                                    <th class="p-3 text-sm font-semibold text-right">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rows || `<tr><td colspan="7" class="p-6 text-center text-gray-500">Tedarikçi bulunamadı.</td></tr>`}</tbody>
+                        </table>
+                    </div>
+                `;
+                
+                document.getElementById('addSupplierBtn')?.addEventListener('click', showAddSupplierModal);
+                container.querySelectorAll('.edit-supplier').forEach(btn => btn.addEventListener('click', () => showAddSupplierModal(parseInt(btn.dataset.id))));
+                container.querySelectorAll('.change-status').forEach(btn => btn.addEventListener('click', () => showChangeSupplierStatusModal(parseInt(btn.dataset.id))));
+                container.querySelectorAll('.del-supplier').forEach(btn => btn.addEventListener('click', () => deleteSupplier(parseInt(btn.dataset.id))));
             } else {
                 container.innerHTML = `<div class="text-center p-6 text-gray-500">Bilinmeyen sekme: ${tabName}</div>`;
             }
@@ -18882,6 +19302,33 @@
             }
         }
 
+        // --- Info Box Management ---
+        function hideInfoBox(infoBoxId) {
+            // Hide the info box immediately
+            const infoBox = document.getElementById(infoBoxId);
+            if (infoBox) {
+                infoBox.style.display = 'none';
+            }
+            
+            // Remember that user has closed this info box
+            const hiddenInfoBoxes = JSON.parse(localStorage.getItem('hiddenInfoBoxes') || '[]');
+            if (!hiddenInfoBoxes.includes(infoBoxId)) {
+                hiddenInfoBoxes.push(infoBoxId);
+                localStorage.setItem('hiddenInfoBoxes', JSON.stringify(hiddenInfoBoxes));
+            }
+        }
+        
+        function shouldShowInfoBox(infoBoxId) {
+            const hiddenInfoBoxes = JSON.parse(localStorage.getItem('hiddenInfoBoxes') || '[]');
+            return !hiddenInfoBoxes.includes(infoBoxId);
+        }
+        
+        function createInfoBoxCloseButton(infoBoxId, colorClass) {
+            return `<button onclick="hideInfoBox('${infoBoxId}')" class="${colorClass} hover:opacity-75 focus:outline-none transition-opacity" title="Bu bilgi kutusunu kapat">
+                        <i class="fas fa-times"></i>
+                    </button>`;
+        }
+
         // --- Utility Functions ---
         function getProductStock(productId, supplierId = null) {
             const user = window.currentUser || {};
@@ -19057,7 +19504,7 @@
                 // Handle new product URLs like #product/new-1234567890/edit
                 renderers.productDetail(subpage);
             }
-            else if (page === 'products') { renderers.products(subpage || 'yeni-gelenler'); } 
+            else if (page === 'products') { renderers.products(subpage || 'aktif'); } 
             else if (page === 'main-product' && (id1 || subpage)) { 
                 const mainProductId = id1 || subpage;
                 renderers.mainProduct(parseInt(mainProductId)); 
@@ -19128,7 +19575,7 @@ const navLinksSupplier = [
     text: 'Ürünler', 
     role: 'supplier',
     children: [
-      { href: '#products/yeni-urun-talepleri', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
+      { href: '#products/aktif', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
       { href: '#bulk-upload', icon: 'fa-upload', text: 'Toplu İşlemler', role: 'supplier' }
     ]
   },
@@ -19268,10 +19715,15 @@ sidebarNav.addEventListener('click', (e) => {
                 });
             });
 
-            document.getElementById('modal-cancel').textContent = t('cancel');
-            document.getElementById('modal-confirm').textContent = t('confirm');
-            document.getElementById('filterPanelTitle').textContent = t('filters');
-            document.getElementById('filterPanelApplyBtn').textContent = t('filters');
+            const modalCancel = document.getElementById('modal-cancel');
+            const modalConfirm = document.getElementById('modal-confirm');
+            const filterPanelTitle = document.getElementById('filterPanelTitle');
+            const filterPanelApplyBtn = document.getElementById('filterPanelApplyBtn');
+            
+            if (modalCancel) modalCancel.textContent = t('cancel');
+            if (modalConfirm) modalConfirm.textContent = t('confirm');
+            if (filterPanelTitle) filterPanelTitle.textContent = t('filters');
+            if (filterPanelApplyBtn) filterPanelApplyBtn.textContent = t('filters');
             const currentDateEl = document.getElementById('currentDate');
             if (currentDateEl) currentDateEl.textContent = new Date().toLocaleDateString('tr-TR');
         }
@@ -21599,18 +22051,20 @@ function showPriceReviewModal(productId) {
     `;
 
     pendingRequests.forEach((request, index) => {
-        const priceChange = ((request.requestedPrice - request.currentPrice) / request.currentPrice * 100).toFixed(1);
+        const isStockPriceUpdate = request.requestType === 'stock_price_update';
+        const priceChange = request.currentPrice > 0 ? ((request.requestedPrice - request.currentPrice) / request.currentPrice * 100).toFixed(1) : '0';
         const changeColor = priceChange > 0 ? 'text-red-600' : 'text-green-600';
         const changeIcon = priceChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-        const recommendationColor = request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
-        const recommendationIcon = request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
+        const recommendationColor = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
+        const recommendationIcon = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
         
         body += `
             <div class="border border-gray-200 rounded-lg p-4">
                 <div class="flex justify-between items-start mb-4">
                     <div>
                         <h4 class="font-semibold text-gray-800">${request.supplierName}</h4>
-                        <p class="text-sm text-gray-500">${new Date(request.submittedAt).toLocaleDateString('tr-TR')}</p>
+                        <p class="text-sm text-gray-500">${new Date(request.requestDate || request.submittedAt).toLocaleDateString('tr-TR')}</p>
+                        ${isStockPriceUpdate ? '<span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full mt-1">Stok & Fiyat Güncelleme</span>' : ''}
                     </div>
                     <div class="text-right">
                         <div class="text-sm text-gray-600">${t('price_change')}</div>
@@ -21630,11 +22084,21 @@ function showPriceReviewModal(productId) {
                             <span class="text-sm text-gray-600">${t('requested_price')}:</span>
                             <span class="font-medium">${request.requestedPrice.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
                         </div>
+                        ${isStockPriceUpdate ? `
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Mevcut Stok:</span>
+                            <span class="font-medium">${request.currentStock || 0} adet</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Talep Edilen Stok:</span>
+                            <span class="font-medium">${request.requestedStock || 0} adet</span>
+                        </div>
+                        ` : ''}
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between">
                             <span class="text-sm text-gray-600">${t('change_reason')}:</span>
-                            <span class="text-sm">${request.reason}</span>
+                            <span class="text-sm">${request.reason || 'Stok ve fiyat güncelleme talebi'}</span>
                         </div>
                     </div>
                 </div>
@@ -21644,26 +22108,26 @@ function showPriceReviewModal(productId) {
                              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                                  <div>
                                      <span class="text-gray-600">${t('platform_average')}:</span>
-                                     <span class="font-medium ml-2">${request.validationInfo.platformAverage.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                     <span class="font-medium ml-2">${request.validationInfo ? request.validationInfo.platformAverage.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : 'N/A'}</span>
                                  </div>
                                  <div>
                                      <span class="text-gray-600">${t('recommendation')}:</span>
                                      <span class="font-medium ml-2 ${recommendationColor}">
                                          <i class="fas ${recommendationIcon} mr-1"></i>
-                                         ${request.validationInfo.recommendation === 'approve' ? 'Onayla' : 'Reddet'}
+                                         ${request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'Onayla' : 'Reddet'}
                                      </span>
                                  </div>
                              </div>
                              <div class="mt-2">
                                  <span class="text-gray-600 text-sm">${t('unique_product_prices')}:</span>
                                  <div class="flex flex-wrap gap-1 mt-1">
-                                     ${request.validationInfo.uniqueProductPrices.map(price => 
+                                     ${request.validationInfo && request.validationInfo.uniqueProductPrices ? request.validationInfo.uniqueProductPrices.map(price => 
                                          `<span class="px-2 py-1 bg-white rounded text-xs">${price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>`
-                                     ).join('')}
+                                     ).join('') : 'N/A'}
                                  </div>
                              </div>
                              <div class="mt-2 text-sm text-gray-600">
-                                 <strong>${t('margin_analysis')}:</strong> ${request.validationInfo.marginAnalysis}
+                                 <strong>${t('margin_analysis')}:</strong> ${request.validationInfo ? request.validationInfo.marginAnalysis : 'N/A'}
                              </div>
                          </div>
 
@@ -21703,20 +22167,24 @@ function handlePriceDecision(productId, supplierId, decision) {
     request.decidedAt = new Date().toISOString();
     request.decidedBy = window.currentUser.name;
 
-    // If approved, update the supplier product price
+    // If approved, update the supplier product price and stock
     if (decision === 'approve') {
         const supplierProduct = mockData.supplierProducts.find(sp => 
             sp.productId === productId && sp.supplierId === supplierId
         );
         if (supplierProduct) {
             supplierProduct.price = request.requestedPrice;
+            // Update stock if this is a stock & price update request
+            if (request.requestType === 'stock_price_update' && request.requestedStock !== undefined) {
+                supplierProduct.stock = request.requestedStock;
+            }
         } else {
             // Create new supplier product record if it doesn't exist
             mockData.supplierProducts.push({
                 productId: productId,
                 supplierId: supplierId,
                 price: request.requestedPrice,
-                stock: 0
+                stock: request.requestType === 'stock_price_update' ? (request.requestedStock || 0) : 0
             });
         }
     }
@@ -21797,20 +22265,24 @@ function handlePriceDecisionCustom(productId, supplierId, decision) {
     request.decidedAt = new Date().toISOString();
     request.decidedBy = window.currentUser.name;
 
-    // If approved, update the supplier product price
+    // If approved, update the supplier product price and stock
     if (decision === 'approve') {
         const supplierProduct = mockData.supplierProducts.find(sp => 
             sp.productId === productId && sp.supplierId === supplierId
         );
         if (supplierProduct) {
             supplierProduct.price = request.requestedPrice;
+            // Update stock if this is a stock & price update request
+            if (request.requestType === 'stock_price_update' && request.requestedStock !== undefined) {
+                supplierProduct.stock = request.requestedStock;
+            }
         } else {
             // Create new supplier product record if it doesn't exist
             mockData.supplierProducts.push({
                 productId: productId,
                 supplierId: supplierId,
                 price: request.requestedPrice,
-                stock: 0
+                stock: request.requestType === 'stock_price_update' ? (request.requestedStock || 0) : 0
             });
         }
     }
@@ -22678,7 +23150,12 @@ function renderGeneralTab(container, product, isSupplier) {
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ana Ürün ID</label>
-                                    <input type="text" value="${product.mainProductId || product.id}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" value="${product.mainProductId || product.id}" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                                        <a href="#main-product/${product.mainProductId || product.id}" class="px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors" title="Ana ürün detaylarını görüntüle">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Türü</label>
@@ -22857,7 +23334,7 @@ function renderGeneralTab(container, product, isSupplier) {
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">Ana Ürün ID:</span>
-                                    <span class="font-medium">${product.mainProductId || product.id}</span>
+                                    <a href="#main-product/${product.mainProductId || product.id}" class="font-medium text-blue-600 hover:underline">${product.mainProductId || product.id}</a>
                                 </div>
                                 ${product.mainProductId && product.mainProductId !== product.id ? `
                                 <div class="flex justify-between">
@@ -23042,6 +23519,156 @@ function saveSupplierProductInfo(productId){
     renderProductTab('general', p);
 }
 
+// Function to submit stock & price update request
+function submitStockPriceUpdateRequest(productId) {
+    const product = mockData.products.find(p => p.id === productId);
+    if (!product) {
+        showToast('Ürün bulunamadı.', 'error');
+        return;
+    }
+    
+    const user = window.currentUser || {};
+    const isSupplier = user.role === 'supplier';
+    
+    if (!isSupplier) {
+        showToast('Bu işlem sadece tedarikçiler tarafından yapılabilir.', 'error');
+        return;
+    }
+    
+    const supplierId = user.supplierId;
+    if (!supplierId) {
+        showToast('Tedarikçi bilgisi bulunamadı.', 'error');
+        return;
+    }
+    
+    // Get current values
+    const currentPrice = getProductPrice(productId, supplierId);
+    const currentStock = getProductStock(productId, supplierId);
+    
+    // Create the request
+    const request = {
+        id: Date.now(),
+        supplierId: supplierId,
+        supplierName: mockData.suppliers.find(s => s.id === supplierId)?.name || 'Bilinmeyen Tedarikçi',
+        productId: productId,
+        currentPrice: currentPrice,
+        requestedPrice: currentPrice, // Will be updated by user
+        currentStock: currentStock,
+        requestedStock: currentStock, // Will be updated by user
+        status: 'pending',
+        requestDate: new Date().toISOString(),
+        requestType: 'stock_price_update'
+    };
+    
+    // Initialize supplierSubmission if it doesn't exist
+    if (!product.supplierSubmission) {
+        product.supplierSubmission = {
+            supplierId: supplierId,
+            status: 'pending',
+            submissionDate: new Date().toISOString()
+        };
+    }
+    
+    // Initialize priceRequests array if it doesn't exist
+    if (!product.supplierSubmission.priceRequests) {
+        product.supplierSubmission.priceRequests = [];
+    }
+    
+    // Add the request
+    product.supplierSubmission.priceRequests.push(request);
+    
+    showToast('Stok ve fiyat güncelleme talebi başarıyla gönderildi.', 'success');
+    
+    // Refresh the current view
+    if (window.location.hash.includes('products/detail/')) {
+        renderProductTab('stock-price', product);
+    }
+}
+
+// Function to submit stock & price update request with user input values
+function submitStockPriceUpdateRequestWithValues(productId) {
+    const product = mockData.products.find(p => p.id === productId);
+    if (!product) {
+        showToast('Ürün bulunamadı.', 'error');
+        return;
+    }
+    
+    const user = window.currentUser || {};
+    const isSupplier = user.role === 'supplier';
+    
+    if (!isSupplier) {
+        showToast('Bu işlem sadece tedarikçiler tarafından yapılabilir.', 'error');
+        return;
+    }
+    
+    const supplierId = user.supplierId;
+    if (!supplierId) {
+        showToast('Tedarikçi bilgisi bulunamadı.', 'error');
+        return;
+    }
+    
+    // Get input values
+    const newStockInput = document.getElementById(`new-stock-${productId}`);
+    const newPriceInput = document.getElementById(`new-price-${productId}`);
+    
+    if (!newStockInput || !newPriceInput) {
+        showToast('Form alanları bulunamadı.', 'error');
+        return;
+    }
+    
+    const newStock = parseInt(newStockInput.value) || 0;
+    const newPrice = parseFloat(newPriceInput.value) || 0;
+    
+    // Get current values
+    const currentPrice = getProductPrice(productId, supplierId);
+    const currentStock = getProductStock(productId, supplierId);
+    
+    // Check if there are any changes
+    if (newStock === currentStock && newPrice === currentPrice) {
+        showToast('Değişiklik yapılmadı. Lütfen yeni değerler girin.', 'warning');
+        return;
+    }
+    
+    // Create the request
+    const request = {
+        id: Date.now(),
+        supplierId: supplierId,
+        supplierName: mockData.suppliers.find(s => s.id === supplierId)?.name || 'Bilinmeyen Tedarikçi',
+        productId: productId,
+        currentPrice: currentPrice,
+        requestedPrice: newPrice,
+        currentStock: currentStock,
+        requestedStock: newStock,
+        status: 'pending',
+        requestDate: new Date().toISOString(),
+        requestType: 'stock_price_update'
+    };
+    
+    // Initialize supplierSubmission if it doesn't exist
+    if (!product.supplierSubmission) {
+        product.supplierSubmission = {
+            supplierId: supplierId,
+            status: 'pending',
+            submissionDate: new Date().toISOString()
+        };
+    }
+    
+    // Initialize priceRequests array if it doesn't exist
+    if (!product.supplierSubmission.priceRequests) {
+        product.supplierSubmission.priceRequests = [];
+    }
+    
+    // Add the request
+    product.supplierSubmission.priceRequests.push(request);
+    
+    showToast('Stok ve fiyat güncelleme talebi başarıyla gönderildi.', 'success');
+    
+    // Refresh the current view
+    if (window.location.hash.includes('products/detail/')) {
+        renderProductTab('stock-price', product);
+    }
+}
+
 function renderStockPriceTab(container, product, isSupplier) {
     
     try {
@@ -23082,29 +23709,46 @@ function renderStockPriceTab(container, product, isSupplier) {
             `;
         } else if (isSupplier) {
             // Read-only version for suppliers (other products)
+            const user = window.currentUser || {};
+            const supplierId = user.supplierId;
+            const currentPrice = getProductPrice(product.id, supplierId);
+            const currentStock = getProductStock(product.id, supplierId);
+            
             container.innerHTML = `
                 <div class="max-w-2xl">
                     <div class="bg-blue-50 p-6 rounded-lg">
                         <h3 class="text-lg font-semibold mb-4">Stok ve Fiyat Bilgileri</h3>
                         <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
-                                <input type="number" value="${stock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
-                                    <input type="number" step="0.01" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (USD)</label>
-                                    <input type="number" step="0.01" value="${product.listPriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Amerikan Doları)</p>
+                            <div class="bg-white p-4 rounded-lg border border-blue-200">
+                                <h4 class="font-medium text-gray-900 mb-3">Mevcut Değerler</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Mevcut Stok</label>
+                                        <input type="number" value="${currentStock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Mevcut Fiyat (TRY)</label>
+                                        <input type="number" step="0.01" value="${currentPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                <h4 class="font-medium text-gray-900 mb-3">Yeni Değerler</h4>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Yeni Stok Miktarı</label>
+                                        <input type="number" id="new-stock-${product.id}" value="${currentStock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" min="0">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Yeni Fiyat (TRY)</label>
+                                        <input type="number" step="0.01" id="new-price-${product.id}" value="${currentPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" min="0">
+                                        <p class="text-xs text-gray-500 mt-1">Fiyat değişikliği onay gerektirir</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button onclick="submitStockPriceUpdateRequestWithValues(${product.id})" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelleme Talebi Gönder</button>
                         </div>
                     </div>
                 </div>
@@ -23184,7 +23828,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                             })()}
                         </div>
                         <div class="mt-6 pt-4 border-t border-blue-200">
-                            <button class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
+                            <button onclick="submitStockPriceUpdateRequest(${product.id})" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
                         </div>
                     </div>
                 </div>
