@@ -4270,6 +4270,11 @@
                 .reduce((total, current) => total + current.stock, 0);
         }
 
+        function calculateProductCompleteness(product) {
+            // Return the health percentage from the product data
+            return product.health || 0;
+        }
+
         function getProductPrice(productId, supplierId = null) {
             if (supplierId) {
                 // Get price for specific supplier
@@ -4532,7 +4537,7 @@
             products: (activeTab = 'yeni-urun-talepleri', view = 'list') => {
                  // Suppliers can only see approved, rejected, sent, draft, and update pending products
                 if ((window.currentUser||{}).role === 'supplier') {
-                     if (activeTab !== 'aktif' && activeTab !== 'reddedilen' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
+                     if (activeTab !== 'aktif' && activeTab !== 'archived' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'talepler' && activeTab !== 'fiyat-stok-istekleri' && activeTab !== 'archived-items' && activeTab !== 'urun-guncelleme' && activeTab !== 'yeni-urun-talepleri') {
                         navigateTo('#products/yeni-urun-talepleri');
                         return;
                     }
@@ -4552,6 +4557,16 @@
                 const gonderilenlerCount = isCurrentUserSupplier && currentUserSupplierId ? 
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId).length :
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission).length;
+                
+                // Count for yeni-urun-talepleri tab (matches the filtering logic)
+                const yeniUrunTalepleriCount = isCurrentUserSupplier && currentUserSupplierId ? 
+                    mockData.products.filter(p => 
+                        p.status === 'draft' && (
+                            (p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId) ||
+                            (!p.supplierSubmission && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId))
+                        )
+                    ).length :
+                    mockData.products.filter(p => p.status === 'draft').length;
                 const draftCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission && p.supplierProducts && p.supplierProducts.some(sp => sp.supplierId === (window.currentUser||{}).supplierId)).length;
                 const priceUpdateRequestsCount = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending')).length;
                 // Pasif (unavailable for sale) count per supplier: stock==0 OR isArchived OR isBanned
@@ -4588,41 +4603,37 @@
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
-                        <div class="relative group">
-                            <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
+                        <div class="relative group flex-1">
+                            <a href="#products/talepler" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Talepler</span>
-                                <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${gonderilenlerCount}</span>
+                                <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
                             <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                                 <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                     <span>Tüm Talepler</span>
-                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                    <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
                                 </a>
                                 <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                     <span>${t('price_stock_requests')}</span>
-                                    <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                    <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${priceUpdateRequestsCount}</span>
                                 </a>
                                 <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                     <span>Ürün Güncelleme İstekleri</span>
-                                    <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                    <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${guncellemeBekleyenlerCount}</span>
                                 </a>
                                 <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <span>Yeni Ürün Talepleri</span>
-                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniGelenlerCount + gonderilenlerCount}</span>
+                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniUrunTalepleriCount}</span>
                                 </a>
                             </div>
                         </div>
-                        <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
+                        <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                             <span>${t('onaylanan')}</span>
                             <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
                         </a>
-                        <a href="#products/reddedilen" class="tab-button flex items-center space-x-2 ${activeTab === 'reddedilen' ? 'active' : 'text-gray-500'} font-medium py-4">
-                            <span>Reddedilen</span>
-                            <span class="bg-red-200 text-red-800 text-xs font-semibold px-2 py-0.5 rounded-full">${reddedilenCount}</span>
-                        </a>
-                        <div class="relative group">
-                            <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                        <div class="relative group flex-1">
+                            <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Pasif</span>
                                 <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
@@ -4648,37 +4659,37 @@
                         </div>
                     </nav>` :
                     `<nav id="product-tabs" class="-mb-px flex space-x-6 px-6">
-                                <div class="relative group">
-                                    <a href="#products/talepler" class="tab-button flex items-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <div class="relative group flex-1">
+                                    <a href="#products/talepler" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Talepler</span>
-                                        <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${yeniGelenlerCount}</span>
+                                        <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${reddedilenCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
                                     </a>
                                     <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
                                         <a href="#products/talepler" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                             <span>Tüm Talepler</span>
-                                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                            <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${reddedilenCount}</span>
                                         </a>
                                         <a href="#products/fiyat-stok-istekleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                             <span>${t('price_stock_requests')}</span>
-                                            <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                            <span class="bg-purple-200 text-purple-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${priceUpdateRequestsCount}</span>
                                         </a>
                                         <a href="#products/urun-guncelleme" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 border-b border-gray-100">
                                             <span>Ürün Güncelleme İstekleri</span>
-                                            <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">0</span>
+                                            <span class="bg-yellow-200 text-yellow-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${guncellemeBekleyenlerCount}</span>
                                         </a>
                                 <a href="#products/yeni-urun-talepleri" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <span>Yeni Ürün Talepleri</span>
-                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniGelenlerCount + gonderilenlerCount}</span>
+                                    <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full ml-2">${yeniUrunTalepleriCount}</span>
                                 </a>
                                     </div>
                                 </div>
-                                <a href="#products/aktif" class="tab-button flex items-center space-x-2 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <a href="#products/aktif" class="tab-button flex items-center justify-center space-x-2 flex-1 ${activeTab === 'aktif' ? 'active' : 'text-gray-500'} font-medium py-4">
                                     <span>${t('onaylanan')}</span>
                                     <span class="bg-green-200 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">${onaylananCount}</span>
                                 </a>
-                                <div class="relative group">
-                                    <a href="#products/archived" class="tab-button flex items-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                <div class="relative group flex-1">
+                                    <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Pasif</span>
                                         <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
@@ -9246,8 +9257,6 @@
                  // Suppliers can see approved, rejected, and their update requests
                 if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
-                } else if (activeTab === 'reddedilen') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'rejected');
                  } else if (activeTab === 'urun-guncelleme') {
                      // Show products where current supplier has pending update requests
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
@@ -9559,8 +9568,8 @@
 
             // Handle empty state for "talepler" tabs and "archived-items"
             let content = '';
-            if (activeTab === 'talepler' || activeTab === 'archived-items') {
-                // Show empty state for requests and archived items
+            if ((activeTab === 'talepler' || activeTab === 'archived-items') && products.length === 0) {
+                // Show empty state for requests and archived items only when there are no products
                 const emptyStateHTML = `
                     <div class="bg-white rounded-lg shadow-sm border">
                         <div class="p-6">
@@ -12733,7 +12742,6 @@
             
             const allowedSupplierTabs = new Set([
                 'aktif',
-                'reddedilen',
                 'urun-guncelleme',
                 'yeni-urun-talepleri',
                 'archived',
@@ -12789,11 +12797,17 @@
                 case 'aktif':
                     filteredProducts = mockData.products.filter(p => p.status === 'active');
                     break;
-                case 'reddedilen':
-                    filteredProducts = mockData.products.filter(p => p.status === 'rejected');
-                    break;
                 case 'talepler':
-                    filteredProducts = [];
+                    // Include rejected products in Talepler tab
+                    if (isSupplier && currentSupplierId) {
+                        filteredProducts = mockData.products.filter(p => 
+                            p.status === 'rejected' && 
+                            mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId)
+                        );
+                    } else {
+                        // For admins: show all rejected products
+                        filteredProducts = mockData.products.filter(p => p.status === 'rejected');
+                    }
                     break;
                 case 'fiyat-stok-istekleri':
                     filteredProducts = mockData.products.filter(p => p.supplierSubmission && p.supplierSubmission.priceRequests && p.supplierSubmission.priceRequests.some(req => req.status === 'pending'));
@@ -12834,6 +12848,7 @@
                                 };
                             });
                     } else {
+                        // For admins: show all archived products from all suppliers
                         filteredProducts = mockData.supplierProducts
                             .filter(sp => sp.isArchived === true)
                             .map(sp => {
@@ -12881,8 +12896,8 @@
             // Set render function for pagination
             window.paginationState.renderFunction = () => switchProductView(activeTab, view);
             
-            // Special handling for talepler tabs and archived-items - use renderProductListView
-            if (activeTab === 'talepler' || activeTab === 'archived-items') {
+            // Special handling for talepler tabs - use renderProductListView
+            if (activeTab === 'talepler') {
                 renderProductListView(paginatedProducts, activeTab, isSupplier);
             } else if (view === 'list') {
                 renderProductList(paginatedProducts, displayEl);
@@ -24423,24 +24438,6 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<a href="#" id="bulk-download-template" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-file-download w-4 mr-2"></i>Şablon İndir</a>'
                     ];
                 }
-            } else if (activeTab === 'reddedilen') {
-                if (isSupplier) {
-                    // Rejected Products - Supplier view
-                    actions = [
-                        '<a href="#" id="bulk-resubmit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-redo w-4 mr-2 text-blue-500"></i>Tekrar Gönder</a>',
-                        '<a href="#" id="bulk-edit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Düzenle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
-                    ];
-                } else {
-                    // Rejected Products - Admin view
-                    actions = [
-                        '<a href="#" id="bulk-reapprove" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Tekrar Onayla</a>',
-                        '<a href="#" id="bulk-delete" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Seçilenleri Sil</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="bulk-export" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
-                    ];
-                }
             } else if (activeTab === 'archived') {
                 if (isSupplier) {
                     // Archived Products - Supplier view
@@ -24564,7 +24561,7 @@ function filterAdminFinanceData(startDate, endDate) {
                         '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Aktif Ürünleri Dışa Aktar</a>'
                     ];
                 }
-            } else if (activeTab === 'reddedilen' || activeTab === 'rejected') {
+            } else if (activeTab === 'rejected') {
                 if (isSupplier) {
                     // Rejected products - Supplier view
                     actions = [
