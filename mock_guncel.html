@@ -440,15 +440,15 @@
 
     <!-- Modal Template -->
     <div id="modal-template" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden opacity-0" style="backdrop-filter: blur(2px);">
-        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg transform -translate-y-10 opacity-0">
-            <div class="p-4 border-b flex justify-between items-center">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-lg transform -translate-y-10 opacity-0 flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b flex justify-between items-center flex-shrink-0">
                 <h3 id="modal-title" class="text-lg font-semibold">Modal Başlığı</h3>
                 <button class="close-modal p-2 rounded-md hover:bg-gray-100">&times;</button>
             </div>
-            <div id="modal-body" class="p-6 max-h-[70vh] overflow-y-auto">
+            <div id="modal-body" class="p-6 flex-1 overflow-y-auto min-h-0">
                 <!-- Modal body content goes here -->
             </div>
-            <div id="modal-footer" class="p-4 bg-gray-50 border-t rounded-b-lg flex justify-end space-x-2">
+            <div id="modal-footer" class="p-4 bg-gray-50 border-t rounded-b-lg flex justify-end space-x-2 flex-shrink-0">
                 <button id="modal-cancel" class="close-modal px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">İptal</button>
                 <button id="modal-confirm" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Onayla</button>
             </div>
