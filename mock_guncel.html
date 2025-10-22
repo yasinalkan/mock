@@ -13696,6 +13696,22 @@
                     </td>
                     <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
                     <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span></td>
+                    ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? `
+                    <td class="p-3">
+                        <div class="flex items-center">
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                ${(() => {
+                                    const requestType = isNewProductRequestsTab ? 'product_create' : 'product_update';
+                                    const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && r.status === 'submitted');
+                                    if (req) {
+                                        return req.status === 'submitted' ? 'Gönderildi' : req.status === 'toBeRevised' ? 'Revize Edilecek' : req.status === 'accepted' ? 'Kabul Edildi' : 'Tamamlandı';
+                                    }
+                                    return 'Bilinmiyor';
+                                })()}
+                            </span>
+                        </div>
+                    </td>
+                    ` : ''}
                     ${isNewArrivalsTab ? `
                     <td class="p-3">
                         <div class="flex items-center">
@@ -13733,6 +13749,7 @@
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
+                                ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Durum</th>` : ''}
                                 ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('originality_header')}</th>` : ''}
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('status_description_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('last_updated_header')}</th>
@@ -13870,6 +13887,13 @@
                                 ${request.reason}
                             </div>
                         </td>
+                        <td class="p-4">
+                            <div class="flex items-center">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                    ${request.status === 'submitted' ? 'Gönderildi' : request.status === 'toBeRevised' ? 'Revize Edilecek' : request.status === 'accepted' ? 'Kabul Edildi' : 'Tamamlandı'}
+                                </span>
+                            </div>
+                        </td>
                         <td class="p-4 text-right">
                             <div class="flex space-x-2">
                                 <button onclick="showRequestDetailModal(${request.id})" 
@@ -13907,6 +13931,7 @@
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Platform Ortalaması</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Öneri</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Neden</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Durum</th>
                                 <th class="p-4 text-sm font-semibold text-right">İşlemler</th>
                             </tr>
                         </thead>
