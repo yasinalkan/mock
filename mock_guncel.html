@@ -4607,36 +4607,7 @@
 
         // Set default current user
         window.currentUser = window.availableUsers[1]; // Start with supplier user for testing
-        
-        // Initialize user switcher when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof ensureUserSwitcher === 'function') {
-                ensureUserSwitcher();
-            }
-            // Initial page render
-            handleRouteChange();
-        });
-        
-        // Handle hash change for SPA routing
-        window.addEventListener('hashchange', function() {
-            handleRouteChange();
-        });
-        
-        // Also call handleRouteChange on first load if DOM is already ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function() {
-                if (typeof handleRouteChange === 'function' && !window.initialRouteHandled) {
-                    handleRouteChange();
-                    window.initialRouteHandled = true;
-                }
-            });
-        } else {
-            // DOM is already loaded
-            if (typeof handleRouteChange === 'function' && !window.initialRouteHandled) {
-                handleRouteChange();
-                window.initialRouteHandled = true;
-            }
-        }
+
 
         // --- Hydrate from window.mockData (demo seed) so Orders page can see seeded data ---
         window.mockData = window.mockData || {};
@@ -27096,7 +27067,31 @@ window.mockData.orders = window.mockData.orders || [
      showToast('Güncelleme düzenleme özelliği yakında eklenecek.', 'info');
      // TODO: Implement edit update request functionality
  }
-</script>
+
+        // ==============================================
+        // INITIALIZE APPLICATION
+        // ==============================================
+        // Handle hash change for SPA routing
+        window.addEventListener('hashchange', function() {
+            handleRouteChange();
+        });
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof ensureUserSwitcher === 'function') {
+                ensureUserSwitcher();
+            }
+            // Render the initial page
+            handleRouteChange();
+        });
+        
+        // If DOM is already loaded when this script runs, initialize immediately
+        if (document.readyState !== 'loading' && !window.appInitialized) {
+            handleRouteChange();
+            window.appInitialized = true;
+        }
+
+    </script>
 
 </body>
 </html>
