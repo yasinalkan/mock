@@ -13359,7 +13359,7 @@
                     }
                     break;
                 case 'aktif':
-                    filteredProducts = mockData.products.filter(p => p.status === 'active');
+                    filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
                     break;
                 case 'talepler':
                     // Include rejected products in Talepler tab
