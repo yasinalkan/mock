@@ -4613,7 +4613,30 @@
             if (typeof ensureUserSwitcher === 'function') {
                 ensureUserSwitcher();
             }
+            // Initial page render
+            handleRouteChange();
         });
+        
+        // Handle hash change for SPA routing
+        window.addEventListener('hashchange', function() {
+            handleRouteChange();
+        });
+        
+        // Also call handleRouteChange on first load if DOM is already ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof handleRouteChange === 'function' && !window.initialRouteHandled) {
+                    handleRouteChange();
+                    window.initialRouteHandled = true;
+                }
+            });
+        } else {
+            // DOM is already loaded
+            if (typeof handleRouteChange === 'function' && !window.initialRouteHandled) {
+                handleRouteChange();
+                window.initialRouteHandled = true;
+            }
+        }
 
         // --- Hydrate from window.mockData (demo seed) so Orders page can see seeded data ---
         window.mockData = window.mockData || {};
