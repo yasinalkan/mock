@@ -7040,7 +7040,63 @@
             `;
         };
 
-        // --- ATTRIBUTE DETAIL PAGE RENDERER ---
+        // --- REQUEST REVIEW PAGE RENDERER ---
+        renderers.requestReviewPage = (requestId) => {
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (!request) {
+                pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Talep Bulunamadı</h2><p class="text-gray-500">Aradığınız talep mevcut değil.</p><button onclick="navigateTo('#products/yeni-urun-talepleri')" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Talepler Sayfasına Dön</button></div>';
+                return;
+            }
+
+            const product = mockData.products.find(p => p.id === request.productId);
+            const supplier = mockData.suppliers.find(s => s.id === request.supplierId);
+            const user = window.currentUser || {};
+            
+            if (!product) {
+                pageContent.innerHTML = '<div class="text-center p-10"><h2 class="text-2xl font-bold text-red-600">Ürün Bulunamadı</h2><p class="text-gray-500">Aradığınız ürün mevcut değil.</p></div>';
+                return;
+            }
+
+            // Update page title with back button
+            const backTab = request.type === 'product_create' ? 'yeni-urun-talepleri' : 'urun-guncelleme';
+            const backButton = '<button class="mr-4 px-3 py-1 text-blue-600 hover:text-blue-800 text-sm flex items-center" onclick="navigateTo(\'#products/' + backTab + '\')"><i class="fas fa-arrow-left mr-2"></i>Geri Dön</button>';
+            pageTitle.innerHTML = backButton + (request.type === 'product_create' ? 'Yeni Ürün Talebi' : 'Ürün Güncelleme Talebi');
+            
+            // Create a temporary container to generate the detailed comparison view
+            const tempContainer = document.createElement('div');
+            
+            // For stock/price update requests, show the simple comparison
+            if (request.type === 'stock_price_update') {
+                const modalContent = `<div class="space-y-6"><div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200"><div class="flex items-center justify-between"><div><h3 class="text-lg font-semibold text-gray-900">Stok ve Fiyat Güncelleme Talebi</h3><p class="text-sm text-gray-600 mt-1">Bu ürün için gönderilen stok ve fiyat güncelleme talebi</p></div><div class="flex items-center space-x-2"><span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full"><i class="fas fa-clock mr-1"></i>${request.status === 'submitted' ? 'Gönderildi' : request.status === 'toBeRevised' ? 'Revize Edilecek' : 'Kabul Edildi'}</span></div></div></div><div class="bg-white rounded-lg shadow-sm border p-6"><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="flex items-center space-x-3"><div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><i class="fas fa-calendar-alt text-blue-600"></i></div><div><p class="text-sm font-medium text-gray-700">Gönderim Tarihi</p><p class="text-sm text-gray-600">${new Date(request.submittedAt).toLocaleDateString('tr-TR')}</p></div></div><div class="flex items-center space-x-3"><div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center"><i class="fas fa-user text-green-600"></i></div><div><p class="text-sm font-medium text-gray-700">Tedarikçi</p><p class="text-sm text-gray-600">${supplier?.name || 'Bilinmeyen Tedarikçi'}</p></div></div><div class="flex items-center space-x-3"><div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"><i class="fas fa-box text-orange-600"></i></div><div><p class="text-sm font-medium text-gray-700">Ürün</p><p class="text-sm text-gray-600">${product.name}</p></div></div></div></div><div class="bg-white rounded-lg shadow-sm border overflow-hidden"><div class="px-6 py-4 border-b border-gray-200"><h4 class="text-lg font-semibold text-gray-900">Stok ve Fiyat Değişiklikleri</h4><p class="text-sm text-gray-600 mt-1">Mevcut değerler ile talep edilen değerler arasındaki fark</p></div><div class="p-6"><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="p-4 bg-orange-50 border border-orange-200 rounded-lg"><div class="flex items-center space-x-3 mb-3"><i class="fas fa-boxes text-orange-600"></i><p class="font-medium text-gray-900">Stok Miktarı</p><span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">Güncellendi</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-white p-3 rounded-lg border"><div class="text-sm text-gray-600 mb-1">Mevcut Değer</div><div class="font-medium text-gray-800">${request.data.currentStock || 0}</div></div><div class="bg-orange-100 p-3 rounded-lg border border-orange-300"><div class="text-sm text-orange-700 mb-1">Talep Edilen Değer</div><div class="font-medium text-orange-900">${request.data.requestedStock || 0}</div></div></div></div><div class="p-4 bg-orange-50 border border-orange-200 rounded-lg"><div class="flex items-center space-x-3 mb-3"><i class="fas fa-lira-sign text-orange-600"></i><p class="font-medium text-gray-900">Fiyat (TRY)</p><span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">Güncellendi</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-white p-3 rounded-lg border"><div class="text-sm text-gray-600 mb-1">Mevcut Değer</div><div class="font-medium text-gray-800">${request.data.currentPrice || 0} TRY</div></div><div class="bg-orange-100 p-3 rounded-lg border border-orange-300"><div class="text-sm text-orange-700 mb-1">Talep Edilen Değer</div><div class="font-medium text-orange-900">${request.data.requestedPrice || 0} TRY</div></div></div></div></div></div></div>${user.role === 'admin' && request.status === 'submitted' ? '<div class="flex justify-end space-x-3 pt-4 border-t"><button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">Revize Et</button><button onclick="handleRequestDecision(${request.id}, 'accepted')" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Kabul Et</button></div>' : ''}</div>`;
+                pageContent.innerHTML = modalContent;
+                return;
+            }
+
+            // For product create/update requests, use the comparison view
+            const tempSubmission = {
+                supplierId: request.supplierId,
+                status: request.status,
+                submittedAt: request.submittedAt,
+                name: request.data.name ? { value: request.data.name, status: 'pending' } : null,
+                attributes: request.data.attributes || {},
+                requestType: request.type
+            };
+            
+            const originalSubmission = product.supplierSubmission;
+            product.supplierSubmission = tempSubmission;
+            renderComparisonTab(tempContainer, product, user.role === 'supplier');
+            product.supplierSubmission = originalSubmission;
+            
+            let finalContent = tempContainer.innerHTML;
+            
+            if (user.role === 'admin' && request.status === 'submitted') {
+                finalContent += '<div class="flex justify-end space-x-3 pt-4 border-t mt-6"><button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">Revize Et</button><button onclick="handleRequestDecision(${request.id}, 'accepted')" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Kabul Et</button></div>';
+            }
+
+            pageContent.innerHTML = finalContent;
+        };
+
+                // --- ATTRIBUTE DETAIL PAGE RENDERER ---
         renderers['attribute'] = (attributeId) => {
             const attribute = mockData.attributes.find(a => a.id == attributeId);
             if (!attribute) {
@@ -13568,7 +13624,16 @@
 
                 const isRejected = p.status === 'rejected';
                 const rowClass = 'border-b hover:bg-gray-50 cursor-pointer';
-                const clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
+                
+                // For new product requests and update requests, navigate to request review page
+                let clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
+                if ((isNewProductRequestsTab || isAwaitingApprovalTab) && !isSupplier) {
+                    const requestType = isNewProductRequestsTab ? 'product_create' : 'product_update';
+                    const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && r.status !== 'completed' && r.status !== 'revoked');
+                    if (req) {
+                        clickHandler = `onclick="navigateTo('#request-review/${req.id}')"`;
+                    }
+                };
 
                 return `
                 <tr class="${rowClass}" ${clickHandler}>
@@ -20016,7 +20081,8 @@
                 }
             }
 
-            if (page === 'products' && subpage === 'compare' && id1 && id2) { renderers.productComparison(parseInt(id1), parseInt(id2)); } 
+            if (page === 'request-review' && id1) { renderers.requestReviewPage(parseInt(id1)); }
+            else             if (page === 'products' && subpage === 'compare' && id1 && id2) { renderers.productComparison(parseInt(id1), parseInt(id2)); } 
             else if (page === 'products' && subpage === 'detail' && id1) {
                 const product = mockData.products.find(p => p.id == id1);
                 const user = window.currentUser || {};
