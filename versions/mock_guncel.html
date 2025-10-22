@@ -14438,7 +14438,7 @@
                             <div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="supplierProductName" value="${t(product.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün adını girin"></div>
                             <div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" value="${product.sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                             <div><label class="block text-sm font-medium text-gray-700">Kategori</label><input type="text" value="${t(category.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
-                            <div><label class="block text-sm font-medium text-gray-700">Marka</label><select id="supplierProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Marka</label><input type="text" id="supplierProductBrand" value="${product.brand || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Marka adını girin"></div>
                             <div><label class="block text-sm font-medium text-gray-700">Model</label><input type="text" id="supplierProductModel" value="${product.model || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Model adını girin"></div>
                             <div><label class="block text-sm font-medium text-gray-700">Sizin Stok Miktarınız</label><input type="number" id="supplierStock" value="${supplierStock}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" min="0"></div>
                             <div><label class="block text-sm font-medium text-gray-700">Sizin Fiyatınız (₺)</label><input type="number" id="supplierPrice" value="${supplierPrice}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Fiyat girin" min="0" step="0.01"></div>
@@ -14497,7 +14497,7 @@
                                     <div><label class="block text-sm font-medium text-gray-700">Kategori</label><select id="productCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option>${t(category.name)}</option><option>Diğer Kategori</option></select></div>
                                     <div><label class="block text-sm font-medium text-gray-700">Toplam Stok Miktarı</label><input type="number" value="${totalStock}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                                     <div><label class="block text-sm font-medium text-gray-700">En Düşük Fiyat</label><input type="text" value="${priceText}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
-                                    <div><label class="block text-sm font-medium text-gray-700">Marka</label><select id="adminProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select></div>
+                                    <div><label class="block text-sm font-medium text-gray-700">Marka</label><input type="text" id="adminProductBrand" value="${product.brand || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Marka adını girin"></div>
                                     <div><label class="block text-sm font-medium text-gray-700">Model</label><input type="text" id="adminProductModel" value="${product.model || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Model adını girin"></div>
                                     <div><label class="block text-sm font-medium text-gray-700">Ürün Kodu</label><input type="text" id="adminProductCode" value="${product.productCode || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün kodunu girin"></div>
                                     <div><label class="block text-sm font-medium text-gray-700">GTIN/Barkod</label><input type="text" id="adminGTIN" value="${product.gtin || ''}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="GTIN/Barkod girin"></div>
@@ -16467,10 +16467,6 @@
                 
                 if (nameInput) product.name = { tr: nameInput.value, en: nameInput.value };
                 if (categoryInput) product.categoryId = parseInt(categoryInput.value);
-                
-                // Update brand
-                const brandInput = document.getElementById('adminProductBrand');
-                if (brandInput && brandInput.value) product.brandId = parseInt(brandInput.value, 10);
                 
                 // Update product prices
                 if (listPriceInput) product.listPrice = parseFloat(listPriceInput.value) || 0;
@@ -24061,10 +24057,6 @@ function saveSupplierProductInfo(productId){
     if (minOrderEl) p.minOrderQuantity = minOrderEl.value === '' ? undefined : parseInt(minOrderEl.value, 10);
     if (descEl) p.description = descEl.value;
     if (keywordsEl) p.keywords = keywordsEl.value;
-
-    // Get brand ID
-    const brandEl = document.getElementById('supplierProductBrand');
-    if (brandEl && brandEl.value) p.brandId = parseInt(brandEl.value, 10);
 
     // Collect editable attributes
     const inputs = document.querySelectorAll('.supplier-attr-input[data-attr-id]');
