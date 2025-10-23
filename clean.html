@@ -429,6 +429,14 @@
             include_details: { tr: 'Sorununuzla ilgili detayları ekleyin', en: 'Include details about your issue' },
             provide_screenshots: { tr: 'Mümkünse ekran görüntüleri sağlayın', en: 'Provide screenshots if possible' },
             
+            // --- FAQ TEXTS ---
+            faq: { tr: 'Sık Sorulan Sorular', en: 'Frequently Asked Questions' },
+            faq_title: { tr: 'Sık Sorulan Sorular', en: 'Frequently Asked Questions' },
+            faq_subtitle: { tr: 'Sistem hakkında en çok sorulan sorular ve cevapları', en: 'Most frequently asked questions and answers about the system' },
+            search_faq: { tr: 'SSS\'de ara...', en: 'Search FAQ...' },
+            no_results: { tr: 'Sonuç bulunamadı', en: 'No results found' },
+            try_different_keywords: { tr: 'Farklı anahtar kelimeler deneyin', en: 'Try different keywords' },
+            
             // --- BULK UPLOAD TEXTS ---
             bulk_upload: { tr: 'Toplu İşlemler', en: 'Bulk Actions' },
             bulk_product_upload: { tr: 'Toplu Ürün Yükleme', en: 'Bulk Product Upload' },
@@ -5522,7 +5530,7 @@
                     </div>
                     ` : ''}
                     
-                    <div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('integrations')}</h2><p class="mt-1 text-sm text-gray-500">Sisteminizi diğer servislerle bağlayın ve yönetin.</p></div><button id="addIntegrationBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Entegrasyon Ekle</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${integrationCards}</div>`;
+                    <div class="flex justify-between items-center mb-4"><div><p class="mt-1 text-sm text-gray-500">Sisteminizi diğer servislerle bağlayın ve yönetin.</p></div><button id="addIntegrationBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-box mr-2"></i>Yeni Entegrasyon Ekle</button></div><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">${integrationCards}</div>`;
                 document.getElementById('addIntegrationBtn').addEventListener('click', showAddIntegrationModal);
             },
             categoriesPage: (initialTab = 'master') => {
@@ -5932,7 +5940,7 @@
                         </div>
                     </div>
                     
-                    <div class="flex justify-between items-center mb-4"><div><h2 class="text-2xl font-bold">${t('supplier_stock_management')}</h2><p class="mt-1 text-sm text-gray-500">Ürünlerin tedarikçi bazlı stok ve fiyat bilgilerini yönetin.</p></div></div><div class="bg-white p-4 rounded-lg shadow"><table id="supplier-stock-table" class="w-full text-left"><thead class="table-header"><tr><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('product_name_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('category_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th><th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${productRows}</tbody></table></div>`;
+                    <div class="flex justify-between items-center mb-4"><div><p class="mt-1 text-sm text-gray-500">Ürünlerin tedarikçi bazlı stok ve fiyat bilgilerini yönetin.</p></div></div><div class="bg-white p-4 rounded-lg shadow"><table id="supplier-stock-table" class="w-full text-left"><thead class="table-header"><tr><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('product_name_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('category_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th><th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th><th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th></tr></thead><tbody>${productRows}</tbody></table></div>`;
                 
                 // Make the supplier stock table sortable
                 setTimeout(() => makeTableSortable('supplier-stock-table'), 100);
@@ -7678,7 +7686,6 @@
                                 <i class="fas fa-headset text-blue-600 text-2xl"></i>
                             </div>
                             <div>
-                                <h2 class="text-2xl font-bold text-gray-900">${t('support_center')}</h2>
                                 <p class="text-gray-600 mt-1">${t('contact_support')} - ${t('get_help')}</p>
                             </div>
                         </div>
@@ -7821,6 +7828,438 @@
             });
         }
 
+        // --- FAQ PAGE RENDERER ---
+        renderers['faq'] = () => {
+            pageTitle.textContent = t('faq');
+            
+            // FAQ data organized by categories
+            const faqData = [
+                {
+                    category: 'Genel',
+                    icon: 'fa-info-circle',
+                    color: 'blue',
+                    questions: [
+                        {
+                            question: 'Connect Dropshipping sistemi nedir?',
+                            answer: 'Connect Dropshipping, tedarikçiler ve satıcılar arasında köprü kuran, ürün yönetimi, sipariş takibi ve finansal işlemleri kolaylaştıran kapsamlı bir e-ticaret platformudur. Sistem, dropshipping iş modelini dijitalleştirerek tüm süreçleri otomatikleştirir. Platform, ürün katalogları, stok yönetimi, sipariş işleme, kargo takibi, komisyon hesaplama ve ödeme süreçlerini tek bir çatı altında toplar. Bu sayede tedarikçiler ürünlerini kolayca pazarlayabilir, satıcılar ise stok tutmadan geniş ürün yelpazesini müşterilerine sunabilir.'
+                        },
+                        {
+                            question: 'Sisteme nasıl giriş yapabilirim?',
+                            answer: 'Sisteme giriş yapmak için ana sayfadaki "Giriş Yap" butonuna tıklayın. E-posta adresiniz ve şifrenizle giriş yapabilirsiniz. Eğer hesabınız yoksa, "Kayıt Ol" seçeneğini kullanarak yeni bir hesap oluşturabilirsiniz. Kayıt sırasında tedarikçi veya satıcı olarak hesap türünüzü seçmeniz gerekir. Hesap onayı genellikle 1-2 iş günü içinde tamamlanır. Giriş yaparken sorun yaşıyorsanız, "Şifremi Unuttum" linkini kullanarak şifrenizi sıfırlayabilirsiniz.'
+                        },
+                        {
+                            question: 'Hangi tarayıcıları destekliyorsunuz?',
+                            answer: 'Sistemimiz Chrome (sürüm 90+), Firefox (sürüm 88+), Safari (sürüm 14+), Edge (sürüm 90+) gibi modern tarayıcıların son sürümlerini destekler. En iyi performans için Chrome tarayıcısını kullanmanızı öneririz. Internet Explorer desteklenmemektedir. Tarayıcınızın JavaScript ve çerezlerin aktif olduğundan emin olun. Eski tarayıcı sürümlerinde bazı özellikler düzgün çalışmayabilir.'
+                        },
+                        {
+                            question: 'Mobil cihazlarda kullanabilir miyim?',
+                            answer: 'Evet, sistemimiz responsive tasarıma sahiptir ve mobil cihazlarda da sorunsuz çalışır. iOS ve Android cihazlarda web tarayıcı üzerinden erişebilirsiniz. Mobil cihazlarda tüm temel işlevler (ürün ekleme, sipariş takibi, stok yönetimi) kullanılabilir. En iyi deneyim için ekranı yatay konuma çevirmenizi öneririz.'
+                        },
+                        {
+                            question: 'Hesap türleri nelerdir?',
+                            answer: 'Sistemde iki ana hesap türü bulunur: Tedarikçi ve Yönetici. Tedarikçi hesapları ürün ekleyebilir, stok yönetebilir ve siparişleri takip edebilir. Yönetici hesapları ise tüm sistemi yönetebilir, kategorileri düzenleyebilir, kullanıcıları yönetebilir ve sistem ayarlarını yapabilir. Hesap türünüz kayıt sırasında belirlenir ve sonradan değiştirilemez.'
+                        },
+                        {
+                            question: 'Sistem güncellemeleri nasıl yapılır?',
+                            answer: 'Sistem güncellemeleri otomatik olarak yapılır ve kullanıcı müdahalesi gerektirmez. Güncellemeler genellikle gece saatlerinde yapılır ve sistem kısa süreliğine erişilemez olabilir. Önemli güncellemeler önceden duyurulur ve kullanıcılara bildirim gönderilir. Güncelleme sonrası yeni özellikler ve iyileştirmeler otomatik olarak aktif hale gelir.'
+                        }
+                    ]
+                },
+                {
+                    category: 'Ürün Yönetimi',
+                    icon: 'fa-box',
+                    color: 'green',
+                    questions: [
+                        {
+                            question: 'Ürün nasıl eklerim?',
+                            answer: 'Ürün eklemek için "Ürün Yönetimi" > "Ürün Listesi" sayfasına gidin ve "Yeni Ürün Ekle" butonuna tıklayın. Ürün ekleme formunda şu bilgileri doldurmanız gerekir: Ürün adı (Türkçe ve İngilizce), SKU kodu, kategori seçimi, fiyat, stok miktarı, ürün açıklaması, ürün görselleri ve ürün özellikleri. Tüm zorunlu alanları doldurduktan sonra "Kaydet" butonuna basarak ürününüzü sisteme ekleyebilirsiniz. Ürün ekleme işlemi tamamlandıktan sonra, ürününüz onay sürecine girer ve yönetici onayından sonra satışa sunulur.'
+                        },
+                        {
+                            question: 'Ürün kategorilerini nasıl yönetirim?',
+                            answer: 'Kategorileri yönetmek için "Ürün Yönetimi" > "Kategoriler" sayfasına gidin. Burada yeni kategori ekleyebilir, mevcut kategorileri düzenleyebilir veya silebilirsiniz. Kategoriler hiyerarşik yapıda organize edilir (Ana Kategori > Alt Kategori > Alt Alt Kategori). Yeni kategori eklerken üst kategori seçimi yapabilir, kategori adını Türkçe ve İngilizce olarak girebilirsiniz. Kategori açıklaması ve görseli de ekleyebilirsiniz. Kategoriler silinmeden önce içindeki ürünlerin başka kategorilere taşınması gerekir.'
+                        },
+                        {
+                            question: 'Toplu ürün yükleme nasıl yapılır?',
+                            answer: 'Toplu ürün yükleme için "Toplu İşlemler" sayfasını kullanın. Excel veya CSV formatında hazırladığınız ürün listesini sisteme yükleyebilirsiniz. Öncelikle "Şablon İndir" butonuna tıklayarak doğru formatı öğrenin. Şablonda şu sütunlar bulunmalıdır: SKU, Ürün Adı (TR), Ürün Adı (EN), Kategori ID, Fiyat, Stok, Açıklama. Dosya boyutu maksimum 10MB olmalıdır. Dosyayı yükledikten sonra "İşle" butonuna tıklayın. Sistem dosyayı kontrol eder ve hataları raporlar. Başarılı ürünler otomatik olarak sisteme eklenir.'
+                        },
+                        {
+                            question: 'Ürün durumları nelerdir?',
+                            answer: 'Ürünleriniz farklı durumlarda olabilir: Aktif (satışta, müşteriler tarafından görülebilir ve satın alınabilir), Taslak (henüz yayınlanmamış, sadece siz görebilirsiniz), Arşivlenmiş (geçici olarak gizli, stok bittiğinde otomatik olarak bu duruma geçer), Yasaklı (içerik sorunu nedeniyle kaldırılmış, yönetici tarafından onaylanmamış), Beklemede (onay sürecinde, yönetici incelemesi bekleniyor). Durum değişiklikleri otomatik olarak bildirilir ve ürün listesinde renk kodları ile gösterilir.'
+                        },
+                        {
+                            question: 'Yasaklı kelimeler nedir?',
+                            answer: 'Yasaklı kelimeler, ürün adı, açıklama veya özelliklerde kullanılması yasak olan kelime ve ifadelerdir. Sistem bu kelimeleri içeren ürünleri otomatik olarak reddeder. Yasaklı kelimeleri "Ürün Yönetimi" > "Yasaklı Kelimeler" sayfasından yönetebilirsiniz. Bu kelimeler telif hakkı ihlali, yanıltıcı bilgi veya uygunsuz içerik içerebilir. Yeni yasaklı kelime eklemek için "Yasaklı Kelime Ekle" butonunu kullanın.'
+                        },
+                        {
+                            question: 'Ürün görselleri nasıl yüklenir?',
+                            answer: 'Ürün görselleri ürün ekleme/düzenleme sayfasında "Görsel Yükle" bölümünden yüklenebilir. Desteklenen formatlar: JPG, PNG, GIF. Maksimum dosya boyutu 5MB\'dır. Ana görsel olarak seçilen görsel ürün listelerinde gösterilir. Birden fazla görsel yükleyerek ürün galerisi oluşturabilirsiniz. Görseller otomatik olarak optimize edilir ve farklı boyutlarda saklanır.'
+                        },
+                        {
+                            question: 'Ürün özellikleri nasıl tanımlanır?',
+                            answer: 'Ürün özellikleri "Ürün Yönetimi" > "Özellikler" sayfasından tanımlanır. Önce özellik kategorisi oluşturun (örn: "Teknik Özellikler"), sonra bu kategoriye ait özellikleri ekleyin (örn: "Ekran Boyutu", "Renk"). Ürün eklerken bu özellikleri seçerek değerlerini girebilirsiniz. Özellikler filtreleme ve arama işlevlerinde kullanılır.'
+                        }
+                    ]
+                },
+                {
+                    category: 'Sipariş Yönetimi',
+                    icon: 'fa-shopping-cart',
+                    color: 'purple',
+                    questions: [
+                        {
+                            question: 'Siparişleri nasıl takip ederim?',
+                            answer: 'Siparişlerinizi "Siparişler" sayfasından takip edebilirsiniz. Burada sipariş durumları, müşteri bilgileri, ürün detayları ve kargo bilgilerini görebilirsiniz. Sipariş durumlarını güncelleyebilir ve müşterilere bildirim gönderebilirsiniz. Sipariş listesinde filtreleme yapabilir (tarih, durum, müşteri adı), arama yapabilir ve sipariş detaylarına tıklayarak tam bilgilere ulaşabilirsiniz. Her sipariş için işlem geçmişi, iletişim kayıtları ve ödeme durumu görüntülenir.'
+                        },
+                        {
+                            question: 'Sipariş durumları nelerdir?',
+                            answer: 'Sipariş durumları: Hazırlanıyor (sipariş alındı, stok kontrolü yapılıyor), Onaylandı (sipariş onaylandı, hazırlık aşamasında), Kargolandı (kargo firmasına teslim edildi, takip numarası eklendi), Teslim Edildi (müşteriye ulaştı, sipariş tamamlandı), İptal (sipariş iptal edildi, iade süreci başlatıldı), İade (müşteri iade talebinde bulundu). Her durum değişikliğinde müşteriye otomatik bildirim gönderilir ve sipariş geçmişi güncellenir.'
+                        },
+                        {
+                            question: 'İade işlemleri nasıl yönetilir?',
+                            answer: 'İade işlemleri "İade İşlemleri" sayfasından yönetilir. İade taleplerini inceleyebilir, onaylayabilir veya reddedebilirsiniz. İade süreci müşteri memnuniyeti için önemlidir ve hızlı işlem yapılması gerekir. İade talepleri 14 gün içinde değerlendirilmelidir. Onaylanan iadeler için kargo etiketi oluşturulur ve müşteriye gönderilir. İade edilen ürünler kontrol edildikten sonra stok güncellenir ve ödeme iadesi yapılır. İade nedeni ve durumu sistemde kayıt altına alınır.'
+                        },
+                        {
+                            question: 'Kargo takip numarası nasıl eklenir?',
+                            answer: 'Sipariş detay sayfasında "Kargo Bilgileri" bölümünden kargo firması ve takip numarasını ekleyebilirsiniz. Bu bilgi otomatik olarak müşteriye bildirilir. Kargo bilgileri eklendikten sonra sipariş durumu "Kargolandı" olarak güncellenir ve müşteriye SMS/e-posta ile bildirim gönderilir.'
+                        },
+                        {
+                            question: 'Sipariş iptali nasıl yapılır?',
+                            answer: 'Sipariş iptali için sipariş detay sayfasında "Siparişi İptal Et" butonunu kullanın. İptal nedeni seçmeniz gerekir (müşteri talebi, stok yokluğu, vb.). İptal işlemi onaylandıktan sonra müşteriye bildirim gönderilir ve ödeme iadesi otomatik olarak başlatılır. İptal edilen siparişler "İptal Edilen Siparişler" listesinde görüntülenir.'
+                        },
+                        {
+                            question: 'Sipariş geçmişi nasıl görüntülenir?',
+                            answer: 'Sipariş geçmişini "Siparişler" sayfasından görüntüleyebilirsiniz. Filtreleme seçenekleri ile tarih aralığı, sipariş durumu, müşteri adı gibi kriterlere göre arama yapabilirsiniz. Sipariş detaylarında tüm işlem geçmişi, durum değişiklikleri ve iletişim kayıtları görüntülenir.'
+                        }
+                    ]
+                },
+                {
+                    category: 'Finans ve Ödemeler',
+                    icon: 'fa-wallet',
+                    color: 'yellow',
+                    questions: [
+                        {
+                            question: 'Komisyon oranları nasıl belirlenir?',
+                            answer: 'Komisyon oranları kategori, tedarikçi veya genel kurallara göre belirlenir. "Finans" > "Komisyon Yönetimi" sayfasından komisyon kurallarını görüntüleyebilir ve yönetebilirsiniz. Komisyon oranları %5-15 arasında değişebilir ve şu faktörlere göre belirlenir: ürün kategorisi (elektronik %8, giyim %12), tedarikçi anlaşması, satış hacmi (yüksek hacimli satışlarda düşük komisyon), özel kampanyalar. Komisyon hesaplaması sipariş tamamlandıktan sonra yapılır ve aylık ödeme döneminde kesilir.'
+                        },
+                        {
+                            question: 'Ödeme takvimi nedir?',
+                            answer: 'Ödemeler genellikle aylık olarak yapılır. Ödeme takvimini "Finans" sayfasından takip edebilirsiniz. Bekleyen ödemeler, tamamlanan ödemeler ve ödeme geçmişi burada görüntülenir. Ödemeler her ayın 15\'inde yapılır ve bir önceki ayın satışları için hesaplanır. Ödeme yöntemleri: banka havalesi, EFT veya çek. Minimum ödeme tutarı 500 TL\'dir. Ödeme detaylarında komisyon kesintileri, vergi hesaplamaları ve net tutar görüntülenir.'
+                        },
+                        {
+                            question: 'Fatura nasıl alabilirim?',
+                            answer: 'Faturalarınızı "Finans" sayfasından indirebilirsiniz. E-fatura sistemi entegre edilmiştir ve otomatik olarak oluşturulur. Faturalar her ayın sonunda oluşturulur ve PDF formatında indirilebilir. E-fatura alıyorsanız, faturalar otomatik olarak e-posta adresinize gönderilir. Fatura içeriği: satış tutarı, komisyon kesintileri, KDV hesaplaması, net ödeme tutarı. Fatura düzenleme talepleri için muhasebe departmanı ile iletişime geçin.'
+                        },
+                        {
+                            question: 'Vergi hesaplamaları nasıl yapılır?',
+                            answer: 'Sistem otomatik olarak KDV hesaplamalarını yapar. Vergi oranları ürün kategorisine göre belirlenir ve sipariş toplamına dahil edilir. Standart KDV oranı %20\'dir, ancak bazı kategorilerde farklı oranlar uygulanabilir. Vergi hesaplamaları sipariş oluşturulurken otomatik olarak yapılır ve faturada ayrı olarak gösterilir.'
+                        },
+                        {
+                            question: 'Ödeme yöntemleri nelerdir?',
+                            answer: 'Sistemde kredi kartı, banka kartı, havale/EFT ve kapıda ödeme seçenekleri bulunur. Kredi kartı ödemeleri 3D Secure güvenlik sistemi ile korunur. Havale/EFT ödemeleri manuel onay gerektirir. Kapıda ödeme seçeneği sadece belirli bölgelerde mevcuttur. Ödeme işlemleri güvenli ödeme altyapısı üzerinden gerçekleştirilir.'
+                        },
+                        {
+                            question: 'Komisyon kesintileri nasıl hesaplanır?',
+                            answer: 'Komisyon kesintileri ürün kategorisi, tedarikçi anlaşması ve satış tutarına göre hesaplanır. Komisyon oranları %5-15 arasında değişebilir. Komisyon hesaplaması sipariş tamamlandıktan sonra yapılır ve aylık ödeme döneminde kesilir. Komisyon detayları "Finans" > "Komisyon Raporu" sayfasından görüntülenebilir.'
+                        }
+                    ]
+                },
+                {
+                    category: 'Teknik Destek',
+                    icon: 'fa-cogs',
+                    color: 'red',
+                    questions: [
+                        {
+                            question: 'Sistem yavaş çalışıyor, ne yapmalıyım?',
+                            answer: 'Sistem yavaşlığı genellikle internet bağlantısı veya tarayıcı cache sorunlarından kaynaklanır. Tarayıcı cache\'ini temizleyin, farklı bir tarayıcı deneyin veya internet bağlantınızı kontrol edin. Diğer çözümler: tarayıcı eklentilerini devre dışı bırakın, JavaScript\'i yeniden etkinleştirin, bilgisayarınızı yeniden başlatın. Sistem yoğun saatlerde (09:00-18:00) daha yavaş olabilir. Sorun devam ederse teknik destek ile iletişime geçin.'
+                        },
+                        {
+                            question: 'Dosya yükleme hatası alıyorum',
+                            answer: 'Dosya boyutu 10MB\'dan küçük olmalı ve desteklenen formatlarda (CSV, Excel) olmalıdır. Dosya formatını kontrol edin ve tekrar deneyin. Yaygın hatalar: dosya adında özel karakterler, sütun başlıklarının yanlış olması, boş satırlar, virgül yerine noktalı virgül kullanımı. Excel dosyalarını CSV formatına çevirerek deneyin. Dosya şablonunu kullanarak doğru formatı sağlayın. Hata mesajlarını dikkatlice okuyun ve belirtilen satırları düzeltin.'
+                        },
+                        {
+                            question: 'Şifremi unuttum, nasıl sıfırlarım?',
+                            answer: 'Giriş sayfasında "Şifremi Unuttum" linkine tıklayın. E-posta adresinizi girerek şifre sıfırlama linki alabilirsiniz. Sıfırlama linki 24 saat geçerlidir ve sadece bir kez kullanılabilir. E-posta gelmezse spam klasörünü kontrol edin. Yeni şifreniz en az 8 karakter, büyük/küçük harf, rakam ve özel karakter içermelidir. Şifre sıfırlama işlemi tamamlandıktan sonra tüm cihazlardan çıkış yapılır.'
+                        },
+                        {
+                            question: 'API entegrasyonu nasıl yapılır?',
+                            answer: 'API entegrasyonu için "Ayarlar" > "API Anahtarları" sayfasından API anahtarınızı alabilirsiniz. API dokümantasyonu için teknik destek ekibiyle iletişime geçin. API ile ürün ekleme, stok güncelleme, sipariş takibi gibi işlemler otomatikleştirilebilir. API kullanım limitleri ve güvenlik kuralları bulunmaktadır.'
+                        },
+                        {
+                            question: 'Sistem bakım zamanları nelerdir?',
+                            answer: 'Sistem bakımları genellikle hafta sonları ve gece saatlerinde yapılır. Bakım süresi ortalama 2-4 saattir. Bakım öncesi tüm kullanıcılara e-posta ve SMS ile bildirim gönderilir. Acil bakımlar için 24 saat önceden bildirim yapılır. Bakım sırasında sistem erişilemez olabilir.'
+                        },
+                        {
+                            question: 'Veri yedekleme nasıl yapılır?',
+                            answer: 'Sistem verileri otomatik olarak günlük yedeklenir. Yedekler farklı lokasyonlarda saklanır ve 30 gün boyunca korunur. Kritik veriler için anlık yedekleme yapılır. Veri kaybı durumunda son yedekten geri yükleme işlemi 24 saat içinde tamamlanır. Kullanıcılar kendi verilerini CSV formatında indirebilir.'
+                        }
+                    ]
+                },
+                {
+                    category: 'Güvenlik ve Gizlilik',
+                    icon: 'fa-shield-alt',
+                    color: 'indigo',
+                    questions: [
+                        {
+                            question: 'Verilerim güvende mi?',
+                            answer: 'Evet, tüm verileriniz SSL şifreleme ile korunur ve güvenli sunucularda saklanır. Düzenli yedekleme yapılır ve veri kaybı riski minimize edilir. Verileriniz ISO 27001 sertifikalı veri merkezlerinde saklanır. 256-bit SSL şifreleme kullanılır ve tüm veri transferleri güvenli kanallar üzerinden yapılır. Düzenli güvenlik denetimleri yapılır ve güvenlik açıkları anında giderilir. Veri erişimi sadece yetkili personel tarafından yapılır ve tüm erişimler loglanır.'
+                        },
+                        {
+                            question: 'Hesap güvenliğimi nasıl artırabilirim?',
+                            answer: 'Güçlü bir şifre kullanın, iki faktörlü kimlik doğrulamayı aktifleştirin ve hesabınızı düzenli olarak kontrol edin. Şüpheli aktiviteleri derhal bildirin.'
+                        },
+                        {
+                            question: 'Kişisel verilerim nasıl korunuyor?',
+                            answer: 'KVKK ve GDPR uyumlu veri koruma politikalarımız vardır. Kişisel verileriniz sadece gerekli amaçlar için kullanılır ve üçüncü taraflarla paylaşılmaz. Verileriniz SSL şifreleme ile korunur ve güvenli sunucularda saklanır. Veri işleme faaliyetleri düzenli olarak denetlenir ve güvenlik açıkları anında giderilir.'
+                        },
+                        {
+                            question: 'İki faktörlü kimlik doğrulama nasıl aktifleştirilir?',
+                            answer: 'İki faktörlü kimlik doğrulama için "Ayarlar" > "Güvenlik" sayfasına gidin ve "2FA Aktifleştir" seçeneğini seçin. Telefon numaranızı doğrulayın ve SMS ile gelen kodu girin. Bundan sonra giriş yaparken hem şifrenizi hem de SMS kodunu girmeniz gerekir. Bu özellik hesap güvenliğinizi önemli ölçüde artırır.'
+                        },
+                        {
+                            question: 'Hesap güvenliği için ne yapmalıyım?',
+                            answer: 'Hesap güvenliği için güçlü bir şifre kullanın (en az 8 karakter, büyük/küçük harf, rakam ve özel karakter içermeli). İki faktörlü kimlik doğrulamayı aktifleştirin. Şüpheli aktiviteleri derhal bildirin. Ortak bilgisayarlarda "Beni Hatırla" seçeneğini kullanmayın. Düzenli olarak şifrenizi değiştirin ve güvenlik ayarlarınızı kontrol edin.'
+                        }
+                    ]
+                }
+            ];
+            
+            pageContent.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-question-circle text-blue-600 text-2xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 mt-1">${t('faq_subtitle')}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <div class="relative">
+                            <input type="text" id="faqSearch" placeholder="${t('search_faq')}" 
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- FAQ Categories -->
+                    <div id="faqContent">
+                        ${faqData.map(category => `
+                            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden" data-category="${category.category.toLowerCase()}">
+                                <div class="bg-${category.color}-50 border-b border-${category.color}-200 p-4">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-${category.color}-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas ${category.icon} text-${category.color}-600"></i>
+                                        </div>
+                                        <h3 class="text-lg font-semibold text-gray-900">${category.category}</h3>
+                                        <span class="px-2 py-1 bg-${category.color}-100 text-${category.color}-800 text-sm font-medium rounded-full">
+                                            ${category.questions.length} soru
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="divide-y divide-gray-200">
+                                    ${category.questions.map((faq, index) => {
+                                        const faqId = `${category.category.toLowerCase().replace(/\s+/g, '_')}_${index}`;
+                                        return `
+                                        <div class="faq-item p-6" data-question="${faq.question.toLowerCase()}">
+                                            <button class="faq-question w-full text-left flex items-center justify-between group" 
+                                                    data-faq-id="${faqId}">
+                                                <span class="text-gray-900 font-medium group-hover:text-blue-600 transition-colors">
+                                                    ${faq.question}
+                                                </span>
+                                                <i class="fas fa-chevron-down text-gray-400 group-hover:text-blue-600 transition-all transform faq-icon" 
+                                                   id="icon_${faqId}"></i>
+                                            </button>
+                                            <div class="faq-answer mt-4 text-gray-600 leading-relaxed hidden" 
+                                                 id="answer_${faqId}">
+                                                ${faq.answer}
+                                            </div>
+                                        </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <!-- No Results Message -->
+                    <div id="noResults" class="text-center py-12 hidden">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-search text-gray-400 text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">${t('no_results')}</h3>
+                        <p class="text-gray-500">${t('try_different_keywords')}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add search functionality
+            const searchInput = document.getElementById('faqSearch');
+            const faqContent = document.getElementById('faqContent');
+            const noResults = document.getElementById('noResults');
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                if (searchTerm === '') {
+                    // Show all FAQs
+                    document.querySelectorAll('[data-category]').forEach(category => {
+                        category.style.display = 'block';
+                    });
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        item.style.display = 'block';
+                    });
+                    noResults.classList.add('hidden');
+                    return;
+                }
+                
+                let hasResults = false;
+                
+                // Search through categories and questions
+                document.querySelectorAll('[data-category]').forEach(category => {
+                    let categoryHasResults = false;
+                    
+                    category.querySelectorAll('.faq-item').forEach(item => {
+                        const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                        const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+                        
+                        if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                            item.style.display = 'block';
+                            categoryHasResults = true;
+                            hasResults = true;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    if (categoryHasResults) {
+                        category.style.display = 'block';
+                    } else {
+                        category.style.display = 'none';
+                    }
+                });
+                
+                if (hasResults) {
+                    noResults.classList.add('hidden');
+                } else {
+                    noResults.classList.remove('hidden');
+                }
+            });
+            
+            // Add event listeners for FAQ toggle buttons
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const faqId = this.getAttribute('data-faq-id');
+                    toggleFAQ(faqId);
+                });
+            });
+        };
+
+        // --- FAQ TOGGLE FUNCTION ---
+        function toggleFAQ(faqId) {
+            const answer = document.getElementById(`answer_${faqId}`);
+            const icon = document.getElementById(`icon_${faqId}`);
+            
+            if (answer && icon) {
+                if (answer.classList.contains('hidden')) {
+                    // Show answer
+                    answer.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    // Hide answer
+                    answer.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            }
+        }
+
+        // --- PROHIBITED WORDS PAGE RENDERER ---
+        renderers['prohibitedWords'] = () => {
+            const user = window.currentUser || {};
+            if (user.role !== 'admin') {
+                showModal('Erişim Yok', '<p>Bu sayfa sadece yöneticiler içindir.</p>', 'Kapat', closeModal);
+                navigateTo('#dashboard'); return;
+            }
+            
+            const words = mockData.prohibitedWords || [];
+            const rows = words.map(word => {
+                const appliesTo = word.appliesTo.map(field => {
+                    if (field === 'name') return t('applies_to_name');
+                    if (field === 'description') return t('applies_to_description');
+                    if (field === 'attributes') return t('applies_to_attributes');
+                    return field;
+                }).join(', ');
+                
+                return `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 text-sm font-medium">${word.word}</td>
+                        <td class="p-3 text-sm text-gray-600 text-xs">${appliesTo}</td>
+                        <td class="p-3 text-sm">${word.addedBy}</td>
+                        <td class="p-3 text-right">
+                            <button class="p-2 text-gray-500 hover:text-blue-600 edit-word" data-id="${word.id}"><i class="fas fa-edit"></i></button>
+                            <button class="p-2 text-gray-500 hover:text-red-600 del-word" data-id="${word.id}"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            pageContent.innerHTML = `
+                <div class="space-y-6">
+                    <div class="mb-6">
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle text-blue-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-blue-700">
+                                        Tedarikçiler tarafından ürün adı, açıklama veya özelliklerde kullanılması yasak olan kelime ve ifadeleri buradan yönetebilirsiniz. 
+                                        Sistem bu kelimeleri içeren ürün verilerini otomatik olarak reddeder.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold">${t('prohibited_words_management')}</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Toplam ${words.length} yasaklı kelime/ifade</p>
+                                </div>
+                                <button id="addWordBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    <i class="fas fa-ban mr-2"></i> ${t('add_prohibited_word')}
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th class="p-3 text-sm font-semibold">${t('word_phrase')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('applies_to')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('added_by')}</th>
+                                            <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rows || `<tr><td colspan="4" class="p-6 text-center text-gray-500">Henüz yasaklı kelime tanımlanmamış.</td></tr>`}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('addWordBtn')?.addEventListener('click', () => showAddProhibitedWordModal());
+            pageContent.querySelectorAll('.edit-word').forEach(btn => btn.addEventListener('click', () => showAddProhibitedWordModal(parseInt(btn.dataset.id))));
+            pageContent.querySelectorAll('.del-word').forEach(btn => btn.addEventListener('click', () => deleteProhibitedWord(parseInt(btn.dataset.id))));
+        };
+
         // --- BULK UPLOAD PAGE RENDERER ---
         renderers.bulkUpload = function() {
             const user = window.currentUser || {};
@@ -7856,8 +8295,7 @@
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h1 class="text-2xl font-bold text-gray-900">${t('bulk_actions')}</h1>
-                                <p class="text-gray-600 mt-1">Toplu olarak ürün işlemleri gerçekleştirin. Dosya seçerek işlemi gerçekleştirin. Toplu işlemleri yapılan ürünlerin durumunu ilgili sayfadan takip edebilirsiniz. </p>
+                                <p class="text-gray-600">Toplu olarak ürün işlemleri gerçekleştirin. Dosya seçerek işlemi gerçekleştirin. Toplu işlemleri yapılan ürünlerin durumunu ilgili sayfadan takip edebilirsiniz. </p>
                             </div>
                             <div class="relative">
                                 <button onclick="toggleTemplateDropdown()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
@@ -19956,6 +20394,11 @@
                 // Handle new product URLs like #product/new-1234567890/edit
                 renderers.productDetail(subpage);
             }
+            else if (page === 'products' && subpage === 'prohibited-words') { 
+                // Handle prohibited words page under products section
+                pageTitle.textContent = 'Yasaklı Kelimeler - Ürün Yönetimi';
+                renderers.prohibitedWords(); 
+            }
             else if (page === 'products') { renderers.products(subpage || 'aktif'); } 
             else if (page === 'main-product' && (id1 || subpage)) { 
                 const mainProductId = id1 || subpage;
@@ -19997,6 +20440,7 @@
             else if (page === 'returns' && subpage) { renderers.returns(subpage); }
             else if (page === 'returns') { renderers.returns('all'); }
             else if (page === 'support') { renderers.support(); }
+            else if (page === 'faq') { renderers.faq(); }
             else if (page === 'bulk-upload') { renderers.bulkUpload(); }
             else if (page === 'supplier-settings') { 
                 if (subpage === 'stores') {
@@ -20027,7 +20471,7 @@ const navLinksSupplier = [
     text: 'Ürünler', 
     role: 'supplier',
     children: [
-      { href: '#products/aktif', icon: 'fa-box', text: 'Ürünler', role: 'supplier' },
+      { href: '#products/aktif', icon: 'fa-box', text: 'Ürün Listesi', role: 'supplier' },
       { href: '#bulk-upload', icon: 'fa-upload', text: 'Toplu İşlemler', role: 'supplier' }
     ]
   },
@@ -20052,7 +20496,8 @@ const navLinksSupplier = [
       { href: '#supplier-settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'supplier' }
     ]
   },
-  { href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' }
+  { href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' },
+  { href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'supplier' }
 ];
 const navLinksAdmin = [
   { 
@@ -20061,10 +20506,10 @@ const navLinksAdmin = [
     text: 'Ürün Yönetimi', 
     role: 'admin',
     children: [
-      { href: '#products', icon: 'fa-box', text: 'Ürünler', role: 'admin' },
+      { href: '#products', icon: 'fa-box', text: 'Ürün Listesi', role: 'admin' },
       { href: '#categories', icon: 'fa-sitemap', text: 'Kategoriler', role: 'admin' },
       { href: '#attributes', icon: 'fa-tags', text: 'Özellikler', role: 'admin' },
-      { href: '#settings/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' }
+      { href: '#products/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' }
     ]
   },
   { href: '#dashboard', icon: 'fa-tachometer-alt', text: 'Dashboard', role: 'admin' },
@@ -20100,7 +20545,8 @@ const navLinksAdmin = [
       { href: '#settings/api', icon: 'fa-key', text: 'API Anahtarları', role: 'admin' },
       { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
     ]
-  }
+  },
+  { href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'admin' }
 ];
 
 let navHTML = pinnedHTML;
