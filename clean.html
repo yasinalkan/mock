@@ -614,6 +614,21 @@
             price_approved: { tr: 'Fiyat Onaylandı', en: 'Price Approved' },
             price_rejected: { tr: 'Fiyat Reddedildi', en: 'Price Rejected' },
             no_price_requests: { tr: 'Fiyat talebi bulunmuyor', en: 'No price requests' },
+            
+            // Revision Reasons
+            revision_reason: { tr: 'Revizyon Nedeni', en: 'Revision Reason' },
+            select_revision_reason: { tr: 'Revizyon nedenini seçin', en: 'Select revision reason' },
+            custom_reason: { tr: 'Özel Neden', en: 'Custom Reason' },
+            price_too_high: { tr: 'Fiyat çok yüksek', en: 'Price too high' },
+            price_too_low: { tr: 'Fiyat çok düşük', en: 'Price too low' },
+            stock_insufficient: { tr: 'Stok yetersiz', en: 'Insufficient stock' },
+            product_info_incomplete: { tr: 'Ürün bilgileri eksik', en: 'Product information incomplete' },
+            image_quality_poor: { tr: 'Görsel kalitesi düşük', en: 'Poor image quality' },
+            category_mismatch: { tr: 'Kategori uyumsuzluğu', en: 'Category mismatch' },
+            description_insufficient: { tr: 'Açıklama yetersiz', en: 'Insufficient description' },
+            attributes_missing: { tr: 'Özellikler eksik', en: 'Missing attributes' },
+            brand_information_missing: { tr: 'Marka bilgisi eksik', en: 'Brand information missing' },
+            please_provide_reason: { tr: 'Lütfen revizyon nedenini belirtin', en: 'Please provide revision reason' },
         };
 // User data will be defined later in the script
 
@@ -3956,7 +3971,7 @@
         }
 
         function getRequestsByType(type, supplierId = null) {
-            let requests = mockData.requests.filter(r => r.type === type);
+            let requests = mockData.requests.filter(r => r.type === type && (r.status === 'submitted' || r.status === 'toBeRevised'));
             if (supplierId) {
                 requests = requests.filter(r => r.supplierId === supplierId);
             }
@@ -3987,10 +4002,10 @@
                 mockData.requests;
             
             return {
-                stockPriceUpdate: requests.filter(r => r.type === 'stock_price_update' && r.status === 'submitted').length,
-                productUpdate: requests.filter(r => r.type === 'product_update' && r.status === 'submitted').length,
-                productCreate: requests.filter(r => r.type === 'product_create' && r.status === 'submitted').length,
-                totalSubmitted: requests.filter(r => r.status === 'submitted').length
+                stockPriceUpdate: requests.filter(r => r.type === 'stock_price_update' && (r.status === 'submitted' || r.status === 'toBeRevised')).length,
+                productUpdate: requests.filter(r => r.type === 'product_update' && (r.status === 'submitted' || r.status === 'toBeRevised')).length,
+                productCreate: requests.filter(r => r.type === 'product_create' && (r.status === 'submitted' || r.status === 'toBeRevised')).length,
+                totalSubmitted: requests.filter(r => r.status === 'submitted' || r.status === 'toBeRevised').length
             };
         }
 
@@ -4383,13 +4398,146 @@
                 applyRequestToProduct(request);
                 updateRequestStatus(requestId, 'completed');
                 showToast('Talep kabul edildi ve uygulandı.', 'success');
+                // Navigate back to requests list
+                navigateTo('#products/yeni-urun-talepleri');
             } else if (decision === 'toBeRevised') {
-                updateRequestStatus(requestId, 'toBeRevised');
-                showToast('Talep revize edilmek üzere işaretlendi.', 'info');
+                // Show revision reason modal
+                showRevisionReasonModal(requestId);
             }
+        }
 
-            // Navigate back to requests list
-            navigateTo('#products/yeni-urun-talepleri');
+        function showRevisionReasonModal(requestId) {
+            const body = `
+                <div class="space-y-4">
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-yellow-800">Talep Revizyonu</h3>
+                                <p class="text-sm text-yellow-600">Bu talebi revize etmek için bir neden belirtin</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">${t('select_revision_reason')} (Birden fazla seçebilirsiniz)</label>
+                        <div class="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-md p-3">
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="price_too_high" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('price_too_high')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="price_too_low" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('price_too_low')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="stock_insufficient" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('stock_insufficient')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="product_info_incomplete" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('product_info_incomplete')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="image_quality_poor" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('image_quality_poor')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="category_mismatch" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('category_mismatch')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="description_insufficient" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('description_insufficient')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="attributes_missing" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('attributes_missing')}</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded">
+                                <input type="checkbox" value="brand_information_missing" class="revision-reason-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm text-gray-700">${t('brand_information_missing')}</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="custom-reason-text" class="block text-sm font-medium text-gray-700 mb-2">${t('custom_reason')} (İsteğe bağlı)</label>
+                        <textarea id="custom-reason-text" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Ek revizyon nedenlerinizi buraya yazabilirsiniz..."></textarea>
+                    </div>
+                    
+                    <div>
+                        <label for="revision-message" class="block text-sm font-medium text-gray-700 mb-2">Tedarikçiye Mesaj (İsteğe bağlı)</label>
+                        <textarea id="revision-message" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Tedarikçiye göndermek istediğiniz ek bilgileri buraya yazabilirsiniz. Bu mesaj tedarikçiye iletilecektir..."></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Bu mesaj tedarikçiye gönderilecek ve revizyon sürecinde rehber olacaktır.</p>
+                    </div>
+                </div>
+            `;
+            
+            showModal('Talep Revizyonu', body, 'Revize Et', () => {
+                const selectedCheckboxes = document.querySelectorAll('.revision-reason-checkbox:checked');
+                const customReason = document.getElementById('custom-reason-text').value.trim();
+                const revisionMessage = document.getElementById('revision-message').value.trim();
+                
+                if (selectedCheckboxes.length === 0 && !customReason) {
+                    alert(t('please_provide_reason'));
+                    return;
+                }
+                
+                // Collect selected reasons
+                let selectedReasons = [];
+                selectedCheckboxes.forEach(checkbox => {
+                    selectedReasons.push(t(checkbox.value));
+                });
+                
+                // Add custom reason if provided
+                if (customReason) {
+                    selectedReasons.push(customReason);
+                }
+                
+                // Combine all reasons
+                const finalReason = selectedReasons.join(', ');
+                
+                // Update request with revision reason and message
+                const request = mockData.requests.find(r => r.id === requestId);
+                if (request) {
+                    request.revisionReason = finalReason;
+                    request.revisionReasons = selectedReasons; // Store individual reasons as array
+                    request.revisionMessage = revisionMessage; // Store the message for supplier
+                    request.revisedAt = new Date().toISOString();
+                    request.revisedBy = window.currentUser?.name || 'Admin';
+                }
+                
+                updateRequestStatus(requestId, 'toBeRevised');
+                
+                // Show success message with reasons
+                let successMessage = `Talep revize edilmek üzere işaretlendi. Nedenler: ${finalReason}`;
+                if (revisionMessage) {
+                    successMessage += `\nTedarikçiye mesaj gönderildi.`;
+                }
+                showToast(successMessage, 'info');
+                
+                // Close modal first
+                closeModal();
+                
+                // Navigate back to Talepler tab to show the request with toBeRevised status
+                setTimeout(() => {
+                    navigateTo('#products/talepler');
+                    // Force refresh the page content
+                    if (typeof handleRouteChange === 'function') {
+                        setTimeout(() => handleRouteChange(), 100);
+                    }
+                }, 200);
+            });
+            
+            // Add yellow styling for revision action
+            setTimeout(() => {
+                const btn = document.getElementById('modal-confirm');
+                if (btn) {
+                    btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    btn.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                }
+            }, 50);
         }
 
         function applyRequestToProduct(request) {
@@ -4470,7 +4618,7 @@
         ];
 
         // Set default current user
-        window.currentUser = window.availableUsers[1]; // Start with supplier user for testing
+        window.currentUser = window.availableUsers[0]; // Start with admin user as default
         
         // Initialize user switcher when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -4627,7 +4775,7 @@
         const renderers = {
             dashboard: () => {
                 const totalStock = mockData.supplierProducts.reduce((sum, sp) => sum + sp.stock, 0);
-                const outOfStockCount = mockData.products.filter(p => getProductStock(p.id) === 0).length;
+                const outOfStockCount = mockData.products.filter(p => p.status === 'active' && getProductStock(p.id) === 0).length;
                 const user = window.currentUser || {};
                 const isSupplier = user.role === 'supplier';
                 
@@ -4832,7 +4980,11 @@
                 const guncellemeBekleyenlerCount = requestCounts.productUpdate;
                 const yeniGelenlerCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission).length;
                 const onaylananCount = mockData.products.filter(p => p.status === 'active').length;
-                const reddedilenCount = mockData.products.filter(p => p.status === 'rejected').length;
+                // Calculate count for Talepler tab (all submitted and toBeRevised requests)
+                const reddedilenCount = mockData.requests.filter(r => 
+                    (r.type === 'product_create' || r.type === 'product_update') && 
+                    (r.status === 'submitted' || r.status === 'toBeRevised')
+                ).length;
                 const gonderilenlerCount = isCurrentUserSupplier && currentUserSupplierId ? 
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission && p.supplierSubmission.supplierId === currentUserSupplierId).length :
                     mockData.products.filter(p => p.status === 'draft' && p.supplierSubmission).length;
@@ -4857,11 +5009,17 @@
                 // Count out-of-stock products (stock: 0)
                 const outOfStockCount = isCurrentUserSupplier && currentUserSupplierId ? 
                     mockData.products.filter(p => {
+                        // Only count active products
+                        if (p.status !== 'active') return false;
+                        
                         const hasSupplierProduct = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
                         const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.stock === 0);
                         return hasSupplierProduct && isOutOfStock;
                     }).length :
                     mockData.products.filter(p => {
+                        // Only count active products
+                        if (p.status !== 'active') return false;
+                        
                         const isOutOfStock = mockData.supplierProducts.some(sp => sp.productId === p.id && sp.stock === 0);
                         return isOutOfStock;
                     }).length;
@@ -4881,7 +5039,11 @@
                         <div class="relative group flex-1">
                             <a href="#products/yeni-urun-talepleri" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'talepler' || activeTab === 'fiyat-stok-istekleri' || activeTab === 'urun-guncelleme' || activeTab === 'yeni-urun-talepleri' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Talepler</span>
-                                <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${isCurrentUserSupplier && currentUserSupplierId ? mockData.products.filter(p => p.status === 'rejected' && mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId)).length : reddedilenCount}</span>
+                                <span class="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">${isCurrentUserSupplier && currentUserSupplierId ? mockData.requests.filter(r => 
+                                    (r.type === 'product_create' || r.type === 'product_update') && 
+                                    r.supplierId === currentUserSupplierId && 
+                                    (r.status === 'submitted' || r.status === 'toBeRevised')
+                                ).length : reddedilenCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
                             <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
@@ -5149,7 +5311,7 @@
                 // Check if this is a new product request (draft with supplierSubmission)
                 // For admins, we don't need to check supplierId since they can see all requests
                 // Check if this is a new product request using centralized request system
-                const hasProductCreateRequest = mockData.requests && mockData.requests.some(r => r.type === 'product_create' && r.productId === product.id && r.status === 'submitted');
+                const hasProductCreateRequest = mockData.requests && mockData.requests.some(r => r.type === 'product_create' && r.productId === product.id && (r.status === 'submitted' || r.status === 'toBeRevised'));
                 const isNewProductRequest = hasProductCreateRequest || (product.status === 'draft' && product.supplierSubmission && (isSupplier ? product.supplierSubmission.supplierId === (window.currentUser||{}).supplierId : true));
                 
                 console.log('Product Detail View Debug:', {
@@ -6218,8 +6380,59 @@
                 // Setup date range functionality
                 setupDateRangeFiltering();
             },
-            commissionManagement: (activeTab = 'brand') => {
+            commissionManagement: () => {
                 pageTitle.textContent = t('commission_management');
+                
+                // Get all commission rules
+                const rules = mockData.commissionRules || [];
+                
+                // Create rows for all commission rules
+                const rows = rules.map(rule => {
+                    let targetName = '';
+                    let ruleType = '';
+                    
+                    if (rule.type === 'supplier') {
+                        const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
+                        targetName = supplier ? supplier.name : 'Bilinmiyor';
+                        ruleType = 'Tedarikçi';
+                    } else if (rule.type === 'category') {
+                        const category = mockData.categories.find(c => c.id === rule.categoryId);
+                        targetName = category ? t(category.name) : 'Bilinmiyor';
+                        ruleType = 'Kategori';
+                    } else if (rule.type === 'supplier_category') {
+                        const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
+                        const category = mockData.categories.find(c => c.id === rule.categoryId);
+                        const supplierName = supplier ? supplier.name : 'Bilinmiyor';
+                        const categoryName = category ? t(category.name) : 'Bilinmiyor';
+                        targetName = `${supplierName} - ${categoryName}`;
+                        ruleType = 'Tedarikçi + Kategori';
+                    }
+                    
+                    const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
+                    const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
+                    const defaultRate = rule.defaultRate ? `${rule.defaultRate}%` : '-';
+                    
+                    return `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 text-sm font-medium">${targetName}</td>
+                            <td class="p-3 text-sm">${rule.rate}%</td>
+                            <td class="p-3 text-sm">${defaultRate}</td>
+                            <td class="p-3 text-sm">${ruleType}</td>
+                            <td class="p-3 text-sm">${startDate}</td>
+                            <td class="p-3 text-sm">${endDate}</td>
+                            <td class="p-3 text-sm">${new Date(rule.updatedAt).toLocaleDateString('tr-TR')}</td>
+                            <td class="p-3 text-right">
+                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="p-2 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
                 pageContent.innerHTML = `
                     <!-- Commission Management Page Info -->
                     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="commission-management-info">
@@ -6230,7 +6443,7 @@
                             <div class="ml-3 flex-1">
                                 <h3 class="text-sm font-medium text-yellow-800">Komisyon Yönetimi</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
-                                    <p>Bu sayfada marka, kategori ve ürün bazlı komisyon oranlarını yönetebilirsiniz. Farklı komisyon stratejileri oluşturabilir ve gelir optimizasyonu yapabilirsiniz.</p>
+                                    <p>Bu sayfada tedarikçi, kategori ve tedarikçi+kategori bazlı komisyon oranlarını yönetebilirsiniz. Farklı komisyon stratejileri oluşturabilir ve gelir optimizasyonu yapabilirsiniz.</p>
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
@@ -6242,19 +6455,38 @@
                     </div>
                     
                     <div class="bg-white rounded-lg shadow">
-                        <div class="border-b border-gray-200">
-                            <nav id="commission-tabs" class="-mb-px flex space-x-6 px-6">
-                                <a href="#commissions/brand" class="tab-button ${activeTab === 'brand' ? 'active' : 'text-gray-500'} font-medium py-4">${t('brand_based')}</a>
-                                <a href="#commissions/category" class="tab-button ${activeTab === 'category' ? 'active' : 'text-gray-500'} font-medium py-4">${t('category_based')}</a>
-                                <a href="#commissions/seller" class="tab-button ${activeTab === 'seller' ? 'active' : 'text-gray-500'} font-medium py-4">${t('seller_based')}</a>
-                            </nav>
-                        </div>
-                        <div id="commission-tab-content" class="p-4">
-                            <!-- Commission tables will be rendered here -->
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold">${t('commission_rules')}</h3>
+                                <button id="addCommissionBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    <i class="fas fa-plus mr-2"></i> ${t('add_commission_rule')}
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left">
+                                    <thead class="table-header">
+                                        <tr>
+                                            <th class="p-3 text-sm font-semibold">Hedef</th>
+                                            <th class="p-3 text-sm font-semibold">${t('commission_rate')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('default_rate')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('rule_type')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('start_date')}</th>
+                                            <th class="p-3 text-sm font-semibold">${t('end_date')}</th>
+                                            <th class="p-3 text-sm font-semibold">Güncellenme</th>
+                                            <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rows || `<tr><td colspan="8" class="p-6 text-center text-gray-500">Henüz kural tanımlanmamış.</td></tr>`}</tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 `;
-                renderCommissionTable(activeTab);
+                
+                // Add event listeners
+                document.getElementById('addCommissionBtn')?.addEventListener('click', showAddCommissionModal);
+                document.querySelectorAll('.edit-commission').forEach(btn => btn.addEventListener('click', () => showAddCommissionModal(parseInt(btn.dataset.id))));
+                document.querySelectorAll('.del-commission').forEach(btn => btn.addEventListener('click', () => deleteCommission(parseInt(btn.dataset.id))));
             },
             settings: (activeTab = 'suppliers') => {
                 pageTitle.textContent = t('settings');
@@ -6285,7 +6517,6 @@
                                 <a href="#settings/suppliers" class="tab-button ${activeTab === 'suppliers' ? 'active' : 'text-gray-500'} font-medium py-4">Tedarikçi Listesi</a>
                                 <a href="#settings/users" class="tab-button ${activeTab === 'users' ? 'active' : 'text-gray-500'} font-medium py-4">${t('settings_users')}</a>
                                 <a href="#settings/api" class="tab-button ${activeTab === 'api' ? 'active' : 'text-gray-500'} font-medium py-4">${t('settings_api_keys')}</a>
-                                <a href="#settings/commissions" class="tab-button ${activeTab === 'commissions' ? 'active' : 'text-gray-500'} font-medium py-4">${t('commission_management')}</a>
                             </nav>
                         </div>
                         <div id="settings-tab-content" class="p-4"></div>
@@ -6293,15 +6524,22 @@
                 `;
                 renderSettingsSubTab(activeTab);
                 
-                // Set up tab navigation
+                // Set up tab navigation (remove existing listeners first to prevent duplicates)
                 const tabs = document.querySelectorAll('#settings-tabs .tab-button');
-                tabs.forEach(tab => tab.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const href = e.currentTarget.getAttribute('href');
-                    const parts = href.split('/');
-                    const sub = parts[2]; // Get the third part (index 2)
-                    navigateTo(`#settings/${sub}`);
-                }));
+                tabs.forEach(tab => {
+                    // Remove existing event listeners by cloning the element
+                    const newTab = tab.cloneNode(true);
+                    tab.parentNode.replaceChild(newTab, tab);
+                    
+                    // Add new event listener
+                    newTab.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const href = e.currentTarget.getAttribute('href');
+                        const parts = href.split('/');
+                        const sub = parts[2]; // Get the third part (index 2)
+                        navigateTo(`#settings/${sub}`);
+                    });
+                });
             },
             returns: (activeTab = 'all') => {
                 pageTitle.textContent = t('returns');
@@ -10071,9 +10309,12 @@
                         mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true)
                     );
                 } else if (activeTab === 'out-of-stock') {
-                    // Show out-of-stock products for current supplier
+                    // Show active products with 0 stock for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
+                        // Only show active products
+                        if (p.status !== 'active') return false;
+                        
                         const sp = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
                         return sp && Number(sp.stock) === 0;
                     });
@@ -10117,8 +10358,12 @@
                         mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true)
                     );
                 } else if (activeTab === 'out-of-stock') {
-                    // Show out-of-stock products for admin
+                    // Show active products with 0 stock for admin
                     filteredProducts = mockData.products.filter(p => {
+                        // Only show active products
+                        if (p.status !== 'active') return false;
+                        
+                        // Check if any supplier has 0 stock for this product
                         const spZero = mockData.supplierProducts.find(sp => sp.productId === p.id && Number(sp.stock) === 0);
                         return Boolean(spZero);
                     });
@@ -10378,7 +10623,7 @@
                         // Find the request for this product
                         const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
                         const request = mockData.requests.find(r => 
-                            r.type === requestType && r.productId === product.id && r.status === 'submitted'
+                            r.type === requestType && r.productId === product.id && (r.status === 'submitted' || r.status === 'toBeRevised')
                         );
                         if (request) {
                             row += `
@@ -13599,9 +13844,22 @@
                 
                 alert('Tedarikçi başarıyla eklendi.');
                 
-                // Refresh the suppliers page
-                navigateTo('#settings/suppliers');
+                // Close modal first, then refresh the suppliers page
                 closeModal();
+                
+                // Refresh the suppliers list immediately
+                if (typeof renderSettingsSubTab === 'function') {
+                    renderSettingsSubTab('suppliers');
+                }
+                
+                // Also refresh the page after a short delay to ensure everything is updated
+                setTimeout(() => {
+                    navigateTo('#settings/suppliers');
+                    // Force refresh the suppliers list
+                    if (typeof handleRouteChange === 'function') {
+                        handleRouteChange();
+                    }
+                }, 100);
             });
             
             const modalConfirmButton = document.getElementById('modal-confirm');
@@ -13689,15 +13947,26 @@
                     filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
                     break;
                 case 'talepler':
-                    // Include rejected products in Talepler tab
+                    // Show all submitted and toBeRevised requests in Talepler tab
                     if (isSupplier && currentSupplierId) {
-                        filteredProducts = mockData.products.filter(p => 
-                            p.status === 'rejected' && 
-                            mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentSupplierId)
+                        // For suppliers: show their submitted and toBeRevised requests
+                        const allRequests = mockData.requests.filter(r => 
+                            (r.type === 'product_create' || r.type === 'product_update') && 
+                            r.supplierId === currentSupplierId && 
+                            (r.status === 'submitted' || r.status === 'toBeRevised')
                         );
+                        filteredProducts = allRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     } else {
-                        // For admins: show all rejected products
-                        filteredProducts = mockData.products.filter(p => p.status === 'rejected');
+                        // For admins: show all submitted and toBeRevised requests
+                        const allRequests = mockData.requests.filter(r => 
+                            (r.type === 'product_create' || r.type === 'product_update') && 
+                            (r.status === 'submitted' || r.status === 'toBeRevised')
+                        );
+                        filteredProducts = allRequests.map(req => 
+                            mockData.products.find(p => p.id === req.productId)
+                        ).filter(Boolean);
                     }
                     break;
                 case 'fiyat-stok-istekleri':
@@ -13827,6 +14096,7 @@
             const isPriceUpdateRequestsTab = currentHash.includes('fiyat-stok-istekleri');
             const isSentTab = currentHash.includes('gonderilenler');
             const isArchivedTab = currentHash.includes('archived');
+            const isTaleplerTab = currentHash.includes('talepler') && !currentHash.includes('yeni-urun-talepleri') && !currentHash.includes('urun-guncelleme') && !currentHash.includes('fiyat-stok-istekleri');
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
             
@@ -13986,13 +14256,14 @@
                     </td>
                     <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
                     <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span></td>
-                    ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? `
+                    ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `
                     <td class="p-3">
                         <div class="flex items-center">
                             <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
                                 ${(() => {
-                                    const requestType = isNewProductRequestsTab ? 'product_create' : 'product_update';
-                                    const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && r.status === 'submitted');
+                                    let requestType = 'product_create';
+                                    if (isAwaitingApprovalTab) requestType = 'product_update';
+                                    const req = mockData.requests.find(r => r.productId === p.id && (r.status === 'submitted' || r.status === 'toBeRevised'));
                                     if (req) {
                                         return req.status === 'submitted' ? 'Gönderildi' : req.status === 'toBeRevised' ? 'Revize Edilecek' : req.status === 'accepted' ? 'Kabul Edildi' : 'Tamamlandı';
                                     }
@@ -14012,12 +14283,12 @@
                         </div>
                     </td>
                     ` : ''}
-                    ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? '' : `<td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>`}
+                    ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? '' : `<td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>`}
                     <td class="p-3 text-sm text-gray-500">${formatTimeAgo(p.lastUpdated)}</td>
                     <td class="p-3 text-right">
                         ${((activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') && !isSupplier) ? (() => {
                             const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
-                            const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && r.status === 'submitted');
+                            const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && (r.status === 'submitted' || r.status === 'toBeRevised'));
                             return req ? `<button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('#request-detail/' + ${req.id});"><i class="fas fa-search-plus mr-1"></i>İncele</button>` : '';
                         })() : `<button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');"><i class="fas fa-edit"></i></button>`}
                     </td>
@@ -14039,7 +14310,7 @@
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
-                                ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Talep Durumu</th>` : ''}
+                                ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Talep Durumu</th>` : ''}
                                 ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('originality_header')}</th>` : ''}
                                 ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? '' : `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('status_description_header')}</th>`}
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('last_updated_header')}</th>
@@ -14572,7 +14843,11 @@
         }
         
         function renderSimilarProducts(product) {
-            if (product.status !== 'draft' || product.supplierSubmission) {
+            // Show similar products for draft products and new product requests
+            const isNewProductRequest = product.status === 'draft' && product.supplierSubmission;
+            const isDraftWithoutSubmission = product.status === 'draft' && !product.supplierSubmission;
+            
+            if (!isDraftWithoutSubmission && !isNewProductRequest) {
                 return '';
             }
 
@@ -18527,69 +18802,6 @@
                 container.querySelectorAll('.edit-api').forEach(btn => btn.addEventListener('click', () => showAddApiCredentialModal(parseInt(btn.dataset.id))));
                 container.querySelectorAll('.del-api').forEach(btn => btn.addEventListener('click', () => deleteApiCredential(parseInt(btn.dataset.id))));
                 
-            } else if (tabName === 'commissions') {
-                // Commission management tab
-                const rules = mockData.commissionRules || [];
-                const rows = rules.map(rule => {
-                    let targetName = '';
-                    if (rule.type === 'supplier') {
-                        targetName = rule.supplierName || 'Bilinmiyor';
-                    } else if (rule.type === 'category') {
-                        targetName = rule.categoryName || 'Bilinmiyor';
-                    } else if (rule.type === 'supplier_category') {
-                        targetName = `${rule.supplierName || 'Bilinmiyor'} - ${rule.categoryName || 'Bilinmiyor'}`;
-                    }
-                    
-                    const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
-                    const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
-                    const defaultRate = rule.defaultRate ? `${rule.defaultRate}%` : '-';
-                    
-                    return `
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 text-sm font-medium">${targetName}</td>
-                            <td class="p-3 text-sm">${rule.rate}%</td>
-                            <td class="p-3 text-sm">${defaultRate}</td>
-                            <td class="p-3 text-sm">${rule.type === 'supplier' ? 'Tedarikçi' : rule.type === 'category' ? 'Kategori' : 'Tedarikçi + Kategori'}</td>
-                            <td class="p-3 text-sm">${startDate}</td>
-                            <td class="p-3 text-sm">${endDate}</td>
-                            <td class="p-3 text-sm">${new Date(rule.updatedAt).toLocaleDateString('tr-TR')}</td>
-                            <td class="p-3 text-right">
-                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}"><i class="fas fa-edit"></i></button>
-                                <button class="p-2 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-                
-                container.innerHTML = `
-                    <div class="flex justify-between items-center mb-4">
-                        <div><h3 class="text-lg font-semibold">${t('commission_rules')}</h3></div>
-                        <button id="addCommissionBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                            <i class="fas fa-plus mr-2"></i> ${t('add_commission_rule')}
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="table-header">
-                                <tr>
-                                    <th class="p-3 text-sm font-semibold">Hedef</th>
-                                    <th class="p-3 text-sm font-semibold">${t('commission_rate')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('default_rate')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('rule_type')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('start_date')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('end_date')}</th>
-                                    <th class="p-3 text-sm font-semibold">Güncellenme</th>
-                                    <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rows || `<tr><td colspan="8" class="p-6 text-center text-gray-500">Henüz kural tanımlanmamış.</td></tr>`}</tbody>
-                        </table>
-                    </div>
-                `;
-                
-                document.getElementById('addCommissionBtn')?.addEventListener('click', showAddCommissionModal);
-                container.querySelectorAll('.edit-commission').forEach(btn => btn.addEventListener('click', () => showAddCommissionModal(parseInt(btn.dataset.id))));
-                container.querySelectorAll('.del-commission').forEach(btn => btn.addEventListener('click', () => deleteCommission(parseInt(btn.dataset.id))));
             } else if (tabName === 'prohibited-words') {
                 // Prohibited Words management tab
                 const words = mockData.prohibitedWords || [];
@@ -20427,7 +20639,7 @@
                 const defaultTab = isSupplier ? 'completed' : 'supplier-revenue';
                 renderers.finance(subpage || defaultTab);
             } 
-            else if (page === 'commissions') { renderers.commissionManagement(subpage || 'brand'); }
+            else if (page === 'commissions') { renderers.commissionManagement(); }
             else if (page === 'settings') { 
                 if (subpage === 'suppliers') {
                     renderers.adminSuppliers?.();
@@ -20530,7 +20742,7 @@ const navLinksAdmin = [
     role: 'admin',
     children: [
       { href: '#finance', icon: 'fa-chart-line', text: 'Finans Dashboard', role: 'admin' },
-      { href: '#settings/commissions', icon: 'fa-percentage', text: 'Komisyon Yönetimi', role: 'admin' }
+      { href: '#commissions', icon: 'fa-percentage', text: 'Komisyon Yönetimi', role: 'admin' }
     ]
   },
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden

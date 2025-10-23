@@ -1,0 +1,1 @@
+Klasörü indirdikten sonra clean.html dosyasını bir internet tarayıcı ile açınız. 
