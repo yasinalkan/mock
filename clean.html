@@ -4520,9 +4520,20 @@
                 // Close modal first
                 closeModal();
                 
-                // Navigate back to Talepler tab to show the request with toBeRevised status
+                // Navigate to the appropriate sub-tab based on request type
+                let targetTab = '#products/yeni-urun-talepleri'; // default
+                if (request) {
+                    if (request.type === 'product_create') {
+                        targetTab = '#products/yeni-urun-talepleri';
+                    } else if (request.type === 'product_update') {
+                        targetTab = '#products/urun-guncelleme';
+                    } else if (request.type === 'stock_price_update') {
+                        targetTab = '#products/fiyat-stok-istekleri';
+                    }
+                }
+                
                 setTimeout(() => {
-                    navigateTo('#products/talepler');
+                    navigateTo(targetTab);
                     // Force refresh the page content
                     if (typeof handleRouteChange === 'function') {
                         setTimeout(() => handleRouteChange(), 100);
@@ -4542,6 +4553,8 @@
 
         function applyRequestToProduct(request) {
             const product = mockData.products.find(p => p.id === request.productId);
+
+
             if (!product) return;
 
             if (request.type === 'stock_price_update') {
@@ -4568,9 +4581,8 @@
                     mockData.supplierProducts.push({
                         productId: product.id,
                         supplierId: request.supplierId,
-                        stock: 0,
-                        listPrice: product.listPrice || 0,
-                        description: '',
+                        stock: 1,
+                        price: product.listPrice || 0,
                         isArchived: false,
                         isBanned: false
                     });
@@ -4698,7 +4710,7 @@
             }
             
             // Special handling for "Pasif" tab - show specific reason why product is passive
-            if (activeTab === 'archived') {
+            if (activeTab === 'pasif') {
                 const currentUserSupplierId = (window.currentUser||{}).supplierId;
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 
@@ -4979,7 +4991,21 @@
                 // For suppliers: count products where they have pending update requests
                 const guncellemeBekleyenlerCount = requestCounts.productUpdate;
                 const yeniGelenlerCount = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission).length;
-                const onaylananCount = mockData.products.filter(p => p.status === 'active').length;
+                const onaylananCount = mockData.products.filter(p => {
+                    // Must be active
+                    if (p.status !== 'active') return false;
+                    // Must not be pending submission
+                    if (p.supplierSubmission && p.supplierSubmission.status === 'pending') return false;
+                    
+                    // Check total stock
+                    const totalStock = getProductStock(p.id);
+                    
+                    // Allow product if it has stock OR if it has at least one supplierProduct entry (newly approved)
+                    const hasSupplierProducts = mockData.supplierProducts.some(sp => sp.productId === p.id);
+                    if (totalStock === 0 && !hasSupplierProducts) return false;
+                    
+                    return true;
+                }).length;
                 // Calculate count for Talepler tab (all submitted and toBeRevised requests)
                 const reddedilenCount = mockData.requests.filter(r => 
                     (r.type === 'product_create' || r.type === 'product_update') && 
@@ -5064,17 +5090,13 @@
                             </div>
                         </div>
                         <div class="relative group flex-1">
-                            <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                            <a href="#products/out-of-stock" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'out-of-stock' || activeTab === 'banned' || activeTab === 'archived-items' ? 'active' : 'text-gray-500'} font-medium py-4">
                                 <span>Pasif</span>
                                 <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </a>
                             <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
                                 <div class="py-2">
-                                    <a href="#products/archived" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 border-l-4 border-transparent hover:border-gray-500">
-                                        <span class="font-medium">Tümü</span>
-                                        <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-full">${passiveCount}</span>
-                                    </a>
                                     <a href="#products/out-of-stock" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-all duration-200 border-l-4 border-transparent hover:border-red-500">
                                         <span class="font-medium">Stoğu Bitenler</span>
                                         <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
@@ -5120,17 +5142,13 @@
                                     </div>
                                 </div>
                                 <div class="relative group flex-1">
-                                    <a href="#products/archived" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'archived' ? 'active' : 'text-gray-500'} font-medium py-4">
+                                    <a href="#products/out-of-stock" class="tab-button flex items-center justify-center space-x-2 ${activeTab === 'out-of-stock' || activeTab === 'banned' || activeTab === 'archived-items' ? 'active' : 'text-gray-500'} font-medium py-4">
                                         <span>Pasif</span>
                                         <span class="bg-gray-200 text-gray-800 text-xs font-semibold px-2 py-0.5 rounded-full">${passiveCount}</span>
                                         <i class="fas fa-chevron-down text-xs ml-1"></i>
                                     </a>
                                     <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-20 overflow-hidden">
                                         <div class="py-2">
-                                            <a href="#products/archived" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-all duration-200 border-l-4 border-transparent hover:border-gray-500">
-                                                <span class="font-medium">Tümü</span>
-                                                <span class="bg-gray-100 text-gray-700 text-xs font-bold px-2.5 py-1 rounded-full">${passiveCount}</span>
-                                            </a>
                                             <a href="#products/out-of-stock" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-all duration-200 border-l-4 border-transparent hover:border-red-500">
                                                 <span class="font-medium">Stoğu Bitenler</span>
                                                 <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
@@ -10278,6 +10296,9 @@
             console.log('First switchProductView called with activeTab:', activeTab, 'view:', view);
             const isSupplier = (window.currentUser||{}).role === 'supplier';
             
+            // Redirect pasif tab to out-of-stock if accessed directly
+            if (activeTab === 'pasif') { navigateTo('#products/out-of-stock'); return; }
+            
             // Re-attach event listeners for buttons that might be missing after tab switches
             reattachProductPageEventListeners(activeTab, isSupplier);
             
@@ -10287,7 +10308,29 @@
             if (isSupplier) {
                  // Suppliers can see approved, rejected, and their update requests
                 if (activeTab === 'aktif') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
+                    const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                    filteredProducts = mockData.products.filter(p => {
+                        // Must be active
+                        if (p.status !== 'active') return false;
+                        // Must not be pending submission
+                        if (p.supplierSubmission && p.supplierSubmission.status === 'pending') return false;
+                        
+                        // Exclude products that should appear in Pasif sub-tabs
+                        // For suppliers: check their own supplier entry
+                        const sp = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
+                        if (sp) {
+                            // Exclude if archived, banned, or out of stock
+                            if (sp.isArchived === true) return false;
+                            if (sp.isBanned === true) return false;
+                            if (sp.stock === 0 || Number(sp.stock) === 0) return false;
+                        }
+                        
+                        // Also check if product has zero stock from ANY supplier using getProductStock
+                        const totalStock = getProductStock(p.id);
+                        if (totalStock === 0) return false;
+                        
+                        return true;
+                    });
                  } else if (activeTab === 'urun-guncelleme') {
                     // Show update requests using new request system
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
@@ -10302,7 +10345,7 @@
                     filteredProducts = createRequests.map(req => 
                         mockData.products.find(p => p.id === req.productId)
                     ).filter(Boolean);
-                } else if (activeTab === 'archived') {
+                } else if (activeTab === 'pasif') {
                     // Show archived products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => 
@@ -10352,8 +10395,24 @@
                         mockData.products.find(p => p.id === req.productId)
                     ).filter(Boolean);
                 } else if (activeTab === 'aktif') {
-                    filteredProducts = mockData.products.filter(p => p.status === 'active');
-                } else if (activeTab === 'archived') {
+                    filteredProducts = mockData.products.filter(p => {
+                        // Must be active
+                        if (p.status !== 'active') return false;
+                        
+                        // Check total stock using getProductStock
+                        const totalStock = getProductStock(p.id);
+                        if (totalStock === 0) return false;
+                        
+                        // Exclude products that should appear in Pasif sub-tabs
+                        // Check if ANY supplier has this product as archived or banned
+                        const hasPassiveStatus = mockData.supplierProducts.some(sp => {
+                            if (sp.productId !== p.id) return false;
+                            return sp.isArchived === true || sp.isBanned === true;
+                        });
+                        
+                        return !hasPassiveStatus;
+                    });
+                } else if (activeTab === 'pasif') {
                     filteredProducts = mockData.products.filter(p => 
                         mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true)
                     );
@@ -10495,6 +10554,18 @@
                 } else if (activeTab === 'urun-guncelleme' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
                     statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
+                } else if (activeTab === 'out-of-stock') {
+                    // Stoğu Bitenler tab - show "Stokta Yok"
+                    statusText = 'Stokta Yok';
+                    statusClass = 'bg-red-100 text-red-800';
+                } else if (activeTab === 'banned') {
+                    // Yasaklananlar tab - show "Kaldırıldı"
+                    statusText = 'Kaldırıldı';
+                    statusClass = 'bg-orange-100 text-orange-800';
+                } else if (activeTab === 'archived-items') {
+                    // Arşivlenenler tab - show "Arşivli"
+                    statusText = 'Arşivli';
+                    statusClass = 'bg-slate-100 text-slate-800';
                 } else {
                     // Check for archive/ban status per supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
@@ -10735,6 +10806,18 @@
                 } else if (activeTab === 'urun-guncelleme' && product.supplierSubmission && product.supplierSubmission.status === 'pending') {
                     statusText = isSupplier ? 'Değerlendirmede' : 'Güncelleme Bekliyor';
                     statusClass = 'bg-yellow-100 text-yellow-800';
+                } else if (activeTab === 'out-of-stock') {
+                    // Stoğu Bitenler tab - show "Stokta Yok"
+                    statusText = 'Stokta Yok';
+                    statusClass = 'bg-red-100 text-red-800';
+                } else if (activeTab === 'banned') {
+                    // Yasaklananlar tab - show "Kaldırıldı"
+                    statusText = 'Kaldırıldı';
+                    statusClass = 'bg-orange-100 text-orange-800';
+                } else if (activeTab === 'archived-items') {
+                    // Arşivlenenler tab - show "Arşivli"
+                    statusText = 'Arşivli';
+                    statusClass = 'bg-slate-100 text-slate-800';
                 } else {
                     // Check for archive/ban status per supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
@@ -13879,6 +13962,10 @@
             if (!displayEl) return;
 
             console.log('Second switchProductView called with activeTab:', activeTab, 'view:', view);
+            
+            // Redirect pasif tab to out-of-stock if accessed directly
+            if (activeTab === 'pasif') { navigateTo('#products/out-of-stock'); return; }
+            
             // Suppliers can only see approved and rejected products
             const isSupplier = (window.currentUser||{}).role === 'supplier';
             const currentSupplierId = (window.currentUser||{}).supplierId;
@@ -13890,12 +13977,10 @@
                 'aktif',
                 'urun-guncelleme',
                 'yeni-urun-talepleri',
-                'archived',
                 'out-of-stock',
                 'banned',
                 'archived-items',
-                'fiyat-stok-istekleri',
-                'talepler'
+                'fiyat-stok-istekleri'
             ]);
 
             if (isSupplier && !allowedSupplierTabs.has(activeTab)) {
@@ -13931,44 +14016,58 @@
                 case 'yeni-urun-talepleri':
                     if (isSupplier && currentSupplierId) {
                         // For suppliers: show their new product creation requests using new request system
-                        const createRequests = getRequestsByType('product_create', currentSupplierId).filter(r => r.status === 'submitted');
+                        const createRequests = getRequestsByType('product_create', currentSupplierId).filter(r => r.status === 'submitted' || r.status === 'toBeRevised');
                         filteredProducts = createRequests.map(req => 
                             mockData.products.find(p => p.id === req.productId)
                         ).filter(Boolean);
                     } else {
                         // For admins: show all new product creation requests using new request system
-                        const createRequests = getRequestsByType('product_create').filter(r => r.status === 'submitted');
+                        const createRequests = getRequestsByType('product_create').filter(r => r.status === 'submitted' || r.status === 'toBeRevised');
                         filteredProducts = createRequests.map(req => 
                             mockData.products.find(p => p.id === req.productId)
                         ).filter(Boolean);
                     }
                     break;
                 case 'aktif':
-                    filteredProducts = mockData.products.filter(p => p.status === 'active' && (!p.supplierSubmission || p.supplierSubmission.status !== 'pending'));
+                    filteredProducts = mockData.products.filter(p => {
+
+                        // Must be active
+                        if (p.status !== 'active') return false;
+                        // Must not be pending submission
+                        if (p.supplierSubmission && p.supplierSubmission.status === 'pending') return false;
+                        
+                        // Check total stock using getProductStock
+                        const totalStock = getProductStock(p.id);
+
+                        // Allow product if it has stock OR if it has at least one supplierProduct entry (newly approved)
+                        const hasSupplierProducts = mockData.supplierProducts.some(sp => sp.productId === p.id);
+
+                        if (totalStock === 0 && !hasSupplierProducts) return false;
+                        
+                        // Exclude products that should appear in Pasif sub-tabs
+                        if (isSupplier && currentSupplierId) {
+                            // For suppliers, check their own supplier products
+                            const sp = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentSupplierId);
+                            if (sp) {
+                                if (sp.isArchived === true) return false;
+                                if (sp.isBanned === true) return false;
+                            }
+                        } else {
+                            // For admins, check if ANY supplier has this product as archived or banned
+                            const hasPassiveStatus = mockData.supplierProducts.some(sp => {
+                                if (sp.productId !== p.id) return false;
+                                return sp.isArchived === true || sp.isBanned === true;
+                            });
+                            if (hasPassiveStatus) return false;
+                        }
+                        
+                        return true;
+                    });
                     break;
                 case 'talepler':
-                    // Show all submitted and toBeRevised requests in Talepler tab
-                    if (isSupplier && currentSupplierId) {
-                        // For suppliers: show their submitted and toBeRevised requests
-                        const allRequests = mockData.requests.filter(r => 
-                            (r.type === 'product_create' || r.type === 'product_update') && 
-                            r.supplierId === currentSupplierId && 
-                            (r.status === 'submitted' || r.status === 'toBeRevised')
-                        );
-                        filteredProducts = allRequests.map(req => 
-                            mockData.products.find(p => p.id === req.productId)
-                        ).filter(Boolean);
-                    } else {
-                        // For admins: show all submitted and toBeRevised requests
-                        const allRequests = mockData.requests.filter(r => 
-                            (r.type === 'product_create' || r.type === 'product_update') && 
-                            (r.status === 'submitted' || r.status === 'toBeRevised')
-                        );
-                        filteredProducts = allRequests.map(req => 
-                            mockData.products.find(p => p.id === req.productId)
-                        ).filter(Boolean);
-                    }
-                    break;
+                    // Redirect to the first sub-tab (Yeni Ürün Talepleri)
+                    navigateTo('#products/yeni-urun-talepleri');
+                    return;
                 case 'fiyat-stok-istekleri':
                     if (isSupplier && currentSupplierId) {
                         // For suppliers: show only their own requests using new request system
@@ -13984,7 +14083,7 @@
                         ).filter(Boolean);
                     }
                     break;
-                case 'archived':
+                case 'pasif':
                     // Pasif ana sekmesi: satışa kapalı ürünler (stok 0, arşivli, yasaklı)
                     filteredProducts = mockData.products.filter(p => {
                         const sp = mockData.supplierProducts.find(x => x.productId === p.id && x.supplierId === currentSupplierId);
@@ -14038,7 +14137,7 @@
                     break;
                 case 'urun-guncelleme':
                     // Show update requests using new request system
-                    const updateRequests = getRequestsByType('product_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted');
+                    const updateRequests = getRequestsByType('product_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted' || r.status === 'toBeRevised');
                     filteredProducts = updateRequests.map(req => 
                         mockData.products.find(p => p.id === req.productId)
                     ).filter(Boolean);
@@ -14095,14 +14194,23 @@
             const isAwaitingApprovalTab = currentHash.includes('urun-guncelleme');
             const isPriceUpdateRequestsTab = currentHash.includes('fiyat-stok-istekleri');
             const isSentTab = currentHash.includes('gonderilenler');
-            const isArchivedTab = currentHash.includes('archived');
+            const isOutOfStockTab = currentHash.includes('out-of-stock');
+            const isBannedTab = currentHash.includes('banned');
+            const isArchivedItemsTab = currentHash.includes('archived-items');
+            const isArchivedTab = currentHash.includes('pasif') && !isOutOfStockTab && !isBannedTab && !isArchivedItemsTab;
             const isTaleplerTab = currentHash.includes('talepler') && !currentHash.includes('yeni-urun-talepleri') && !currentHash.includes('urun-guncelleme') && !currentHash.includes('fiyat-stok-istekleri');
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
             
             // Determine the active tab for status description
             let activeTab = null;
-            if (isArchivedTab) {
+            if (isOutOfStockTab) {
+                activeTab = 'out-of-stock';
+            } else if (isBannedTab) {
+                activeTab = 'banned';
+            } else if (isArchivedItemsTab) {
+                activeTab = 'archived-items';
+            } else if (isArchivedTab) {
                 activeTab = 'archived';
             } else if (isNewProductRequestsTab) {
                 activeTab = 'yeni-urun-talepleri';
@@ -14143,6 +14251,16 @@
 
                 if (isSupplier && isSentTab) {
                     statusInfo = { text: 'Gönderildi', class: 'bg-blue-100 text-blue-800' };
+                }
+                
+                // For Pasif sub-tabs, show specific status
+                if (isOutOfStockTab) {
+                    statusInfo = { text: 'Stokta Yok', class: 'bg-red-100 text-red-800' };
+                } else if (isBannedTab) {
+                    statusInfo = { text: 'Kaldırıldı', class: 'bg-orange-100 text-orange-800' };
+                } else if (isArchivedItemsTab) {
+                    statusInfo = { text: 'Arşivli', class: 'bg-slate-100 text-slate-800' };
+                }
 
                 // For request tabs, override statusInfo to show request status
                 if (isNewProductRequestsTab || isAwaitingApprovalTab) {
@@ -14157,7 +14275,6 @@
                             statusInfo = { text: 'Tamamlandı', class: 'bg-green-100 text-green-800' };
                         }
                     }
-                }
                 }
 
                 const isRejected = p.status === 'rejected';
@@ -14352,7 +14469,7 @@
             const currentSupplierId = currentUser.supplierId;
 
             // Get stock/price update requests using new request system
-            const stockPriceRequests = getRequestsByType('stock_price_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted');
+            const stockPriceRequests = getRequestsByType('stock_price_update', isSupplier ? currentSupplierId : null).filter(r => r.status === 'submitted' || r.status === 'toBeRevised');
             
             // Map requests to include product information
             const allPriceRequests = stockPriceRequests.map(request => {
@@ -16760,7 +16877,7 @@
             mockData.supplierProducts.push({
                 productId: productId,
                 supplierId: supplierId,
-                stock: 0,
+                stock: 1,
                 price: 0
             });
             
@@ -17135,7 +17252,7 @@
                         description: product.description || '',
                         imageUrl: product.imageUrl || '',
                         images: product.images || [],
-                        listPrice: product.listPrice || 0,
+                        price: product.listPrice || 0,
                         stock: mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === currentSupplierId)?.stock || 0,
                         price: mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === currentSupplierId)?.price || 0
                     };
@@ -18085,7 +18202,7 @@
                 mockData.supplierProducts.push({
                     productId: productId,
                     supplierId: supplierId,
-                    stock: 0,
+                    stock: 1,
                     price: 0
                 });
             }
@@ -18109,7 +18226,7 @@
                 mockData.supplierProducts.push({
                     productId: productId,
                     supplierId: supplierId,
-                    stock: 0,
+                    stock: 1,
                     price: 0
                 });
             }
@@ -18391,7 +18508,7 @@
                                     mockData.supplierProducts.push({
                                         productId: id,
                                         supplierId: supplierId,
-                                        stock: 0,
+                                        stock: 1,
                                         price: 0
                                     });
                                 }
@@ -18419,7 +18536,7 @@
                                     mockData.supplierProducts.push({
                                         productId: id,
                                         supplierId: currentUserSupplierId,
-                                        stock: 0,
+                                        stock: 1,
                                         price: 0,
                                         isArchived: true,
                                         isBanned: false
@@ -18450,7 +18567,7 @@
                                     mockData.supplierProducts.push({
                                         productId: id,
                                         supplierId: currentUserSupplierIdBan,
-                                        stock: 0,
+                                        stock: 1,
                                         price: 0,
                                         isArchived: false,
                                         isBanned: true
