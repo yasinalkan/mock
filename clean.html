@@ -15465,8 +15465,19 @@
             // Ensure modal-confirm button is visible and functional
             modalConfirm.textContent = confirmText;
             modalConfirm.classList.remove("hidden");
-            modalConfirm.style.display = "";
-            modalConfirm.style.removeProperty('visibility');
+            modalConfirm.style.display = "block";
+            modalConfirm.style.visibility = "visible";
+            modalConfirm.style.opacity = "1";
+            modalConfirm.style.removeProperty('display');
+            
+            // Also ensure modal-cancel button is visible
+            const modalCancel = document.getElementById('modal-cancel');
+            if (modalCancel) {
+                modalCancel.classList.remove("hidden");
+                modalCancel.style.display = "block";
+                modalCancel.style.visibility = "visible";
+                modalCancel.style.opacity = "1";
+            }
             // Remove any existing onclick handlers to avoid duplicates
             modalConfirm.onclick = null;
             // Set the new onclick handler

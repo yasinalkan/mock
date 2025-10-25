@@ -921,7 +921,6 @@ window.mockData.orders = window.mockData.orders || [
                                 const pathData = points.map((point, index) => 
                                     `${index === 0 ? 'M' : 'L'} ${point.x} ${point.y}`
                                 ).join(' ');
-                                
                                 // Create area path (for gradient fill)
                                 const areaPath = `M ${points[0].x} ${chartHeight - 50} ${pathData} L ${points[points.length - 1].x} ${chartHeight - 50} Z`;
                                 
@@ -2900,6 +2899,55 @@ function bulkExport() {
     showToast(`${selectedIds.length} ürün CSV formatında dışa aktarıldı.`);
     clearSelection();
 }
+
+// --- FORM STATE MANAGEMENT ---
+// Object to store form field values per tab
+let formStatePerTab = {};
+let currentProductTab = null;
+
+function saveFormState(tabName) {
+    // Save all input and select values from the current tab
+    const container = document.getElementById('product-tab-content');
+    if (!container || !tabName) return;
+    
+    // Initialize cache for this tab if it doesn't exist
+    if (!formStatePerTab[tabName]) {
+        formStatePerTab[tabName] = {};
+    }
+    
+    const inputs = container.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        // Create a unique key based on input id or data attributes
+        let key = input.id || input.getAttribute('name') || input.getAttribute('data-attr-id');
+        if (!key) return;
+        
+        if (input.type === 'checkbox') {
+            formStatePerTab[tabName][key] = input.checked;
+        } else {
+            formStatePerTab[tabName][key] = input.value;
+        }
+    });
+}
+
+function restoreFormState(tabName) {
+    // Only restore if we have saved state for this specific tab
+    const container = document.getElementById('product-tab-content');
+    if (!container || !tabName || !formStatePerTab[tabName]) return;
+    
+    setTimeout(() => {
+        const inputs = container.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            let key = input.id || input.getAttribute('name') || input.getAttribute('data-attr-id');
+            if (!key || !formStatePerTab[tabName].hasOwnProperty(key)) return;
+            
+            if (input.type === 'checkbox') {
+                input.checked = formStatePerTab[tabName][key];
+            } else {
+                input.value = formStatePerTab[tabName][key];
+            }
+        });
+    }, 0);
+}
 // --- PRODUCT TAB RENDERING ---
 function renderProductTab(tabName, product) {
     
@@ -2912,6 +2960,8 @@ function renderProductTab(tabName, product) {
     const user = window.currentUser || {};
     const isSupplier = user.role === 'supplier';
     
+    // Save form state before rendering new tab
+    saveFormState(currentProductTab);
     
     switch (tabName) {
          case 'comparison':
@@ -2944,6 +2994,9 @@ function renderProductTab(tabName, product) {
         default:
             container.innerHTML = '<p class="text-gray-500">Bilinmeyen sekme</p>';
     }
+    
+    // Restore form state after rendering new tab
+    restoreFormState(tabName); currentProductTab = tabName;;
 }
  function renderComparisonTab(container, product, isSupplier) {
      try {
@@ -3216,7 +3269,6 @@ function renderProductTab(tabName, product) {
          container.innerHTML = '<div class="text-center p-10 text-red-500">Karşılaştırma verileri yüklenirken hata oluştu.</div>';
      }
  }
- 
 function renderGeneralTab(container, product, isSupplier) {
     
     try {
@@ -3289,7 +3341,6 @@ function renderGeneralTab(container, product, isSupplier) {
                     </div>
                 </div>
             `;
-            
             // Add event listener for category change
             const categorySelect = document.getElementById('edit-product-category');
             if (categorySelect) {
@@ -4635,7 +4686,6 @@ function renderLogsTab(container, product) {
                     }).join('')}
                 </div>
             </div>
-            
             <!-- Change Log Timeline -->
             <div class="bg-white border rounded-lg p-6">
                 <div class="flex items-center justify-between mb-6">
@@ -5627,7 +5677,6 @@ function filterAdminFinanceData(startDate, endDate) {
                 case 'export-rejected':
                     showToast(`${selectedCount} reddedilen ürün dışa aktarılıyor...`);
                     break;
-                    
                 case 'reapprove-rejected':
                     selectedProductIds.forEach(id => {
                         const product = mockData.products.find(p => p.id === id);
@@ -5986,8 +6035,11 @@ renderers['supplierProductDetail'] = (productId) => {
             button.classList.add('active', 'border-blue-500', 'text-blue-600');
             button.classList.remove('border-transparent', 'text-gray-500');
             
-            // Render tab content
+            // Render tab content with form state preservation
+            saveFormState(currentProductTab);
             renderProductTab(tabName, product);
+            restoreFormState(tabName);
+            currentProductTab = tabName;
         });
     });
     // Add event listeners for save buttons
