@@ -5262,7 +5262,6 @@
                     if (product.isNew) {
                         // New product - show create and submit buttons
                         headerButtons = `
-                            <button id="save-draft-btn" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">Taslak Olarak Kaydet</button>
                             <button id="submit-product-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ürün Oluştur ve Gönder</button>
                         `;
                     } else if (product.status === 'draft' && !product.supplierSubmission) {
@@ -12225,9 +12224,7 @@
                                     <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                                         <i class="fas fa-print mr-2"></i>Yazdır
                                     </button>
-                                    <button class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-                                        <i class="fas fa-download mr-2"></i>PDF İndir
-                                    </button>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -15468,7 +15465,6 @@
             modalConfirm.style.display = "block";
             modalConfirm.style.visibility = "visible";
             modalConfirm.style.opacity = "1";
-            modalConfirm.style.removeProperty('display');
             
             // Also ensure modal-cancel button is visible
             const modalCancel = document.getElementById('modal-cancel');
@@ -19205,7 +19201,6 @@
                 });
             }
             
-            closeModal();
             renderSettingsSubTab('api');
         }
 
@@ -19637,7 +19632,6 @@
             
             showModal(title, body, t('save'), () => {
                 saveSupplierRestriction(editId);
-                closeModal();
             });
             
             // Add event listener for restriction type change
@@ -19739,7 +19733,6 @@
                 showToast(t('restriction_added'));
             }
             
-            closeModal();
             renderSettingsSubTab('supplier-restrictions');
         }
 
