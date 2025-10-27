@@ -8,7 +8,66 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
-</head>
+
+    <style>
+        /* Category Picker Styles */
+        #category-tree-container [data-category-id] {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        #category-tree-container [data-category-id]:hover {
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+        }
+        
+        #category-tree-container [data-category-id].bg-blue-300 {
+            background-color: #dbeafe;
+            border-left: 4px solid #2563eb;
+            font-weight: 600;
+        }
+        
+        /* Tree item styling */
+        #category-tree-container .flex {
+            align-items: center;
+        }
+        
+        /* Scrollbar styling for category tree */
+        #category-tree-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #category-tree-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+        
+        #category-tree-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        #category-tree-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Selected category display */
+        #selected-category-display {
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    </head>
 <body class="bg-gray-50 text-gray-800">
 
     <div id="app" class="flex h-screen">
@@ -15116,6 +15175,111 @@
                     document.getElementById('clear-category-filters').addEventListener('click', clearCategoryFilters);
                     break; 
                     /* case 'mapping': const renderMappingView = (masterSearch = '', channelSearch = '') => { const channelSelect = document.getElementById('channel-select'); const selectedChannelId = channelSelect ? channelSelect.value : mockData.channels[0]?.id; const channelCategories = mockData.channelCategories[selectedChannelId] || []; const mappingsForChannel = mockData.categoryMappings[selectedChannelId] || {}; tabContent.innerHTML = `<div class="flex justify-between items-center mb-4 px-6 sm:px-0"><div><h3 class="text-xl font-bold">${t('category_mapping')}</h3><p class="mt-1 text-sm text-gray-500">Ana kategorilerinizi satış kanalı kategorileriyle eşleştirin.</p></div><div><label for="channel-select" class="text-sm font-medium mr-2">Kanal Seç:</label><select id="channel-select" class="rounded-md border-gray-300 shadow-sm">${mockData.channels.map(ch => `<option value="${ch.id}" ${ch.id == selectedChannelId ? 'selected' : ''}>${ch.name}</option>`).join('')}</select></div></div><div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-6 items-center"><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">${t('master_category_tree')}</h4><input type="text" id="master-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${masterSearch}"><div id="master-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(mockData.categories, null, false, mappingsForChannel, selectedChannelId, masterSearch)}</div></div><div class="flex flex-col items-center"><button id="map-btn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"><i class="fas fa-link mr-2"></i> Eşle</button></div><div class="bg-white p-4 rounded-lg shadow-sm border"><h4 class="font-semibold mb-2">Kanal Kategori Ağacı</h4><input type="text" id="channel-search" class="w-full p-2 border rounded-md mb-2" placeholder="Kategori ara..." value="${channelSearch}"><div id="channel-tree-container" class="h-96 overflow-y-auto">${buildCategoryTree(channelCategories, null, true, {}, null, channelSearch)}</div></div></div>`; document.getElementById('channel-select').addEventListener('change', () => renderMappingView()); document.getElementById('master-search').addEventListener('input', (e) => renderMappingView(e.target.value, document.getElementById('channel-search').value)); document.getElementById('channel-search').addEventListener('input', (e) => renderMappingView(document.getElementById('master-search').value, e.target.value)); document.querySelectorAll('.master-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.master-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.querySelectorAll('.channel-category-check').forEach(cb => { cb.addEventListener('change', e => { if (e.target.checked) { document.querySelectorAll('.channel-category-check').forEach(otherCb => { if (otherCb !== e.target) otherCb.checked = false; }); } }); }); document.getElementById('map-btn').addEventListener('click', () => { const selectedMaster = document.querySelector('.master-category-check:checked'); const selectedChannel = document.querySelector('.channel-category-check:checked'); if (selectedMaster && selectedChannel) { const masterId = parseInt(selectedMaster.dataset.id); const channelId = parseInt(selectedChannel.dataset.id); if (!mockData.categoryMappings[selectedChannelId]) { mockData.categoryMappings[selectedChannelId] = {}; } mockData.categoryMappings[selectedChannelId][masterId] = channelId; renderMappingView(document.getElementById('master-search').value, document.getElementById('channel-search').value); } else { alert('Lütfen her iki ağaçtan da bir kategori seçin.'); } }); }; renderMappingView(); break; */ } }
+        function buildCategoryTreeOptions(categories, parentId = null, depth = 0) {
+            const treeChars = {
+                0: { prefix: '📁', suffix: '' },
+                1: { prefix: '   ├─ 📂', suffix: '' },
+                2: { prefix: '   │  ├─ 📄', suffix: '' },
+                3: { prefix: '   │  │  └─ 📋', suffix: '' }
+            };
+            
+            const chars = treeChars[Math.min(depth, 3)] || { prefix: '   │  │     ', suffix: '' };
+            const prefix = depth > 0 ? chars.prefix : '🏠';
+            
+            return categories
+                .filter(c => c.parentId === parentId)
+                .flatMap(c => {
+                    const option = `<option value="${c.id}" data-depth="${depth}">${prefix} ${t(c.name)}</option>`;
+                    const children = buildCategoryTreeOptions(categories, c.id, depth + 1);
+                    return option + children;
+                })
+                .join("");
+        }
+
+        function buildCategoryTreeHTML(categories, parentId = null, depth = 0) {
+            const treeItems = categories
+                .filter(c => c.parentId === parentId)
+                .map(c => {
+                    const children = buildCategoryTreeHTML(categories, c.id, depth + 1);
+                    const hasChildren = categories.some(cat => cat.parentId === c.id);
+                    const bgColor = depth === 0 ? 'bg-blue-50 border-l-4 border-blue-500' : depth === 1 ? 'bg-blue-100' : 'bg-blue-50';
+                    const childrenHTML = children ? `<div class="ml-4 mt-1 border-l border-gray-300">${children}</div>` : '';
+                    
+                    return `<div class="p-3 my-1 rounded-md cursor-pointer hover:bg-blue-200 transition-colors ${bgColor}" data-category-id="${c.id}">
+                        <div class="flex items-center">
+                            ${hasChildren ? '<i class="fas fa-folder text-blue-500 mr-2"></i>' : '<i class="fas fa-folder-open text-yellow-500 mr-2"></i>'}
+                            <span class="font-medium text-gray-800">${t(c.name)}</span>
+                        </div>
+                        ${childrenHTML}
+                    </div>`;
+                })
+                .join('');
+            
+            return treeItems;
+        }
+
+
+
+        
+        function buildCategoryTreeHTML(categories, parentId = null, depth = 0) {
+            const treeItems = categories
+                .filter(c => c.parentId === parentId)
+                .map(c => {
+                    const children = buildCategoryTreeHTML(categories, c.id, depth + 1);
+                    const hasChildren = categories.some(cat => cat.parentId === c.id);
+                    const bgColor = depth === 0 ? 'bg-blue-50 border-l-4 border-blue-500' : depth === 1 ? 'bg-blue-100' : 'bg-blue-50';
+                    const childrenHTML = children ? `<div class="ml-4 mt-1 border-l border-gray-300">${children}</div>` : '';
+                    
+                    return `<div class="p-3 my-1 rounded-md cursor-pointer hover:bg-blue-200 transition-colors ${bgColor}" data-category-id="${c.id}">
+                        <div class="flex items-center">
+                            ${hasChildren ? '<i class="fas fa-folder text-blue-500 mr-2"></i>' : '<i class="fas fa-folder-open text-yellow-500 mr-2"></i>'}
+                            <span class="font-medium text-gray-800">${t(c.name)}</span>
+                        </div>
+                        ${childrenHTML}
+                    </div>`;
+                })
+                .join('');
+            
+            return treeItems;
+        }
+
+
+        function createCategoryPicker(selectedId = null, excludeId = null) {
+            const categories = mockData.categories.filter(c => c.id !== excludeId);
+            const treeHTML = buildCategoryTreeHTML(categories);
+            
+            return `<div class="space-y-3">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-sitemap text-blue-600"></i>
+                        <label class="block text-sm font-semibold text-gray-700">Kategori Ağacı</label>
+                    </div>
+                    <p class="text-xs text-gray-600">Bir kategoriyi seçmek için tıklayın. Boş bırakmak için "Ana Kategori" seçeneğini kullanın.</p>
+                </div>
+                
+                <div id="category-tree-container" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4">
+                    <div class="p-3 my-1 rounded-md cursor-pointer hover:bg-blue-100 transition-colors" data-category-id="">
+                        <div class="flex items-center">
+                            <i class="fas fa-home text-green-500 mr-2"></i>
+                            <span class="font-medium text-gray-800">🏠 Ana Kategori</span>
+                        </div>
+                    </div>
+                    <div class="border-t border-gray-200 mt-2 pt-2">
+                        ${treeHTML}
+                    </div>
+                </div>
+                
+                <div id="selected-category-display" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <small class="text-gray-600">Seçilen: </small>
+                    <span id="selected-cat-name" class="font-semibold text-blue-700">
+                        ${selectedId ? (mockData.categories.find(c => c.id == selectedId)?.name?.tr || 'Yükleniyor...') : 'Ana Kategori'}
+                    </span>
+                </div>
+                
+                <input type="hidden" id="category-picker-input" value="${selectedId || ''}">
+            </div>`;
+        }
+
         function renderProductTab(tabName, product) { 
             const contentEl = document.getElementById('product-tab-content'); 
             let content = ''; 
@@ -15225,7 +15389,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
                                     <div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="productName" value="${t(product.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div>
                                     <div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" value="${product.sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
-                                    <div><label class="block text-sm font-medium text-gray-700">Kategori</label><select id="productCategory" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option>${t(category.name)}</option><option>Diğer Kategori</option></select></div>
+                                    <div class="md:col-span-2"><label class="block text-sm font-medium text-gray-700">Kategori Seçin</label>${createCategoryPicker(product.categoryId)}</div>
                                     <div><label class="block text-sm font-medium text-gray-700">Toplam Stok Miktarı</label><input type="number" value="${totalStock}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                                     <div><label class="block text-sm font-medium text-gray-700">En Düşük Fiyat</label><input type="text" value="${priceText}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                                     <div><label class="block text-sm font-medium text-gray-700">Marka</label><select id="adminProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select></div>
@@ -15397,7 +15561,38 @@
                     }
                     break; 
             } 
-            contentEl.innerHTML = content; 
+            contentEl.innerHTML = content;
+                    contentEl.innerHTML = content;
+                    
+                    // Setup category picker event listeners for product form
+                    if (tabName === 'general' && !isSupplier) {
+                        setTimeout(() => {
+                            document.querySelectorAll('#category-tree-container [data-category-id]').forEach(element => {
+                                element.addEventListener('click', (e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    
+                                    const selectedId = element.dataset.categoryId || '';
+                                    document.getElementById('category-picker-input').value = selectedId;
+                                    
+                                    // Update display
+                                    const selectedDisplay = document.getElementById('selected-cat-name');
+                                    if (selectedId) {
+                                        const cat = mockData.categories.find(c => c.id == selectedId);
+                                        selectedDisplay.textContent = cat ? t(cat.name) : 'Ana Kategori';
+                                    } else {
+                                        selectedDisplay.textContent = 'Ana Kategori';
+                                    }
+                                    
+                                    // Update visual selection
+                                    document.querySelectorAll('#category-tree-container [data-category-id]').forEach(el => {
+                                        el.classList.remove('bg-blue-300', 'border-l-4', 'border-blue-600');
+                                    });
+                                    element.classList.add('bg-blue-300', 'border-l-4', 'border-blue-600');
+                                });
+                            });
+                        }, 100);
+                    } 
             if (tabName === 'general' && !isSupplier) { 
                 const generateBtn = document.getElementById('generateDescBtn');
                 if (generateBtn) {
@@ -17121,7 +17316,8 @@
             if (productId && productId !== 'new') { 
             } else { 
                 const attributes = {}; 
-                const categoryId = parseInt(document.getElementById('newProductCategory').value); 
+                const categoryPickerInput = document.getElementById('category-picker-input');
+                const categoryId = categoryPickerInput ? parseInt(categoryPickerInput.value) : null; 
                 const category = mockData.categories.find(c => c.id === categoryId); 
                 if (category && category.attributes) { 
                     category.attributes.forEach(attrId => { 
@@ -17315,7 +17511,8 @@
             if (productId && productId !== 'new') { 
             } else { 
                 const attributes = {}; 
-                const categoryId = parseInt(document.getElementById('newProductCategory').value); 
+                const categoryPickerInput = document.getElementById('category-picker-input');
+                const categoryId = categoryPickerInput ? parseInt(categoryPickerInput.value) : null; 
                 const category = mockData.categories.find(c => c.id === categoryId); 
                 if (category && category.attributes) { 
                     category.attributes.forEach(attrId => { 
@@ -17374,8 +17571,90 @@
         }
         function showAddAttributeModal() { const title = 'Yeni Nitelik Ekle'; const body = `<div class="space-y-4"><div><label for="attr_name" class="block text-sm font-medium text-gray-700">Nitelik Kodu</label><input type="text" id="attr_name" placeholder="Örn: color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_label" class="block text-sm font-medium text-gray-700">Nitelik Etiketi</label><input type="text" id="attr_label" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_type" class="block text-sm font-medium text-gray-700">Tip</label><select id="attr_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="Text">Yazı (Text)</option><option value="Textarea">Uzun Yazı (Textarea)</option><option value="Number">Rakam (Number)</option><option value="Boolean">Evet/Hayır (Boolean)</option><option value="Select">Seçim (Select)</option></select></div><div id="attr_options_container" class="hidden space-y-2"><label for="attr_options" class="block text-sm font-medium text-gray-700">Seçenekler</label><textarea id="attr_options" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Seçenekleri virgülle ayırarak girin. Örn: Kırmızı,Yeşil,Mavi"></textarea></div><div class="flex items-center space-x-4 pt-2"><div class="flex items-start"><div class="flex items-center h-5"><input id="attr_scopeable" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="attr_scopeable" class="font-medium text-gray-700">Kanal Bazlı</label></div></div></div></div>`; showModal(title, body, 'Niteliği Oluştur', () => { const label = document.getElementById('attr_label').value; const newAttribute = { id: Math.max(...mockData.attributes.map(a => a.id)) + 1, name: document.getElementById('attr_name').value, label: { tr: label, en: label }, type: document.getElementById('attr_type').value, options: document.getElementById('attr_type').value === 'Select' ? document.getElementById('attr_options').value.split(',').map(s => s.trim()) : [], scopeable: document.getElementById('attr_scopeable').checked, default: '', lastUpdated: new Date().toISOString() }; mockData.attributes.push(newAttribute); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } document.getElementById('attr_type').addEventListener('change', (e) => { document.getElementById('attr_options_container').classList.toggle('hidden', e.target.value !== 'Select'); }); }
         function showAddChannelModal() { const title = 'Yeni Kanal Ekle'; const body = `<div class="space-y-4"><div><label for="channel_name" class="block text-sm font-medium text-gray-700">Kanal Adı</label><input type="text" id="channel_name" placeholder="Örn: Trendyol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="channel_currency" class="block text-sm font-medium text-gray-700">Para Birimi</label><select id="channel_currency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="TRY">TRY</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div><div class="flex items-start"><div class="flex items-center h-5"><input id="channel_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="channel_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kanalı Oluştur', () => { const newChannel = { id: Math.max(...(mockData.channels.map(c => c.id) || [0])) + 1, name: document.getElementById('channel_name').value, status: document.getElementById('channel_active').checked ? 'active' : 'passive', productCount: 0, currency: document.getElementById('channel_currency').value }; mockData.channels.push(newChannel); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } }
-        function showAddCategoryModal() { const title = 'Yeni Kategori Ekle'; const parentCategoryOptions = mockData.categories.map(c => `<option value="${c.id}">${t(c.name)}</option>`).join(''); const attributeSelectionHTML = mockData.attributes.map(a => `<div class="flex justify-between items-center p-2 border rounded-md"><span>${t(a.label)}</span><div class="flex items-center space-x-4"><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-assoc-check"><span class="ml-2">İlişkili</span></label><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-variant-check" disabled><span class="ml-2 text-gray-400">Varyant</span></label></div></div>`).join(''); const body = `<div class="space-y-4"><div><label for="cat_name" class="block text-sm font-medium text-gray-700">Kategori Adı</label><input type="text" id="cat_name" placeholder="Örn: Spor Ayakkabı" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="cat_parent" class="block text-sm font-medium text-gray-700">Üst Kategori</label><select id="cat_parent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Yok (Ana Kategori)</option>${parentCategoryOptions}</select></div><div><label class="block text-sm font-medium text-gray-700 mb-2">İlişkili Özellikler</label><div id="attribute-selection-container" class="space-y-2 max-h-48 overflow-y-auto p-1">${attributeSelectionHTML}</div></div><div class="flex items-start"><div class="flex items-center h-5"><input id="cat_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="cat_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kategoriyi Oluştur', () => { const selectedAttributes = []; const variantAttributes = []; document.querySelectorAll('#attribute-selection-container .attribute-assoc-check:checked').forEach(cb => { const attrId = parseInt(cb.dataset.attrId); selectedAttributes.push(attrId); const variantCb = document.querySelector(`#attribute-selection-container .attribute-variant-check[data-attr-id="${attrId}"]`); if (variantCb && variantCb.checked) { variantAttributes.push(attrId); } }); const catName = document.getElementById('cat_name').value; const newCategory = { id: Math.max(...mockData.categories.map(c => c.id)) + 1, name: { tr: catName, en: catName }, parentId: parseInt(document.getElementById('cat_parent').value) || null, active: document.getElementById('cat_active').checked, attributes: selectedAttributes, variantAttributes: variantAttributes }; mockData.categories.push(newCategory); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } document.querySelectorAll('.attribute-assoc-check').forEach(assocCheck => { assocCheck.addEventListener('change', (e) => { const attrId = e.target.dataset.attrId; const variantCheck = document.querySelector(`.attribute-variant-check[data-attr-id="${attrId}"]`); const variantLabel = variantCheck.nextElementSibling; if (e.target.checked) { variantCheck.disabled = false; variantLabel.classList.remove('text-gray-400'); } else { variantCheck.disabled = true; variantCheck.checked = false; variantLabel.classList.add('text-gray-400'); } }); }); }
-        function showEditCategoryModal(categoryId) {
+        function showAddCategoryModal() {
+            const title = 'Yeni Kategori Ekle';
+            const attributeSelectionHTML = mockData.attributes.map(a => `<div class="flex justify-between items-center p-2 border rounded-md"><span>${t(a.label)}</span><div class="flex items-center space-x-4"><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-assoc-check"><span class="ml-2">Zorunlu</span></label><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-variant-check" disabled><span class="ml-2 text-gray-400">Varyant</span></label></div></div>`).join('');
+            const body = `<div class="space-y-4"><div><label for="cat_name" class="block text-sm font-medium text-gray-700">Kategori Adı</label><input type="text" id="cat_name" placeholder="Örn: Spor Ayakkabı" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="cat_parent" class="block text-sm font-medium text-gray-700">Üst Kategori Seçin</label>${createCategoryPicker()}</div><div><label class="block text-sm font-medium text-gray-700 mb-2">Zorunlu Özellikler</label><div id="attribute-selection-container" class="space-y-2 max-h-48 overflow-y-auto p-1">${attributeSelectionHTML}</div></div><div class="flex items-start"><div class="flex items-center h-5"><input id="cat_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="cat_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`;
+            
+            showModal(title, body, 'Kategoriyi Oluştur', () => {
+                const catName = document.getElementById('cat_name').value;
+                const selectedParentId = document.getElementById('category-picker-input').value;
+                
+                const selectedAttributes = [];
+                const variantAttributes = [];
+                document.querySelectorAll('#attribute-selection-container .attribute-assoc-check:checked').forEach(cb => {
+                    const attrId = parseInt(cb.dataset.attrId);
+                    selectedAttributes.push(attrId);
+                    const variantCb = document.querySelector(`#attribute-selection-container .attribute-variant-check[data-attr-id="${attrId}"]`);
+                    if (variantCb && variantCb.checked) { variantAttributes.push(attrId); }
+                });
+                
+                const newCategory = {
+                    id: Math.max(...mockData.categories.map(c => c.id)) + 1,
+                    name: { tr: catName, en: catName },
+                    parentId: selectedParentId ? parseInt(selectedParentId) : null,
+                    active: document.getElementById('cat_active').checked,
+                    attributes: selectedAttributes,
+                    variantAttributes: variantAttributes
+                };
+                mockData.categories.push(newCategory);
+            });
+            
+            const modalConfirmButton = document.getElementById('modal-confirm');
+            if(modalConfirmButton) {
+                modalConfirmButton.classList.remove('hidden');
+                modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+            const modalCancelButton = document.getElementById('modal-cancel');
+            if(modalCancelButton) {
+                modalCancelButton.classList.remove('hidden');
+            }
+            
+            // Setup category picker event listeners
+            setTimeout(() => {
+                document.querySelectorAll('#category-tree-container [data-category-id]').forEach(element => {
+                    element.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const selectedId = element.dataset.categoryId || '';
+                        document.getElementById('category-picker-input').value = selectedId;
+                        
+                        // Update display
+                        const selectedDisplay = document.getElementById('selected-cat-name');
+                        if (selectedId) {
+                            const cat = mockData.categories.find(c => c.id == selectedId);
+                            selectedDisplay.textContent = cat ? t(cat.name) : 'Ana Kategori';
+                        } else {
+                            selectedDisplay.textContent = 'Ana Kategori';
+                        }
+                        
+                        // Update visual selection
+                        document.querySelectorAll('#category-tree-container [data-category-id]').forEach(el => {
+                            el.classList.remove('bg-blue-300', 'border-l-4', 'border-blue-600');
+                        });
+                        element.classList.add('bg-blue-300', 'border-l-4', 'border-blue-600');
+                    });
+                });
+            }, 100);
+            
+            document.querySelectorAll('.attribute-assoc-check').forEach(assocCheck => {
+                assocCheck.addEventListener('change', (e) => {
+                    const attrId = e.target.dataset.attrId;
+                    const variantCheck = document.querySelector(`.attribute-variant-check[data-attr-id="${attrId}"]`);
+                    const variantLabel = variantCheck.nextElementSibling;
+                    if (e.target.checked) {
+                        variantCheck.disabled = false;
+                        variantLabel.classList.remove('text-gray-400');
+                    } else {
+                        variantCheck.disabled = true;
+                        variantCheck.checked = false;
+                        variantLabel.classList.add('text-gray-400');
+                    }
+                });
+            });
+        }
+                function showEditCategoryModal(categoryId) {
             console.log('showEditCategoryModal called with categoryId:', categoryId);
             const category = mockData.categories.find(c => c.id === categoryId);
             console.log('Found category:', category);
@@ -17384,9 +17663,15 @@
                 return;
             }
             
-            const parentCategoryOptions = mockData.categories.filter(c => c.id !== categoryId).map(c => 
-                `<option value="${c.id}" ${category.parentId === c.id ? 'selected' : ''}>${t(c.name)}</option>`
-            ).join('');
+            // Build category tree with hierarchy
+            let parentCategoryOptions = buildCategoryTreeOptions(mockData.categories.filter(c => c.id !== categoryId), null, 0);
+            // Add selected attribute to the currently selected parent
+            if (category.parentId) {
+                parentCategoryOptions = parentCategoryOptions.replace(
+                    `value="${category.parentId}"`,
+                    `value="${category.parentId}" selected`
+                );
+            }
             
             const attributeSelectionHTML = mockData.attributes.map(a => {
                 const isAssociated = category.attributes.includes(a.id);
@@ -17396,7 +17681,7 @@
                     <div class="flex items-center space-x-4">
                         <label class="flex items-center text-sm cursor-pointer">
                             <input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-assoc-check" ${isAssociated ? 'checked' : ''}>
-                            <span class="ml-2">İlişkili</span>
+                            <span class="ml-2">Zorunlu</span>
                         </label>
                         <label class="flex items-center text-sm cursor-pointer">
                             <input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-variant-check" ${isVariant ? 'checked' : ''} ${!isAssociated ? 'disabled' : ''}>
@@ -17412,14 +17697,11 @@
                     <input type="text" id="edit_cat_name" value="${t(category.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                 </div>
                 <div>
-                    <label for="edit_cat_parent" class="block text-sm font-medium text-gray-700">Üst Kategori</label>
-                    <select id="edit_cat_parent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                        <option value="">Yok (Ana Kategori)</option>
-                        ${parentCategoryOptions}
-                    </select>
+                    <label for="edit_cat_parent" class="block text-sm font-medium text-gray-700">Üst Kategori Seçin</label>
+                    ${createCategoryPicker(category.parentId, categoryId)}
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">İlişkili Özellikler</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Zorunlu Özellikler</label>
                     <div id="attribute-selection-container" class="space-y-2 max-h-48 overflow-y-auto p-1">
                         ${attributeSelectionHTML}
                     </div>
@@ -17441,6 +17723,34 @@
                 closeModal();
             });
             console.log('showModal called successfully');
+            
+            // Setup category picker event listeners
+            setTimeout(() => {
+                document.querySelectorAll('#category-tree-container [data-category-id]').forEach(element => {
+                    element.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const selectedId = element.dataset.categoryId || '';
+                        document.getElementById('category-picker-input').value = selectedId;
+                        
+                        // Update display
+                        const selectedDisplay = document.getElementById('selected-cat-name');
+                        if (selectedId) {
+                            const cat = mockData.categories.find(c => c.id == selectedId);
+                            selectedDisplay.textContent = cat ? t(cat.name) : 'Ana Kategori';
+                        } else {
+                            selectedDisplay.textContent = 'Ana Kategori';
+                        }
+                        
+                        // Update visual selection
+                        document.querySelectorAll('#category-tree-container [data-category-id]').forEach(el => {
+                            el.classList.remove('bg-blue-300', 'border-l-4', 'border-blue-600');
+                        });
+                        element.classList.add('bg-blue-300', 'border-l-4', 'border-blue-600');
+                    });
+                });
+            }, 100);
             
             document.querySelectorAll('.attribute-assoc-check').forEach(assocCheck => {
                 assocCheck.addEventListener('change', (e) => {
@@ -17466,7 +17776,7 @@
             category.name.tr = newName;
             category.name.en = newName;
             
-            const parentId = document.getElementById('edit_cat_parent').value;
+            const parentId = document.getElementById('category-picker-input').value;
             category.parentId = parentId ? parseInt(parentId) : null;
             
             const selectedAttributes = [];
@@ -17631,7 +17941,7 @@
                             <!-- Associated Attributes -->
                             <div class="bg-white p-6 rounded-lg shadow-sm border">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl font-semibold text-green-800">İlişkili Nitelikler</h2>
+                                    <h2 class="text-xl font-semibold text-green-800">Zorunlu Nitelikler</h2>
                                     <button onclick="showEditCategoryModal(${category.id})" class="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center space-x-1">
                                         <i class="fas fa-edit text-xs"></i>
                                         <span>Düzenle</span>
@@ -17713,7 +18023,7 @@
                             <!-- No Attributes -->
                             <div class="bg-white p-6 rounded-lg shadow-sm border">
                                 <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl font-semibold text-gray-800">İlişkili Nitelikler</h2>
+                                    <h2 class="text-xl font-semibold text-gray-800">Zorunlu Nitelikler</h2>
                                     <button onclick="showEditCategoryModal(${category.id})" class="px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center space-x-1">
                                         <i class="fas fa-plus text-xs"></i>
                                         <span>Nitelik Ekle</span>
