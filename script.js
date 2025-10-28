@@ -3403,10 +3403,10 @@ function renderGeneralTab(container, product, isSupplier) {
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
                                 ${(() => {
-                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === ${product.id} && sp.supplierId === ${supplierId});
-                                    const isArch = ${JSON.stringify(product.isArchived)} || (spProd?.isArchived);
+                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+                                    const isArch = product.isArchived || (spProd?.isArchived);
                                     if (!isArch) return '';
-                                    return '<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>';
+                                    return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
                                 })()}
                             </div>
                             <div class="space-y-3">
@@ -3505,10 +3505,10 @@ function renderGeneralTab(container, product, isSupplier) {
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
                                 ${(() => {
-                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === ${product.id} && sp.supplierId === ${supplierId});
-                                    const isArch = ${JSON.stringify(product.isArchived)} || (spProd?.isArchived);
+                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+                                    const isArch = product.isArchived || (spProd?.isArchived);
                                     if (!isArch) return '';
-                                    return '<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>';
+                                    return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
                                 })()}
                             </div>
                             <div class="space-y-3">
