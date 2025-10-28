@@ -13,23 +13,6 @@
         /* Category Picker Styles */
         #category-tree-container [data-category-id] {
             position: relative;
-            transition: all 0.2s ease;
-        }
-        
-        #category-tree-container [data-category-id]:hover {
-            transform: translateX(4px);
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
-        }
-        
-        #category-tree-container [data-category-id].bg-blue-300 {
-            background-color: #dbeafe;
-            border-left: 4px solid #2563eb;
-            font-weight: 600;
-        }
-        
-        /* Tree item styling */
-        #category-tree-container .flex {
-            align-items: center;
         }
         
         /* Scrollbar styling for category tree */
@@ -38,33 +21,16 @@
         }
         
         #category-tree-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 3px;
+            background: transparent;
         }
         
         #category-tree-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #d1d5db;
             border-radius: 3px;
         }
         
         #category-tree-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        
-        /* Selected category display */
-        #selected-category-display {
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            background: #9ca3af;
         }
     </style>
     </head>
@@ -15202,13 +15168,15 @@
                 .map(c => {
                     const children = buildCategoryTreeHTML(categories, c.id, depth + 1);
                     const hasChildren = categories.some(cat => cat.parentId === c.id);
-                    const bgColor = depth === 0 ? 'bg-blue-50 border-l-4 border-blue-500' : depth === 1 ? 'bg-blue-100' : 'bg-blue-50';
-                    const childrenHTML = children ? `<div class="ml-4 mt-1 border-l border-gray-300">${children}</div>` : '';
+                    const uniqueId = `cat-children-${c.id}`;
+                    const childrenHTML = children ? `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 hidden">${children}</div>` : '';
+                    const toggleIcon = hasChildren ? `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="icon-${c.id}" style="display: inline-block; width: 12px;"></i>` : '<span style="display: inline-block; width: 12px;"></span>';
                     
-                    return `<div class="p-3 my-1 rounded-md cursor-pointer hover:bg-blue-200 transition-colors ${bgColor}" data-category-id="${c.id}">
-                        <div class="flex items-center">
-                            ${hasChildren ? '<i class="fas fa-folder text-blue-500 mr-2"></i>' : '<i class="fas fa-folder-open text-yellow-500 mr-2"></i>'}
-                            <span class="font-medium text-gray-800">${t(c.name)}</span>
+                    return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded" data-category-id="${c.id}">
+                        <div class="flex items-center" ${hasChildren ? `onclick="toggleCategoryChildren('${uniqueId}', 'icon-${c.id}'); event.stopPropagation();"` : ''} style="${hasChildren ? 'cursor: pointer;' : 'cursor: pointer;'}">
+                            ${toggleIcon}
+                            ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                            <span class="text-sm text-gray-700 ml-1">${t(c.name)}</span>
                         </div>
                         ${childrenHTML}
                     </div>`;
@@ -15216,6 +15184,17 @@
                 .join('');
             
             return treeItems;
+        }
+        
+        function toggleCategoryChildren(elementId, iconId) {
+            const element = document.getElementById(elementId);
+            const icon = document.getElementById(iconId);
+            if (element) {
+                element.classList.toggle('hidden');
+                if (icon) {
+                    icon.style.transform = element.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                }
+            }
         }
 
 
@@ -15227,13 +15206,15 @@
                 .map(c => {
                     const children = buildCategoryTreeHTML(categories, c.id, depth + 1);
                     const hasChildren = categories.some(cat => cat.parentId === c.id);
-                    const bgColor = depth === 0 ? 'bg-blue-50 border-l-4 border-blue-500' : depth === 1 ? 'bg-blue-100' : 'bg-blue-50';
-                    const childrenHTML = children ? `<div class="ml-4 mt-1 border-l border-gray-300">${children}</div>` : '';
+                    const uniqueId = `cat-children-${c.id}`;
+                    const childrenHTML = children ? `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 hidden">${children}</div>` : '';
+                    const toggleIcon = hasChildren ? `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="icon-${c.id}" style="display: inline-block; width: 12px;"></i>` : '<span style="display: inline-block; width: 12px;"></span>';
                     
-                    return `<div class="p-3 my-1 rounded-md cursor-pointer hover:bg-blue-200 transition-colors ${bgColor}" data-category-id="${c.id}">
-                        <div class="flex items-center">
-                            ${hasChildren ? '<i class="fas fa-folder text-blue-500 mr-2"></i>' : '<i class="fas fa-folder-open text-yellow-500 mr-2"></i>'}
-                            <span class="font-medium text-gray-800">${t(c.name)}</span>
+                    return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded" data-category-id="${c.id}">
+                        <div class="flex items-center" ${hasChildren ? `onclick="toggleCategoryChildren('${uniqueId}', 'icon-${c.id}'); event.stopPropagation();"` : ''} style="${hasChildren ? 'cursor: pointer;' : 'cursor: pointer;'}">
+                            ${toggleIcon}
+                            ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                            <span class="text-sm text-gray-700 ml-1">${t(c.name)}</span>
                         </div>
                         ${childrenHTML}
                     </div>`;
@@ -15241,6 +15222,17 @@
                 .join('');
             
             return treeItems;
+        }
+        
+        function toggleCategoryChildren(elementId, iconId) {
+            const element = document.getElementById(elementId);
+            const icon = document.getElementById(iconId);
+            if (element) {
+                element.classList.toggle('hidden');
+                if (icon) {
+                    icon.style.transform = element.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                }
+            }
         }
 
 
@@ -17598,6 +17590,7 @@
                     variantAttributes: variantAttributes
                 };
                 mockData.categories.push(newCategory);
+                handleRouteChange();
             });
             
             const modalConfirmButton = document.getElementById('modal-confirm');
@@ -17720,7 +17713,6 @@
             showModal(t('edit_category'), body, t('save'), () => {
                 console.log('Modal save button clicked');
                 saveCategory(categoryId);
-                closeModal();
             });
             console.log('showModal called successfully');
             
@@ -17881,10 +17873,10 @@
                                             <span class="text-gray-600">Türkçe Ad:</span>
                                             <span class="font-medium">${category.name.tr}</span>
                                         </div>
-                                        <div class="flex justify-between">
+                                        <!-- <div class="flex justify-between">
                                             <span class="text-gray-600">İngilizce Ad:</span>
                                             <span class="font-medium">${category.name.en}</span>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <div class="space-y-3">
                                         <div class="flex justify-between">
@@ -18356,10 +18348,10 @@
                                             <span class="text-gray-600">Türkçe Ad:</span>
                                             <span class="font-medium">${mainProduct.name.tr}</span>
                                         </div>
-                                        <div class="flex justify-between">
+                                        <!-- <div class="flex justify-between">
                                             <span class="text-gray-600">İngilizce Ad:</span>
                                             <span class="font-medium">${mainProduct.name.en}</span>
-                                        </div>
+                                        </div> -->
                                         <div class="flex justify-between">
                                             <span class="text-gray-600">Kategori:</span>
                                             <span class="font-medium">${category ? t(category.name) : 'Kategorisiz'}</span>
