@@ -10334,8 +10334,11 @@
                 if (activeTab === 'aktif') {
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
-                        // Must be active
+                        // Must be active status
                         if (p.status !== 'active') return false;
+                        // Exclude product-level archived and banned flags
+                        if (p.isArchived === true) return false;
+                        if (p.isBanned === true) return false;
                         // Must not be pending submission
                         if (p.supplierSubmission && p.supplierSubmission.status === 'pending') return false;
                         
@@ -10379,8 +10382,11 @@
                     // Show active products with 0 stock for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
-                        // Only show active products
+                        // Only show active status products
                         if (p.status !== 'active') return false;
+                        // Exclude product-level archived and banned
+                        if (p.isArchived === true) return false;
+                        if (p.isBanned === true) return false;
                         
                         const sp = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
                         return sp && Number(sp.stock) === 0;
@@ -10420,8 +10426,11 @@
                     ).filter(Boolean);
                 } else if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => {
-                        // Must be active
+                        // Must be active status
                         if (p.status !== 'active') return false;
+                        // Exclude product-level archived and banned flags
+                        if (p.isArchived === true) return false;
+                        if (p.isBanned === true) return false;
                         
                         // Check total stock using getProductStock
                         const totalStock = getProductStock(p.id);
