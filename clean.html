@@ -10355,15 +10355,15 @@
                         
                         return true;
                     });
-                 } else if (activeTab === 'urun-guncelleme') {
+                 } else if (activeTab === 'urun-guncelleme' || activeTab === 'archived-items-requests') {
                     // Show update requests using new request system
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     const updateRequests = getRequestsByType('product_update', currentUserSupplierId);
                     filteredProducts = updateRequests.map(req => 
                         mockData.products.find(p => p.id === req.productId)
                     ).filter(p => {
-                        // If viewing archived items, only show archived products
-                        if (previousActiveTab === 'archived-items' || document.location.hash.includes('archived-items')) {
+                        // If viewing archived items requests, only show archived products
+                        if (activeTab === 'archived-items-requests') {
                             return mockData.supplierProducts.some(sp => 
                                 sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true
                             );
