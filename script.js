@@ -3355,14 +3355,8 @@ function renderGeneralTab(container, product, isSupplier) {
             }
         } else if (isSupplier) {
             // Editable version for suppliers on published products
-            // Check if product is archived
             const supplierUser = window.currentUser || {};
             const supplierId = supplierUser.supplierId;
-            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
-            if (product.isArchived || (supplierProduct?.isArchived)) {
-                container.innerHTML = `<div class="bg-yellow-50 p-6 rounded-lg border border-yellow-200 m-6"><h3 class="text-2xl font-semibold mb-4 text-yellow-900">Ürün Arşivlenmiş</h3><div class="flex items-center mb-4"><i class="fas fa-archive text-yellow-600 mr-2 text-lg"></i><span class="text-lg text-yellow-800">Bu ürün arşivlenmiş durumda ve görüntülenebilir ancak düzenlenemez</span></div><button onclick="unarchiveSupplierProduct(${product.id})" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium text-lg"><i class="fas fa-redo mr-2"></i>Aktifleştir</button></div>`;
-                return;
-            }
             
             const categoryName = t(category.name);
             const brandName = brand.name;
@@ -3406,7 +3400,15 @@ function renderGeneralTab(container, product, isSupplier) {
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-6">
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-4">Temel Bilgiler</h3>
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
+                                ${(() => {
+                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === ${product.id} && sp.supplierId === ${supplierId});
+                                    const isArch = ${JSON.stringify(product.isArchived)} || (spProd?.isArchived);
+                                    if (!isArch) return '';
+                                    return '<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>';
+                                })()}
+                            </div>
                             <div class="space-y-3">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">SKU:</span>
@@ -3500,7 +3502,15 @@ function renderGeneralTab(container, product, isSupplier) {
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-6">
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-4">Temel Bilgiler</h3>
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
+                                ${(() => {
+                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === ${product.id} && sp.supplierId === ${supplierId});
+                                    const isArch = ${JSON.stringify(product.isArchived)} || (spProd?.isArchived);
+                                    if (!isArch) return '';
+                                    return '<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>';
+                                })()}
+                            </div>
                             <div class="space-y-3">
                                 <div class="flex justify-between">
                                     <span class="text-gray-600">SKU:</span>
@@ -6048,10 +6058,21 @@ renderers['supplierProductDetail'] = (productId) => {
                             </div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-sm text-gray-500">Son Güncelleme</div>
-                        <div class="text-sm font-medium">${new Date(product.lastUpdated).toLocaleDateString('tr-TR')}</div>
+                    <div class="text-right flex flex-col items-end space-y-4">
+                        ${(() => {
+                            const supplierUser = window.currentUser || {};
+                            const supplierId = supplierUser.supplierId;
+                            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+                            const isArchived = product.isArchived || (supplierProduct?.isArchived);
+                            if (!isArchived) return '';
+                            return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium flex items-center space-x-2"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
+                        })()}
+                        <div>
+                            <div class="text-sm text-gray-500">Son Güncelleme</div>
+                            <div class="text-sm font-medium">${new Date(product.lastUpdated).toLocaleDateString('tr-TR')}</div>
+                        </div>
                     </div>
+
                 </div>
             </div>
             <!-- Tabs -->
