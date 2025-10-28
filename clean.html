@@ -10355,21 +10355,13 @@
                         
                         return true;
                     });
-                 } else if (activeTab === 'urun-guncelleme' || activeTab === 'archived-items-requests') {
+                 } else if (activeTab === 'urun-guncelleme') {
                     // Show update requests using new request system
                      const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     const updateRequests = getRequestsByType('product_update', currentUserSupplierId);
                     filteredProducts = updateRequests.map(req => 
                         mockData.products.find(p => p.id === req.productId)
-                    ).filter(p => {
-                        // If viewing archived items requests, only show archived products
-                        if (activeTab === 'archived-items-requests') {
-                            return mockData.supplierProducts.some(sp => 
-                                sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true
-                            );
-                        }
-                        return true;
-                    });
+                    ).filter(Boolean);
                 } else if (activeTab === 'yeni-urun-talepleri') {
                     // Show new product creation requests using new request system
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
