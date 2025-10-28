@@ -923,7 +923,6 @@ window.mockData.orders = window.mockData.orders || [
                                 ).join(' ');
                                 // Create area path (for gradient fill)
                                 const areaPath = `M ${points[0].x} ${chartHeight - 50} ${pathData} L ${points[points.length - 1].x} ${chartHeight - 50} Z`;
-                                
                                 return `
                                     <div class="relative">
                                         <svg width="100%" height="${chartHeight}" viewBox="0 0 ${chartWidth} ${chartHeight}" class="overflow-visible">
@@ -3356,6 +3355,15 @@ function renderGeneralTab(container, product, isSupplier) {
             }
         } else if (isSupplier) {
             // Editable version for suppliers on published products
+            // Check if product is archived
+            const supplierUser = window.currentUser || {};
+            const supplierId = supplierUser.supplierId;
+            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+            if (product.isArchived || (supplierProduct?.isArchived)) {
+                container.innerHTML = `<div class="bg-yellow-50 p-6 rounded-lg border border-yellow-200 m-6"><h3 class="text-2xl font-semibold mb-4 text-yellow-900">Ürün Arşivlenmiş</h3><div class="flex items-center mb-4"><i class="fas fa-archive text-yellow-600 mr-2 text-lg"></i><span class="text-lg text-yellow-800">Bu ürün arşivlenmiş durumda ve görüntülenebilir ancak düzenlenemez</span></div><button onclick="unarchiveSupplierProduct(${product.id})" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium text-lg"><i class="fas fa-redo mr-2"></i>Aktifleştir</button></div>`;
+                return;
+            }
+            
             const categoryName = t(category.name);
             const brandName = brand.name;
             const editableAttributes = (() => {
@@ -3603,7 +3611,6 @@ function renderGeneralTab(container, product, isSupplier) {
                                 })()}
                             </div>
                         </div>
-                        
                     </div>
                     
                     <div class="space-y-6">
@@ -3634,6 +3641,29 @@ function renderGeneralTab(container, product, isSupplier) {
                                 ` : ''}
                             </div>
                         </div>
+                        
+                        ${(() => {
+                            if (!isSupplier) return '';
+                            const user = window.currentUser || {};
+                            const supplierId = user.supplierId;
+                            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+                            const isArchived = product.isArchived || (supplierProduct?.isArchived);
+                            if (!isArchived) return '';
+                            return `
+                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                                    <h3 class="text-lg font-semibold mb-3 text-yellow-900">Ürün Durumu</h3>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-archive text-yellow-600 mr-2"></i>
+                                            <span class="text-yellow-800">Bu ürün arşivlenmiş durumda</span>
+                                        </div>
+                                        <button onclick="unarchiveSupplierProduct(${product.id})" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
+                                            <i class="fas fa-redo mr-2"></i>Aktifleştir
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        })()}
                     </div>
                 </div>
             `;
@@ -3693,6 +3723,31 @@ function saveSupplierProductInfo(productId){
     showToast('Ürün bilgileri güncellendi');
     // Re-render to reflect changes
     renderProductTab('general', p);
+}
+
+function unarchiveSupplierProduct(productId) {
+    const currentUser = window.currentUser || {};
+    const currentSupplierId = currentUser.supplierId;
+    
+    if (!currentSupplierId) {
+        showToast('Tedarikçi bilgisi bulunamadı', 'error');
+        return;
+    }
+    
+    const supplierProduct = mockData.supplierProducts.find(sp => 
+        sp.productId === productId && sp.supplierId === currentSupplierId
+    );
+    
+    if (!supplierProduct) {
+        showToast('Ürün bulunamadı', 'error');
+        return;
+    }
+    
+    if (confirm('Bu ürünü aktif duruma taşımak istediğinizden emin misiniz?')) {
+        supplierProduct.isArchived = false;
+        showToast('Ürün başarıyla aktif duruma alındı', 'success');
+        handleRouteChange();
+    }
 }
 // Function to submit stock & price update request
 function submitStockPriceUpdateRequest(productId) {
@@ -5630,7 +5685,6 @@ function filterAdminFinanceData(startDate, endDate) {
                     });
                     showToast(`${selectedCount} ürün aktif edildi.`);
                     break;
-                    
                 case 'deactivate-products':
                     selectedProductIds.forEach(id => {
                         const product = mockData.products.find(p => p.id === id);

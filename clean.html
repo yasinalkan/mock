@@ -15272,6 +15272,28 @@
             </div>`;
         }
 
+        function unarchiveSupplierProduct(productId) {
+            const currentUser = window.currentUser || {};
+            const supplierId = currentUser.supplierId;
+            
+            if (!supplierId) {
+                showToast('Tedarikçi bilgisi bulunamadı', 'error');
+                return;
+            }
+            
+            const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === productId && sp.supplierId === supplierId);
+            if (!supplierProduct) {
+                showToast('Ürün bulunamadı', 'error');
+                return;
+            }
+            
+            if (confirm('Bu ürünü aktif duruma taşımak istediğinizden emin misiniz?')) {
+                supplierProduct.isArchived = false;
+                showToast('Ürün başarıyla aktif duruma alındı', 'success');
+                handleRouteChange();
+            }
+        }
+
         function renderProductTab(tabName, product) { 
             const contentEl = document.getElementById('product-tab-content'); 
             let content = ''; 
@@ -15311,6 +15333,15 @@
                     if (isSupplier) {
                         // Suppliers can now edit more product information
                         const supplierId = user.supplierId;
+                        // Check if product is archived and show unarchive option
+                        const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
+                        console.log('renderProductTab supplier check - archived?', {productArchived: product.isArchived, supplierProductArchived: supplierProduct?.isArchived});
+                        if (product.isArchived || (supplierProduct?.isArchived)) {
+                            console.log('SHOWING UNARCHIVE BUTTON FOR PRODUCT', product.id);
+                            content = `<div class="bg-yellow-50 p-6 rounded-lg border border-yellow-200"><h3 class="text-xl font-semibold mb-4 text-yellow-900">Ürün Durumu</h3><div class="flex items-center mb-4"><i class="fas fa-archive text-yellow-600 mr-2 text-lg"></i><span class="text-lg text-yellow-800">Bu ürün arşivlenmiş durumda</span></div><button onclick="unarchiveSupplierProduct(${product.id})" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium text-lg"><i class="fas fa-redo mr-2"></i>Aktifleştir</button></div>`;
+                            contentEl.innerHTML = content;
+                            return;
+                        }
                         const supplierStock = product.isNew ? 0 : (mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId)?.stock || 0);
                         const supplierPrice = product.isNew ? '' : (getProductPrice(product.id, supplierId) || '');
                         
