@@ -3268,7 +3268,7 @@ function renderProductTab(tabName, product) {
          container.innerHTML = '<div class="text-center p-10 text-red-500">Karşılaştırma verileri yüklenirken hata oluştu.</div>';
      }
  }
-function renderGeneralTab(container, product, isSupplier) {
+function renderGeneralTab(container, product, isSupplier, supplierId) {
     
     try {
         const category = mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
@@ -3410,7 +3410,11 @@ function renderGeneralTab(container, product, isSupplier) {
                                 })()}
                             </div>
                             <div class="space-y-3">
-                                <div class="flex justify-between">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Ürün Adı <span class="text-red-500">*</span></label>
+                                    <input type="text" id="supplierProductName" value="${typeof product.name === 'string' ? product.name : (product.name?.tr || '')}" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ürün adını girin">
+                                </div>
+                                <div class="flex justify-between pt-2 border-t">
                                     <span class="text-gray-600">SKU:</span>
                                     <span class="font-medium">${product.sku}</span>
                                 </div>
@@ -3423,6 +3427,15 @@ function renderGeneralTab(container, product, isSupplier) {
                                     <span class="font-medium">${brandName}</span>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Marka</label>
+                                        <select id="supplierProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Model</label>
+                                        <input type="text" id="supplierProductModel" value="${(product.model||'').replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Model adını girin">
+                                    </div>
+
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Ürün Kodu</label>
                                         <input type="text" id="supplierProductCode" value="${(product.productCode||'').replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün kodunu girin">
@@ -3494,7 +3507,7 @@ function renderGeneralTab(container, product, isSupplier) {
             // Wire up save
             const btn = document.getElementById('supplier-save-product');
             if (btn) {
-                btn.addEventListener('click', () => saveSupplierProductInfo(product.id));
+                btn.addEventListener('click', () => saveSupplierProductInfo());
             }
         } else {
             // Read-only version for other products
@@ -3693,47 +3706,6 @@ function renderGeneralTab(container, product, isSupplier) {
     }
 }
 // Save handler for supplier product edits
-function saveSupplierProductInfo(productId){
-    const productIndex = mockData.products.findIndex(p => p.id === productId);
-    if (productIndex === -1) { showToast('Ürün bulunamadı'); return; }
-    const p = mockData.products[productIndex];
-    // Collect general fields
-    const codeEl = document.getElementById('supplierProductCode');
-    const gtinEl = document.getElementById('supplierGTIN');
-    const originEl = document.getElementById('supplierOriginCountry');
-    const manufEl = document.getElementById('supplierManufacturer');
-    const warrEl = document.getElementById('supplierWarranty');
-    const minOrderEl = document.getElementById('supplierMinOrder');
-    const descEl = document.getElementById('supplierProductDescription');
-    const keywordsEl = document.getElementById('supplierProductKeywords');
-    if (codeEl) p.productCode = codeEl.value.trim();
-    if (gtinEl) p.gtin = gtinEl.value.trim();
-    if (originEl) p.originCountry = originEl.value.trim();
-    if (manufEl) p.manufacturer = manufEl.value.trim();
-    if (warrEl) p.warrantyMonths = warrEl.value === '' ? undefined : parseInt(warrEl.value, 10);
-    if (minOrderEl) p.minOrderQuantity = minOrderEl.value === '' ? undefined : parseInt(minOrderEl.value, 10);
-    if (descEl) p.description = descEl.value;
-    if (keywordsEl) p.keywords = keywordsEl.value;
-    // Get brand ID
-    const brandEl = document.getElementById('supplierProductBrand');
-    if (brandEl && brandEl.value) p.brandId = parseInt(brandEl.value, 10);
-    // Collect editable attributes
-    const inputs = document.querySelectorAll('.supplier-attr-input[data-attr-id]');
-    if (!p.attributes) p.attributes = {};
-    inputs.forEach(input => {
-        const attrId = parseInt(input.getAttribute('data-attr-id'));
-        const val = input.value.trim();
-        if (!Number.isNaN(attrId)) {
-            if (!p.attributes[attrId]) p.attributes[attrId] = { value: '', validationStatus: 'pending', rejectionReason: '' };
-            p.attributes[attrId].value = val;
-            if (!p.attributes[attrId].validationStatus) p.attributes[attrId].validationStatus = 'pending';
-        }
-    });
-    p.lastUpdated = new Date().toISOString();
-    showToast('Ürün bilgileri güncellendi');
-    // Re-render to reflect changes
-    renderProductTab('general', p);
-}
 
 function unarchiveSupplierProduct(productId) {
     const currentUser = window.currentUser || {};
@@ -5787,12 +5759,11 @@ function filterAdminFinanceData(startDate, endDate) {
     
     // Get form values
     const productName = document.getElementById('supplierProductName')?.value;
+    console.log('DEBUG: productName field:', document.getElementById('supplierProductName'), 'value:', productName);
     const productBrand = document.getElementById('supplierProductBrand')?.value;
     const productModel = document.getElementById('supplierProductModel')?.value;
     const productDescription = document.getElementById('supplierProductDescription')?.value;
     const productKeywords = document.getElementById('supplierProductKeywords')?.value;
-    const supplierStock = document.getElementById('supplierStock')?.value;
-    const supplierPrice = document.getElementById('supplierPrice')?.value;
     
     // Validate required fields
     if (!productName || !productName.trim()) {
@@ -5807,62 +5778,53 @@ function filterAdminFinanceData(startDate, endDate) {
         return;
     }
     
-    // Update product information
-    product.name = { tr: productName.trim(), en: productName.trim() };
-    if (productBrand) product.brand = productBrand.trim();
-    if (productModel) product.model = productModel.trim();
-    if (productDescription) product.description = productDescription.trim();
-    if (productKeywords) product.keywords = productKeywords.trim();
-    
-    // Update supplier-specific data
+    // Create product update request instead of directly updating product
     const supplierId = user.supplierId;
-    if (supplierStock !== null && supplierStock !== undefined) {
-        let supplierProduct = mockData.supplierProducts.find(sp => sp.productId == productId && sp.supplierId == supplierId);
-        if (!supplierProduct) {
-            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0, isArchived: false, isBanned: false };
-            mockData.supplierProducts.push(supplierProduct);
-        }
-        supplierProduct.stock = parseInt(supplierStock) || 0;
+    if (!supplierId) {
+        showToast('Tedarikçi bilgisi bulunamadı.');
+        return;
     }
     
-    if (supplierPrice !== null && supplierPrice !== undefined) {
-        let supplierProduct = mockData.supplierProducts.find(sp => sp.productId == productId && sp.supplierId == supplierId);
-        if (!supplierProduct) {
-            supplierProduct = { productId: productId, supplierId: supplierId, stock: 0, price: 0, isArchived: false, isBanned: false };
-            mockData.supplierProducts.push(supplierProduct);
+    // Collect product attributes from form
+    const attributeInputs = document.querySelectorAll('.supplier-attr-input[data-attr-id]');
+    const attributes = {};
+    attributeInputs.forEach(input => {
+        const attrId = input.getAttribute('data-attr-id');
+        const value = input.value.trim();
+        if (attrId) {
+            attributes[attrId] = {
+                value: value,
+                status: 'pending'
+            };
         }
-        supplierProduct.price = parseFloat(supplierPrice) || 0;
-    }
-    
-    // Add to change log
-    if (!product.changeLog) product.changeLog = [];
-    product.changeLog.unshift({
-        id: Date.now(),
-        action: 'supplier_update',
-        user: user.name,
-        userRole: 'supplier',
-        timestamp: new Date().toISOString(),
-        changes: {
-            name: productName.trim(),
-            brand: productBrand?.trim(),
-            model: productModel?.trim(),
-            description: productDescription?.trim(),
-            keywords: productKeywords?.trim(),
-            stock: supplierStock,
-            price: supplierPrice
-        },
-        message: 'Tedarikçi tarafından ürün bilgileri güncellendi'
     });
     
-    showToast('Ürün bilgileri başarıyla güncellendi!');
+    // Prepare update data
+    const updateData = {
+        name: productName.trim(),
+        brand: productBrand?.trim(),
+        model: productModel?.trim(),
+        description: productDescription?.trim(),
+        keywords: productKeywords?.trim(),
+        attributes: attributes
+    };
     
-    // Refresh the product detail view
-    setTimeout(() => {
-        const currentHash = window.location.hash;
-        if (currentHash.includes('#products/detail/')) {
-            handleRouteChange();
-        }
-    }, 1000);
+    // Create product_update request
+    try {
+        const newRequest = createRequest('product_update', productId, supplierId, updateData);
+        showToast('Ürün güncelleme talebi başarıyla gönderildi! Admin tarafından onaylanmayı beklemektedir.');
+        
+        // Refresh the product detail view
+        setTimeout(() => {
+            const currentHash = window.location.hash;
+            if (currentHash.includes('#products/detail/')) {
+                handleRouteChange();
+            }
+        }, 1000);
+    } catch (error) {
+        console.error('Error submitting product update request:', error);
+        showToast('Ürün güncelleme talebi gönderilirken hata oluştu: ' + error.message);
+    }
 }
 function saveSupplierAttributes() {
     const productId = getCurrentProductId();
@@ -5946,8 +5908,6 @@ function previewSupplierProduct() {
     const productModel = document.getElementById('supplierProductModel')?.value || '';
     const productDescription = document.getElementById('supplierProductDescription')?.value || '';
     const productKeywords = document.getElementById('supplierProductKeywords')?.value || '';
-    const supplierStock = document.getElementById('supplierStock')?.value || '0';
-    const supplierPrice = document.getElementById('supplierPrice')?.value || '0';
     
     // Create preview content
     const previewContent = `
@@ -5966,16 +5926,7 @@ function previewSupplierProduct() {
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-600">Stok</div>
-                        <div class="text-lg font-semibold">${supplierStock} adet</div>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded">
-                        <div class="text-sm text-gray-600">Fiyat</div>
-                        <div class="text-lg font-semibold text-green-600">${parseFloat(supplierPrice).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                    </div>
-                </div>
+
                 
                 ${productDescription ? `
                 <div>

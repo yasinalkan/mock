@@ -65,9 +65,11 @@
                 
                 <div class="flex-1 flex justify-center items-center gap-3">
                     <h1 class="text-2xl font-bold" style="color: rgb(63, 70, 173);">connect.</h1>
+                    <!-- 
                     <div class="flex items-center justify-center w-12 h-8 bg-red-600 text-white font-bold text-sm rounded">
                         Vakko
-                    </div>
+                    </div> 
+                    -->
                 </div>
                 
                 <div class="flex items-center space-x-4">
@@ -128,7 +130,7 @@
         <!-- Filter Panel -->
         <div id="filterPanel" class="fixed top-0 right-0 h-full bg-white w-80 shadow-lg transform translate-x-full transition-transform duration-300 ease-in-out z-40 flex flex-col">
             <div class="p-4 border-b flex justify-between items-center">
-                <h3 id="filterPanelTitle" class="text-lg font-semibold">Filtreler</h3>
+                <h3 id="filterPanelTitle" class="text-lg font-semibold">Filtrele</h3>
                 <button id="closeFilterPanel" class="p-2 rounded-md hover:bg-gray-100">&times;</button>
             </div>
             <div id="filterPanelContent" class="flex-1 p-4 overflow-y-auto filter-panel-content">
@@ -653,7 +655,7 @@
             description_insufficient: { tr: 'Açıklama yetersiz', en: 'Insufficient description' },
             attributes_missing: { tr: 'Özellikler eksik', en: 'Missing attributes' },
             brand_information_missing: { tr: 'Marka bilgisi eksik', en: 'Brand information missing' },
-            please_provide_reason: { tr: 'Lütfen revizyon nedenini belirtin', en: 'Please provide revision reason' },
+            please_provide_reason: { tr: 'Lütfen revizyon nedenini belirtin', en: 'Please provide revision reason' }
         };
 // User data will be defined later in the script
 
@@ -1246,8 +1248,7 @@
                     variants: [
                         { id: 401, sku: '8683822429559-M-MAVI', attributes: { 1: 'Mavi', 2: 'M' } },
                         { id: 402, sku: '8683822429559-L-MAVI', attributes: { 1: 'Mavi', 2: 'L' } },
-                        { id: 403, sku: '8683822429559-XL-MAVI', attributes: { 1: 'Mavi', 2: 'XL' } },
-                    ],
+                        { id: 403, sku: '8683822429559-XL-MAVI', attributes: { 1: 'Mavi', 2: 'XL' } }],
                     reviewHistory: [
                         {
                             reviewer: 'Ahmet Yılmaz',
@@ -1336,12 +1337,6 @@
                     lastUpdated: '2025-07-28T18:45:00Z' 
                 },
                 // New arrivals (yeni-gelenler) - products with status 'draft' and no supplierSubmission
-                { id: 9, sku: '8683822185001', name: { tr: 'Siyah Deri Ceket', en: 'Black Leather Jacket'}, categoryId: 1, brandId: 1, status: 'draft',
-                    isArchived: false,
-                    isBanned: false, health: 75, originalityScore: 92, imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Siyah', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'L', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Deri', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-20T10:30:00Z' },
-                { id: 10, sku: '8683822185002', name: { tr: 'Kırmızı Elbise', en: 'Red Dress'}, categoryId: 1, brandId: 2, status: 'draft',
-                    isArchived: false,
-                    isBanned: false, health: 80, originalityScore: 88, imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Kırmızı', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'M', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Polyester', validationStatus: 'approved', rejectionReason: '' } }, variants: [], lastUpdated: '2025-01-19T14:15:00Z' },
                 { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, status: 'active',
                     isArchived: false,
                     isBanned: false, health: 70, originalityScore: 75, imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60', attributes: { 1: { value: 'Mavi', validationStatus: 'approved', rejectionReason: '' }, 2: { value: '32', validationStatus: 'approved', rejectionReason: '' }, 3: { value: 'Denim', validationStatus: 'approved', rejectionReason: '' } }, 
@@ -1541,362 +1536,14 @@
                     archivedReason: 'Supplier request - no longer available'
                 },
                 // Mock products for "Gönderilenler" tab - products sent by suppliers for review
-                { 
-                    id: 15, 
-                    sku: 'GOND-001', 
-                    name: { tr: 'Klasik Deri Cüzdan', en: 'Classic Leather Wallet'}, 
-                    categoryId: 1, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 85, 
-                    originalityScore: 88, 
-                    imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
-                    images: [
-                        {
-                            id: 1,
-                            url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&auto=format&fit=crop&q=80',
-                            type: 'main',
-                            title: 'Ana Ürün Görseli',
-                            alt: 'Klasik Deri Cüzdan - Ana Görsel',
-                            quality: {
-                                resolution: '1200x1600',
-                                fileSize: '198 KB',
-                                format: 'JPEG',
-                                score: 92,
-                                issues: []
-                            },
-                            uploadedAt: '2025-01-15T10:30:00Z'
-                        }
-                    ],
-                    attributes: {
-                        1: { value: 'Kahverengi', validationStatus: 'pending', rejectionReason: '' },
-                        2: { value: 'Orta', validationStatus: 'pending', rejectionReason: '' },
-                        3: { value: 'Deri', validationStatus: 'pending', rejectionReason: '' },
-                        4: { value: 'Orta', validationStatus: 'pending', rejectionReason: '' },
-                        5: { value: 'Kahverengi', validationStatus: 'pending', rejectionReason: '' },
-                        6: { value: '0cm', validationStatus: 'pending', rejectionReason: '' },
-                        7: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        8: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        9: { value: 'İtalya', validationStatus: 'pending', rejectionReason: '' },
-                        10: { value: '150g', validationStatus: 'pending', rejectionReason: '' },
-                        11: { value: '12cm x 8cm x 2cm', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 1, // ModaTedarik
-                        submittedAt: '2025-01-15T10:30:00Z',
-                        name: {
-                            value: { tr: 'Klasik Deri Cüzdan', en: 'Classic Leather Wallet' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Deri', status: 'pending' },
-                            '2': { value: 'Kahverengi', status: 'pending' },
-                            '3': { value: 'Orta', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-15T10:30:00Z' 
-                },
-                { 
-                    id: 17, 
-                    sku: 'GOND-002', 
-                    name: { tr: 'Spor Ayakkabı', en: 'Sports Shoes'}, 
-                    categoryId: 2, 
-                    brandId: 2, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 78, 
-                    originalityScore: 82, 
-                    imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
-                    images: [
-                        {
-                            id: 1,
-                            url: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1200&auto=format&fit=crop&q=80',
-                            type: 'main',
-                            title: 'Ana Ürün Görseli',
-                            alt: 'Spor Ayakkabı - Ana Görsel',
-                            quality: {
-                                resolution: '1200x1600',
-                                fileSize: '223 KB',
-                                format: 'JPEG',
-                                score: 89,
-                                issues: []
-                            },
-                            uploadedAt: '2025-01-14T14:20:00Z'
-                        }
-                    ],
-                    attributes: {
-                        1: { value: 'Beyaz', validationStatus: 'pending', rejectionReason: '' },
-                        2: { value: '42', validationStatus: 'pending', rejectionReason: '' },
-                        3: { value: 'Sentetik', validationStatus: 'pending', rejectionReason: '' },
-                        4: { value: '42', validationStatus: 'pending', rejectionReason: '' },
-                        5: { value: 'Beyaz', validationStatus: 'pending', rejectionReason: '' },
-                        6: { value: '2cm', validationStatus: 'pending', rejectionReason: '' },
-                        7: { value: 'Spor', validationStatus: 'pending', rejectionReason: '' },
-                        8: { value: 'Spor', validationStatus: 'pending', rejectionReason: '' },
-                        9: { value: 'Çin', validationStatus: 'pending', rejectionReason: '' },
-                        10: { value: '700g', validationStatus: 'pending', rejectionReason: '' },
-                        11: { value: '29cm x 21cm x 11cm', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 1, // ModaTedarik
-                        submittedAt: '2025-01-14T14:20:00Z',
-                        name: {
-                            value: { tr: 'Spor Ayakkabı', en: 'Sports Shoes' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Spor', status: 'pending' },
-                            '2': { value: 'Beyaz', status: 'pending' },
-                            '3': { value: '42', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-14T14:20:00Z' 
-                },
-                { 
-                    id: 221, 
-                    sku: 'GOND-003', 
-                    name: { tr: 'Yazlık Elbise', en: 'Summer Dress'}, 
-                    categoryId: 1, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 92, 
-                    originalityScore: 95, 
-                    imageUrl: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=500&auto=format&fit=crop&q=60',
-                    images: [
-                        {
-                            id: 1,
-                            url: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=1200&auto=format&fit=crop&q=80',
-                            type: 'main',
-                            title: 'Ana Ürün Görseli',
-                            alt: 'Yazlık Elbise - Ana Görsel',
-                            quality: {
-                                resolution: '1200x1600',
-                                fileSize: '267 KB',
-                                format: 'JPEG',
-                                score: 94,
-                                issues: []
-                            },
-                            uploadedAt: '2025-01-13T16:45:00Z'
-                        }
-                    ],
-                    attributes: {
-                        1: { value: 'Mavi', validationStatus: 'pending', rejectionReason: '' },
-                        2: { value: 'M', validationStatus: 'pending', rejectionReason: '' },
-                        3: { value: 'Pamuk', validationStatus: 'pending', rejectionReason: '' },
-                        4: { value: 'M', validationStatus: 'pending', rejectionReason: '' },
-                        5: { value: 'Mavi', validationStatus: 'pending', rejectionReason: '' },
-                        6: { value: '0cm', validationStatus: 'pending', rejectionReason: '' },
-                        7: { value: 'Yaz', validationStatus: 'pending', rejectionReason: '' },
-                        8: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        9: { value: 'Türkiye', validationStatus: 'pending', rejectionReason: '' },
-                        10: { value: '300g', validationStatus: 'pending', rejectionReason: '' },
-                        11: { value: '90cm x 60cm', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 1, // ModaTedarik
-                        submittedAt: '2025-01-13T16:45:00Z',
-                        name: {
-                            value: { tr: 'Yazlık Elbise', en: 'Summer Dress' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Yazlık', status: 'pending' },
-                            '2': { value: 'Mavi', status: 'pending' },
-                            '3': { value: 'M', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-13T16:45:00Z' 
-                },
-                { 
-                    id: 36, 
-                    sku: 'GOND-004', 
-                    name: { tr: 'Erkek Gömlek', en: 'Men\'s Shirt'}, 
-                    categoryId: 1, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 88, 
-                    originalityScore: 90, 
-                    imageUrl: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&auto=format&fit=crop&q=60',
-                    images: [
-                        {
-                            id: 1,
-                            url: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=1200&auto=format&fit=crop&q=80',
-                            type: 'main',
-                            title: 'Ana Ürün Görseli',
-                            alt: 'Erkek Gömlek - Ana Görsel',
-                            quality: {
-                                resolution: '1200x1600',
-                                fileSize: '245 KB',
-                                format: 'JPEG',
-                                score: 91,
-                                issues: []
-                            },
-                            uploadedAt: '2025-01-12T11:15:00Z'
-                        }
-                    ],
-                    attributes: {
-                        1: { value: 'Beyaz', validationStatus: 'pending', rejectionReason: '' },
-                        2: { value: 'L', validationStatus: 'pending', rejectionReason: '' },
-                        3: { value: 'Pamuk', validationStatus: 'pending', rejectionReason: '' },
-                        4: { value: 'L', validationStatus: 'pending', rejectionReason: '' },
-                        5: { value: 'Beyaz', validationStatus: 'pending', rejectionReason: '' },
-                        6: { value: '0cm', validationStatus: 'pending', rejectionReason: '' },
-                        7: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        8: { value: 'İş', validationStatus: 'pending', rejectionReason: '' },
-                        9: { value: 'Türkiye', validationStatus: 'pending', rejectionReason: '' },
-                        10: { value: '250g', validationStatus: 'pending', rejectionReason: '' },
-                        11: { value: '75cm x 55cm', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 1, // ModaTedarik
-                        submittedAt: '2025-01-12T11:15:00Z',
-                        name: {
-                            value: { tr: 'Erkek Gömlek', en: 'Men\'s Shirt' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Gömlek', status: 'pending' },
-                            '2': { value: 'Beyaz', status: 'pending' },
-                            '3': { value: 'L', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-12T11:15:00Z' 
-                },
-                { 
-                    id: 37, 
-                    sku: 'GOND-005', 
-                    name: { tr: 'Kadın Çanta', en: 'Women\'s Handbag'}, 
-                    categoryId: 1, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 85, 
-                    originalityScore: 87, 
-                    imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
-                    images: [
-                        {
-                            id: 1,
-                            url: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&auto=format&fit=crop&q=80',
-                            type: 'main',
-                            title: 'Ana Ürün Görseli',
-                            alt: 'Kadın Çanta - Ana Görsel',
-                            quality: {
-                                resolution: '1200x1600',
-                                fileSize: '201 KB',
-                                format: 'JPEG',
-                                score: 88,
-                                issues: []
-                            },
-                            uploadedAt: '2025-01-11T09:30:00Z'
-                        }
-                    ],
-                    attributes: {
-                        1: { value: 'Siyah', validationStatus: 'pending', rejectionReason: '' },
-                        2: { value: 'Orta', validationStatus: 'pending', rejectionReason: '' },
-                        3: { value: 'Deri', validationStatus: 'pending', rejectionReason: '' },
-                        4: { value: 'Orta', validationStatus: 'pending', rejectionReason: '' },
-                        5: { value: 'Siyah', validationStatus: 'pending', rejectionReason: '' },
-                        6: { value: '0cm', validationStatus: 'pending', rejectionReason: '' },
-                        7: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        8: { value: 'Günlük', validationStatus: 'pending', rejectionReason: '' },
-                        9: { value: 'İtalya', validationStatus: 'pending', rejectionReason: '' },
-                        10: { value: '600g', validationStatus: 'pending', rejectionReason: '' },
-                        11: { value: '30cm x 20cm x 12cm', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 1, // ModaTedarik
-                        submittedAt: '2025-01-11T09:30:00Z',
-                        name: {
-                            value: { tr: 'Kadın Çanta', en: 'Women\'s Handbag' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Çanta', status: 'pending' },
-                            '2': { value: 'Siyah', status: 'pending' },
-                            '3': { value: 'Orta', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-11T09:30:00Z' 
-                },
+                
+                
+                
+                
+                
                 // Mock products from other suppliers to test filtering
-                { 
-                    id: 26, 
-                    sku: 'GOND-006', 
-                    name: { tr: 'Erkek Pantolon', en: 'Men\'s Pants'}, 
-                    categoryId: 1, 
-                    brandId: 2, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 75, 
-                    originalityScore: 82, 
-                    imageUrl: 'https://images.unsplash.com/photo-1506629905607-3b3b2b2b2b2b?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Pantolon', validationStatus: 'pending', rejectionReason: '' },
-                        '2': { value: 'Siyah', validationStatus: 'pending', rejectionReason: '' },
-                        '3': { value: '32', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        supplierId: 2, // Farklı Tedarikçi (not current supplier)
-                        submittedAt: '2025-01-10T15:20:00Z',
-                        name: {
-                            value: { tr: 'Erkek Pantolon', en: 'Men\'s Pants' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Pantolon', status: 'pending' },
-                            '2': { value: 'Siyah', status: 'pending' },
-                            '3': { value: '32', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-10T15:20:00Z' 
-                },
-                { 
-                    id: 28, 
-                    sku: 'GOND-007', 
-                    name: { tr: 'Kadın Ayakkabı', en: 'Women\'s Shoes'}, 
-                    categoryId: 2, 
-                    brandId: 3, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 80, 
-                    originalityScore: 85, 
-                    imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Kadın', validationStatus: 'pending', rejectionReason: '' },
-                        '2': { value: 'Kırmızı', validationStatus: 'pending', rejectionReason: '' },
-                        '3': { value: '38', validationStatus: 'pending', rejectionReason: '' }
-                    },
-                    supplierSubmission: {
-                        submittedAt: '2025-01-09T12:10:00Z',
-                        name: {
-                            value: { tr: 'Kadın Ayakkabı', en: 'Women\'s Shoes' },
-                            status: 'pending'
-                        },
-                        attributes: {
-                            '1': { value: 'Kadın', status: 'pending' },
-                            '2': { value: 'Kırmızı', status: 'pending' },
-                            '3': { value: '38', status: 'pending' }
-                        }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-09T12:10:00Z' 
-                },
+                
+                
                 { 
                     id: 16, 
                     sku: '8683822183857', 
@@ -1937,26 +1584,7 @@
                     variants: [], 
                     lastUpdated: '2025-01-07T10:15:00Z' 
                 },
-                { 
-                    id: 22, 
-                    sku: '8683822183859', 
-                    name: { tr: 'Mavi Kot Pantolon', en: 'Blue Jeans'}, 
-                    categoryId: 100, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 75, 
-                    originalityScore: 78, 
-                    imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Erkek', status: 'pending' },
-                        '2': { value: 'Mavi', status: 'pending' },
-                        '3': { value: '32', status: 'pending' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-06T14:45:00Z' 
-                },
+                
                 { 
                     id: 13, 
                     sku: '8683822183860', 
@@ -2017,46 +1645,8 @@
                     variants: [], 
                     lastUpdated: '2025-01-03T11:45:00Z' 
                 },
-                { 
-                    id: 30, 
-                    sku: '8683822183863', 
-                    name: { tr: 'Kahverengi Çanta', en: 'Brown Bag'}, 
-                    categoryId: 100, 
-                    brandId: 3, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 68, 
-                    originalityScore: 72, 
-                    imageUrl: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Kadın', status: 'pending' },
-                        '2': { value: 'Kahverengi', status: 'pending' },
-                        '3': { value: 'Tek Boyut', status: 'pending' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-02T13:15:00Z' 
-                },
-                { 
-                    id: 20, 
-                    sku: '8683822183864', 
-                    name: { tr: 'Siyah Saat', en: 'Black Watch'}, 
-                    categoryId: 100, 
-                    brandId: 5, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 96, 
-                    originalityScore: 94, 
-                    imageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Unisex', status: 'approved' },
-                        '2': { value: 'Siyah', status: 'approved' },
-                        '3': { value: 'Tek Boyut', status: 'approved' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2025-01-01T08:30:00Z' 
-                },
+                
+                
                 { 
                     id: 29, 
                     sku: '8683822183865', 
@@ -2117,26 +1707,7 @@
                     variants: [], 
                     lastUpdated: '2024-12-29T11:30:00Z' 
                 },
-                { 
-                    id: 33, 
-                    sku: '8683822183868', 
-                    name: { tr: 'Kırmızı Kadın Gömleği', en: 'Red Women Shirt'}, 
-                    categoryId: 3, 
-                    brandId: 3, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 75, 
-                    originalityScore: 78, 
-                    imageUrl: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Kadın', status: 'pending' },
-                        '2': { value: 'Kırmızı', status: 'pending' },
-                        '3': { value: 'S', status: 'pending' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2024-12-28T16:45:00Z' 
-                },
+                
                 { 
                     id: 34, 
                     sku: '8683822183869', 
@@ -2177,26 +1748,7 @@
                     variants: [], 
                     lastUpdated: '2024-12-26T13:10:00Z' 
                 },
-                { 
-                    id: 21, 
-                    sku: '8683822183871', 
-                    name: { tr: 'Beyaz Spor Ayakkabı', en: 'White Sports Shoes'}, 
-                    categoryId: 101, 
-                    brandId: 4, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 91, 
-                    originalityScore: 89, 
-                    imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Unisex', status: 'approved' },
-                        '2': { value: 'Beyaz', status: 'approved' },
-                        '3': { value: '41', status: 'approved' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2024-12-25T15:30:00Z' 
-                },
+                
                 { 
                     id: 38, 
                     sku: '8683822183872', 
@@ -2217,26 +1769,7 @@
                     variants: [], 
                     lastUpdated: '2024-12-24T12:45:00Z' 
                 },
-                { 
-                    id: 39, 
-                    sku: '8683822183873', 
-                    name: { tr: 'Siyah Kazak', en: 'Black Sweater'}, 
-                    categoryId: 102, 
-                    brandId: 1, 
-                    status: 'draft',
-                    isArchived: false,
-                    isBanned: false, 
-                    health: 78, 
-                    originalityScore: 80, 
-                    imageUrl: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&auto=format&fit=crop&q=60',
-                    attributes: {
-                        '1': { value: 'Kadın', status: 'pending' },
-                        '2': { value: 'Siyah', status: 'pending' },
-                        '3': { value: 'M', status: 'pending' }
-                    },
-                    variants: [], 
-                    lastUpdated: '2024-12-23T10:15:00Z' 
-                },
+                
                 { 
                     id: 40, 
                     sku: '8683822183874', 
@@ -2276,8 +1809,7 @@
                     },
                     variants: [], 
                     lastUpdated: '2024-12-21T11:30:00Z' 
-                },
-            ],
+                }],
             supplierProducts: [
                 // Product 1 - Taş Pamuk Elastan Dümeli Bermuda
                 { productId: 1, supplierId: 1, stock: 100, price: 499.99, isArchived: false, isBanned: false },
@@ -2525,16 +2057,14 @@
                     { id: 1004, name: 'Erkek Giyim', parentId: 1000 },
                     { id: 1005, name: 'Gömlek', parentId: 1004 },
                     { id: 1006, name: 'Ayakkabı', parentId: 1000 },
-                    { id: 1007, name: 'Klasik Ayakkabı', parentId: 1006 },
-                ],
+                    { id: 1007, name: 'Klasik Ayakkabı', parentId: 1006 }],
                 2: [ // Hepsiburada
                     { id: 2000, name: 'Giyim & Ayakkabı', parentId: null },
                     { id: 2001, name: 'Kadın', parentId: 2000 },
                     { id: 2002, name: 'Erkek', parentId: 2000 },
                     { id: 2003, name: 'Üst Giyim', parentId: 2002 },
                     { id: 2004, name: 'Gömlekler', parentId: 2003 },
-                    { id: 2005, name: 'Ayakkabılar', parentId: 2002 },
-                ]
+                    { id: 2005, name: 'Ayakkabılar', parentId: 2002 }]
             },
             categoryMappings: {
                 1: { 3: 1005, 2: 1007 },
@@ -2543,15 +2073,12 @@
             commissionRules: {
                 brand: [
                     { id: 1, targetId: 1, rate: 15, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 10 },
-                    { id: 2, targetId: 2, rate: 12, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 8 },
-                ],
+                    { id: 2, targetId: 2, rate: 12, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 8 }],
                 category: [
                     { id: 101, targetId: 101, rate: 20, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 15 },
-                    { id: 102, targetId: 3, rate: 18, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 12 },
-                ],
+                    { id: 102, targetId: 3, rate: 18, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 12 }],
                 seller: [
-                     { id: 201, targetId: 1, rate: 10, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 7 },
-                ]
+                     { id: 201, targetId: 1, rate: 10, startDate: '2025-01-01', endDate: '2025-12-31', defaultRate: 7 }]
             },
             // Admin revenue data from suppliers
             adminRevenue: [
@@ -4158,7 +3685,7 @@
                         <div class="flex justify-end space-x-3 pt-4 border-t">
                             <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
                                     class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
-                                Revize Et
+                                Revize İste
                             </button>
                             <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                     class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
@@ -4215,7 +3742,7 @@
                     <div class="flex justify-end space-x-3 pt-4 border-t mt-6">
                         <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
                                 class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
-                            Revize Et
+                            Revize İste
                         </button>
                         <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
@@ -4388,7 +3915,7 @@
                     <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
                         <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
                                 class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
-                            <i class="fas fa-edit mr-2"></i>Revize Et
+                            <i class="fas fa-edit mr-2"></i>Revize İste
                         </button>
                         <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
@@ -4499,7 +4026,7 @@
                 </div>
             `;
             
-            showModal('Talep Revizyonu', body, 'Revize Et', () => {
+            showModal('Talep Revizyonu', body, 'Revize İste', () => {
                 const selectedCheckboxes = document.querySelectorAll('.revision-reason-checkbox:checked');
                 const customReason = document.getElementById('custom-reason-text').value.trim();
                 const revisionMessage = document.getElementById('revision-message').value.trim();
@@ -6181,8 +5708,7 @@
                             { id: 'REV-004', supplierId: 1, supplierName: 'ModaTedarik', date: '2024-12-15', period: 'Aralık 2024', totalSales: 22000.00, commissionEarned: 3300.00, commissionRate: 15, orderCount: 78, avgOrderValue: 282.05, status: 'completed' },
                             { id: 'REV-005', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2024-12-15', period: 'Aralık 2024', totalSales: 19500.00, commissionEarned: 2340.00, commissionRate: 12, orderCount: 68, avgOrderValue: 286.76, status: 'completed' },
                             { id: 'REV-007', supplierId: 1, supplierName: 'ModaTedarik', date: '2024-11-15', period: 'Kasım 2024', totalSales: 19000.00, commissionEarned: 2850.00, commissionRate: 15, orderCount: 65, avgOrderValue: 292.31, status: 'completed' },
-                            { id: 'REV-008', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2024-11-15', period: 'Kasım 2024', totalSales: 16500.00, commissionEarned: 1980.00, commissionRate: 12, orderCount: 58, avgOrderValue: 284.48, status: 'completed' },
-                        ];
+                            { id: 'REV-008', supplierId: 2, supplierName: 'Ayakkabı A.Ş.', date: '2024-11-15', period: 'Kasım 2024', totalSales: 16500.00, commissionEarned: 1980.00, commissionRate: 12, orderCount: 58, avgOrderValue: 284.48, status: 'completed' }];
                         mockData.adminRevenue = sampleRevenueData;
                     }
                     
@@ -6969,7 +6495,7 @@
                         ${actionButtons}
                     </div>
                 `;
-            },
+            }
         };
 
         // --- CUSTOMER DETAIL PAGE RENDERER ---
@@ -9751,7 +9277,7 @@
                     price: parseFloat(row.price),
                     stock: parseInt(row.stock),
                     category: row.category,
-                    status: 'draft',
+                    status: 'active',
                         isArchived: false,
                         isBanned: false,
                     isArchived: false,
@@ -15362,7 +14888,7 @@
                                     Genel Bilgiler
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-                            <div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="supplierProductName" value="${t(product.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün adını girin"></div>
+                            <div><label class="block text-sm font-medium text-gray-700">Ürün Adı</label><input type="text" id="supplierProductName" value="${typeof product.name === 'string' ? product.name : (product.name?.tr || '')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün adını girin"></div>
                             <div><label class="block text-sm font-medium text-gray-700">${t('sku_header')}</label><input type="text" value="${product.sku}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                             <div><label class="block text-sm font-medium text-gray-700">Kategori</label><input type="text" value="${t(category.name)}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100" readonly></div>
                             <div><label class="block text-sm font-medium text-gray-700">Marka</label><select id="supplierProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select></div>
@@ -16342,13 +15868,7 @@
                 const validCategory = mockData.categories.find(c => isLowestLevelCategory(c.id));
                 const categoryId = validCategory ? validCategory.id : 1; // fallback to first category
                 
-                const newId = Math.max(...mockData.products.map(p => p.id)) + 1; const newProduct1 = { id: newId, sku: 'BULK-ADD-001', name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, categoryId: categoryId, status: 'draft',
-                        isArchived: false,
-                        isBanned: false,
-                    isArchived: false,
-                    isBanned: false, health: 40, imageUrl: 'https://placehold.co/100x100?text=JEANS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct1); mockData.supplierProducts.push({ productId: newId, supplierId: 1, stock: 200, price: 899.00 }); const newProduct2 = { id: newId + 1, sku: 'BULK-ADD-002', name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, categoryId: categoryId, status: 'draft',
-                        isArchived: false,
-                        isBanned: false, health: 50, imageUrl: 'https://placehold.co/100x100?text=DRESS', attributes: {}, variants: [], lastUpdated: new Date().toISOString() }; mockData.products.push(newProduct2); mockData.supplierProducts.push({ productId: newId + 1, supplierId: 2, stock: 150, price: 1200.00 }); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
+                const newRequestId1 = Math.max(...(mockData.requests || []).map(r => r.id), 0) + 1; const newRequest1 = { id: newRequestId1, type: 'product_create', status: 'submitted', productId: 1, supplierId: 1, submittedAt: new Date().toISOString(), data: { name: { tr: 'Toplu Eklenen Kot Pantolon', en: 'Bulk Added Jeans' }, sku: 'BULK-ADD-001', categoryId: categoryId, attributes: {} } }; mockData.requests.push(newRequest1); const newRequestId2 = newRequestId1 + 1; const newRequest2 = { id: newRequestId2, type: 'product_create', status: 'submitted', productId: 2, supplierId: 2, submittedAt: new Date().toISOString(), data: { name: { tr: 'Toplu Eklenen Elbise', en: 'Bulk Added Dress' }, sku: 'BULK-ADD-002', categoryId: categoryId, attributes: {} } }; mockData.requests.push(newRequest2); successCount = 2; } const successMessage = type === 'update' ? `${successCount} ürün başarıyla güncellendi.` : `${successCount} ürün başarıyla eklendi. Ürünleri 'Yeni Gelenler' sekmesinde bulabilirsiniz.`; showModal('İşlem Başarılı', `<p>${successMessage}</p>`, 'Tamam', () => { closeModal(); handleRouteChange(); }); }, 2000); }
         function buildMultiSelectCategoryTree(categories, parentId = null, level = 0) {
             const children = categories.filter(c => c.parentId === parentId);
             if (children.length === 0) return '';
@@ -17195,7 +16715,7 @@
                 name: { tr: '', en: '' },
                 categoryId: null,
                 brandId: null,
-                status: 'draft',
+                status: 'active',
                         isArchived: false,
                         isBanned: false,
                     isArchived: false,
@@ -17372,7 +16892,7 @@
                     name: { tr: name, en: name }, 
                     categoryId: categoryId, 
                     brandId: null,
-                    status: 'draft',
+                    status: 'active',
                         isArchived: false,
                         isBanned: false,
                     isArchived: false,
@@ -17566,7 +17086,7 @@
                     sku: document.getElementById('product-sku').value, 
                     name: { tr: name, en: name }, 
                     categoryId: categoryId, 
-                    status: 'draft',
+                    status: 'active',
                         isArchived: false,
                         isBanned: false,
                     isArchived: false,
@@ -19976,6 +19496,17 @@
                 saveSupplierRestriction(editId);
             });
             
+            // Ensure buttons are visible
+            const restrictionModalConfirmButton = document.getElementById('modal-confirm');
+            if(restrictionModalConfirmButton) {
+                restrictionModalConfirmButton.classList.remove('hidden');
+                restrictionModalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+            const restrictionModalCancelButton = document.getElementById('modal-cancel');
+            if(restrictionModalCancelButton) {
+                restrictionModalCancelButton.classList.remove('hidden');
+            }
+            
             // Add event listener for restriction type change
             const restrictionTypeSelect = document.getElementById('restriction-type');
             restrictionTypeSelect.addEventListener('change', toggleRestrictionFields);
@@ -21094,7 +20625,7 @@
                 const attributeId = id1 || subpage;
                 renderers.attribute(attributeId); 
             } 
-            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'},], showAddAttributeModal, null, (id) => navigateTo('#attribute/' + id)); } 
+            else if (page === 'attributes') { renderers.genericPage('attributes', mockData.attributes, [{key: 'name', label: 'Kod'}, {key: 'label', label: 'Etiket', render: (item) => t(item.label)}, {key: 'type', label: 'Tip'},{key: 'lastUpdated', label: 'Son Güncelleme', render: (item) => item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString('tr-TR') : '-'}], showAddAttributeModal, null, (id) => navigateTo('#attribute/' + id)); } 
             else if (page === 'channels') { renderers.genericPage('channels', mockData.channels, [{key: 'name', label: 'channel_name'}, {key: 'productCount', label: 'product_count'}, {key: 'currency', label: 'currency'}, {key: 'status', label: 'status_header', render: (item) => item.status === 'active' ? `<span class="text-green-600">${t('status_active')}</span>` : `<span class="text-red-600">${t('status_passive')}</span>`}], showAddChannelModal); } 
             else if (page === 'finance') { 
                 const user = window.currentUser || {};
@@ -21106,6 +20637,10 @@
             else if (page === 'settings') { 
                 if (subpage === 'suppliers') {
                     renderers.adminSuppliers?.();
+                } else if (subpage === 'supplier-restrictions') {
+                    pageTitle.textContent = 'Tedarikçi Kısıtlamaları';
+                    pageContent.innerHTML = `<div id="settings-tab-content"></div>`;
+                    renderSettingsSubTab('supplier-restrictions');
                 } else {
                     renderers.settings(subpage || 'api'); 
                 }

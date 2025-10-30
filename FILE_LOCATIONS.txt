@@ -1,0 +1,131 @@
+================================================================================
+                         EXACT FILE LOCATIONS
+================================================================================
+
+FILE: clean.html
+================================================================================
+
+SECTION: mockData.requests array
+──────────────────────────────────────────────────────────────────────────────
+Lines 664-720: Complete requests array
+
+REQUEST 3 (Product Create for Product 20):
+  Lines: 708-719
+  productId: 20
+  Type: product_create
+  Status: submitted
+
+REQUEST 4 (Product Create for Product 21):
+  Lines: 709-719
+  productId: 21
+  Type: product_create
+  Status: submitted
+
+──────────────────────────────────────────────────────────────────────────────
+
+SECTION: mockData.products array
+──────────────────────────────────────────────────────────────────────────────
+Lines 735+: Complete products array
+
+PRODUCT 20 - Siyah Saat (Black Watch):
+  Lines: 2040-2059
+  Status: draft
+  SKU: 8683822183864
+  categoryId: 100
+  brandId: 5
+
+  ⚠️ ACTION NEEDED (Option A):
+     Delete this entire product object to remove duplication
+
+──────────────────────────────────────────────────────────────────────────────
+
+PRODUCT 21 - Beyaz Spor Ayakkabı (White Sports Shoes):
+  Lines: 2180-2199  [ESTIMATED - verify exact lines]
+  Status: draft
+  SKU: 8683822183871
+  categoryId: 101
+  brandId: 4
+
+  ⚠️ ACTION NEEDED (Option A):
+     Delete this entire product object to remove duplication
+
+──────────────────────────────────────────────────────────────────────────────
+
+PRODUCT 1 - Taş Pamuk Elastan Dümeli Bermuda (Correct example):
+  ✓ In mockData.products (status: active)
+  ✓ In mockData.requests (via requests 1 & 2 - stock_price_update & product_update)
+  ✓ This is CORRECT - active products can have update requests
+
+================================================================================
+                         EXACT EDIT LOCATIONS
+================================================================================
+
+If choosing OPTION A (Recommended: Remove products 20 & 21):
+─────────────────────────────────────────────────────────────
+
+Edit 1: Remove Product 20
+  File: clean.html
+  Location: Lines 2040-2059
+  Action: Delete the entire object including commas
+
+  From:
+    },
+    {
+      id: 20,
+      sku: '8683822183864',
+      ...
+      lastUpdated: '2025-01-01T08:30:00Z'
+    },
+
+  To:
+    },
+    {
+      id: 29,  // Next product continues
+      ...
+    }
+
+──────────────────────────────────────────────────────────────
+
+Edit 2: Remove Product 21
+  File: clean.html
+  Location: Lines 2180-2199
+  Action: Delete the entire object including commas
+
+  Similar to above - remove the entire product 21 object
+
+──────────────────────────────────────────────────────────────
+
+If choosing OPTION B (Alternative: Remove requests 3 & 4):
+──────────────────────────────────────────────────────────────
+
+Edit: Remove Requests 3 & 4
+  File: clean.html
+  Location: Lines 708-719
+  Action: Delete the two product_create request objects
+
+  Keep requests 1 & 2 (for product 1)
+
+================================================================================
+                        VERIFICATION POINTS
+================================================================================
+
+After making changes, verify:
+
+1. JSON/JavaScript syntax is still valid
+   → Opening and closing braces match
+   → All commas are in correct places
+
+2. Product IDs in requests still reference valid products
+   → Request with productId: 1 should still work
+
+3. No products appear in both arrays
+   → Run a quick search for duplicate productIds
+
+4. mockData structure is still intact:
+   - products: [...] ✓
+   - requests: [...] ✓
+   - suppliers: [...] ✓
+   - brands: [...] ✓
+   - categories: [...] ✓
+
+================================================================================

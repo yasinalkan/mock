@@ -1,0 +1,88 @@
+================================================================================
+                    DATA CONSISTENCY QUICK REFERENCE
+================================================================================
+
+MAIN ISSUE: Products 20 & 21 appear in BOTH mockData.products AND mockData.requests
+            This causes them to display in both the "Ürünler" and "Yeni Ürün Talepleri" tabs
+
+================================================================================
+PROBLEMATIC PRODUCTS
+================================================================================
+
+Product ID 20: Siyah Saat (Black Watch)
+├─ Location 1: mockData.products[...] 
+│  ├─ Status: draft
+│  ├─ SKU: 8683822183864
+│  ├─ Category ID: 100
+│  └─ Brand ID: 5
+│
+├─ Location 2: mockData.requests[2] (Request ID: 3)
+│  ├─ Type: product_create
+│  ├─ Status: submitted
+│  └─ Supplier ID: 1
+│
+└─ RESULT: Appears in both tabs ⚠️
+
+---
+
+Product ID 21: Beyaz Spor Ayakkabı (White Sports Shoes)
+├─ Location 1: mockData.products[...]
+│  ├─ Status: draft
+│  ├─ SKU: 8683822183871
+│  ├─ Category ID: 101
+│  └─ Brand ID: 4
+│
+├─ Location 2: mockData.requests[3] (Request ID: 4)
+│  ├─ Type: product_create
+│  ├─ Status: submitted
+│  └─ Supplier ID: 1
+│
+└─ RESULT: Appears in both tabs ⚠️
+
+================================================================================
+OTHER FINDINGS
+================================================================================
+
+✓ Product 1 correctly appears in:
+  - mockData.products (status: active)
+  - mockData.requests (ID: 1, type: stock_price_update)
+  - mockData.requests (ID: 2, type: product_update)
+  ✓ This is CORRECT - active products can have update/price requests
+
+✓ All 64 other products:
+  - Only in mockData.products
+  - No associated requests
+  - ✓ This is CORRECT - most products don't need requests
+
+================================================================================
+WHERE THEY APPEAR IN UI
+================================================================================
+
+Tab: Yeni Ürün Talepleri (New Product Requests)
+  ├─ Shows requests of type: product_create
+  ├─ Maps to products: 20, 21 ✓ (This is expected)
+  └─ Result: Products 20, 21 appear here (CORRECT IF THEY'RE REMOVED FROM PRODUCTS ARRAY)
+
+Tab: Ürünler > Yeni Gelenler (Products > New Arrivals)
+  ├─ Filters: products with status = draft
+  ├─ Includes: products 20, 21 ⚠️ (WRONG if they should be requests only)
+  └─ Result: Products 20, 21 appear here (INCORRECT - DUPLICATION)
+
+================================================================================
+RECOMMENDED ACTION: Option A
+================================================================================
+
+1. REMOVE from mockData.products:
+   - Product object ID: 20 (Siyah Saat)
+   - Product object ID: 21 (Beyaz Spor Ayakkabı)
+
+2. VERIFY in mockData.requests:
+   - Request ID 3 (product_create for product 20) has complete data
+   - Request ID 4 (product_create for product 21) has complete data
+
+3. RESULT:
+   - Products 20, 21 only appear in "Yeni Ürün Talepleri" tab ✓
+   - Products 20, 21 do NOT appear in "Ürünler" > "Yeni Gelenler" ✓
+   - Clear data separation achieved ✓
+
+================================================================================
