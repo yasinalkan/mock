@@ -2079,7 +2079,7 @@ renderers['adminSuppliers'] = () => {
             const lastActivity = supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-';
             
             return `
-                <tr class="hover:bg-gray-50">
+                <tr class="hover:bg-gray-50 cursor-pointer" data-supplier-id="${supplier.id}">
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.name}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.email || '-'}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.phone || '-'}</td>
@@ -2087,10 +2087,7 @@ renderers['adminSuppliers'] = () => {
                     <td class="px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button onclick="showSupplierDetailModal(${supplier.id})" class="p-2 text-gray-500 hover:text-blue-600" title="Detayları Görüntüle">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onclick="event.stopPropagation();">
                         <button onclick="showSupplierStatusModal(${supplier.id})" class="p-2 text-gray-500 hover:text-green-600" title="Durum Değiştir">
                             <i class="fas fa-edit"></i>
                         </button>
@@ -2190,8 +2187,40 @@ renderers['adminSuppliers'] = () => {
         
         searchCount.textContent = `${filteredSuppliers.length} tedarikçi bulundu`;
         searchResults.classList.remove('hidden');
+        
+        // Re-attach row click listeners after filtering
+        attachSupplierRowClickListeners();
     });
+    
+    // Add click event listener for supplier rows
+    attachSupplierRowClickListeners();
 };
+
+function attachSupplierRowClickListeners() {
+    const tableBody = document.getElementById('supplierTableBody');
+    if (tableBody) {
+        // Remove existing listeners by cloning
+        const newTableBody = tableBody.cloneNode(true);
+        tableBody.parentNode.replaceChild(newTableBody, tableBody);
+        
+        // Add new event listener
+        newTableBody.addEventListener('click', (e) => {
+            const row = e.target.closest('tr[data-supplier-id]');
+            if (!row) return;
+            
+            // Don't navigate if clicking on buttons or action area
+            if (e.target.closest('button') || 
+                e.target.closest('td[onclick*="stopPropagation"]')) {
+                return;
+            }
+            
+            const supplierId = row.getAttribute('data-supplier-id');
+            if (supplierId) {
+                showSupplierDetailModal(parseInt(supplierId));
+            }
+        });
+    }
+}
 function showToast(msg){
   const t = document.createElement('div');
   t.className = 'fixed bottom-4 right-4 bg-black text-white text-sm px-3 py-2 rounded shadow';

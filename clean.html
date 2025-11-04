@@ -3885,25 +3885,38 @@
             } else {
                 // Product create/update request
                 const tempContainer = document.createElement('div');
+                
+                // Build tempSubmission from request.data, ensuring all submitted fields are included
+                // For product_update requests, prioritize submitted values from request.data
                 const tempSubmission = {
                     supplierId: request.supplierId,
                     status: request.status,
                     submittedAt: request.submittedAt,
-                    name: request.data.name ? { value: request.data.name, status: 'pending' } : null,
+                    // Convert name string to object format expected by renderComparisonTab
+                    // Use submitted name if provided, otherwise null (don't show if not submitted)
+                    name: request.data.name !== undefined ? { value: request.data.name, status: 'pending' } : null,
+                    // Include all submitted attributes
                     attributes: request.data.attributes || {},
-                    categoryId: request.data.categoryId,
-                    brandId: request.data.brandId,
-                    sku: request.data.sku,
-                    description: request.data.description || '',
-                    imageUrl: request.data.imageUrl || '',
-                    images: request.data.images || [],
-                    listPrice: request.data.listPrice || 0,
+                    // Use submitted values if they exist in request.data, otherwise fall back to product values
+                    categoryId: request.data.categoryId !== undefined ? request.data.categoryId : product.categoryId,
+                    brandId: request.data.brandId !== undefined ? request.data.brandId : product.brandId,
+                    brand: request.data.brand !== undefined ? request.data.brand : product.brand,
+                    model: request.data.model !== undefined ? request.data.model : product.model,
+                    keywords: request.data.keywords !== undefined ? request.data.keywords : product.keywords,
+                    sku: request.data.sku !== undefined ? request.data.sku : product.sku,
+                    // For description, use submitted value (even if empty string) if it exists in request.data
+                    description: request.data.description !== undefined ? request.data.description : (product.description || ''),
+                    imageUrl: request.data.imageUrl !== undefined ? request.data.imageUrl : (product.imageUrl || ''),
+                    images: request.data.images !== undefined ? request.data.images : (product.images || []),
+                    listPrice: request.data.listPrice !== undefined ? request.data.listPrice : 0,
                     requestType: request.type
                 };
                 
                 const originalSubmission = product.supplierSubmission;
+                // Temporarily set the submission to show submitted values
                 product.supplierSubmission = tempSubmission;
                 renderComparisonTab(tempContainer, product, window.currentUser?.role === 'supplier');
+                // Restore original submission
                 product.supplierSubmission = originalSubmission;
                 
                 pageContent += tempContainer.innerHTML;
@@ -13724,7 +13737,21 @@
 
                 const isRejected = p.status === 'rejected';
                 const rowClass = 'border-b hover:bg-gray-50 cursor-pointer';
-                const clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
+                
+                // For suppliers in update requests tab, navigate to request detail if there's a pending request
+                let clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
+                let requestId = null;
+                if (isSupplier && isAwaitingApprovalTab) {
+                    const request = mockData.requests.find(r => 
+                        r.type === 'product_update' && 
+                        r.productId === p.id && 
+                        (r.status === 'submitted' || r.status === 'toBeRevised')
+                    );
+                    if (request) {
+                        requestId = request.id;
+                        clickHandler = `data-request-id="${request.id}"`;
+                    }
+                }
 
                 return `
                 <tr class="${rowClass}" ${clickHandler}>
@@ -13897,6 +13924,29 @@
                 checkbox.addEventListener('change', updateBulkActionsVisibility);
             });
             
+            // Add click event listener for supplier update requests
+            if (isSupplier && isAwaitingApprovalTab) {
+                const tableBody = container.querySelector('tbody');
+                if (tableBody) {
+                    tableBody.addEventListener('click', (e) => {
+                        const row = e.target.closest('tr[data-request-id]');
+                        if (!row) return;
+                        
+                        // Don't navigate if clicking on checkbox, button, or link
+                        if (e.target.closest('input[type="checkbox"]') || 
+                            e.target.closest('button') || 
+                            e.target.closest('a')) {
+                            return;
+                        }
+                        
+                        const requestId = row.getAttribute('data-request-id');
+                        if (requestId) {
+                            navigateTo(`#request-detail/${requestId}`);
+                        }
+                    });
+                }
+            }
+            
             // Make the products table sortable
             setTimeout(() => makeTableSortable('products-table-alt'), 100);
         }
@@ -13950,12 +14000,13 @@
                 const recommendationIcon = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
 
                 return `
-                    <tr class="border-b hover:bg-gray-50">
+                    <tr class="border-b hover:bg-gray-50 cursor-pointer" data-request-id="${request.id}">
                         <td class="p-4 w-10">
                             <input type="checkbox" class="product-checkbox rounded border-gray-300" 
                                    data-product-id="${request.productId}" 
                                    data-supplier-id="${request.supplierId}"
-                                   data-request-index="${index}">
+                                   data-request-index="${index}"
+                                   onclick="event.stopPropagation();">
                         </td>
                         <td class="p-4">
                             <div class="flex items-center space-x-3">
@@ -13992,12 +14043,6 @@
                             </div>
                         </td>
                         <td class="p-4">
-                            <div class="text-sm">
-                                <div class="font-medium text-gray-900">${request.validationInfo ? request.validationInfo.platformAverage.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' }) : 'N/A'}</div>
-                                <div class="text-gray-500">Platform Ort.</div>
-                            </div>
-                        </td>
-                        <td class="p-4">
                             <div class="flex items-center">
                                 <i class="fas ${recommendationIcon} ${recommendationColor} mr-1"></i>
                                 <span class="font-medium ${recommendationColor}">
@@ -14018,11 +14063,7 @@
                             </div>
                         </td>
                         <td class="p-4 text-right">
-                            <div class="flex space-x-2">
-                                <button onclick="navigateTo(\'#request-detail/\' + ${request.id})" 
-                                        class="px-3 py-1 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm font-medium">
-                                    <i class="fas fa-search-plus mr-1"></i>İncele
-                                </button>
+                            <div class="flex space-x-2" onclick="event.stopPropagation();">
                                 <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                         class="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 text-sm font-medium">
                                     <i class="fas fa-check mr-1"></i>Onayla
@@ -14051,20 +14092,40 @@
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Mevcut Fiyat</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Talep Edilen Fiyat</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Değişim</th>
-                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Platform Ortalaması</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Öneri</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Neden</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Durum</th>
                                 <th class="p-4 text-sm font-semibold text-right">İşlemler</th>
                             </tr>
                         </thead>
-                        <tbody>${requestRows}</tbody>
+                        <tbody id="price-requests-table-body">${requestRows}</tbody>
                     </table>
                 </div>
             `;
             
             // Setup checkbox event listeners using existing system
             setupPriceRequestsCheckboxListeners();
+            
+            // Add click event listener to table body for row navigation
+            const tableBody = document.getElementById('price-requests-table-body');
+            if (tableBody) {
+                tableBody.addEventListener('click', (e) => {
+                    const row = e.target.closest('tr[data-request-id]');
+                    if (!row) return;
+                    
+                    // Don't navigate if clicking on checkbox, button, or action area
+                    if (e.target.closest('input[type="checkbox"]') || 
+                        e.target.closest('button') || 
+                        e.target.closest('[onclick*="event.stopPropagation"]')) {
+                        return;
+                    }
+                    
+                    const requestId = row.getAttribute('data-request-id');
+                    if (requestId) {
+                        navigateTo(`#request-detail/${requestId}`);
+                    }
+                });
+            }
             
             // Make the price requests table sortable
             setTimeout(() => makeTableSortable('price-requests-table'), 100);
@@ -20732,12 +20793,12 @@ const navLinksSupplier = [
     text: 'Ayarlar', 
     role: 'supplier',
     children: [
-      { href: '#supplier-settings/stores', icon: 'fa-store', text: 'Mağaza Yönetimi', role: 'supplier' },
+      //{ href: '#supplier-settings/stores', icon: 'fa-store', text: 'Mağaza Yönetimi', role: 'supplier' },
       { href: '#supplier-settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'supplier' }
     ]
   },
   { href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' },
-  { href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'supplier' }
+  //{ href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'supplier' }
 ];
 const navLinksAdmin = [
   { 
@@ -20749,10 +20810,10 @@ const navLinksAdmin = [
       { href: '#products', icon: 'fa-box', text: 'Ürün Listesi', role: 'admin' },
       { href: '#categories', icon: 'fa-sitemap', text: 'Kategoriler', role: 'admin' },
       { href: '#attributes', icon: 'fa-tags', text: 'Özellikler', role: 'admin' },
-      { href: '#products/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' }
+      //{ href: '#products/prohibited-words', icon: 'fa-ban', text: 'Yasaklı Kelimeler', role: 'admin' }
     ]
   },
-  { href: '#dashboard', icon: 'fa-tachometer-alt', text: 'Dashboard', role: 'admin' },
+  //{ href: '#dashboard', icon: 'fa-tachometer-alt', text: 'Dashboard', role: 'admin' },
   { 
     type: 'parent', 
     icon: 'fa-shopping-bag', 
@@ -20776,17 +20837,25 @@ const navLinksAdmin = [
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden
   { 
     type: 'parent', 
+    icon: 'fa-handshake', 
+    text: 'Tedarikçiler', 
+    role: 'admin',
+    children: [
+      { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçi Listesi', role: 'admin' },
+      { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
+    ]
+  },
+  { 
+    type: 'parent', 
     icon: 'fa-cog', 
     text: 'Ayarlar', 
     role: 'admin',
     children: [
-      { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçi Listesi', role: 'admin' },
       { href: '#settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'admin' },
-      { href: '#settings/api', icon: 'fa-key', text: 'API Anahtarları', role: 'admin' },
-      { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
+      //{ href: '#settings/api', icon: 'fa-key', text: 'API Anahtarları', role: 'admin' }
     ]
   },
-  { href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'admin' }
+  //{ href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'admin' }
 ];
 
 let navHTML = pinnedHTML;
