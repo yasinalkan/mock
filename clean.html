@@ -6748,198 +6748,102 @@
             )].sort();
 
             pageContent.innerHTML = `
-                <div class="space-y-6">
-                    <!-- Back Button -->
-                    <div class="flex items-center space-x-4">
-                        <button onclick="navigateTo('#attributes')" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 flex items-center space-x-2">
-                            <i class="fas fa-arrow-left"></i>
-                            <span>Özelliklere Dön</span>
-                        </button>
+                <div class="bg-white rounded-lg shadow-sm border">
+                    <!-- Attribute Header -->
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-tag text-blue-600 text-lg"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold text-gray-900">${t(attribute.label)}</h1>
+                                    <p class="text-gray-600 mt-1">${attribute.name}</p>
+                                    <div class="flex items-center space-x-2 mt-2">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            ${attribute.type}
+                                        </span>
+                                        ${attribute.scopeable ? '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Filtrelenebilir</span>' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-3" id="attribute-actions">
+                                <button onclick="toggleEditMode(${attribute.id})" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center space-x-2">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Düzenle</span>
+                                </button>
+                                <button onclick="showDeleteAttributeModal(${attribute.id})" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center space-x-2">
+                                    <i class="fas fa-trash"></i>
+                                    <span>Sil</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Attribute Information Card -->
-                    <div class="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/20 rounded-2xl shadow-xl border border-blue-100/50 overflow-hidden">
-                        <!-- Header Section -->
-                        <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-8 py-6 relative overflow-hidden">
-                            <div class="absolute inset-0 bg-black/5"></div>
-                            <div class="relative flex items-center justify-between">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                                        <i class="fas fa-tag text-white text-2xl"></i>
+                    <!-- Content Section -->
+                    <div class="p-6">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Temel Bilgiler</h3>
+                                <div class="bg-gray-50 rounded-lg p-4 space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Kod</label>
+                                        <div id="attribute-name-display" class="mt-1 text-sm text-gray-900">${attribute.name}</div>
+                                        <input type="text" id="attribute-name-edit" value="${attribute.name}" class="hidden w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
-                                        <h2 class="text-3xl font-bold text-white mb-1">${t(attribute.label)}</h2>
-                                        <p class="text-blue-100 text-sm font-medium">Özellik Detayları</p>
+                                        <label class="text-sm font-medium text-gray-700">Etiket (Türkçe)</label>
+                                        <div id="attribute-label-tr-display" class="mt-1 text-sm text-gray-900">${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}</div>
+                                        <input type="text" id="attribute-label-tr-edit" value="${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}" class="hidden w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     </div>
-                                </div>
-                                <div class="flex space-x-3" id="attribute-actions">
-                                    <button onclick="toggleEditMode(${attribute.id})" class="px-6 py-3 bg-white/20 backdrop-blur-sm text-white rounded-xl hover:bg-white/30 transition-all duration-200 flex items-center space-x-2 border border-white/30 shadow-lg hover:shadow-xl">
-                                        <i class="fas fa-edit"></i>
-                                        <span class="font-medium">Düzenle</span>
-                                    </button>
-                                    <button onclick="showDeleteAttributeModal(${attribute.id})" class="px-6 py-3 bg-red-500/80 backdrop-blur-sm text-white rounded-xl hover:bg-red-500 transition-all duration-200 flex items-center space-x-2 border border-red-400/50 shadow-lg hover:shadow-xl">
-                                        <i class="fas fa-trash"></i>
-                                        <span class="font-medium">Sil</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Content Section -->
-                        <div class="p-8">
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <!-- Left Column - Basic Information -->
-                                <div class="space-y-6">
-                                    <div class="flex items-center space-x-3 mb-6">
-                                        <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center shadow-sm">
-                                            <i class="fas fa-info-circle text-blue-600 text-lg"></i>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-gray-900">Temel Bilgiler</h3>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Etiket (İngilizce)</label>
+                                        <div id="attribute-label-en-display" class="mt-1 text-sm text-gray-900">${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}</div>
+                                        <input type="text" id="attribute-label-en-edit" value="${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}" class="hidden w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     </div>
-                                    
-                                    <div class="space-y-5">
-                                        <!-- Code Field -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                                                    <i class="fas fa-code text-gray-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Kod</div>
-                                                    <div id="attribute-name-display" class="text-lg font-semibold text-gray-900">${attribute.name}</div>
-                                                    <input type="text" id="attribute-name-edit" value="${attribute.name}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Turkish Label -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                                                    <i class="fas fa-tag text-green-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Etiket (Türkçe)</div>
-                                                    <div id="attribute-label-tr-display" class="text-lg font-semibold text-gray-900">${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}</div>
-                                                    <input type="text" id="attribute-label-tr-edit" value="${typeof attribute.label === 'object' ? attribute.label.tr : attribute.label}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- English Label -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                                                    <i class="fas fa-tag text-purple-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Etiket (İngilizce)</div>
-                                                    <div id="attribute-label-en-display" class="text-lg font-semibold text-gray-900">${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}</div>
-                                                    <input type="text" id="attribute-label-en-edit" value="${typeof attribute.label === 'object' ? attribute.label.en : attribute.label}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Type Field -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center group-hover:bg-orange-200 transition-colors">
-                                                    <i class="fas fa-cog text-orange-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Tip</div>
-                                                    <div id="attribute-type-display" class="text-lg font-semibold text-gray-900">${attribute.type}</div>
-                                                    <select id="attribute-type-edit" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                        <option value="Text" ${attribute.type === 'Text' ? 'selected' : ''}>Metin</option>
-                                                        <option value="Select" ${attribute.type === 'Select' ? 'selected' : ''}>Seçim</option>
-                                                        <option value="Number" ${attribute.type === 'Number' ? 'selected' : ''}>Sayı</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Right Column - Additional Information -->
-                                <div class="space-y-6">
-                                    <div class="flex items-center space-x-3 mb-6">
-                                        <div class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center shadow-sm">
-                                            <i class="fas fa-cogs text-indigo-600 text-lg"></i>
-                                        </div>
-                                        <h3 class="text-xl font-bold text-gray-900">Ek Bilgiler</h3>
-                                    </div>
-                                    
-                                    <div class="space-y-5">
-                                        <!-- Default Value Field -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
-                                                    <i class="fas fa-star text-yellow-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Varsayılan Değer</div>
-                                                    <div id="attribute-default-display" class="text-lg font-semibold text-gray-900">${attribute.default || 'Belirtilmemiş'}</div>
-                                                    <input type="text" id="attribute-default-edit" value="${attribute.default || ''}" class="hidden w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Filterable Field -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center group-hover:bg-teal-200 transition-colors">
-                                                    <i class="fas fa-filter text-teal-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Filtrelenebilir</div>
-                                                    <div id="attribute-scopeable-display" class="text-lg font-semibold text-gray-900">${attribute.scopeable ? 'Evet' : 'Hayır'}</div>
-                                                    <div id="attribute-scopeable-edit" class="hidden">
-                                                        <label class="flex items-center">
-                                                            <input type="checkbox" ${attribute.scopeable ? 'checked' : ''} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                                                            <span class="ml-2 text-sm text-gray-700">Filtrelenebilir</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Last Updated Field -->
-                                        <div class="bg-white rounded-xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 group">
-                                            <div class="flex items-center space-x-4">
-                                                <div class="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                                                    <i class="fas fa-clock text-gray-600 text-lg"></i>
-                                                </div>
-                                                <div class="flex-1">
-                                                    <div class="text-sm font-medium text-gray-500 mb-2">Son Güncelleme</div>
-                                                    <div class="text-lg font-semibold text-gray-900">${attribute.lastUpdated ? new Date(attribute.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Tip</label>
+                                        <div id="attribute-type-display" class="mt-1 text-sm text-gray-900">${attribute.type}</div>
+                                        <select id="attribute-type-edit" class="hidden w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="Text" ${attribute.type === 'Text' ? 'selected' : ''}>Metin</option>
+                                            <option value="Select" ${attribute.type === 'Select' ? 'selected' : ''}>Seçim</option>
+                                            <option value="Number" ${attribute.type === 'Number' ? 'selected' : ''}>Sayı</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Default Value Highlight Section (if exists) -->
-                            ${attribute.default ? `
-                                <div class="mt-8 pt-8 border-t border-gray-200">
-                                    <div class="bg-gradient-to-r from-yellow-50 via-orange-50 to-amber-50 rounded-2xl p-6 border border-yellow-200 shadow-sm">
-                                        <div class="flex items-center space-x-4 mb-4">
-                                            <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center shadow-sm">
-                                                <i class="fas fa-star text-yellow-600 text-lg"></i>
-                                            </div>
-                                            <h3 class="text-xl font-bold text-gray-900">Varsayılan Değer</h3>
-                                        </div>
-                                        <div class="bg-white rounded-xl p-4 border border-yellow-200 shadow-sm">
-                                            <span class="text-xl font-bold text-gray-900">${attribute.default}</span>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-4">Ek Bilgiler</h3>
+                                <div class="bg-gray-50 rounded-lg p-4 space-y-4">
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Varsayılan Değer</label>
+                                        <div id="attribute-default-display" class="mt-1 text-sm text-gray-900">${attribute.default || 'Belirtilmemiş'}</div>
+                                        <input type="text" id="attribute-default-edit" value="${attribute.default || ''}" class="hidden w-full px-3 py-2 mt-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Filtrelenebilir</label>
+                                        <div id="attribute-scopeable-display" class="mt-1 text-sm text-gray-900">${attribute.scopeable ? 'Evet' : 'Hayır'}</div>
+                                        <div id="attribute-scopeable-edit" class="hidden mt-1">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" ${attribute.scopeable ? 'checked' : ''} class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                <span class="ml-2 text-sm text-gray-700">Filtrelenebilir</span>
+                                            </label>
                                         </div>
                                     </div>
+                                    <div>
+                                        <label class="text-sm font-medium text-gray-700">Son Güncelleme</label>
+                                        <div class="mt-1 text-sm text-gray-900">${attribute.lastUpdated ? new Date(attribute.lastUpdated).toLocaleDateString('tr-TR') : 'Bilinmiyor'}</div>
+                                    </div>
                                 </div>
-                            ` : ''}
+                            </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Options and Values Management -->
-                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                <!-- Options and Values Management -->
+                <div class="bg-white rounded-lg shadow-sm border mt-6">
+                    <div class="p-6">
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <!-- Options Section -->
                             <div>
@@ -7009,8 +6913,9 @@
                         </div>
                     </div>
 
-                    <!-- Categories Using This Attribute -->
-                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                <!-- Categories Using This Attribute -->
+                <div class="bg-white rounded-lg shadow-sm border mt-6">
+                    <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                             <i class="fas fa-sitemap text-green-600 mr-2"></i>
                             Bu Özelliği Kullanan Kategoriler (${categoriesUsingAttribute.length})
@@ -7036,8 +6941,9 @@
                             </div>
                         `}
                     </div>
+                </div>
 
-                    <!-- Recent Products Using This Attribute - COMMENTED OUT FOR NOW -->
+                <!-- Recent Products Using This Attribute - COMMENTED OUT FOR NOW -->
                     <!-- 
                     <div class="bg-white rounded-lg shadow-sm border p-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -13254,23 +13160,6 @@
                             <p class="mt-1 text-sm text-gray-900">${lastActivity}</p>
                         </div>
                     </div>
-                    
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-blue-800 mb-2">İstatistikler</h4>
-                        <div class="grid grid-cols-3 gap-4 text-sm">
-                            <div>
-                                <span class="font-semibold text-blue-600">Toplam Ürün:</span>
-                                <span class="ml-2">${mockData.products.filter(p => p.supplierId === supplierId).length}</span>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-blue-600">Aktif Ürün:</span>
-                                <span class="ml-2">${mockData.products.filter(p => p.supplierId === supplierId && p.status === 'active').length}</span>
-                            </div>
-                            <div>
-                                <span class="font-semibold text-blue-600">Toplam Sipariş:</span>
-                                <span class="ml-2">${mockData.orders.filter(o => o.supplierId === supplierId).length}</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             `;
@@ -18675,28 +18564,33 @@
             
             if (tabName === 'users') {
                 // User Management tab
-                const users = mockData.users || [];
-                const rows = users.map(user => `
-                    <tr class="border-b hover:bg-gray-50">
-                        <td class="p-3 text-sm font-medium">${user.name}</td>
-                        <td class="p-3 text-sm">${user.email}</td>
-                        <td class="p-3 text-sm">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
-                                ${user.role === 'admin' ? 'Admin' : 'Tedarikçi'}
-                            </span>
-                        </td>
-                        <td class="p-3 text-sm">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('tr-TR') : 'Hiç giriş yapmamış'}</td>
-                        <td class="p-3 text-sm">
-                            <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
-                                ${user.active ? t('status_active') : t('status_passive')}
-                            </span>
-                        </td>
-                        <td class="p-3 text-right">
-                            <button class="p-2 text-gray-500 hover:text-blue-600 edit-user" data-id="${user.id}"><i class="fas fa-edit"></i></button>
-                            <button class="p-2 text-gray-500 hover:text-red-600 del-user" data-id="${user.id}"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
+                const allUsers = mockData.users || [];
+                
+                const renderUserRows = (users) => {
+                    return users.map(user => `
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="p-3 text-sm font-medium">${user.name}</td>
+                            <td class="p-3 text-sm">${user.email}</td>
+                            <td class="p-3 text-sm">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
+                                    ${user.role === 'admin' ? 'Admin' : 'Tedarikçi'}
+                                </span>
+                            </td>
+                            <td class="p-3 text-sm">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('tr-TR') : 'Hiç giriş yapmamış'}</td>
+                            <td class="p-3 text-sm">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                    ${user.active ? t('status_active') : t('status_passive')}
+                                </span>
+                            </td>
+                            <td class="p-3 text-right">
+                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-user" data-id="${user.id}"><i class="fas fa-edit"></i></button>
+                                <button class="p-2 text-gray-500 hover:text-red-600 del-user" data-id="${user.id}"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                };
+                
+                const initialRows = renderUserRows(allUsers);
                 
                 container.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
@@ -18705,6 +18599,50 @@
                             <i class="fas fa-user-plus mr-2"></i> Yeni Kullanıcı Ekle
                         </button>
                     </div>
+                    
+                    <!-- Search and Filter Section -->
+                    <div class="mb-4 bg-gray-50 rounded-lg p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Search Input -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                    <input type="text" id="userSearchInput" 
+                                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                           placeholder="Ad, soyad veya e-posta ile ara...">
+                                </div>
+                            </div>
+                            
+                            <!-- Role Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+                                <select id="userRoleFilter" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Roller</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="supplier">Tedarikçi</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Status Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+                                <select id="userStatusFilter" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Durumlar</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="inactive">Pasif</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Results Count -->
+                        <div id="userSearchResults" class="mt-3 text-sm text-gray-500 hidden">
+                            <span id="userSearchCount"></span>
+                        </div>
+                    </div>
+                    
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead class="table-header">
@@ -18717,12 +18655,97 @@
                                     <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                                 </tr>
                             </thead>
-                            <tbody>${rows || `<tr><td colspan="6" class="p-6 text-center text-gray-500">Kullanıcı bulunamadı.</td></tr>`}</tbody>
+                            <tbody id="userTableBody">${initialRows || `<tr><td colspan="6" class="p-6 text-center text-gray-500">Kullanıcı bulunamadı.</td></tr>`}</tbody>
                         </table>
                     </div>
                 `;
                 
                 document.getElementById('addUserBtn')?.addEventListener('click', showAddUserModal);
+                
+                // Search and Filter Functionality
+                const searchInput = document.getElementById('userSearchInput');
+                const roleFilter = document.getElementById('userRoleFilter');
+                const statusFilter = document.getElementById('userStatusFilter');
+                const tableBody = document.getElementById('userTableBody');
+                const searchResults = document.getElementById('userSearchResults');
+                const searchCount = document.getElementById('userSearchCount');
+                
+                const applyFilters = () => {
+                    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+                    const selectedRole = roleFilter?.value || '';
+                    const selectedStatus = statusFilter?.value || '';
+                    
+                    const filteredUsers = allUsers.filter(user => {
+                        // Search filter
+                        if (searchTerm) {
+                            const name = (user.name || '').toLowerCase();
+                            const email = (user.email || '').toLowerCase();
+                            if (!name.includes(searchTerm) && !email.includes(searchTerm)) {
+                                return false;
+                            }
+                        }
+                        
+                        // Role filter
+                        if (selectedRole && user.role !== selectedRole) {
+                            return false;
+                        }
+                        
+                        // Status filter
+                        if (selectedStatus) {
+                            if (selectedStatus === 'active' && !user.active) {
+                                return false;
+                            }
+                            if (selectedStatus === 'inactive' && user.active) {
+                                return false;
+                            }
+                        }
+                        
+                        return true;
+                    });
+                    
+                    // Render filtered rows
+                    if (filteredUsers.length === 0) {
+                        tableBody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="p-6 text-center text-gray-500">
+                                    <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
+                                    <p>Sonuç bulunamadı</p>
+                                </td>
+                            </tr>
+                        `;
+                    } else {
+                        tableBody.innerHTML = renderUserRows(filteredUsers);
+                        
+                        // Re-attach event listeners for edit and delete buttons
+                        container.querySelectorAll('.edit-user').forEach(btn => {
+                            btn.addEventListener('click', () => showAddUserModal(parseInt(btn.dataset.id)));
+                        });
+                        container.querySelectorAll('.del-user').forEach(btn => {
+                            btn.addEventListener('click', () => deleteUser(parseInt(btn.dataset.id)));
+                        });
+                    }
+                    
+                    // Update results count
+                    if (searchTerm || selectedRole || selectedStatus) {
+                        searchCount.textContent = `${filteredUsers.length} kullanıcı bulundu`;
+                        searchResults.classList.remove('hidden');
+                    } else {
+                        searchResults.classList.add('hidden');
+                    }
+                };
+                
+                // Add event listeners
+                if (searchInput) {
+                    searchInput.addEventListener('input', applyFilters);
+                }
+                if (roleFilter) {
+                    roleFilter.addEventListener('change', applyFilters);
+                }
+                if (statusFilter) {
+                    statusFilter.addEventListener('change', applyFilters);
+                }
+                
+                // Initial event listeners for edit and delete buttons
                 container.querySelectorAll('.edit-user').forEach(btn => btn.addEventListener('click', () => showAddUserModal(parseInt(btn.dataset.id))));
                 container.querySelectorAll('.del-user').forEach(btn => btn.addEventListener('click', () => deleteUser(parseInt(btn.dataset.id))));
                 
@@ -20636,6 +20659,14 @@
             else if (page === 'settings') { 
                 if (subpage === 'suppliers') {
                     renderers.adminSuppliers?.();
+                } else if (subpage === 'users') {
+                    pageTitle.textContent = t('settings_users');
+                    pageContent.innerHTML = `<div class="bg-white rounded-lg shadow"><div id="settings-tab-content" class="p-6"></div></div>`;
+                    renderSettingsSubTab('users');
+                } else if (subpage === 'api' || subpage === 'api-keys') {
+                    pageTitle.textContent = t('settings_api_keys');
+                    pageContent.innerHTML = `<div class="bg-white rounded-lg shadow"><div id="settings-tab-content" class="p-6"></div></div>`;
+                    renderSettingsSubTab('api');
                 } else if (subpage === 'supplier-restrictions') {
                     pageTitle.textContent = 'Tedarikçi Kısıtlamaları';
                     pageContent.innerHTML = `<div id="settings-tab-content"></div>`;

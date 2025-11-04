@@ -1211,6 +1211,120 @@ window.mockData.orders = window.mockData.orders || [
                 showModal('Erişim Yok', '<p>Bu sayfa sadece tedarikçiler içindir.</p>', 'Kapat', closeModal);
                 navigateTo('#products/aktif'); return;
             }
+            
+            // Supplier users data - representing team members
+            const supplierUsers = [
+                { id: 1, name: 'Ahmet Yılmaz', email: 'ahmet@modatedarik.com', role: 'Admin', title: 'Sahip', status: 'active', lastLogin: '2 saat önce', permissions: ['Ürün Yönetimi', 'Sipariş Yönetimi', 'Kullanıcı Yönetimi'], avatarColor: 'blue', avatarInitials: 'AY' },
+                { id: 2, name: 'Elif Demir', email: 'elif@modatedarik.com', role: 'Ürün Uzmanı', title: 'Ürün Uzmanı', status: 'active', lastLogin: '1 gün önce', permissions: ['Ürün Yönetimi', 'Stok Güncelleme'], avatarColor: 'green', avatarInitials: 'ED' },
+                { id: 3, name: 'Mehmet Kaya', email: 'mehmet@modatedarik.com', role: 'Sipariş Uzmanı', title: 'Sipariş Uzmanı', status: 'active', lastLogin: '3 saat önce', permissions: ['Sipariş Yönetimi', 'Müşteri Hizmetleri'], avatarColor: 'orange', avatarInitials: 'MK' },
+                { id: 4, name: 'Zeynep Aktaş', email: 'zeynep@modatedarik.com', role: 'Stajyer', title: 'Stajyer', status: 'pending', lastLogin: '-', permissions: ['Sadece Görüntüleme'], avatarColor: 'yellow', avatarInitials: 'ZA' }
+            ];
+            
+            const renderUserRows = (users) => {
+                return users.map(u => {
+                    const getStatusBadge = (status) => {
+                        if (status === 'active') {
+                            return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>';
+                        } else if (status === 'pending') {
+                            return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Bekliyor</span>';
+                        } else {
+                            return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Pasif</span>';
+                        }
+                    };
+                    
+                    const getRoleBadge = (role) => {
+                        const roleClasses = {
+                            'Admin': 'bg-purple-100 text-purple-800',
+                            'Ürün Uzmanı': 'bg-blue-100 text-blue-800',
+                            'Sipariş Uzmanı': 'bg-green-100 text-green-800',
+                            'Stajyer': 'bg-gray-100 text-gray-800'
+                        };
+                        const roleClass = roleClasses[role] || 'bg-gray-100 text-gray-800';
+                        return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${roleClass}">${role}</span>`;
+                    };
+                    
+                    const getAvatarColor = (color) => {
+                        const colors = {
+                            'blue': 'bg-blue-100 text-blue-600',
+                            'green': 'bg-green-100 text-green-600',
+                            'orange': 'bg-orange-100 text-orange-600',
+                            'yellow': 'bg-yellow-100 text-yellow-600'
+                        };
+                        return colors[color] || 'bg-gray-100 text-gray-600';
+                    };
+                    
+                    const permissionsHTML = u.permissions.map(perm => {
+                        const permColors = {
+                            'Ürün Yönetimi': 'bg-green-100 text-green-800',
+                            'Sipariş Yönetimi': 'bg-blue-100 text-blue-800',
+                            'Kullanıcı Yönetimi': 'bg-purple-100 text-purple-800',
+                            'Stok Güncelleme': 'bg-yellow-100 text-yellow-800',
+                            'Müşteri Hizmetleri': 'bg-gray-100 text-gray-800',
+                            'Sadece Görüntüleme': 'bg-gray-100 text-gray-800'
+                        };
+                        const permClass = permColors[perm] || 'bg-gray-100 text-gray-800';
+                        return `<span class="px-2 py-1 text-xs ${permClass} rounded">${perm}</span>`;
+                    }).join('');
+                    
+                    const actionButtons = u.status === 'pending' ? `
+                        <button onclick="approveUser(${u.id})" class="text-green-600 hover:text-green-900">
+                            <i class="fas fa-check"></i>
+                        </button>
+                        <button onclick="rejectUser(${u.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button onclick="viewUserDetails(${u.id})" class="text-blue-600 hover:text-blue-900">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    ` : `
+                        <button onclick="editUser(${u.id})" class="text-blue-600 hover:text-blue-900">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${u.status === 'active' ? `
+                        <button onclick="toggleUserStatus(${u.id})" class="text-yellow-600 hover:text-yellow-900">
+                            <i class="fas fa-pause"></i>
+                        </button>
+                        ` : ''}
+                        <button onclick="viewUserDetails(${u.id})" class="text-green-600 hover:text-green-900">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    `;
+                    
+                    return `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 ${getAvatarColor(u.avatarColor)} rounded-full flex items-center justify-center mr-3">
+                                        <span class="font-semibold">${u.avatarInitials}</span>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">${u.name}</div>
+                                        <div class="text-sm text-gray-500">${u.title}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${u.email}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${getRoleBadge(u.role)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="flex flex-wrap gap-1">${permissionsHTML}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(u.status)}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${u.lastLogin}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <div class="flex space-x-2">${actionButtons}</div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            };
+            
+            const totalUsers = supplierUsers.length;
+            const activeUsers = supplierUsers.filter(u => u.status === 'active').length;
+            const pendingUsers = supplierUsers.filter(u => u.status === 'pending').length;
+            const adminUsers = supplierUsers.filter(u => u.role === 'Admin').length;
+            
+            const initialRows = renderUserRows(supplierUsers);
+            
             pageTitle.textContent = 'Kullanıcı Yönetimi';
             pageContent.innerHTML = `
                 <div class="space-y-6">
@@ -1228,7 +1342,7 @@ window.mockData.orders = window.mockData.orders || [
                                 <div class="flex items-center">
                                     <i class="fas fa-users text-blue-600 text-2xl mr-3"></i>
                                     <div>
-                                        <div class="text-2xl font-bold text-blue-700">5</div>
+                                        <div class="text-2xl font-bold text-blue-700">${totalUsers}</div>
                                         <div class="text-sm text-blue-600">Toplam Kullanıcı</div>
                                     </div>
                                 </div>
@@ -1237,7 +1351,7 @@ window.mockData.orders = window.mockData.orders || [
                                 <div class="flex items-center">
                                     <i class="fas fa-user-check text-green-600 text-2xl mr-3"></i>
                                     <div>
-                                        <div class="text-2xl font-bold text-green-700">4</div>
+                                        <div class="text-2xl font-bold text-green-700">${activeUsers}</div>
                                         <div class="text-sm text-green-600">Aktif Kullanıcı</div>
                                     </div>
                                 </div>
@@ -1246,7 +1360,7 @@ window.mockData.orders = window.mockData.orders || [
                                 <div class="flex items-center">
                                     <i class="fas fa-user-clock text-yellow-600 text-2xl mr-3"></i>
                                     <div>
-                                        <div class="text-2xl font-bold text-yellow-700">1</div>
+                                        <div class="text-2xl font-bold text-yellow-700">${pendingUsers}</div>
                                         <div class="text-sm text-yellow-600">Bekleyen Onay</div>
                                     </div>
                                 </div>
@@ -1255,18 +1369,66 @@ window.mockData.orders = window.mockData.orders || [
                                 <div class="flex items-center">
                                     <i class="fas fa-user-shield text-purple-600 text-2xl mr-3"></i>
                                     <div>
-                                        <div class="text-2xl font-bold text-purple-700">2</div>
+                                        <div class="text-2xl font-bold text-purple-700">${adminUsers}</div>
                                         <div class="text-sm text-purple-600">Admin Yetkisi</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
                     <!-- Users List -->
                     <div class="bg-white rounded-lg shadow">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <h3 class="text-lg font-semibold text-gray-900">Kullanıcılarım</h3>
                         </div>
+                        
+                        <!-- Search and Filter Section -->
+                        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <!-- Search Input -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
+                                    <div class="relative">
+                                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                        <input type="text" id="supplierUserSearchInput" 
+                                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                               placeholder="Ad, soyad veya e-posta ile ara...">
+                                    </div>
+                                </div>
+                                
+                                <!-- Role Filter -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+                                    <select id="supplierUserRoleFilter" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Tüm Roller</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Ürün Uzmanı">Ürün Uzmanı</option>
+                                        <option value="Sipariş Uzmanı">Sipariş Uzmanı</option>
+                                        <option value="Stajyer">Stajyer</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Status Filter -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+                                    <select id="supplierUserStatusFilter" 
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="">Tüm Durumlar</option>
+                                        <option value="active">Aktif</option>
+                                        <option value="pending">Bekliyor</option>
+                                        <option value="inactive">Pasif</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Results Count -->
+                            <div id="supplierUserSearchResults" class="mt-3 text-sm text-gray-500 hidden">
+                                <span id="supplierUserSearchCount"></span>
+                            </div>
+                        </div>
+                        
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -1280,186 +1442,84 @@ window.mockData.orders = window.mockData.orders || [
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
                                     </tr>
                                 </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                                                    <span class="text-blue-600 font-semibold">AY</span>
-                                                </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">Ahmet Yılmaz</div>
-                                                    <div class="text-sm text-gray-500">Sahip</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">ahmet@modatedarik.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
-                                                Admin
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div class="flex flex-wrap gap-1">
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Ürün Yönetimi</span>
-                                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Sipariş Yönetimi</span>
-                                                <span class="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded">Kullanıcı Yönetimi</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                Aktif
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 saat önce</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-2">
-                                                <button onclick="editUser(1)" class="text-blue-600 hover:text-blue-900">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button onclick="viewUserDetails(1)" class="text-green-600 hover:text-green-900">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                                                    <span class="text-green-600 font-semibold">ED</span>
-                                                </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">Elif Demir</div>
-                                                    <div class="text-sm text-gray-500">Ürün Uzmanı</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">elif@modatedarik.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                Ürün Uzmanı
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div class="flex flex-wrap gap-1">
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Ürün Yönetimi</span>
-                                                <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">Stok Güncelleme</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                Aktif
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">1 gün önce</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-2">
-                                                <button onclick="editUser(2)" class="text-blue-600 hover:text-blue-900">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button onclick="toggleUserStatus(2)" class="text-yellow-600 hover:text-yellow-900">
-                                                    <i class="fas fa-pause"></i>
-                                                </button>
-                                                <button onclick="viewUserDetails(2)" class="text-green-600 hover:text-green-900">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                                                    <span class="text-orange-600 font-semibold">MK</span>
-                                                </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">Mehmet Kaya</div>
-                                                    <div class="text-sm text-gray-500">Sipariş Uzmanı</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">mehmet@modatedarik.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                Sipariş Uzmanı
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div class="flex flex-wrap gap-1">
-                                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Sipariş Yönetimi</span>
-                                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Müşteri Hizmetleri</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                Aktif
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">3 saat önce</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-2">
-                                                <button onclick="editUser(3)" class="text-blue-600 hover:text-blue-900">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button onclick="toggleUserStatus(3)" class="text-yellow-600 hover:text-yellow-900">
-                                                    <i class="fas fa-pause"></i>
-                                                </button>
-                                                <button onclick="viewUserDetails(3)" class="text-green-600 hover:text-green-900">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center mr-3">
-                                                    <span class="text-yellow-600 font-semibold">ZA</span>
-                                                </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900">Zeynep Aktaş</div>
-                                                    <div class="text-sm text-gray-500">Stajyer</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">zeynep@modatedarik.com</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                Stajyer
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <div class="flex flex-wrap gap-1">
-                                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-800 rounded">Sadece Görüntüleme</span>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                Bekliyor
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">-</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex space-x-2">
-                                                <button onclick="approveUser(4)" class="text-green-600 hover:text-green-900">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button onclick="rejectUser(4)" class="text-red-600 hover:text-red-900">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                                <button onclick="viewUserDetails(4)" class="text-blue-600 hover:text-blue-900">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tbody id="supplierUserTableBody" class="bg-white divide-y divide-gray-200">
+                                    ${initialRows}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Search and Filter Functionality
+            const searchInput = document.getElementById('supplierUserSearchInput');
+            const roleFilter = document.getElementById('supplierUserRoleFilter');
+            const statusFilter = document.getElementById('supplierUserStatusFilter');
+            const tableBody = document.getElementById('supplierUserTableBody');
+            const searchResults = document.getElementById('supplierUserSearchResults');
+            const searchCount = document.getElementById('supplierUserSearchCount');
+            
+            const applyFilters = () => {
+                const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+                const selectedRole = roleFilter?.value || '';
+                const selectedStatus = statusFilter?.value || '';
+                
+                const filteredUsers = supplierUsers.filter(u => {
+                    // Search filter
+                    if (searchTerm) {
+                        const name = (u.name || '').toLowerCase();
+                        const email = (u.email || '').toLowerCase();
+                        if (!name.includes(searchTerm) && !email.includes(searchTerm)) {
+                            return false;
+                        }
+                    }
+                    
+                    // Role filter
+                    if (selectedRole && u.role !== selectedRole) {
+                        return false;
+                    }
+                    
+                    // Status filter
+                    if (selectedStatus && u.status !== selectedStatus) {
+                        return false;
+                    }
+                    
+                    return true;
+                });
+                
+                // Render filtered rows
+                if (filteredUsers.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
+                                <p>Sonuç bulunamadı</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tableBody.innerHTML = renderUserRows(filteredUsers);
+                }
+                
+                // Update results count
+                if (searchTerm || selectedRole || selectedStatus) {
+                    searchCount.textContent = `${filteredUsers.length} kullanıcı bulundu`;
+                    searchResults.classList.remove('hidden');
+                } else {
+                    searchResults.classList.add('hidden');
+                }
+            };
+            
+            // Add event listeners
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+            if (roleFilter) {
+                roleFilter.addEventListener('change', applyFilters);
+            }
+            if (statusFilter) {
+                statusFilter.addEventListener('change', applyFilters);
+            }
         };
         renderers['supplierOrders'] = () => {
   const user = window.currentUser || {};
@@ -2007,38 +2067,40 @@ renderers['adminSuppliers'] = () => {
         return;
     }
     
-    const supplierRows = mockData.suppliers.map(supplier => {
-        const statusInfo = {
-            approved: { text: 'Onaylandı', class: 'bg-green-100 text-green-800' },
-            application_received: { text: 'Başvuru Alındı', class: 'bg-blue-100 text-blue-800' },
-            rejected: { text: 'Reddedildi', class: 'bg-red-100 text-red-800' }
-        }[supplier.status] || { text: supplier.status, class: 'bg-gray-100 text-gray-800' };
-        
-        const registrationDate = supplier.registrationDate ? new Date(supplier.registrationDate).toLocaleDateString('tr-TR') : '-';
-        const lastActivity = supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-';
-        
-        return `
-            <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.name}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.email || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.phone || '-'}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${registrationDate}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastActivity}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button onclick="showSupplierDetailModal(${supplier.id})" class="p-2 text-gray-500 hover:text-blue-600" title="Detayları Görüntüle">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                    <button onclick="showSupplierStatusModal(${supplier.id})" class="p-2 text-gray-500 hover:text-green-600" title="Durum Değiştir">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    }).join('');
+    const renderSupplierRows = (suppliers) => {
+        return suppliers.map(supplier => {
+            const statusInfo = {
+                approved: { text: 'Onaylandı', class: 'bg-green-100 text-green-800' },
+                application_received: { text: 'Başvuru Alındı', class: 'bg-blue-100 text-blue-800' },
+                rejected: { text: 'Reddedildi', class: 'bg-red-100 text-red-800' }
+            }[supplier.status] || { text: supplier.status, class: 'bg-gray-100 text-gray-800' };
+            
+            const registrationDate = supplier.registrationDate ? new Date(supplier.registrationDate).toLocaleDateString('tr-TR') : '-';
+            const lastActivity = supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-';
+            
+            return `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.email || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.phone || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${registrationDate}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="showSupplierDetailModal(${supplier.id})" class="p-2 text-gray-500 hover:text-blue-600" title="Detayları Görüntüle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="showSupplierStatusModal(${supplier.id})" class="p-2 text-gray-500 hover:text-green-600" title="Durum Değiştir">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    };
     
+    const supplierRows = renderSupplierRows(mockData.suppliers);
     
     pageContent.innerHTML = `
         <div class="bg-white rounded-lg shadow">
@@ -2053,6 +2115,16 @@ renderers['adminSuppliers'] = () => {
                     </button>
                 </div>
                 
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" id="supplierSearchInput" 
+                               class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="Tedarikçi adı, e-posta veya telefon ile ara...">
+                    </div>
+                </div>
+                
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
@@ -2061,19 +2133,64 @@ renderers['adminSuppliers'] = () => {
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-posta</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telefon</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kayıt Tarihi</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Son Aktivite</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">${supplierRows}</tbody>
+                        <tbody id="supplierTableBody" class="bg-white divide-y divide-gray-200">${supplierRows}</tbody>
                     </table>
+                </div>
+                
+                <div id="supplierSearchResults" class="mt-4 text-sm text-gray-500 hidden">
+                    <span id="supplierSearchCount"></span>
                 </div>
             </div>
         </div>
     `;
     
     document.getElementById('addSupplierBtn').addEventListener('click', showAddSupplierModal);
+    
+    // Search functionality
+    const searchInput = document.getElementById('supplierSearchInput');
+    const tableBody = document.getElementById('supplierTableBody');
+    const searchResults = document.getElementById('supplierSearchResults');
+    const searchCount = document.getElementById('supplierSearchCount');
+    
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim();
+        
+        if (searchTerm === '') {
+            tableBody.innerHTML = renderSupplierRows(mockData.suppliers);
+            searchResults.classList.add('hidden');
+            return;
+        }
+        
+        const filteredSuppliers = mockData.suppliers.filter(supplier => {
+            const name = (supplier.name || '').toLowerCase();
+            const email = (supplier.email || '').toLowerCase();
+            const phone = (supplier.phone || '').toLowerCase();
+            
+            return name.includes(searchTerm) || 
+                   email.includes(searchTerm) || 
+                   phone.includes(searchTerm);
+        });
+        
+        tableBody.innerHTML = renderSupplierRows(filteredSuppliers);
+        
+        if (filteredSuppliers.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                        <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
+                        <p>Sonuç bulunamadı</p>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        searchCount.textContent = `${filteredSuppliers.length} tedarikçi bulundu`;
+        searchResults.classList.remove('hidden');
+    });
 };
 function showToast(msg){
   const t = document.createElement('div');
