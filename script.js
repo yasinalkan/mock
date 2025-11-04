@@ -1,3 +1,47 @@
+// Function to get commission rate for a supplier and product (for display purposes)
+function getSupplierCommissionRate(productId, supplierId) {
+    const product = mockData.products.find(p => p.id === productId);
+    if (!product) {
+        return 12; // Default commission rate
+    }
+    
+    const commissionRules = mockData.commissionRules || [];
+    const currentDate = new Date();
+    
+    // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
+    const supplierCategoryRule = commissionRules.find(rule => 
+        rule.type === 'supplier_category' && 
+        rule.supplierId === supplierId &&
+        rule.categoryId === product.categoryId &&
+        new Date(rule.startDate) <= currentDate &&
+        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+    );
+    
+    const supplierRule = commissionRules.find(rule => 
+        rule.type === 'supplier' && 
+        rule.supplierId === supplierId &&
+        new Date(rule.startDate) <= currentDate &&
+        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+    );
+    
+    const categoryRule = commissionRules.find(rule => 
+        rule.type === 'category' && 
+        rule.categoryId === product.categoryId &&
+        new Date(rule.startDate) <= currentDate &&
+        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+    );
+    
+    if (supplierCategoryRule) {
+        return supplierCategoryRule.rate;
+    } else if (supplierRule) {
+        return supplierRule.rate;
+    } else if (categoryRule) {
+        return categoryRule.rate;
+    }
+    
+    return 12; // Default rate
+}
+
 // Function to calculate commission rate for a specific item
 function calculateItemCommissionRate(item, order) {
     if (!item || !order) {
@@ -15,7 +59,15 @@ function calculateItemCommissionRate(item, order) {
     // Find applicable commission rule
     let applicableRate = 12; // Default rate
     
-    // Priority: 1. Supplier-specific rule, 2. Category-specific rule, 3. Default rate
+    // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
+    const supplierCategoryRule = commissionRules.find(rule => 
+        rule.type === 'supplier_category' && 
+        rule.supplierId === order.supplierId &&
+        rule.categoryId === product.categoryId &&
+        new Date(rule.startDate) <= new Date(order.date) &&
+        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+    );
+    
     const supplierRule = commissionRules.find(rule => 
         rule.type === 'supplier' && 
         rule.supplierId === order.supplierId &&
@@ -30,7 +82,9 @@ function calculateItemCommissionRate(item, order) {
         (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
     );
     
-    if (supplierRule) {
+    if (supplierCategoryRule) {
+        applicableRate = supplierCategoryRule.rate;
+    } else if (supplierRule) {
         applicableRate = supplierRule.rate;
     } else if (categoryRule) {
         applicableRate = categoryRule.rate;
@@ -65,7 +119,15 @@ function calculateWeightedAverageCommissionRate(order) {
         // Find applicable commission rule
         let applicableRate = 12; // Default rate
         
-        // Priority: 1. Supplier-specific rule, 2. Category-specific rule, 3. Default rate
+        // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
+        const supplierCategoryRule = commissionRules.find(rule => 
+            rule.type === 'supplier_category' && 
+            rule.supplierId === order.supplierId &&
+            rule.categoryId === product.categoryId &&
+            new Date(rule.startDate) <= new Date(order.date) &&
+            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
+        );
+        
         const supplierRule = commissionRules.find(rule => 
             rule.type === 'supplier' && 
             rule.supplierId === order.supplierId &&
@@ -80,7 +142,9 @@ function calculateWeightedAverageCommissionRate(order) {
             (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
         );
         
-        if (supplierRule) {
+        if (supplierCategoryRule) {
+            applicableRate = supplierCategoryRule.rate;
+        } else if (supplierRule) {
             applicableRate = supplierRule.rate;
         } else if (categoryRule) {
             applicableRate = categoryRule.rate;
@@ -1318,69 +1382,18 @@ window.mockData.orders = window.mockData.orders || [
                 }).join('');
             };
             
-            const totalUsers = supplierUsers.length;
-            const activeUsers = supplierUsers.filter(u => u.status === 'active').length;
-            const pendingUsers = supplierUsers.filter(u => u.status === 'pending').length;
-            const adminUsers = supplierUsers.filter(u => u.role === 'Admin').length;
-            
             const initialRows = renderUserRows(supplierUsers);
             
             pageTitle.textContent = 'Kullanıcı Yönetimi';
             pageContent.innerHTML = `
                 <div class="space-y-6">
-                    <!-- User Overview -->
-                    <div class="bg-white p-6 rounded-lg shadow">
-                        <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-semibold text-gray-900">Kullanıcı Durumu</h2>
+                    <!-- Users List -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-900">Kullanıcılarım</h3>
                             <button onclick="showAddUserModal()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                                 <i class="fas fa-user-plus mr-2"></i>Yeni Kullanıcı Ekle
                             </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                <div class="flex items-center">
-                                    <i class="fas fa-users text-blue-600 text-2xl mr-3"></i>
-                                    <div>
-                                        <div class="text-2xl font-bold text-blue-700">${totalUsers}</div>
-                                        <div class="text-sm text-blue-600">Toplam Kullanıcı</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-check text-green-600 text-2xl mr-3"></i>
-                                    <div>
-                                        <div class="text-2xl font-bold text-green-700">${activeUsers}</div>
-                                        <div class="text-sm text-green-600">Aktif Kullanıcı</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-clock text-yellow-600 text-2xl mr-3"></i>
-                                    <div>
-                                        <div class="text-2xl font-bold text-yellow-700">${pendingUsers}</div>
-                                        <div class="text-sm text-yellow-600">Bekleyen Onay</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                                <div class="flex items-center">
-                                    <i class="fas fa-user-shield text-purple-600 text-2xl mr-3"></i>
-                                    <div>
-                                        <div class="text-2xl font-bold text-purple-700">${adminUsers}</div>
-                                        <div class="text-sm text-purple-600">Admin Yetkisi</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Users List -->
-                    <div class="bg-white rounded-lg shadow">
-                        <div class="px-6 py-4 border-b border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-900">Kullanıcılarım</h3>
                         </div>
                         
                         <!-- Search and Filter Section -->
@@ -3134,7 +3147,11 @@ function renderProductTab(tabName, product) {
             if (!isSupplier) renderSyncTab(container, product);
             break;
         case 'logs':
-            if (!isSupplier) renderLogsTab(container, product);
+            if (!isSupplier) {
+                // Ensure we have the latest product data with changeLogs
+                const latestProduct = mockData.products.find(p => p.id === product.id) || product;
+                renderLogsTab(container, latestProduct);
+            }
             break;
         default:
             container.innerHTML = '<p class="text-gray-500">Bilinmeyen sekme</p>';
@@ -3465,14 +3482,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                         </a>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Türü</label>
-                                    ${product.mainProductId && product.mainProductId !== product.id ? `
-                                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Varyant</span>
-                                    ` : `
-                                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Ana Ürün</span>
-                                    `}
-                                </div>
+                                
                             </div>
                         </div>
                         
@@ -3691,17 +3701,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                     <span class="text-gray-600">Ana Ürün ID:</span>
                                     <a href="#main-product/${product.mainProductId || product.id}" class="font-medium text-blue-600 hover:underline">${product.mainProductId || product.id}</a>
                                 </div>
-                                ${product.mainProductId && product.mainProductId !== product.id ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Ürün Türü:</span>
-                                    <span class="font-medium text-blue-600">Varyant</span>
-                                </div>
-                                ` : `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Ürün Türü:</span>
-                                    <span class="font-medium text-green-600">Ana Ürün</span>
-                                </div>
-                                `}
+                                
                             </div>
                         </div>
                         
@@ -3780,6 +3780,65 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                 })()}
                             </div>
                         </div>
+                        
+                        <!-- Commission Rates Section -->
+                        ${(() => {
+                            const user = window.currentUser || {};
+                            const isSupplier = user.role === 'supplier';
+                            
+                            // For suppliers: show only their own commission rate
+                            // For admins: show all suppliers' commission rates
+                            let productSuppliers = [];
+                            
+                            if (isSupplier && supplierId) {
+                                // Supplier view: show only their own rate
+                                const supplier = mockData.suppliers.find(s => s.id === supplierId);
+                                if (supplier) {
+                                    const commissionRate = getSupplierCommissionRate(product.id, supplierId);
+                                    productSuppliers = [{ supplier, commissionRate }];
+                                }
+                            } else if (!isSupplier) {
+                                // Admin view: show all suppliers that have this product
+                                productSuppliers = mockData.supplierProducts
+                                    .filter(sp => sp.productId === product.id)
+                                    .map(sp => {
+                                        const supplier = mockData.suppliers.find(s => s.id === sp.supplierId);
+                                        if (!supplier) return null;
+                                        const commissionRate = getSupplierCommissionRate(product.id, supplier.id);
+                                        return { supplier, commissionRate };
+                                    })
+                                    .filter(Boolean);
+                            }
+                            
+                            if (productSuppliers.length === 0) {
+                                return '';
+                            }
+                            
+                            return `
+                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                                        <i class="fas fa-percentage text-blue-600 mr-2"></i>
+                                        Komisyon Oranları
+                                    </h3>
+                                    <div class="space-y-3">
+                                        ${productSuppliers.map(({ supplier, commissionRate }) => `
+                                            <div class="bg-white p-3 rounded-md border border-blue-100">
+                                                <div class="flex justify-between items-center">
+                                                    <div>
+                                                        <div class="font-medium text-gray-900">${supplier.name}</div>
+                                                        ${!isSupplier ? `<div class="text-sm text-gray-500">${supplier.email || ''}</div>` : ''}
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <div class="text-2xl font-bold text-blue-600">${commissionRate.toFixed(1)}%</div>
+                                                        <div class="text-xs text-gray-500">Komisyon Oranı</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        })()}
                     </div>
                     
                     <div class="space-y-6">
@@ -4024,17 +4083,10 @@ function renderStockPriceTab(container, product, isSupplier) {
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
                                 <input type="number" id="edit-product-stock" value="${stock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
-                                    <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (USD)</label>
-                                    <input type="number" step="0.01" id="edit-product-list-price-usd" value="${product.listPriceUSD || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Amerikan Doları)</p>
-                                </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
+                                <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
                             </div>
                             
                         </div>
@@ -4139,20 +4191,13 @@ function renderStockPriceTab(container, product, isSupplier) {
                                                     <p class="text-xs text-gray-500 mt-1">Tedarikçi güncellemesi</p>
                                                 </div>
                                             </div>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div class="mt-4">
                                                 <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                                                     <div class="flex items-center justify-between mb-2">
                                                         <span class="text-sm font-medium text-blue-800">Liste Fiyatı (TRY)</span>
                                                         <span class="text-lg font-semibold text-blue-600">${sp.listPrice ? sp.listPrice.toFixed(2) + ' ₺' : 'Belirtilmemiş'}</span>
                                                     </div>
                                                     <p class="text-xs text-blue-600">Normal fiyat (Türk Lirası)</p>
-                                                </div>
-                                                <div class="bg-green-50 p-3 rounded-lg border border-green-200">
-                                                    <div class="flex items-center justify-between mb-2">
-                                                        <span class="text-sm font-medium text-green-800">Liste Fiyatı (USD)</span>
-                                                        <span class="text-lg font-semibold text-green-600">${sp.listPriceUSD ? sp.listPriceUSD.toFixed(2) + ' $' : 'Belirtilmemiş'}</span>
-                                                    </div>
-                                                    <p class="text-xs text-green-600">Normal fiyat (Amerikan Doları)</p>
                                                 </div>
                                             </div>
                                             
@@ -4610,18 +4655,19 @@ function showImagesInAssetsTab() {
     renderImagesTab(container, product, false);
 }
 function renderLogsTab(container, product) {
-    const changeLogs = product.changeLogs || [];
-    
-    if (changeLogs.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
-                <h3 class="text-lg font-semibold text-gray-600 mb-2">Değişiklik Logları</h3>
-                <p class="text-gray-500">Bu ürün için henüz değişiklik kaydı bulunmuyor.</p>
-            </div>
-        `;
-        return;
-    }
+    try {
+        const changeLogs = product.changeLogs || [];
+        
+        if (changeLogs.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+                    <h3 class="text-lg font-semibold text-gray-600 mb-2">Değişiklik Logları</h3>
+                    <p class="text-gray-500">Bu ürün için henüz değişiklik kaydı bulunmuyor.</p>
+                </div>
+            `;
+            return;
+        }
     
     // Group logs by date
     const groupedLogs = changeLogs.reduce((groups, log) => {
@@ -4888,6 +4934,17 @@ function renderLogsTab(container, product) {
             </div>
         </div>
     `;
+    } catch (error) {
+        console.error('Error rendering logs tab:', error);
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                <h3 class="text-lg font-semibold text-red-600 mb-2">Hata Oluştu</h3>
+                <p class="text-gray-500">Değişiklik logları yüklenirken bir hata oluştu.</p>
+                <p class="text-xs text-gray-400 mt-2">${error.message}</p>
+            </div>
+        `;
+    }
 }
 // Image management functions
 function viewImageFullscreen(imageUrl) {

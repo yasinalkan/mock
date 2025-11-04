@@ -730,9 +730,7 @@
                 { id: 3, name: 'Markarama' }
             ],
             currencies: [
-                { code: 'TRY', symbol: '₺' },
-                { code: 'USD', symbol: '$' },
-                { code: 'EUR', symbol: '€' }
+                { code: 'TRY', symbol: '₺' }
             ],
             products: [
                 { 
@@ -1178,7 +1176,84 @@
                         11: { value: '31cm x 21cm x 13cm', validationStatus: 'approved', rejectionReason: '' }
                     },
                     variants: [], 
-                    lastUpdated: '2025-07-31T09:15:00Z' 
+                    lastUpdated: '2025-07-31T09:15:00Z',
+                    changeLogs: [
+                        {
+                            id: 11,
+                            timestamp: '2025-07-31T09:15:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Ana ürün görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=1400&auto=format&fit=crop&q=85&ixlib=rb-4.0.3',
+                                imageType: 'main',
+                                quality: 94
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 12,
+                            timestamp: '2025-07-30T14:20:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'attribute_approved',
+                            actionLabel: 'Nitelik Onaylandı',
+                            description: 'Tüm ürün nitelikleri onaylandı',
+                            details: {
+                                attributes: ['Renk', 'Beden', 'Materyal', 'Ağırlık'],
+                                totalApproved: 11
+                            },
+                            category: 'attributes'
+                        },
+                        {
+                            id: 13,
+                            timestamp: '2025-07-29T16:45:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'price_updated',
+                            actionLabel: 'Fiyat Güncellendi',
+                            description: 'Ürün fiyatı güncellendi',
+                            details: {
+                                oldPrice: '2899.00',
+                                newPrice: '2999.90',
+                                reason: 'Döviz kuru değişikliği'
+                            },
+                            category: 'pricing'
+                        },
+                        {
+                            id: 14,
+                            timestamp: '2025-07-28T10:30:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'status_changed',
+                            actionLabel: 'Durum Değiştirildi',
+                            description: 'Ürün durumu aktif olarak değiştirildi',
+                            details: {
+                                oldStatus: 'draft',
+                                newStatus: 'active',
+                                reason: 'Tüm gerekli bilgiler tamamlandı ve onaylandı'
+                            },
+                            category: 'status'
+                        },
+                        {
+                            id: 15,
+                            timestamp: '2025-07-27T11:15:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'product_updated',
+                            actionLabel: 'Ürün Güncellendi',
+                            description: 'Ürün açıklaması ve özellikleri güncellendi',
+                            details: {
+                                fields: ['description', 'attributes'],
+                                changes: [
+                                    { field: 'description', oldValue: 'Deri ayakkabı', newValue: 'Premium kalite kahve deri ayakkabı' }
+                                ]
+                            },
+                            category: 'product_info'
+                        }
+                    ]
                 },
                 { 
                     id: 4, 
@@ -1268,7 +1343,100 @@
                             timestamp: '2025-01-20T11:00:00Z'
                         }
                     ],
-                    lastUpdated: '2025-07-31T11:00:00Z'
+                    lastUpdated: '2025-07-31T11:00:00Z',
+                    changeLogs: [
+                        {
+                            id: 16,
+                            timestamp: '2025-07-31T11:00:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'product_updated',
+                            actionLabel: 'Ürün Güncellendi',
+                            description: 'Ürün bilgileri güncellendi',
+                            details: {
+                                fields: ['name', 'description'],
+                                changes: [
+                                    { field: 'name', oldValue: 'Mavi Gömlek', newValue: 'Mavi Gömlek' },
+                                    { field: 'description', oldValue: 'Klasik gömlek', newValue: 'Klasik kesim mavi gömlek' }
+                                ]
+                            },
+                            category: 'product_info'
+                        },
+                        {
+                            id: 17,
+                            timestamp: '2025-07-30T15:20:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'stock_updated',
+                            actionLabel: 'Stok Güncellendi',
+                            description: 'Stok miktarı güncellendi',
+                            details: {
+                                oldStock: 50,
+                                newStock: 75,
+                                supplier: 'ModaTedarik',
+                                reason: 'Yeni sevkiyat alındı'
+                            },
+                            category: 'inventory'
+                        },
+                        {
+                            id: 18,
+                            timestamp: '2025-07-29T13:45:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'attribute_approved',
+                            actionLabel: 'Nitelik Onaylandı',
+                            description: 'Renk ve beden nitelikleri onaylandı',
+                            details: {
+                                attributes: ['Renk', 'Beden', 'Materyal'],
+                                totalApproved: 11
+                            },
+                            category: 'attributes'
+                        },
+                        {
+                            id: 19,
+                            timestamp: '2025-07-28T09:30:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Detay görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1633939943422-1ea4a4e309a6?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8bGluZW4lMjBzaGlydHxlbnwwfHwwfHx8MA%3D%3D',
+                                imageType: 'detail',
+                                quality: 88
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 20,
+                            timestamp: '2025-07-27T14:15:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'status_changed',
+                            actionLabel: 'Durum Değiştirildi',
+                            description: 'Ürün durumu aktif olarak değiştirildi',
+                            details: {
+                                oldStatus: 'pending',
+                                newStatus: 'active',
+                                reason: 'Ürün bilgileri tamamlandı ve onaylandı'
+                            },
+                            category: 'status'
+                        },
+                        {
+                            id: 21,
+                            timestamp: '2025-07-26T10:00:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'description_updated',
+                            actionLabel: 'Açıklama Güncellendi',
+                            description: 'Ürün açıklaması güncellendi',
+                            details: {
+                                oldDescription: 'Mavi gömlek',
+                                newDescription: 'Klasik kesim, rahat fit, iş günlük kullanım için ideal'
+                            },
+                            category: 'product_info'
+                        }
+                    ]
                 },
                 { 
                     id: 5, 
@@ -1334,7 +1502,83 @@
                     ],
                     attributes: { 1: { value: 'Beyaz', validationStatus: 'approved', rejectionReason: '' }, 2: { value: 'M', validationStatus: 'approved', rejectionReason: '' } }, 
                     variants: [], 
-                    lastUpdated: '2025-07-28T18:45:00Z' 
+                    lastUpdated: '2025-07-28T18:45:00Z',
+                    changeLogs: [
+                        {
+                            id: 22,
+                            timestamp: '2025-07-28T18:55:00Z',
+                            user: 'W Collection',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Lifestyle görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=600&auto=format&fit=crop&q=70&ixlib=rb-4.0.3',
+                                imageType: 'lifestyle',
+                                quality: 83
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 23,
+                            timestamp: '2025-07-28T18:50:00Z',
+                            user: 'W Collection',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Kumaş detay görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=800&auto=format&fit=crop&q=75&ixlib=rb-4.0.3',
+                                imageType: 'detail',
+                                quality: 87
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 24,
+                            timestamp: '2025-07-28T18:45:00Z',
+                            user: 'W Collection',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Ana ürün görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1622445275463-afa2ab738c34?w=1200&auto=format&fit=crop&q=80&ixlib=rb-4.0.3',
+                                imageType: 'main',
+                                quality: 91
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 25,
+                            timestamp: '2025-07-27T12:30:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'attribute_approved',
+                            actionLabel: 'Nitelik Onaylandı',
+                            description: 'Renk ve beden nitelikleri onaylandı',
+                            details: {
+                                attributes: ['Renk', 'Beden'],
+                                totalApproved: 2
+                            },
+                            category: 'attributes'
+                        },
+                        {
+                            id: 26,
+                            timestamp: '2025-07-26T14:20:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'status_changed',
+                            actionLabel: 'Durum Değiştirildi',
+                            description: 'Ürün durumu aktif olarak değiştirildi',
+                            details: {
+                                oldStatus: 'draft',
+                                newStatus: 'active',
+                                reason: 'Ürün bilgileri tamamlandı'
+                            },
+                            category: 'status'
+                        }
+                    ]
                 },
                 // New arrivals (yeni-gelenler) - products with status 'draft' and no supplierSubmission
                 { id: 11, sku: '8683822185003', name: { tr: 'Mavi Jean Pantolon', en: 'Blue Jeans'}, categoryId: 1, brandId: 3, status: 'active',
@@ -1359,7 +1603,102 @@
                             }
                         ]
                     },
-                    variants: [], lastUpdated: '2025-01-18T16:45:00Z' },
+                    variants: [], 
+                    lastUpdated: '2025-01-18T16:45:00Z',
+                    changeLogs: [
+                        {
+                            id: 27,
+                            timestamp: '2025-01-18T16:45:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'product_updated',
+                            actionLabel: 'Ürün Güncellendi',
+                            description: 'Ürün bilgileri güncellendi',
+                            details: {
+                                fields: ['name', 'attributes'],
+                                changes: [
+                                    { field: 'name', oldValue: 'Mavi Jean Pantolon', newValue: 'Mavi Jean Pantolon' }
+                                ]
+                            },
+                            category: 'product_info'
+                        },
+                        {
+                            id: 28,
+                            timestamp: '2025-01-17T10:30:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'stock_updated',
+                            actionLabel: 'Stok Güncellendi',
+                            description: 'Stok miktarı güncellendi',
+                            details: {
+                                oldStock: 30,
+                                newStock: 45,
+                                supplier: 'ModaTedarik',
+                                reason: 'Yeni üretim partisi eklendi'
+                            },
+                            category: 'inventory'
+                        },
+                        {
+                            id: 29,
+                            timestamp: '2025-01-16T15:15:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'attribute_approved',
+                            actionLabel: 'Nitelik Onaylandı',
+                            description: 'Tüm ürün nitelikleri onaylandı',
+                            details: {
+                                attributes: ['Renk', 'Beden', 'Materyal'],
+                                totalApproved: 3
+                            },
+                            category: 'attributes'
+                        },
+                        {
+                            id: 30,
+                            timestamp: '2025-01-15T11:20:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'image_uploaded',
+                            actionLabel: 'Görsel Yüklendi',
+                            description: 'Ana ürün görseli yüklendi',
+                            details: {
+                                imageUrl: 'https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&auto=format&fit=crop&q=60',
+                                imageType: 'main',
+                                quality: 75
+                            },
+                            category: 'media'
+                        },
+                        {
+                            id: 31,
+                            timestamp: '2025-01-14T09:00:00Z',
+                            user: 'Admin Kullanıcı',
+                            userRole: 'admin',
+                            action: 'status_changed',
+                            actionLabel: 'Durum Değiştirildi',
+                            description: 'Ürün durumu aktif olarak değiştirildi',
+                            details: {
+                                oldStatus: 'draft',
+                                newStatus: 'active',
+                                reason: 'Ürün onaylandı ve yayına alındı'
+                            },
+                            category: 'status'
+                        },
+                        {
+                            id: 32,
+                            timestamp: '2025-01-13T14:45:00Z',
+                            user: 'ModaTedarik',
+                            userRole: 'supplier',
+                            action: 'price_updated',
+                            actionLabel: 'Fiyat Güncellendi',
+                            description: 'Ürün fiyatı güncellendi',
+                            details: {
+                                oldPrice: '480.00',
+                                newPrice: '500.00',
+                                reason: 'Maliyet ayarlaması'
+                            },
+                            category: 'pricing'
+                        }
+                    ]
+                },
                 // Rejected products
                 { 
                     id: 6, 
@@ -5732,7 +6071,7 @@
                     const tabsHTML = `
                         <a href="#finance/supplier-revenue" class="tab-button ${activeTab === 'supplier-revenue' ? 'active' : 'text-gray-500'} font-medium py-4">Tedarikçi Gelirleri</a>
                         <a href="#finance/orders" class="tab-button ${activeTab === 'orders' ? 'active' : 'text-gray-500'} font-medium py-4">Siparişler</a>
-                        <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">İşlemler</a>
+                        <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Gider Tablosu</a>
                         <a href="#finance/profitability" class="tab-button ${activeTab === 'profitability' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a>
                     `;
 
@@ -6903,6 +7242,7 @@
                             </div>
 
                             <!-- Values Section -->
+                            <!--
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                                     <i class="fas fa-tags text-purple-600 mr-2"></i>
@@ -6923,7 +7263,8 @@
                                     </div>
                                 `}
                             </div>
-                        </div>
+                            -->
+                        </div> 
                     </div>
 
                 <!-- Categories Using This Attribute -->
@@ -12420,7 +12761,7 @@
                                     <i class="fas fa-exchange-alt text-purple-400"></i>
                                 </div>
                                 <div class="ml-3 flex-1">
-                                    <h3 class="text-sm font-medium text-purple-800">İşlemler</h3>
+                                    <h3 class="text-sm font-medium text-purple-800">Gelir Gider Tablosu</h3>
                                     <div class="mt-2 text-sm text-purple-700">
                                         <p>Bu sekmede tüm finansal işlemlerin detaylı kayıtlarını görüntüleyebilirsiniz. Gelir, gider, komisyon ve diğer mali işlemlerin tam geçmişi burada tutulur.</p>
                                     </div>
@@ -14063,16 +14404,6 @@
                             </div>
                         </td>
                         <td class="p-4 text-right">
-                            <div class="flex space-x-2" onclick="event.stopPropagation();">
-                                <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
-                                        class="px-3 py-1 bg-green-100 text-green-700 rounded-md hover:bg-green-200 text-sm font-medium">
-                                    <i class="fas fa-check mr-1"></i>Onayla
-                                </button>
-                                <button onclick="handleRequestDecision(${request.id}, 'toBeRevised')" 
-                                        class="px-3 py-1 bg-red-100 text-red-700 rounded-md hover:bg-red-200 text-sm font-medium">
-                                    <i class="fas fa-times mr-1"></i>Reddet
-                                </button>
-                            </div>
                         </td>
                     </tr>
                 `;
@@ -14095,7 +14426,6 @@
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Öneri</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Neden</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Durum</th>
-                                <th class="p-4 text-sm font-semibold text-right">İşlemler</th>
                             </tr>
                         </thead>
                         <tbody id="price-requests-table-body">${requestRows}</tbody>
@@ -17071,7 +17401,7 @@
             handleRouteChange(); 
         }
         function showAddAttributeModal() { const title = 'Yeni Nitelik Ekle'; const body = `<div class="space-y-4"><div><label for="attr_name" class="block text-sm font-medium text-gray-700">Nitelik Kodu</label><input type="text" id="attr_name" placeholder="Örn: color" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_label" class="block text-sm font-medium text-gray-700">Nitelik Etiketi</label><input type="text" id="attr_label" placeholder="Örn: Renk" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="attr_type" class="block text-sm font-medium text-gray-700">Tip</label><select id="attr_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="Text">Yazı (Text)</option><option value="Textarea">Uzun Yazı (Textarea)</option><option value="Number">Rakam (Number)</option><option value="Boolean">Evet/Hayır (Boolean)</option><option value="Select">Seçim (Select)</option></select></div><div id="attr_options_container" class="hidden space-y-2"><label for="attr_options" class="block text-sm font-medium text-gray-700">Seçenekler</label><textarea id="attr_options" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Seçenekleri virgülle ayırarak girin. Örn: Kırmızı,Yeşil,Mavi"></textarea></div><div class="flex items-center space-x-4 pt-2"><div class="flex items-start"><div class="flex items-center h-5"><input id="attr_scopeable" type="checkbox" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="attr_scopeable" class="font-medium text-gray-700">Kanal Bazlı</label></div></div></div></div>`; showModal(title, body, 'Niteliği Oluştur', () => { const label = document.getElementById('attr_label').value; const newAttribute = { id: Math.max(...mockData.attributes.map(a => a.id)) + 1, name: document.getElementById('attr_name').value, label: { tr: label, en: label }, type: document.getElementById('attr_type').value, options: document.getElementById('attr_type').value === 'Select' ? document.getElementById('attr_options').value.split(',').map(s => s.trim()) : [], scopeable: document.getElementById('attr_scopeable').checked, default: '', lastUpdated: new Date().toISOString() }; mockData.attributes.push(newAttribute); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } document.getElementById('attr_type').addEventListener('change', (e) => { document.getElementById('attr_options_container').classList.toggle('hidden', e.target.value !== 'Select'); }); }
-        function showAddChannelModal() { const title = 'Yeni Kanal Ekle'; const body = `<div class="space-y-4"><div><label for="channel_name" class="block text-sm font-medium text-gray-700">Kanal Adı</label><input type="text" id="channel_name" placeholder="Örn: Trendyol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="channel_currency" class="block text-sm font-medium text-gray-700">Para Birimi</label><select id="channel_currency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="TRY">TRY</option><option value="USD">USD</option><option value="EUR">EUR</option></select></div><div class="flex items-start"><div class="flex items-center h-5"><input id="channel_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="channel_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kanalı Oluştur', () => { const newChannel = { id: Math.max(...(mockData.channels.map(c => c.id) || [0])) + 1, name: document.getElementById('channel_name').value, status: document.getElementById('channel_active').checked ? 'active' : 'passive', productCount: 0, currency: document.getElementById('channel_currency').value }; mockData.channels.push(newChannel); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } }
+        function showAddChannelModal() { const title = 'Yeni Kanal Ekle'; const body = `<div class="space-y-4"><div><label for="channel_name" class="block text-sm font-medium text-gray-700">Kanal Adı</label><input type="text" id="channel_name" placeholder="Örn: Trendyol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></div><div><label for="channel_currency" class="block text-sm font-medium text-gray-700">Para Birimi</label><select id="channel_currency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="TRY">TRY</option></select></div><div class="flex items-start"><div class="flex items-center h-5"><input id="channel_active" type="checkbox" checked class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"></div><div class="ml-3 text-sm"><label for="channel_active" class="font-medium text-gray-700">Aktif</label></div></div></div>`; showModal(title, body, 'Kanalı Oluştur', () => { const newChannel = { id: Math.max(...(mockData.channels.map(c => c.id) || [0])) + 1, name: document.getElementById('channel_name').value, status: document.getElementById('channel_active').checked ? 'active' : 'passive', productCount: 0, currency: document.getElementById('channel_currency').value }; mockData.channels.push(newChannel); closeModal(); handleRouteChange(); }); const modalConfirmButton = document.getElementById('modal-confirm'); if(modalConfirmButton) { modalConfirmButton.classList.remove('hidden'); modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700'); } const modalCancelButton = document.getElementById('modal-cancel'); if(modalCancelButton) { modalCancelButton.classList.remove('hidden'); } }
         function showAddCategoryModal() {
             const title = 'Yeni Kategori Ekle';
             const attributeSelectionHTML = mockData.attributes.map(a => `<div class="flex justify-between items-center p-2 border rounded-md"><span>${t(a.label)}</span><div class="flex items-center space-x-4"><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-assoc-check"><span class="ml-2">Zorunlu</span></label><label class="flex items-center text-sm cursor-pointer"><input type="checkbox" data-attr-id="${a.id}" class="form-checkbox h-4 w-4 text-blue-600 attribute-variant-check" disabled><span class="ml-2 text-gray-400">Varyant</span></label></div></div>`).join('');
@@ -20797,7 +21127,7 @@ const navLinksSupplier = [
       { href: '#supplier-settings/users', icon: 'fa-users', text: 'Kullanıcı Yönetimi', role: 'supplier' }
     ]
   },
-  { href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' },
+  //{ href: '#support', icon: 'fa-headset', text: 'Destek', role: 'supplier' },
   //{ href: '#faq', icon: 'fa-question-circle', text: 'Sık Sorulan Sorular', role: 'supplier' }
 ];
 const navLinksAdmin = [
