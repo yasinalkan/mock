@@ -1400,7 +1400,7 @@ window.mockData.orders = window.mockData.orders || [
                         <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <!-- Search Input -->
-                                <div>
+                                    <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
                                     <div class="relative">
                                         <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
@@ -1411,7 +1411,7 @@ window.mockData.orders = window.mockData.orders || [
                                 </div>
                                 
                                 <!-- Role Filter -->
-                                <div>
+                                    <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Rol</label>
                                     <select id="supplierUserRoleFilter" 
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -1421,10 +1421,10 @@ window.mockData.orders = window.mockData.orders || [
                                         <option value="Sipariş Uzmanı">Sipariş Uzmanı</option>
                                         <option value="Stajyer">Stajyer</option>
                                     </select>
-                                </div>
+                                    </div>
                                 
                                 <!-- Status Filter -->
-                                <div>
+                                    <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
                                     <select id="supplierUserStatusFilter" 
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -1433,14 +1433,14 @@ window.mockData.orders = window.mockData.orders || [
                                         <option value="pending">Bekliyor</option>
                                         <option value="inactive">Pasif</option>
                                     </select>
+                                    </div>
                                 </div>
-                            </div>
                             
                             <!-- Results Count -->
                             <div id="supplierUserSearchResults" class="mt-3 text-sm text-gray-500 hidden">
                                 <span id="supplierUserSearchCount"></span>
                             </div>
-                        </div>
+                                    </div>
                         
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -2082,32 +2082,32 @@ renderers['adminSuppliers'] = () => {
     
     const renderSupplierRows = (suppliers) => {
         return suppliers.map(supplier => {
-            const statusInfo = {
-                approved: { text: 'Onaylandı', class: 'bg-green-100 text-green-800' },
-                application_received: { text: 'Başvuru Alındı', class: 'bg-blue-100 text-blue-800' },
-                rejected: { text: 'Reddedildi', class: 'bg-red-100 text-red-800' }
-            }[supplier.status] || { text: supplier.status, class: 'bg-gray-100 text-gray-800' };
-            
-            const registrationDate = supplier.registrationDate ? new Date(supplier.registrationDate).toLocaleDateString('tr-TR') : '-';
-            const lastActivity = supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-';
-            
-            return `
+        const statusInfo = {
+            approved: { text: 'Onaylandı', class: 'bg-green-100 text-green-800' },
+            application_received: { text: 'Başvuru Alındı', class: 'bg-blue-100 text-blue-800' },
+            rejected: { text: 'Reddedildi', class: 'bg-red-100 text-red-800' }
+        }[supplier.status] || { text: supplier.status, class: 'bg-gray-100 text-gray-800' };
+        
+        const registrationDate = supplier.registrationDate ? new Date(supplier.registrationDate).toLocaleDateString('tr-TR') : '-';
+        const lastActivity = supplier.lastActivity ? new Date(supplier.lastActivity).toLocaleDateString('tr-TR') : '-';
+        
+        return `
                 <tr class="hover:bg-gray-50 cursor-pointer" data-supplier-id="${supplier.id}">
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.name}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.email || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.phone || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${registrationDate}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
-                    </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${supplier.name}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.email || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${supplier.phone || '-'}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${registrationDate}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span>
+                </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium" onclick="event.stopPropagation();">
-                        <button onclick="showSupplierStatusModal(${supplier.id})" class="p-2 text-gray-500 hover:text-green-600" title="Durum Değiştir">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-        }).join('');
+                    <button onclick="showSupplierStatusModal(${supplier.id})" class="p-2 text-gray-500 hover:text-green-600" title="Durum Değiştir">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
     };
     
     const supplierRows = renderSupplierRows(mockData.suppliers);
@@ -3780,65 +3780,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                 })()}
                             </div>
                         </div>
-                        
-                        <!-- Commission Rates Section -->
-                        ${(() => {
-                            const user = window.currentUser || {};
-                            const isSupplier = user.role === 'supplier';
-                            
-                            // For suppliers: show only their own commission rate
-                            // For admins: show all suppliers' commission rates
-                            let productSuppliers = [];
-                            
-                            if (isSupplier && supplierId) {
-                                // Supplier view: show only their own rate
-                                const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                                if (supplier) {
-                                    const commissionRate = getSupplierCommissionRate(product.id, supplierId);
-                                    productSuppliers = [{ supplier, commissionRate }];
-                                }
-                            } else if (!isSupplier) {
-                                // Admin view: show all suppliers that have this product
-                                productSuppliers = mockData.supplierProducts
-                                    .filter(sp => sp.productId === product.id)
-                                    .map(sp => {
-                                        const supplier = mockData.suppliers.find(s => s.id === sp.supplierId);
-                                        if (!supplier) return null;
-                                        const commissionRate = getSupplierCommissionRate(product.id, supplier.id);
-                                        return { supplier, commissionRate };
-                                    })
-                                    .filter(Boolean);
-                            }
-                            
-                            if (productSuppliers.length === 0) {
-                                return '';
-                            }
-                            
-                            return `
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                    <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                        <i class="fas fa-percentage text-blue-600 mr-2"></i>
-                                        Komisyon Oranları
-                                    </h3>
-                                    <div class="space-y-3">
-                                        ${productSuppliers.map(({ supplier, commissionRate }) => `
-                                            <div class="bg-white p-3 rounded-md border border-blue-100">
-                                                <div class="flex justify-between items-center">
-                                                    <div>
-                                                        <div class="font-medium text-gray-900">${supplier.name}</div>
-                                                        ${!isSupplier ? `<div class="text-sm text-gray-500">${supplier.email || ''}</div>` : ''}
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <div class="text-2xl font-bold text-blue-600">${commissionRate.toFixed(1)}%</div>
-                                                        <div class="text-xs text-gray-500">Komisyon Oranı</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                    </div>
-                                </div>
-                            `;
-                        })()}
                     </div>
                     
                     <div class="space-y-6">
@@ -4064,6 +4005,61 @@ function submitStockPriceUpdateRequestWithValues(productId) {
 }
 function renderStockPriceTab(container, product, isSupplier) {
     
+    // Helper function to generate commission rates section
+    const getCommissionRatesSection = (product, isSupplier, supplierId) => {
+        const user = window.currentUser || {};
+        let productSuppliers = [];
+        
+        if (isSupplier && supplierId) {
+            // Supplier view: show only their own rate
+            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+            if (supplier) {
+                const commissionRate = getSupplierCommissionRate(product.id, supplierId);
+                productSuppliers = [{ supplier, commissionRate }];
+            }
+        } else if (!isSupplier) {
+            // Admin view: show all suppliers that have this product
+            productSuppliers = mockData.supplierProducts
+                .filter(sp => sp.productId === product.id)
+                .map(sp => {
+                    const supplier = mockData.suppliers.find(s => s.id === sp.supplierId);
+                    if (!supplier) return null;
+                    const commissionRate = getSupplierCommissionRate(product.id, supplier.id);
+                    return { supplier, commissionRate };
+                })
+                .filter(Boolean);
+        }
+        
+        if (productSuppliers.length === 0) {
+            return '';
+        }
+        
+        return `
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mt-4">
+                <h3 class="text-lg font-semibold mb-4 flex items-center">
+                    <i class="fas fa-percentage text-blue-600 mr-2"></i>
+                    Komisyon Oranları
+                </h3>
+                <div class="space-y-3">
+                    ${productSuppliers.map(({ supplier, commissionRate }) => `
+                        <div class="bg-white p-3 rounded-md border border-blue-100">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <div class="font-medium text-gray-900">${supplier.name}</div>
+                                    ${!isSupplier ? `<div class="text-sm text-gray-500">${supplier.email || ''}</div>` : ''}
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold text-blue-600">${commissionRate.toFixed(1)}%</div>
+                                    <div class="text-xs text-gray-500">Komisyon Oranı</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    };
+    
     try {
         const price = product.isNew ? 0 : getProductPrice(product.id);
         const stock = product.isNew ? 0 : getProductStock(product.id);
@@ -4083,14 +4079,15 @@ function renderStockPriceTab(container, product, isSupplier) {
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
                                 <input type="number" id="edit-product-stock" value="${stock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
-                                <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
+                                    <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
+                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
                             </div>
                             
                         </div>
                     </div>
+                    ${getCommissionRatesSection(product, isSupplier, window.currentUser?.supplierId || window.currentUser?.id)}
                 </div>
             `;
         } else if (isSupplier) {
@@ -4137,6 +4134,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                             <button onclick="submitStockPriceUpdateRequestWithValues(${product.id})" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelleme Talebi Gönder</button>
                         </div>
                     </div>
+                    ${getCommissionRatesSection(product, isSupplier, supplierId)}
                 </div>
             `;
         } else {
@@ -4210,6 +4208,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                             <button onclick="submitStockPriceUpdateRequest(${product.id})" class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Stok/Fiyat Güncelle</button>
                         </div>
                     </div>
+                    ${getCommissionRatesSection(product, false, null)}
                 </div>
             `;
         }
@@ -4273,211 +4272,55 @@ function renderAttributesTab(container, product, isSupplier) {
 function renderImagesTab(container, product, isSupplier) {
     const images = product.images || [];
     
-    if (images.length === 0) {
-        container.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-images text-4xl text-gray-400 mb-4"></i>
-                <h3 class="text-lg font-semibold text-gray-600 mb-2">Ürün Görselleri</h3>
-                <p class="text-gray-500 mb-4">Bu ürün için henüz görsel yüklenmemiş.</p>
-                ${isSupplier ? `
-                    <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        <i class="fas fa-upload mr-2"></i>Görsel Yükle
-                    </button>
-                ` : ''}
-            </div>
-        `;
-        return;
-    }
-    
     const imageCards = images.map(image => {
-        const qualityColor = image.quality.score >= 90 ? 'text-green-600' : 
-                           image.quality.score >= 75 ? 'text-yellow-600' : 'text-red-600';
-        const qualityBg = image.quality.score >= 90 ? 'bg-green-100' : 
-                         image.quality.score >= 75 ? 'bg-yellow-100' : 'bg-red-100';
-        
-        const typeLabels = {
-            main: 'Ana Görsel',
-            detail: 'Detay',
-            lifestyle: 'Lifestyle',
-            variant: 'Varyant'
-        };
-        
-        const typeColors = {
-            main: 'bg-blue-100 text-blue-800',
-            detail: 'bg-green-100 text-green-800',
-            lifestyle: 'bg-purple-100 text-purple-800',
-            variant: 'bg-orange-100 text-orange-800'
-        };
+        const imageUrl = image.url || image;
+        const imageAlt = image.alt || image.title || t(product.name);
         
         return `
             <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <!-- Image Preview -->
                 <div class="relative group">
-                    <img src="${image.url}" alt="${image.alt}" class="w-full h-48 object-cover">
+                    <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center">
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex space-x-2">
-                            <button onclick="viewImageFullscreen('${image.url}')" class="px-3 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100">
-                                <i class="fas fa-search-plus"></i>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <button onclick="viewImageFullscreen('${imageUrl}')" class="px-3 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100">
+                                <i class="fas fa-search-plus mr-2"></i>Büyüt
                             </button>
-                            <button onclick="downloadImage('${image.url}', '${image.title}')" class="px-3 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100">
-                                <i class="fas fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Type Badge -->
-                    <div class="absolute top-2 left-2">
-                        <span class="px-2 py-1 text-xs font-semibold rounded-full ${typeColors[image.type] || 'bg-gray-100 text-gray-800'}">
-                            ${typeLabels[image.type] || image.type}
-                        </span>
-                    </div>
-                    <!-- Quality Score -->
-                    <div class="absolute top-2 right-2">
-                        <div class="px-2 py-1 text-xs font-bold rounded-full ${qualityBg} ${qualityColor}">
-                            ${image.quality.score}%
                         </div>
                     </div>
                 </div>
                 
-                <!-- Image Details -->
+                <!-- Action Button -->
                 <div class="p-4">
-                    <h4 class="font-semibold text-gray-900 mb-2">${image.title}</h4>
-                    
-                    <!-- Quality Information -->
-                    <div class="mb-3">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm text-gray-600">Kalite Skoru</span>
-                            <span class="text-sm font-medium ${qualityColor}">${image.quality.score}%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="h-2 rounded-full transition-all duration-300 ${image.quality.score >= 90 ? 'bg-green-500' : image.quality.score >= 75 ? 'bg-yellow-500' : 'bg-red-500'}" 
-                                 style="width: ${image.quality.score}%"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Technical Details -->
-                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 mb-3">
-                        <div>
-                            <span class="font-medium">Çözünürlük:</span>
-                            <div>${image.quality.resolution}</div>
-                        </div>
-                        <div>
-                            <span class="font-medium">Dosya Boyutu:</span>
-                            <div>${image.quality.fileSize}</div>
-                        </div>
-                        <div>
-                            <span class="font-medium">Format:</span>
-                            <div>${image.quality.format}</div>
-                        </div>
-                        <div>
-                            <span class="font-medium">Yüklenme:</span>
-                            <div>${new Date(image.uploadedAt).toLocaleDateString('tr-TR')}</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Quality Issues -->
-                    ${image.quality.issues && image.quality.issues.length > 0 ? `
-                        <div class="mb-3">
-                            <div class="text-xs font-medium text-red-600 mb-1">Kalite Sorunları:</div>
-                            <div class="space-y-1">
-                                ${image.quality.issues.map(issue => `
-                                    <div class="flex items-center text-xs text-red-600">
-                                        <i class="fas fa-exclamation-triangle mr-1"></i>
-                                        ${issue}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : `
-                        <div class="mb-3">
-                            <div class="flex items-center text-xs text-green-600">
-                                <i class="fas fa-check-circle mr-1"></i>
-                                Kalite sorunları tespit edilmedi
-                            </div>
-                        </div>
-                    `}
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex space-x-2">
-                        ${isSupplier ? `
-                            <button onclick="editImage(${image.id})" class="flex-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                                <i class="fas fa-edit mr-1"></i>Düzenle
-                            </button>
-                            <button onclick="replaceImage(${image.id})" class="flex-1 px-3 py-2 text-xs bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200">
-                                <i class="fas fa-sync-alt mr-1"></i>Değiştir
-                            </button>
-                        ` : `
-                            <button onclick="editImage(${image.id})" class="flex-1 px-3 py-2 text-xs bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200">
-                                <i class="fas fa-edit mr-1"></i>Düzenle
-                            </button>
-                            <button onclick="replaceImage(${image.id})" class="flex-1 px-3 py-2 text-xs bg-yellow-100 text-yellow-700 rounded-md hover:bg-yellow-200">
-                                <i class="fas fa-sync-alt mr-1"></i>Değiştir
-                            </button>
-                            <button onclick="deleteImage(${image.id})" class="px-3 py-2 text-xs bg-red-100 text-red-700 rounded-md hover:bg-red-200">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        `}
-                    </div>
+                    <button onclick="deleteImage(${image.id || image})" class="w-full px-3 py-2 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200">
+                        <i class="fas fa-trash mr-2"></i>Görseli Sil
+                    </button>
                 </div>
             </div>
         `;
     }).join('');
     
-    // Calculate overall image quality
-    const averageQuality = images.reduce((sum, img) => sum + img.quality.score, 0) / images.length;
-    const qualityColor = averageQuality >= 90 ? 'text-green-600' : 
-                        averageQuality >= 75 ? 'text-yellow-600' : 'text-red-600';
-    const qualityBg = averageQuality >= 90 ? 'bg-green-50 border-green-200' : 
-                     averageQuality >= 75 ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
+    // Create add image card
+    const addImageCard = `
+        <div class="bg-white border-2 border-dashed border-gray-300 rounded-lg overflow-hidden hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer">
+            <div class="h-48 flex flex-col items-center justify-center p-4" onclick="uploadNewImage()">
+                <i class="fas fa-plus-circle text-4xl text-gray-400 mb-3"></i>
+                <p class="text-sm font-medium text-gray-600">Görsel Ekle</p>
+            </div>
+        </div>
+    `;
     
     container.innerHTML = `
         <div class="space-y-6">
-            <!-- Image Quality Overview -->
-            <div class="border rounded-lg p-4 ${qualityBg}">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-lg font-semibold">Görsel Kalite Özeti</h3>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-sm text-gray-600">Ortalama Kalite:</span>
-                        <span class="text-lg font-bold ${qualityColor}">${averageQuality.toFixed(1)}%</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-gray-700">${images.length}</div>
-                        <div class="text-gray-600">Toplam Görsel</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600">${images.filter(img => img.quality.score >= 90).length}</div>
-                        <div class="text-gray-600">Yüksek Kalite</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-yellow-600">${images.filter(img => img.quality.score >= 75 && img.quality.score < 90).length}</div>
-                        <div class="text-gray-600">Orta Kalite</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-red-600">${images.filter(img => img.quality.score < 75).length}</div>
-                        <div class="text-gray-600">Düşük Kalite</div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Action Bar -->
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold">Ürün Görselleri (${images.length})</h3>
-                <div class="flex space-x-2">
-                    <button onclick="uploadNewImage()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                        <i class="fas fa-upload mr-2"></i>Yeni Görsel Yükle
-                    </button>
-                    ${!isSupplier ? `
-                        <button onclick="optimizeAllImages()" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                            <i class="fas fa-magic mr-2"></i>Tümünü Optimize Et
-                        </button>
-                    ` : ''}
-                </div>
             </div>
             
             <!-- Image Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 ${imageCards}
+                ${addImageCard}
             </div>
         </div>
     `;
@@ -4572,70 +4415,8 @@ function renderVariantsTab(container, product) {
     `;
 }
 function renderAssetsTab(container, product) {
-    const images = product.images || [];
-    
-    // Calculate overall image quality
-    const averageQuality = images.length > 0 ? images.reduce((sum, img) => sum + img.quality.score, 0) / images.length : 0;
-    const qualityColor = averageQuality >= 90 ? 'text-green-600' : 
-                        averageQuality >= 75 ? 'text-yellow-600' : 'text-red-600';
-    const qualityBg = averageQuality >= 90 ? 'bg-green-50 border-green-200' : 
-                     averageQuality >= 75 ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200';
-    
-    container.innerHTML = `
-        <div class="space-y-6">
-            <!-- Asset Management Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Images Summary -->
-                <div class="bg-white border rounded-lg p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-images text-2xl text-blue-600 mr-3"></i>
-                            <h3 class="text-lg font-semibold">Görseller</h3>
-                        </div>
-                        <span class="text-2xl font-bold text-blue-600">${images.length}</span>
-                    </div>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Ortalama Kalite:</span>
-                            <span class="font-medium ${qualityColor}">${averageQuality.toFixed(1)}%</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Yüksek Kalite:</span>
-                            <span class="font-medium text-green-600">${images.filter(img => img.quality.score >= 90).length}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Düşük Kalite:</span>
-                            <span class="font-medium text-red-600">${images.filter(img => img.quality.score < 75).length}</span>
-                        </div>
-                    </div>
-                    <div class="mt-4">
-                        <button onclick="showImagesInAssetsTab()" class="block w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-center">
-                            <i class="fas fa-eye mr-2"></i>Görselleri Görüntüle
-                        </button>
-                    </div>
-                </div>
-                
-            </div>
-            
-            <!-- Asset Management Actions -->
-            <div class="bg-white border rounded-lg p-6">
-                <h3 class="text-lg font-semibold mb-4">Varlık Yönetimi</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
-                        <i class="fas fa-images text-2xl text-gray-400 mb-2"></i>
-                        <div class="text-sm font-medium">Görsel Yükle</div>
-                        <div class="text-xs text-gray-500">JPG, PNG, WebP</div>
-                    </button>
-                    <button class="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors">
-                        <i class="fas fa-archive text-2xl text-gray-400 mb-2"></i>
-                        <div class="text-sm font-medium">Toplu Yükle</div>
-                        <div class="text-xs text-gray-500">ZIP, RAR</div>
-                    </button>
-                </div>
-            </div>
-            
-        </div>
-    `;
+    // Simply use the same rendering as images tab
+    renderImagesTab(container, product, false);
 }
 function showImagesInAssetsTab() {
     // Get the current product from the URL or context
@@ -4656,18 +4437,18 @@ function showImagesInAssetsTab() {
 }
 function renderLogsTab(container, product) {
     try {
-        const changeLogs = product.changeLogs || [];
-        
-        if (changeLogs.length === 0) {
-            container.innerHTML = `
-                <div class="text-center py-8">
-                    <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
-                    <h3 class="text-lg font-semibold text-gray-600 mb-2">Değişiklik Logları</h3>
-                    <p class="text-gray-500">Bu ürün için henüz değişiklik kaydı bulunmuyor.</p>
-                </div>
-            `;
-            return;
-        }
+    const changeLogs = product.changeLogs || [];
+    
+    if (changeLogs.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-600 mb-2">Değişiklik Logları</h3>
+                <p class="text-gray-500">Bu ürün için henüz değişiklik kaydı bulunmuyor.</p>
+            </div>
+        `;
+        return;
+    }
     
     // Group logs by date
     const groupedLogs = changeLogs.reduce((groups, log) => {
@@ -4942,8 +4723,8 @@ function renderLogsTab(container, product) {
                 <h3 class="text-lg font-semibold text-red-600 mb-2">Hata Oluştu</h3>
                 <p class="text-gray-500">Değişiklik logları yüklenirken bir hata oluştu.</p>
                 <p class="text-xs text-gray-400 mt-2">${error.message}</p>
-            </div>
-        `;
+        </div>
+    `;
     }
 }
 // Image management functions
