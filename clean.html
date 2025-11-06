@@ -4182,6 +4182,70 @@
             return false;
         }
 
+        function cancelSupplierRequest(requestId) {
+            const user = window.currentUser || {};
+            if (user.role !== 'supplier') {
+                showToast('Bu işlem sadece tedarikçiler tarafından yapılabilir.', 'error');
+                return;
+            }
+
+            const supplierId = user.supplierId;
+            if (!supplierId) {
+                showToast('Tedarikçi bilgisi bulunamadı.', 'error');
+                return;
+            }
+
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (!request) {
+                showToast('Talep bulunamadı.', 'error');
+                return;
+            }
+
+            // Verify that the supplier owns this request
+            if (request.supplierId !== supplierId) {
+                showToast('Bu talebi iptal etme yetkiniz yok.', 'error');
+                return;
+            }
+
+            // Only allow canceling if request is in submitted or toBeRevised status
+            if (request.status !== 'submitted' && request.status !== 'toBeRevised') {
+                showToast('Sadece bekleyen veya revize edilecek talepler iptal edilebilir.', 'error');
+                return;
+            }
+
+            showModal(
+                'Talebi İptal Et',
+                '<p>Bu talebi iptal etmek istediğinizden emin misiniz?</p><p class="text-sm text-gray-600 mt-2">Bu işlem geri alınamaz ve talep silinecektir.</p>',
+                'İptal Et',
+                () => {
+                    // Find and remove the request from mockData.requests
+                    const requestIndex = mockData.requests.findIndex(r => r.id === requestId);
+                    if (requestIndex !== -1) {
+                        mockData.requests.splice(requestIndex, 1);
+                    }
+
+                    // Also remove supplierSubmission from product if it exists (for backwards compatibility)
+                    if (request.productId) {
+                        const product = mockData.products.find(p => p.id === request.productId);
+                        if (product && product.supplierSubmission) {
+                            // Only remove if this submission is related to this request
+                            if (request.type === 'product_update' || request.type === 'product_create') {
+                                // Check if supplierSubmission matches this request
+                                if (product.supplierSubmission.supplierId === supplierId) {
+                                    delete product.supplierSubmission;
+                                }
+                            }
+                        }
+                    }
+
+                    showToast('Talep başarıyla iptal edildi ve silindi.', 'success');
+                    
+                    // Refresh the current view
+                    handleRouteChange();
+                }
+            );
+        }
+
         function getRequestCounts(supplierId = null) {
             const requests = supplierId ? 
                 mockData.requests.filter(r => r.supplierId === supplierId) : 
@@ -4327,6 +4391,15 @@
                             </button>
                         </div>
                         ` : ''}
+                        ${window.currentUser?.role === 'supplier' && (request.status === 'submitted' || request.status === 'toBeRevised') ? `
+                        <!-- Supplier Cancel Button -->
+                        <div class="flex justify-end space-x-3 pt-4 border-t">
+                            <button onclick="cancelSupplierRequest(${request.id})" 
+                                    class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                <i class="fas fa-times mr-2"></i>Talebi İptal Et
+                            </button>
+                        </div>
+                        ` : ''}
                     </div>
                 `;
                 
@@ -4369,7 +4442,7 @@
             // Get the generated HTML
             const modalContent = tempContainer.innerHTML;
             
-            // Add admin action buttons if needed
+            // Add action buttons if needed
             let finalContent = modalContent;
             if (window.currentUser?.role === 'admin' && request.status === 'submitted') {
                 finalContent += `
@@ -4381,6 +4454,15 @@
                         <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                             Kabul Et
+                        </button>
+                    </div>
+                `;
+            } else if (window.currentUser?.role === 'supplier' && (request.status === 'submitted' || request.status === 'toBeRevised')) {
+                finalContent += `
+                    <div class="flex justify-end space-x-3 pt-4 border-t mt-6">
+                        <button onclick="cancelSupplierRequest(${request.id})" 
+                                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                            <i class="fas fa-times mr-2"></i>Talebi İptal Et
                         </button>
                     </div>
                 `;
@@ -4556,7 +4638,7 @@
                 pageContent += tempContainer.innerHTML;
             }
 
-            // Admin Action Buttons
+            // Action Buttons
             if (window.currentUser?.role === 'admin' && request.status === 'submitted') {
                 pageContent += `
                     <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
@@ -4567,6 +4649,15 @@
                         <button onclick="handleRequestDecision(${request.id}, 'accepted')" 
                                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                             <i class="fas fa-check mr-2"></i>Kabul Et
+                        </button>
+                    </div>
+                `;
+            } else if (window.currentUser?.role === 'supplier' && (request.status === 'submitted' || request.status === 'toBeRevised')) {
+                pageContent += `
+                    <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
+                        <button onclick="cancelSupplierRequest(${request.id})" 
+                                class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                            <i class="fas fa-times mr-2"></i>Talebi İptal Et
                         </button>
                     </div>
                 `;
@@ -6372,27 +6463,27 @@
 
                 pageContent.innerHTML = `
                         <!-- Date Range Filter -->
-                        <div class="bg-white rounded-lg shadow p-6 mb-6">
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-semibold text-gray-800">Tarih Aralığı Filtresi</h3>
+                        <div class="bg-white rounded-lg shadow p-4 mb-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-sm font-semibold text-gray-800">Tarih Aralığı Filtresi</h3>
                                 <div class="flex items-center space-x-2">
-                                    <button id="resetDateRange" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                                    <button id="resetDateRange" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                                         <i class="fas fa-undo mr-1"></i>Sıfırla
                                     </button>
-                                    <button id="applyDateRange" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                        <i class="fas fa-filter mr-2"></i>Filtrele
+                                    <button id="applyDateRange" class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+                                        <i class="fas fa-filter mr-1"></i>Filtrele
                                     </button>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tarih Aralığı</label>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
                                     <div class="relative">
                                         <input type="text" id="dateRangeInput" 
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" 
+                                               class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" 
                                                placeholder="Tarih aralığı seçin..." readonly>
-                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                            <i class="fas fa-calendar-alt text-gray-400 text-xs"></i>
                                         </div>
                                     </div>
                                     <!-- Hidden inputs for actual date values -->
@@ -6400,8 +6491,8 @@
                                     <input type="date" id="endDate" class="hidden">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Hızlı Seçim</label>
-                                    <select id="quickDateRange" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Hızlı Seçim</label>
+                                    <select id="quickDateRange" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">Özel Aralık</option>
                                         <option value="today">Bugün</option>
                                         <option value="yesterday">Dün</option>
@@ -6416,13 +6507,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mt-4 flex items-center justify-between">
-                                <div class="text-sm text-gray-600">
+                            <div class="mt-3 flex items-center justify-between">
+                                <div class="text-xs text-gray-600">
                                     <span id="dateRangeInfo">Tüm zamanlar</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-500">Filtrelenmiş veriler:</span>
-                                    <span id="filteredDataCount" class="text-sm font-medium text-blue-600">-</span>
+                                    <span class="text-xs text-gray-500">Filtrelenmiş veriler:</span>
+                                    <span id="filteredDataCount" class="text-xs font-medium text-blue-600">-</span>
                                 </div>
                             </div>
                         </div>
@@ -6492,6 +6583,7 @@
                 }
 
                 const tabsHTML = isSupplier ? `
+                    <a href="#finance/orders" class="tab-button ${activeTab === 'orders' ? 'active' : 'text-gray-500'} font-medium py-4">Siparişler</a>
                     <a href="#finance/completed" class="tab-button ${activeTab === 'completed' ? 'active' : 'text-gray-500'} font-medium py-4">Geçmiş Ödemeler</a>
                     <a href="#finance/pending" class="tab-button ${activeTab === 'pending' ? 'active' : 'text-gray-500'} font-medium py-4">Bekleyen Ödemeler</a>
                     <a href="#finance/revenue-trend" class="tab-button ${activeTab === 'revenue-trend' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a>
@@ -6503,27 +6595,27 @@
 
                 pageContent.innerHTML = `
                     <!-- Date Range Filter -->
-                    <div class="bg-white rounded-lg shadow p-6 mb-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">Tarih Aralığı Filtresi</h3>
+                    <div class="bg-white rounded-lg shadow p-4 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-gray-800">Tarih Aralığı Filtresi</h3>
                             <div class="flex items-center space-x-2">
-                                <button id="resetDateRange" class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
+                                <button id="resetDateRange" class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded hover:bg-gray-200">
                                     <i class="fas fa-undo mr-1"></i>Sıfırla
                                 </button>
-                                <button id="applyDateRange" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                                    <i class="fas fa-filter mr-2"></i>Filtrele
+                                <button id="applyDateRange" class="px-3 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700">
+                                    <i class="fas fa-filter mr-1"></i>Filtrele
                                 </button>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tarih Aralığı</label>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
                                 <div class="relative">
                                     <input type="text" id="dateRangeInput" 
-                                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" 
+                                           class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer" 
                                            placeholder="Tarih aralığı seçin..." readonly>
-                                    <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                                    <div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                        <i class="fas fa-calendar-alt text-gray-400 text-xs"></i>
                                     </div>
                                 </div>
                                 <!-- Hidden inputs for actual date values -->
@@ -6531,8 +6623,8 @@
                                 <input type="date" id="endDate" class="hidden">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Hızlı Seçim</label>
-                                <select id="quickDateRange" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Hızlı Seçim</label>
+                                <select id="quickDateRange" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Özel Aralık</option>
                                     <option value="today">Bugün</option>
                                     <option value="yesterday">Dün</option>
@@ -6547,13 +6639,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="mt-4 flex items-center justify-between">
-                            <div class="text-sm text-gray-600">
+                        <div class="mt-3 flex items-center justify-between">
+                            <div class="text-xs text-gray-600">
                                 <span id="dateRangeInfo">Tüm zamanlar</span>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm text-gray-500">Filtrelenmiş veriler:</span>
-                                <span id="filteredDataCount" class="text-sm font-medium text-blue-600">-</span>
+                                <span class="text-xs text-gray-500">Filtrelenmiş veriler:</span>
+                                <span id="filteredDataCount" class="text-xs font-medium text-blue-600">-</span>
                             </div>
                         </div>
                     </div>
@@ -10609,8 +10701,9 @@
             
             headers += `
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('category_header')}</th>
-                <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('stock_header')}</th>
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('price_header')}</th>
+                ${isSupplier && activeTab === 'aktif' ? `<th class="p-3 text-sm font-semibold text-left sortable-header sort-none">Komisyon Oranı</th>` : ''}
+                <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('stock_header')}</th>
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('health_header')}</th>
             `;
             
@@ -10746,9 +10839,63 @@
                 `;
                 }
                 
+                // Get commission rate for suppliers in active tab
+                let commissionRate = '';
+                if (isSupplier && activeTab === 'aktif') {
+                    const user = window.currentUser || {};
+                    const currentUserSupplierId = user.supplierId || user.id;
+                    let rate = 12; // Default rate
+                    
+                    try {
+                        // Use the function if available
+                        if (typeof getSupplierCommissionRate === 'function') {
+                            rate = getSupplierCommissionRate(product.id, currentUserSupplierId) || 12;
+                        } else if (typeof mockData !== 'undefined' && mockData.commissionRules) {
+                            // Fallback: calculate directly
+                            const commissionRules = mockData.commissionRules || [];
+                            const currentDate = new Date();
+                            
+                            // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
+                            const supplierCategoryRule = commissionRules.find(rule => 
+                                rule.type === 'supplier_category' && 
+                                rule.supplierId === currentUserSupplierId &&
+                                rule.categoryId === product.categoryId &&
+                                new Date(rule.startDate) <= currentDate &&
+                                (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                            );
+                            
+                            const supplierRule = commissionRules.find(rule => 
+                                rule.type === 'supplier' && 
+                                rule.supplierId === currentUserSupplierId &&
+                                new Date(rule.startDate) <= currentDate &&
+                                (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                            );
+                            
+                            const categoryRule = commissionRules.find(rule => 
+                                rule.type === 'category' && 
+                                rule.categoryId === product.categoryId &&
+                                new Date(rule.startDate) <= currentDate &&
+                                (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                            );
+                            
+                            if (supplierCategoryRule) {
+                                rate = supplierCategoryRule.rate;
+                            } else if (supplierRule) {
+                                rate = supplierRule.rate;
+                            } else if (categoryRule) {
+                                rate = categoryRule.rate;
+                            }
+                        }
+                    } catch (e) {
+                        rate = 12; // Default on error
+                    }
+                    
+                    // Always create the commission rate cell for suppliers in active tab
+                    commissionRate = `<td class="p-3 text-sm font-medium text-blue-600">${rate.toFixed(1)}%</td>`;
+                }
+                
                 row += `
                         <td class="p-3 text-sm">${t(category.name)}</td>
-                        <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
                         <td class="p-3 text-sm font-medium">
                             <div class="flex items-center">
                                 <span>${priceText}</span>
@@ -10766,6 +10913,8 @@
                                 })()}
                             </div>
                         </td>
+                        ${isSupplier && activeTab === 'aktif' ? (commissionRate || '<td class="p-3 text-sm font-medium text-blue-600">12.0%</td>') : ''}
+                        <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
                         <td class="p-3">
                             <div class="flex items-center">
                                 <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
@@ -10800,7 +10949,7 @@
                         <td class="p-3 text-sm text-gray-500">${lastUpdated}</td>
                 `;
                 
-                // Only show actions column for admins, not for suppliers
+                // Show actions column for admins and suppliers (for request tabs)
                 if (!isSupplier) {
                     // For request tabs, show inspection buttons instead of detail buttons
                     if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') {
@@ -10830,6 +10979,52 @@
                         </button>
                     </td>
                 `;
+                    }
+                } else if (isSupplier) {
+                    // For suppliers, show cancel button in request tabs
+                    if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme' || activeTab === 'fiyat-stok-istekleri') {
+                        // Find the request for this product
+                        let requestType = '';
+                        if (activeTab === 'yeni-urun-talepleri') {
+                            requestType = 'product_create';
+                        } else if (activeTab === 'urun-guncelleme') {
+                            requestType = 'product_update';
+                        } else if (activeTab === 'fiyat-stok-istekleri') {
+                            requestType = 'stock_price_update';
+                        }
+                        
+                        const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                        const request = mockData.requests.find(r => 
+                            r.type === requestType && 
+                            r.productId === product.id && 
+                            r.supplierId === currentUserSupplierId &&
+                            (r.status === 'submitted' || r.status === 'toBeRevised')
+                        );
+                        
+                        if (request) {
+                            row += `
+                            <td class="p-3 text-right">
+                                <div class="flex gap-1 justify-end">
+                                    <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); showRequestDetailModal(${request.id});">
+                                        <i class="fas fa-search-plus mr-1"></i>İncele
+                                    </button>
+                                    <button class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-md hover:bg-red-200" onclick="event.stopPropagation(); cancelSupplierRequest(${request.id});">
+                                        <i class="fas fa-times mr-1"></i>İptal
+                                    </button>
+                                </div>
+                            </td>
+                            `;
+                        } else {
+                            row += `<td class="p-3 text-right"></td>`;
+                        }
+                    } else {
+                        row += `
+                        <td class="p-3 text-right">
+                            <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
+                                Detay <i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </td>
+                    `;
                     }
                 }
                 
@@ -11029,10 +11224,45 @@
                             ${supplierSection}
                             ${originalitySection}
                             
-                            <div class="flex justify-end">
-                                <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="navigateTo('${getProductDetailHash(product.id)}')">
-                                    Detay <i class="fas fa-chevron-right ml-1"></i>
-                                </button>
+                            <div class="flex justify-end gap-2">
+                                ${(() => {
+                                    // For suppliers in request tabs, show cancel button
+                                    if (isSupplier && (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme' || activeTab === 'fiyat-stok-istekleri')) {
+                                        let requestType = '';
+                                        if (activeTab === 'yeni-urun-talepleri') {
+                                            requestType = 'product_create';
+                                        } else if (activeTab === 'urun-guncelleme') {
+                                            requestType = 'product_update';
+                                        } else if (activeTab === 'fiyat-stok-istekleri') {
+                                            requestType = 'stock_price_update';
+                                        }
+                                        
+                                        const currentUserSupplierId = (window.currentUser||{}).supplierId;
+                                        const request = mockData.requests.find(r => 
+                                            r.type === requestType && 
+                                            r.productId === product.id && 
+                                            r.supplierId === currentUserSupplierId &&
+                                            (r.status === 'submitted' || r.status === 'toBeRevised')
+                                        );
+                                        
+                                        if (request) {
+                                            return `
+                                                <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="showRequestDetailModal(${request.id})">
+                                                    İncele <i class="fas fa-search-plus ml-1"></i>
+                                                </button>
+                                                <button class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-md hover:bg-red-200" onclick="cancelSupplierRequest(${request.id})">
+                                                    İptal <i class="fas fa-times ml-1"></i>
+                                                </button>
+                                            `;
+                                        }
+                                    }
+                                    // Default detail button
+                                    return `
+                                        <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="navigateTo('${getProductDetailHash(product.id)}')">
+                                            Detay <i class="fas fa-chevron-right ml-1"></i>
+                                        </button>
+                                    `;
+                                })()}
                             </div>
                         </div>
                     </div>
@@ -11822,6 +12052,258 @@
             `;
         }
 
+        function renderSupplierOrdersTable() {
+            const contentEl = document.getElementById('finance-tab-content');
+            if (!contentEl) return;
+            
+            const user = window.currentUser || {};
+            const currentSupplierId = user.supplierId || user.id;
+            
+            // Check if orders data exists
+            if (!mockData.orders || !Array.isArray(mockData.orders)) {
+                contentEl.innerHTML += `
+                    <div class="bg-yellow-50 p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-yellow-800">Veri Bulunamadı</h3>
+                                <p class="text-sm text-yellow-600">Sipariş verisi bulunamadı.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filter orders for current supplier - only show completed orders (delivered or returned)
+            const supplierOrders = mockData.orders.filter(order => 
+                String(order.supplierId) === String(currentSupplierId) && 
+                (order.status === 'teslim edildi' || order.status === 'iade edildi')
+            );
+            
+            function renderFilteredOrders() {
+                // Get filter values
+                const searchQuery = (document.getElementById('supplier-finance-order-search')?.value || '').toLowerCase();
+                const dateRangeFilter = document.getElementById('supplier-finance-order-date-range')?.value || '';
+                const amountFilter = document.getElementById('supplier-finance-order-amount')?.value || '';
+
+                // Apply filters (orders are already filtered to completed status)
+                const filteredOrders = supplierOrders.filter(order => {
+                    // Search filter
+                    if (searchQuery) {
+                        const searchText = `${order.id} ${(order.items||[]).map(i => `${i.sku} ${i.name||''}`).join(' ')}`.toLowerCase();
+                        if (!searchText.includes(searchQuery)) return false;
+                    }
+
+                    // Date range filter
+                    if (dateRangeFilter && order.date) {
+                        const orderDate = new Date(order.date);
+                        const now = new Date();
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        
+                        switch (dateRangeFilter) {
+                            case 'today':
+                                if (orderDate < today) return false;
+                                break;
+                            case 'week':
+                                const weekAgo = new Date(today);
+                                weekAgo.setDate(weekAgo.getDate() - 7);
+                                if (orderDate < weekAgo) return false;
+                                break;
+                            case 'month':
+                                const monthAgo = new Date(today);
+                                monthAgo.setMonth(monthAgo.getMonth() - 1);
+                                if (orderDate < monthAgo) return false;
+                                break;
+                            case 'quarter':
+                                const quarterAgo = new Date(today);
+                                quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+                                if (orderDate < quarterAgo) return false;
+                                break;
+                        }
+                    }
+
+                    // Amount filter
+                    if (amountFilter && typeof order.total === 'number') {
+                        const total = order.total;
+                        switch (amountFilter) {
+                            case '0-1000':
+                                if (total < 0 || total > 1000) return false;
+                                break;
+                            case '1000-2500':
+                                if (total < 1000 || total > 2500) return false;
+                                break;
+                            case '2500-5000':
+                                if (total < 2500 || total > 5000) return false;
+                                break;
+                            case '5000+':
+                                if (total < 5000) return false;
+                                break;
+                        }
+                    }
+
+                    return true;
+                });
+
+                // Apply pagination
+                const paginatedOrders = paginateData(filteredOrders, window.paginationState.currentPage);
+                
+                // Set render function for pagination
+                window.paginationState.renderFunction = renderFilteredOrders;
+                
+                // Update count
+                const countEl = document.getElementById('supplier-finance-order-count');
+                if (countEl) {
+                    countEl.textContent = `Görüntülenen: ${paginatedOrders.length} / Toplam: ${filteredOrders.length} sipariş`;
+                }
+
+                // Render filtered orders
+                const orderRows = paginatedOrders.map(order => {
+                    const itemCount = order.items ? order.items.length : 0;
+                    const totalAmount = order.total || 0;
+                    const commissionRate = calculateWeightedAverageCommissionRate(order);
+                    const commissionAmount = totalAmount * (commissionRate / 100);
+                    
+                    const statusClass = {
+                        'hazırlanıyor': 'bg-yellow-100 text-yellow-800',
+                        'kargolandı': 'bg-blue-100 text-blue-800',
+                        'teslim edildi': 'bg-green-100 text-green-800',
+                        'iade edildi': 'bg-purple-100 text-purple-800',
+                        'iptal': 'bg-red-100 text-red-800'
+                    }[order.status] || 'bg-gray-100 text-gray-800';
+                    
+                    const statusText = {
+                        'hazırlanıyor': 'Hazırlanıyor',
+                        'kargolandı': 'Kargolandı',
+                        'teslim edildi': 'Teslim Edildi',
+                        'iade edildi': 'İade Edildi',
+                        'iptal': 'İptal'
+                    }[order.status] || order.status;
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 cursor-pointer" onclick="showOrderDetail('${order.id}')">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${order.id}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(order.date).toLocaleDateString('tr-TR')}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${itemCount}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${commissionAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${statusText}</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button onclick="event.stopPropagation(); showOrderDetail('${order.id}')" class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('supplier-finance-order-table-body').innerHTML = orderRows || 
+                    `<tr><td colspan="7" class="px-6 py-8 text-center text-gray-500">Filtreleme kriterlerine uygun sipariş bulunamadı.</td></tr>`;
+                
+                // Render pagination
+                renderPagination('supplier-finance-orders-pagination');
+            }
+
+            contentEl.innerHTML += `
+                <div class="space-y-4">
+                    <!-- Filter Section -->
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <div class="mb-2">
+                            <p class="text-xs text-gray-600 italic">Sadece tamamlanmış siparişler gösterilmektedir.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label for="supplier-finance-order-search" class="block text-xs font-medium text-gray-700 mb-1">Sipariş Ara</label>
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input type="text" id="supplier-finance-order-search" class="pl-8 w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" placeholder="Sipariş ID, SKU...">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="supplier-finance-order-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+                                <select id="supplier-finance-order-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Zamanlar</option>
+                                    <option value="today">Bugün</option>
+                                    <option value="week">Bu Hafta</option>
+                                    <option value="month">Bu Ay</option>
+                                    <option value="quarter">Son 3 Ay</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="supplier-finance-order-amount" class="block text-xs font-medium text-gray-700 mb-1">Tutar Aralığı</label>
+                                <select id="supplier-finance-order-amount" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Tutarlar</option>
+                                    <option value="0-1000">₺0 - ₺1.000</option>
+                                    <option value="1000-2500">₺1.000 - ₺2.500</option>
+                                    <option value="2500-5000">₺2.500 - ₺5.000</option>
+                                    <option value="5000+">₺5.000+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-3">
+                            <div class="flex space-x-2">
+                                <button id="supplier-finance-order-apply" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-1 focus:ring-blue-500">
+                                    <i class="fas fa-search mr-1"></i>Filtrele
+                                </button>
+                                <button id="supplier-finance-order-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
+                                    <i class="fas fa-times mr-1"></i>Temizle
+                                </button>
+                            </div>
+                            <div class="text-xs text-gray-500">
+                                <span id="supplier-finance-order-count">Toplam: ${supplierOrders.length} sipariş</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Table -->
+                    <div class="overflow-x-auto bg-white rounded-lg shadow">
+                        <table id="supplier-finance-orders-table" class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Sipariş ID</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Sipariş Tarihi</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Ürün Sayısı</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Toplam Tutar</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Komisyon Tutarı</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sortable-header sort-none">Durum</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplier-finance-order-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Orders will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="supplier-finance-orders-pagination"></div>
+                </div>
+            `;
+
+            // Add event listeners for filtering
+            document.getElementById('supplier-finance-order-apply')?.addEventListener('click', renderFilteredOrders);
+            document.getElementById('supplier-finance-order-clear')?.addEventListener('click', () => {
+                document.getElementById('supplier-finance-order-search').value = '';
+                document.getElementById('supplier-finance-order-date-range').value = '';
+                document.getElementById('supplier-finance-order-amount').value = '';
+                renderFilteredOrders();
+            });
+
+            // Auto-filter on input changes
+            document.getElementById('supplier-finance-order-search')?.addEventListener('input', renderFilteredOrders);
+            document.getElementById('supplier-finance-order-date-range')?.addEventListener('change', renderFilteredOrders);
+            document.getElementById('supplier-finance-order-amount')?.addEventListener('change', renderFilteredOrders);
+
+            // Initialize pagination
+            initializePagination();
+            
+            // Initial render
+            renderFilteredOrders();
+            
+            // Make the supplier finance orders table sortable
+            setTimeout(() => makeTableSortable('supplier-finance-orders-table'), 100);
+        }
+
         function renderOrdersTable() {
             const contentEl = document.getElementById('finance-tab-content');
             if (!contentEl) return;
@@ -11845,21 +12327,20 @@
             function renderFilteredOrders() {
                 // Get filter values
                 const searchQuery = (document.getElementById('finance-order-search')?.value || '').toLowerCase();
-                const statusFilter = document.getElementById('finance-order-status')?.value || '';
                 const supplierFilter = document.getElementById('finance-order-supplier')?.value || '';
                 const dateRangeFilter = document.getElementById('finance-order-date-range')?.value || '';
                 const amountFilter = document.getElementById('finance-order-amount')?.value || '';
 
-                // Apply filters
+                // Apply filters - only show completed orders (delivered or returned)
                 const filteredOrders = mockData.orders.filter(order => {
+                    // Only show completed orders (delivered or returned)
+                    if (order.status !== 'teslim edildi' && order.status !== 'iade edildi') return false;
+                    
                     // Search filter
                     if (searchQuery) {
                         const searchText = `${order.id} ${(order.items||[]).map(i => `${i.sku} ${i.name||''}`).join(' ')}`.toLowerCase();
                         if (!searchText.includes(searchQuery)) return false;
                     }
-
-                    // Status filter
-                    if (statusFilter && order.status !== statusFilter) return false;
 
                     // Supplier filter
                     if (supplierFilter && String(order.supplierId) !== String(supplierFilter)) return false;
@@ -11937,6 +12418,7 @@
                         'hazırlanıyor': 'bg-yellow-100 text-yellow-800',
                         'kargolandı': 'bg-blue-100 text-blue-800',
                         'teslim edildi': 'bg-green-100 text-green-800',
+                        'iade edildi': 'bg-purple-100 text-purple-800',
                         'iptal': 'bg-red-100 text-red-800'
                     }[order.status] || 'bg-gray-100 text-gray-800';
                     
@@ -11944,6 +12426,7 @@
                         'hazırlanıyor': 'Hazırlanıyor',
                         'kargolandı': 'Kargolandı',
                         'teslim edildi': 'Teslim Edildi',
+                        'iade edildi': 'İade Edildi',
                         'iptal': 'İptal'
                     }[order.status] || order.status;
                     
@@ -11981,23 +12464,16 @@
                 <div class="space-y-4">
                     <!-- Filter Section -->
                     <div class="bg-gray-50 p-3 rounded-lg">
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                        <div class="mb-2">
+                            <p class="text-xs text-gray-600 italic">Sadece tamamlanmış siparişler gösterilmektedir.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                             <div>
                                 <label for="finance-order-search" class="block text-xs font-medium text-gray-700 mb-1">Sipariş Ara</label>
                                 <div class="relative">
                                     <i class="fas fa-search absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
                                     <input type="text" id="finance-order-search" class="pl-8 w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" placeholder="Sipariş ID, SKU...">
                                 </div>
-                            </div>
-                            <div>
-                                <label for="finance-order-status" class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
-                                <select id="finance-order-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">Tüm Durumlar</option>
-                                    <option value="hazırlanıyor">Hazırlanıyor</option>
-                                    <option value="kargolandı">Kargolandı</option>
-                                    <option value="teslim edildi">Teslim Edildi</option>
-                                    <option value="iptal">İptal</option>
-                                </select>
                             </div>
                             <div>
                                 <label for="finance-order-supplier" class="block text-xs font-medium text-gray-700 mb-1">Tedarikçi</label>
@@ -12069,7 +12545,6 @@
             document.getElementById('finance-order-apply')?.addEventListener('click', renderFilteredOrders);
             document.getElementById('finance-order-clear')?.addEventListener('click', () => {
                 document.getElementById('finance-order-search').value = '';
-                document.getElementById('finance-order-status').value = '';
                 document.getElementById('finance-order-supplier').value = '';
                 document.getElementById('finance-order-date-range').value = '';
                 document.getElementById('finance-order-amount').value = '';
@@ -12078,7 +12553,6 @@
 
             // Auto-filter on input changes
             document.getElementById('finance-order-search')?.addEventListener('input', renderFilteredOrders);
-            document.getElementById('finance-order-status')?.addEventListener('change', renderFilteredOrders);
             document.getElementById('finance-order-supplier')?.addEventListener('change', renderFilteredOrders);
             document.getElementById('finance-order-date-range')?.addEventListener('change', renderFilteredOrders);
             document.getElementById('finance-order-amount')?.addEventListener('change', renderFilteredOrders);
@@ -13114,6 +13588,28 @@
                         </div>
                     `;
                     break;
+                case 'orders':
+                    infoContent = `
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="orders-info">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-shopping-cart text-green-400"></i>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <h3 class="text-sm font-medium text-green-800">Siparişler</h3>
+                                    <div class="mt-2 text-sm text-green-700">
+                                        <p>Bu sekmede siparişlerinizin finansal detaylarını görüntüleyebilirsiniz. Sipariş tutarları, komisyon hesaplamaları ve ödeme durumları burada takip edilir.</p>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
                 case 'revenue-trend':
                     infoContent = `
                         <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6" id="revenue-trend-info">
@@ -13186,6 +13682,9 @@
             container.innerHTML = infoContent;
             
             switch(tabName) {
+                case 'orders':
+                    renderSupplierOrdersTable();
+                    break;
                 case 'transactions':
                     const visibleTx = (Array.isArray(mockData.transactions)? mockData.transactions: [])
                         .filter(tx => (user.role === 'admin') || (user.role === 'supplier' && user.supplierId != null && getTxSupplierId(tx) === user.supplierId));
@@ -14293,6 +14792,7 @@
             const isArchivedItemsTab = currentHash.includes('archived-items');
             const isArchivedTab = currentHash.includes('pasif') && !isOutOfStockTab && !isBannedTab && !isArchivedItemsTab;
             const isTaleplerTab = currentHash.includes('talepler') && !currentHash.includes('yeni-urun-talepleri') && !currentHash.includes('urun-guncelleme') && !currentHash.includes('fiyat-stok-istekleri');
+            const isAktifTab = currentHash.includes('aktif') || (currentHash.includes('products') && !isNewProductRequestsTab && !isNewArrivalsTab && !isAwaitingApprovalTab && !isPriceUpdateRequestsTab && !isSentTab && !isOutOfStockTab && !isBannedTab && !isArchivedItemsTab && !isArchivedTab && !isTaleplerTab);
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
             
@@ -14314,6 +14814,8 @@
                 activeTab = 'urun-guncelleme';
             } else if (isSentTab) {
                 activeTab = 'gonderilenler';
+            } else if (isAktifTab) {
+                activeTab = 'aktif';
             }
             
             // Special handling for price update requests tab
@@ -14479,6 +14981,59 @@
                             <span>${priceText}</span>
                         </div>
                     </td>
+                    ${(() => {
+                        if (isSupplier && isAktifTab) {
+                            const currentUserSupplierId = user.supplierId || user.id;
+                            let rate = 12; // Default rate
+                            
+                            try {
+                                // Use the function if available
+                                if (typeof getSupplierCommissionRate === 'function') {
+                                    rate = getSupplierCommissionRate(p.id, currentUserSupplierId) || 12;
+                                } else if (typeof mockData !== 'undefined' && mockData.commissionRules) {
+                                    // Fallback: calculate directly
+                                    const commissionRules = mockData.commissionRules || [];
+                                    const currentDate = new Date();
+                                    
+                                    // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
+                                    const supplierCategoryRule = commissionRules.find(rule => 
+                                        rule.type === 'supplier_category' && 
+                                        rule.supplierId === currentUserSupplierId &&
+                                        rule.categoryId === p.categoryId &&
+                                        new Date(rule.startDate) <= currentDate &&
+                                        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                                    );
+                                    
+                                    const supplierRule = commissionRules.find(rule => 
+                                        rule.type === 'supplier' && 
+                                        rule.supplierId === currentUserSupplierId &&
+                                        new Date(rule.startDate) <= currentDate &&
+                                        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                                    );
+                                    
+                                    const categoryRule = commissionRules.find(rule => 
+                                        rule.type === 'category' && 
+                                        rule.categoryId === p.categoryId &&
+                                        new Date(rule.startDate) <= currentDate &&
+                                        (!rule.endDate || new Date(rule.endDate) >= currentDate)
+                                    );
+                                    
+                                    if (supplierCategoryRule) {
+                                        rate = supplierCategoryRule.rate;
+                                    } else if (supplierRule) {
+                                        rate = supplierRule.rate;
+                                    } else if (categoryRule) {
+                                        rate = categoryRule.rate;
+                                    }
+                                }
+                            } catch (e) {
+                                rate = 12; // Default on error
+                            }
+                            
+                            return `<td class="p-3 text-sm font-medium text-blue-600">${rate.toFixed(1)}%</td>`;
+                        }
+                        return '';
+                    })()}
                     <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
                     <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span></td>
                     ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `
@@ -14533,6 +15088,7 @@
                                 ${isPriceUpdateRequestsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Tedarikçi</th>` : ''}
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('category_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('price_header')}</th>
+                                ${isSupplier && isAktifTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Komisyon Oranı</th>` : ''}
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
                                 ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Talep Durumu</th>` : ''}
