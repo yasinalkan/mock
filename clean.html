@@ -14416,7 +14416,18 @@
                     
                     function renderFilteredCompletedPayments() {
                         const dateRangeFilter = document.getElementById('completed-payment-date-range')?.value || '';
-                        filteredSupplierCompletedPayments = mockData.supplierPayouts.filter(p => p.status === 'completed');
+                        const user = window.currentUser || {};
+                        const isSupplier = user.role === 'supplier';
+                        
+                        // Filter by status and supplier ID (if supplier)
+                        filteredSupplierCompletedPayments = mockData.supplierPayouts.filter(p => {
+                            if (p.status !== 'completed') return false;
+                            if (isSupplier && user.supplierId != null) {
+                                const paymentSupplierId = getPaymentSupplierId(p);
+                                if (paymentSupplierId !== user.supplierId) return false;
+                            }
+                            return true;
+                        });
                         
                         // Apply date range filter
                         if (dateRangeFilter) {
@@ -14448,8 +14459,6 @@
                         }
                         
                         // For suppliers: commissions are costs (red), tutar is revenue (green)
-                        const user = window.currentUser || {};
-                        const isSupplier = user.role === 'supplier';
                         const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
                         const carrierColorClass = 'text-red-600'; // Always red as it's a cost
                         
@@ -14546,7 +14555,18 @@
                     
                     function renderFilteredPendingPayments() {
                         const dateRangeFilter = document.getElementById('pending-payment-date-range')?.value || '';
-                        filteredSupplierPendingPayments = mockData.supplierPayouts.filter(p => p.status === 'pending');
+                        const user = window.currentUser || {};
+                        const isSupplier = user.role === 'supplier';
+                        
+                        // Filter by status and supplier ID (if supplier)
+                        filteredSupplierPendingPayments = mockData.supplierPayouts.filter(p => {
+                            if (p.status !== 'pending') return false;
+                            if (isSupplier && user.supplierId != null) {
+                                const paymentSupplierId = getPaymentSupplierId(p);
+                                if (paymentSupplierId !== user.supplierId) return false;
+                            }
+                            return true;
+                        });
                         
                         // Apply date range filter (based on expectedDate)
                         if (dateRangeFilter) {
@@ -14579,8 +14599,6 @@
                         }
                         
                         // For suppliers: commissions are costs (red), tutar is revenue (green)
-                        const user = window.currentUser || {};
-                        const isSupplier = user.role === 'supplier';
                         const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
                         const carrierColorClass = 'text-red-600'; // Always red as it's a cost
                         
