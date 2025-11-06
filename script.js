@@ -364,6 +364,7 @@ renderers['orders'] = () => {
         </table>
         </div>
       </div>
+      <div id="admin-orders-pagination"></div>
     </div>`;
   function numberTRY(x){ return (typeof x==='number') ? (x.toLocaleString('tr-TR',{style:'currency',currency:'TRY'})) : '-'; }
   function openOrderDetail(order){
@@ -712,12 +713,20 @@ window.mockData.orders = window.mockData.orders || [
   function renderRows(){
     const sup=document.getElementById('ord-supplier').value;
     const q=(document.getElementById('ord-query').value||'').toLowerCase();
-    const rows=orders.filter(o=>{
+    const filteredOrders = orders.filter(o=>{
       if(sup && String(o.supplierId)!==String(sup)) return false;
       if(!q) return true;
       const text = `${o.id} ${o.status||''} ${(o.items||[]).map(i => `${i.sku} ${i.name||""}`).join(' ')}`.toLowerCase();
       return text.includes(q);
-    }).map(o=>{
+    });
+    
+    // Apply pagination
+    const paginatedOrders = paginateData(filteredOrders, window.paginationState.currentPage);
+    
+    // Set render function for pagination
+    window.paginationState.renderFunction = renderRows;
+    
+    const rows=paginatedOrders.map(o=>{
       const supplierName=(suppliers.find(s=>String(s.id)===String(o.supplierId))||{}).name||('Tedarikçi '+o.supplierId);
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
@@ -726,7 +735,7 @@ window.mockData.orders = window.mockData.orders || [
       const itemCount = (o.items || []).length;
       const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
       
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs flex items-center justify-center font-semibold shadow-sm\">${initials(supplierName)}</div>\n            <div class=\"leading-5 font-medium text-gray-900\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n            <i class=\"fas fa-lira-sign text-green-500\"></i>\n            <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs flex items-center justify-center font-semibold shadow-sm\">${initials(supplierName)}</div>\n            <div class=\"leading-5 font-medium text-gray-900\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n    <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
     document.getElementById('ord-rows').innerHTML = rows || `<tr><td colspan="7" class="p-8 text-center text-gray-500">
       <div class="flex flex-col items-center space-y-3">
@@ -735,11 +744,14 @@ window.mockData.orders = window.mockData.orders || [
       </div>
     </td></tr>`;
     
+    // Render pagination
+    renderPagination('admin-orders-pagination');
+    
     // Make the admin orders table sortable
     setTimeout(() => makeTableSortable('admin-orders-table'), 100);
   }
-  document.getElementById('ord-apply').addEventListener('click', renderRows);
-  document.getElementById('ord-clear').addEventListener('click', ()=>{ document.getElementById('ord-supplier').value=''; document.getElementById('ord-query').value=''; renderRows(); });
+  document.getElementById('ord-apply').addEventListener('click', ()=>{ window.paginationState.currentPage = 1; renderRows(); });
+  document.getElementById('ord-clear').addEventListener('click', ()=>{ document.getElementById('ord-supplier').value=''; document.getElementById('ord-query').value=''; window.paginationState.currentPage = 1; renderRows(); });
   document.getElementById('ord-export').addEventListener('click', () => exportOrdersToCSV('admin'));
   pageContent.addEventListener('click', (e)=>{
     const tr = e.target.closest('tr[data-order-id]'); 
@@ -1382,7 +1394,9 @@ window.mockData.orders = window.mockData.orders || [
                 }).join('');
             };
             
-            const initialRows = renderUserRows(supplierUsers);
+            // Initial pagination setup
+            paginateData(supplierUsers, 1);
+            const initialRows = renderUserRows(paginateData(supplierUsers, 1));
             
             pageTitle.textContent = 'Kullanıcı Yönetimi';
             pageContent.innerHTML = `
@@ -1460,6 +1474,7 @@ window.mockData.orders = window.mockData.orders || [
                                 </tbody>
                             </table>
                         </div>
+                        <div id="supplier-user-pagination"></div>
                     </div>
                 </div>
             `;
@@ -1472,12 +1487,35 @@ window.mockData.orders = window.mockData.orders || [
             const searchResults = document.getElementById('supplierUserSearchResults');
             const searchCount = document.getElementById('supplierUserSearchCount');
             
+            let filteredUsers = [...supplierUsers];
+            
+            const renderUsersTable = () => {
+                const paginatedUsers = paginateData(filteredUsers, window.paginationState.currentPage);
+                
+                if (paginatedUsers.length === 0) {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
+                                <p>Sonuç bulunamadı</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    tableBody.innerHTML = renderUserRows(paginatedUsers);
+                }
+                
+                renderPagination('supplier-user-pagination');
+            };
+            
+            window.paginationState.renderFunction = renderUsersTable;
+            
             const applyFilters = () => {
                 const searchTerm = (searchInput?.value || '').toLowerCase().trim();
                 const selectedRole = roleFilter?.value || '';
                 const selectedStatus = statusFilter?.value || '';
                 
-                const filteredUsers = supplierUsers.filter(u => {
+                filteredUsers = supplierUsers.filter(u => {
                     // Search filter
                     if (searchTerm) {
                         const name = (u.name || '').toLowerCase();
@@ -1500,19 +1538,8 @@ window.mockData.orders = window.mockData.orders || [
                     return true;
                 });
                 
-                // Render filtered rows
-                if (filteredUsers.length === 0) {
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                                <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
-                                <p>Sonuç bulunamadı</p>
-                            </td>
-                        </tr>
-                    `;
-                } else {
-                    tableBody.innerHTML = renderUserRows(filteredUsers);
-                }
+                window.paginationState.currentPage = 1;
+                renderUsersTable();
                 
                 // Update results count
                 if (searchTerm || selectedRole || selectedStatus) {
@@ -1533,6 +1560,9 @@ window.mockData.orders = window.mockData.orders || [
             if (statusFilter) {
                 statusFilter.addEventListener('change', applyFilters);
             }
+            
+            // Initial render
+            renderPagination('supplier-user-pagination');
         };
         renderers['supplierOrders'] = () => {
   const user = window.currentUser || {};
@@ -1780,7 +1810,7 @@ window.mockData.orders = window.mockData.orders || [
       const itemCount = (o.items || []).length;
       const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
       
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n            <i class=\"fas fa-lira-sign text-green-500\"></i>\n            <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n     <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
     
     document.getElementById('sord-rows').innerHTML = rows || `<tr><td colspan="6" class="p-8 text-center text-gray-500">
@@ -2110,7 +2140,32 @@ renderers['adminSuppliers'] = () => {
     }).join('');
     };
     
-    const supplierRows = renderSupplierRows(mockData.suppliers);
+    let filteredSuppliers = [...mockData.suppliers];
+    
+    const renderSuppliersTable = () => {
+        const paginatedSuppliers = paginateData(filteredSuppliers, window.paginationState.currentPage);
+        const supplierRows = renderSupplierRows(paginatedSuppliers);
+        const tableBody = document.getElementById('supplierTableBody');
+        
+        if (tableBody) {
+            tableBody.innerHTML = supplierRows || `
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                        <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
+                        <p>Sonuç bulunamadı</p>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        renderPagination('admin-suppliers-pagination');
+        attachSupplierRowClickListeners();
+    };
+    
+    window.paginationState.renderFunction = renderSuppliersTable;
+    paginateData(filteredSuppliers, 1);
+    
+    const initialRows = renderSupplierRows(paginateData(filteredSuppliers, 1));
     
     pageContent.innerHTML = `
         <div class="bg-white rounded-lg shadow">
@@ -2147,9 +2202,11 @@ renderers['adminSuppliers'] = () => {
                                 <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
                             </tr>
                         </thead>
-                        <tbody id="supplierTableBody" class="bg-white divide-y divide-gray-200">${supplierRows}</tbody>
+                        <tbody id="supplierTableBody" class="bg-white divide-y divide-gray-200">${initialRows}</tbody>
                     </table>
                 </div>
+                
+                <div id="admin-suppliers-pagination"></div>
                 
                 <div id="supplierSearchResults" class="mt-4 text-sm text-gray-500 hidden">
                     <span id="supplierSearchCount"></span>
@@ -2162,7 +2219,6 @@ renderers['adminSuppliers'] = () => {
     
     // Search functionality
     const searchInput = document.getElementById('supplierSearchInput');
-    const tableBody = document.getElementById('supplierTableBody');
     const searchResults = document.getElementById('supplierSearchResults');
     const searchCount = document.getElementById('supplierSearchCount');
     
@@ -2170,42 +2226,29 @@ renderers['adminSuppliers'] = () => {
         const searchTerm = e.target.value.toLowerCase().trim();
         
         if (searchTerm === '') {
-            tableBody.innerHTML = renderSupplierRows(mockData.suppliers);
+            filteredSuppliers = [...mockData.suppliers];
             searchResults.classList.add('hidden');
-            return;
-        }
-        
-        const filteredSuppliers = mockData.suppliers.filter(supplier => {
-            const name = (supplier.name || '').toLowerCase();
-            const email = (supplier.email || '').toLowerCase();
-            const phone = (supplier.phone || '').toLowerCase();
+        } else {
+            filteredSuppliers = mockData.suppliers.filter(supplier => {
+                const name = (supplier.name || '').toLowerCase();
+                const email = (supplier.email || '').toLowerCase();
+                const phone = (supplier.phone || '').toLowerCase();
+                
+                return name.includes(searchTerm) || 
+                       email.includes(searchTerm) || 
+                       phone.includes(searchTerm);
+            });
             
-            return name.includes(searchTerm) || 
-                   email.includes(searchTerm) || 
-                   phone.includes(searchTerm);
-        });
-        
-        tableBody.innerHTML = renderSupplierRows(filteredSuppliers);
-        
-        if (filteredSuppliers.length === 0) {
-            tableBody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
-                        <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
-                        <p>Sonuç bulunamadı</p>
-                    </td>
-                </tr>
-            `;
+            searchCount.textContent = `${filteredSuppliers.length} tedarikçi bulundu`;
+            searchResults.classList.remove('hidden');
         }
         
-        searchCount.textContent = `${filteredSuppliers.length} tedarikçi bulundu`;
-        searchResults.classList.remove('hidden');
-        
-        // Re-attach row click listeners after filtering
-        attachSupplierRowClickListeners();
+        window.paginationState.currentPage = 1;
+        renderSuppliersTable();
     });
     
-    // Add click event listener for supplier rows
+    // Initial render
+    renderPagination('admin-suppliers-pagination');
     attachSupplierRowClickListeners();
 };
 
@@ -3411,16 +3454,11 @@ function renderProductTab(tabName, product) {
                      </div>
                  </div>
                  
-                 <!-- Action Buttons -->
+                 <!-- Submission Info -->
                  <div class="flex justify-between items-center">
                      <div class="text-sm text-gray-600">
                          <i class="fas fa-clock mr-1"></i>
                          Gönderim: ${new Date(submission.submittedAt).toLocaleString('tr-TR')}
-                     </div>
-                     <div class="flex space-x-3">
-                         <button onclick="cancelUpdateRequest(${product.id})" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-                             <i class="fas fa-times mr-2"></i>Talebi İptal Et
-                         </button>
                      </div>
                  </div>
              </div>
@@ -3439,11 +3477,26 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
         const price = product.isNew ? 0 : getProductPrice(product.id);
         const stock = product.isNew ? 0 : getProductStock(product.id);
         
+        // Check if there's a toBeRevised request for this product
+        const toBeRevisedRequest = isSupplier && supplierId ? 
+            mockData.requests.find(r => 
+                r.productId == product.id && 
+                r.supplierId == supplierId && 
+                r.status === 'toBeRevised' &&
+                (r.type === 'product_update' || r.type === 'product_create')
+            ) : null;
+        
+        // Get request data to pre-populate form if it exists
+        const requestData = toBeRevisedRequest?.data || {};
     
         // Check if this is a draft product or new product that can be edited
         const isDraftEditable = isSupplier && ((product.status === 'draft' && !product.supplierSubmission) || product.isNew);
+        // Check if there's a toBeRevised request - suppliers should be able to edit these directly
+        const hasToBeRevisedRequest = isSupplier && toBeRevisedRequest !== null;
         
-        if (isDraftEditable) {
+        // For suppliers: show editable form if it's a draft/new product OR if there's a toBeRevised request
+        // When there's a toBeRevised request, always show editable form (even if product is not draft)
+        if (isDraftEditable && !hasToBeRevisedRequest) {
             // Editable version for draft products
             const categoryOptions = mockData.categories.map(c => 
                 `<option value="${c.id}" ${c.id === product.categoryId ? 'selected' : ''}>${t(c.name)}</option>`
@@ -3511,17 +3564,39 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
             }
         } else if (isSupplier) {
             // Editable version for suppliers on published products
+            // This includes products with toBeRevised requests - fields are pre-populated and editable
             const supplierUser = window.currentUser || {};
             const supplierId = supplierUser.supplierId;
             
             const categoryName = t(category.name);
             const brandName = brand.name;
+            
+            // Pre-populate with request data if toBeRevised request exists
+            const productNameValue = requestData.name !== undefined ? requestData.name : (typeof product.name === 'string' ? product.name : (product.name?.tr || ''));
+            const productBrandValue = requestData.brand !== undefined ? requestData.brand : (product.brand || '');
+            const productModelValue = requestData.model !== undefined ? requestData.model : (product.model || '');
+            const productDescriptionValue = requestData.description !== undefined ? requestData.description : (product.description || '');
+            const productKeywordsValue = requestData.keywords !== undefined ? requestData.keywords : (product.keywords || '');
+            const productBrandIdValue = requestData.brandId !== undefined ? requestData.brandId : product.brandId;
+            
+            // Show notice if there's a toBeRevised request
+            const toBeRevisedNotice = toBeRevisedRequest ? `
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                        <p class="text-sm font-medium text-yellow-800">Bu ürün için revize edilecek bir talep bulunmaktadır. Değişiklikleriniz mevcut talebe kaydedilecektir.</p>
+                    </div>
+                </div>
+            ` : '';
+            
             const editableAttributes = (() => {
                 const defs = (mockData.attributes || []).slice().sort((a, b) => (a.id || 0) - (b.id || 0));
-                const productAttributes = product.attributes || {};
-                if (defs.length === 0) return '<p class="text-gray-600">Bu ürün için nitelik değeri girilmemiş.</p>';
+                // Use request data attributes if available, otherwise use product attributes
+                const productAttributes = requestData.attributes || product.attributes || {};
+                if (defs.length === 0) return '<p class="text-gray-600">Bu ürün için özellik değeri girilmemiş.</p>';
                 return defs.map(attribute => {
                     const attrData = productAttributes[attribute.id] || productAttributes[String(attribute.id)] || {};
+                    // Get value from request data if it exists, otherwise from product
                     const value = typeof attrData.value !== 'undefined' && attrData.value !== null ? String(attrData.value) : '';
                     const inputType = attribute.type === 'number' ? 'number' : 'text';
                     
@@ -3553,6 +3628,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                 }).join('');
             })();
             container.innerHTML = `
+                ${toBeRevisedNotice}
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-6">
                         <div class="bg-gray-50 p-4 rounded-lg">
@@ -3568,7 +3644,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                             <div class="space-y-3">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Ürün Adı <span class="text-red-500">*</span></label>
-                                    <input type="text" id="supplierProductName" value="${typeof product.name === 'string' ? product.name : (product.name?.tr || '')}" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ürün adını girin">
+                                    <input type="text" id="supplierProductName" value="${productNameValue.replace(/"/g, '&quot;')}" class="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="Ürün adını girin">
                                 </div>
                                 <div class="flex justify-between pt-2 border-t">
                                     <span class="text-gray-600">SKU:</span>
@@ -3585,11 +3661,11 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Marka</label>
-                                        <select id="supplierProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${product.brandId === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select>
+                                        <select id="supplierProductBrand" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"><option value="">Marka Seçin</option>${mockData.brands.map(b => `<option value="${b.id}" ${productBrandIdValue === b.id ? 'selected' : ''}>${b.name}</option>`).join('')}</select>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700">Model</label>
-                                        <input type="text" id="supplierProductModel" value="${(product.model||'').replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Model adını girin">
+                                        <input type="text" id="supplierProductModel" value="${productModelValue.replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Model adını girin">
                                     </div>
 
                                     <div>
@@ -3618,11 +3694,11 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                     </div>
                                     <div class="md:col-span-2">
                                         <label for="supplierProductDescription" class="block text-sm font-medium text-gray-700">Ürün Açıklaması</label>
-                                        <textarea id="supplierProductDescription" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün açıklaması">${(product.description||'').replace(/</g,'&lt;')}</textarea>
+                                        <textarea id="supplierProductDescription" rows="5" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Ürün açıklaması">${(productDescriptionValue||'').replace(/</g,'&lt;')}</textarea>
                                     </div>
                                     <div class="md:col-span-2">
                                         <label for="supplierProductKeywords" class="block text-sm font-medium text-gray-700">Anahtar Kelimeler</label>
-                                        <input type="text" id="supplierProductKeywords" value="${(product.keywords||'').replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="virgülle ayırın">
+                                        <input type="text" id="supplierProductKeywords" value="${productKeywordsValue.replace(/"/g, '&quot;')}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="virgülle ayırın">
                                     </div>
                                 </div>
                             </div>
@@ -3749,7 +3825,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                     const allAttributeDefs = (mockData.attributes || []).slice().sort((a, b) => (a.id || 0) - (b.id || 0));
                                     
                                     if (allAttributeDefs.length === 0) {
-                                        return '<p class="text-gray-600">Bu ürün için nitelik değeri girilmemiş.</p>';
+                                        return '<p class="text-gray-600">Bu ürün için özellik değeri girilmemiş.</p>';
                                     } else {
                                         const productAttributes = product.attributes || {};
                                         return allAttributeDefs.map(attribute => {
@@ -4256,14 +4332,14 @@ function renderAttributesTab(container, product, isSupplier) {
             <table class="w-full text-left">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="p-3 text-sm font-semibold">Nitelik</th>
+                        <th class="p-3 text-sm font-semibold">Özellik</th>
                         <th class="p-3 text-sm font-semibold">Değer</th>
                         <th class="p-3 text-sm font-semibold">Durum</th>
                         ${!isSupplier ? '<th class="p-3 text-sm font-semibold text-right">İşlemler</th>' : ''}
                     </tr>
                 </thead>
                 <tbody>
-                    ${attributeRows || `<tr><td colspan="${isSupplier ? '3' : '4'}" class="p-6 text-center text-gray-500">Henüz nitelik tanımlanmamış</td></tr>`}
+                    ${attributeRows || `<tr><td colspan="${isSupplier ? '3' : '4'}" class="p-6 text-center text-gray-500">Henüz özellik tanımlanmamış</td></tr>`}
                 </tbody>
             </table>
         </div>
@@ -4552,7 +4628,7 @@ function renderLogsTab(container, product) {
                 } else if (log.details.attribute) {
                     detailsHtml = `
                         <div class="mt-2 text-xs text-gray-600">
-                            <span class="font-medium">Nitelik:</span> ${log.details.attribute}
+                            <span class="font-medium">Özellik:</span> ${log.details.attribute}
                             <div><span class="font-medium">Değer:</span> ${log.details.value}</div>
                             ${log.details.reason ? `<div class="text-red-600">Sebep: ${log.details.reason}</div>` : ''}
                         </div>
@@ -5793,10 +5869,25 @@ function filterAdminFinanceData(startDate, endDate) {
         attributes: attributes
     };
     
-    // Create product_update request
+    // Check if there's an existing toBeRevised request for this product
+    const existingRequest = mockData.requests.find(r => 
+        r.productId == productId && 
+        r.supplierId == supplierId && 
+        r.status === 'toBeRevised' &&
+        (r.type === 'product_update' || r.type === 'product_create')
+    );
+    
     try {
-        const newRequest = createRequest('product_update', productId, supplierId, updateData);
-        showToast('Ürün güncelleme talebi başarıyla gönderildi! Admin tarafından onaylanmayı beklemektedir.');
+        if (existingRequest) {
+            // Update existing toBeRevised request with new data
+            existingRequest.data = { ...existingRequest.data, ...updateData };
+            existingRequest.submittedAt = new Date().toISOString();
+            showToast('Talep başarıyla güncellendi! Tekrar göndermek için talep detay sayfasına gidin.');
+        } else {
+            // Create new product_update request
+            const newRequest = createRequest('product_update', productId, supplierId, updateData);
+            showToast('Ürün güncelleme talebi başarıyla gönderildi! Admin tarafından onaylanmayı beklemektedir.');
+        }
         
         // Refresh the product detail view
         setTimeout(() => {
@@ -5852,7 +5943,7 @@ function saveSupplierAttributes() {
     });
     
     if (!hasChanges) {
-        showToast('Güncellenecek nitelik bulunamadı.');
+        showToast('Güncellenecek özellik bulunamadı.');
         return;
     }
     
