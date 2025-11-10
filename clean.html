@@ -5058,22 +5058,23 @@
                     modalConfirm.classList.remove('hidden');
                     modalConfirm.style.display = 'block';
                     modalConfirm.style.visibility = 'visible';
+                    modalConfirm.textContent = 'Revize İste';
                 }
                 if (modalCancel) {
                     modalCancel.classList.remove('hidden');
                     modalCancel.style.display = 'block';
                     modalCancel.style.visibility = 'visible';
+                    modalCancel.textContent = t('cancel') || 'İptal';
                 }
                 if (modalFooter) {
                     modalFooter.classList.remove('hidden');
-                    modalFooter.style.display = '';
+                    modalFooter.style.display = 'flex';
                 }
                 
                 // Add yellow styling for revision action
-                const btn = document.getElementById('modal-confirm');
-                if (btn) {
-                    btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                    btn.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                if (modalConfirm) {
+                    modalConfirm.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    modalConfirm.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
                 }
             }, 50);
         }
@@ -11532,12 +11533,29 @@
             return null;
         }
         function getPaymentSupplierId(p) {
-            if (p && typeof p.supplierId !== 'undefined') return p.supplierId;
-            // Try mapping via orderId if available
-            if (p && p.orderId && Array.isArray(mockData.orders)) {
-                const ord = mockData.orders.find(o => o.id === p.orderId);
-                if (ord && typeof ord.supplierId !== 'undefined') return ord.supplierId;
+            if (!p) return null;
+            // First check if payment has supplierId directly
+            if (typeof p.supplierId !== 'undefined' && p.supplierId != null) return p.supplierId;
+            
+            // Try mapping via orderDetails if available
+            if (p.orderDetails && Array.isArray(p.orderDetails) && p.orderDetails.length > 0) {
+                // Try to find supplier from any order in orderDetails
+                for (const orderDetail of p.orderDetails) {
+                    if (orderDetail.orderId && Array.isArray(mockData.orders)) {
+                        const ord = mockData.orders.find(o => o.id === orderDetail.orderId);
+                        if (ord && typeof ord.supplierId !== 'undefined' && ord.supplierId != null) {
+                            return ord.supplierId;
+                        }
+                    }
+                }
             }
+            
+            // Try mapping via orderId if available (single order)
+            if (p.orderId && Array.isArray(mockData.orders)) {
+                const ord = mockData.orders.find(o => o.id === p.orderId);
+                if (ord && typeof ord.supplierId !== 'undefined' && ord.supplierId != null) return ord.supplierId;
+            }
+            
             return null;
         }
 
@@ -14420,13 +14438,29 @@
                         const isSupplier = user.role === 'supplier';
                         
                         // Filter by status and supplier ID (if supplier)
-                        filteredSupplierCompletedPayments = mockData.supplierPayouts.filter(p => {
-                            if (p.status !== 'completed') return false;
-                            if (isSupplier && user.supplierId != null) {
-                                const paymentSupplierId = getPaymentSupplierId(p);
-                                if (paymentSupplierId !== user.supplierId) return false;
+                        // For suppliers: show all payments if we can't determine supplier ID (mock data scenario)
+                        filteredSupplierCompletedPayments = (mockData.supplierPayouts || []).filter(p => {
+                            if (!p || p.status !== 'completed') return false;
+                            if (isSupplier) {
+                                // Only filter by supplier ID if we have a supplier ID and can determine payment supplier
+                                if (user.supplierId != null) {
+                                    const paymentSupplierId = getPaymentSupplierId(p);
+                                    // If we can determine supplier ID and it doesn't match, exclude it
+                                    // If we can't determine supplier ID (null), include it (for mock data)
+                                    if (paymentSupplierId != null && paymentSupplierId !== user.supplierId) {
+                                        return false;
+                                    }
+                                }
+                                // If user.supplierId is null or paymentSupplierId is null, include the payment
                             }
                             return true;
+                        });
+                        
+                        console.log('Supplier completed payments filter:', {
+                            totalPayments: (mockData.supplierPayouts || []).length,
+                            filteredCount: filteredSupplierCompletedPayments.length,
+                            userSupplierId: user.supplierId,
+                            isSupplier: isSupplier
                         });
                         
                         // Apply date range filter
@@ -14466,30 +14500,35 @@
                         paginateData(filteredSupplierCompletedPayments, window.paginationState.currentPage);
                         const paginatedPayments = window.paginationState.currentPageData || [];
                         
-                        const completedRows = paginatedPayments.map(p => {
-                        const breakdown = p.breakdown || {};
-                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
-                            <td class="p-3 text-sm text-gray-500">${p.id}</td>
-                            <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
-                            <td class="p-3 text-sm">${p.period}</td>
-                            <td class="p-3 text-sm">${p.orders} sipariş</td>
-                            <td class="p-3 text-sm">
-                                <div class="space-y-1">
-                                    <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                    ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
-                                </div>
-                            </td>
-                            <td class="p-3 text-sm">
-                                <div class="space-y-1">
-                                    <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                    <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                </div>
-                            </td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tamamlandı</span></td>
-                        </tr>`;
-                        }).join('');
-                        document.getElementById('completed-payment-table-body').innerHTML = completedRows || 
-                            '<tr><td colspan="7" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
+                        const completedRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
+                            const breakdown = p.breakdown || {};
+                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                                <td class="p-3 text-sm text-gray-500">${p.id}</td>
+                                <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
+                                <td class="p-3 text-sm">${p.period}</td>
+                                <td class="p-3 text-sm">${p.orders} sipariş</td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                                    </div>
+                                </td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    </div>
+                                </td>
+                                <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tamamlandı</span></td>
+                            </tr>`;
+                        }).join('') : '';
+                        const tableBodyEl = document.getElementById('completed-payment-table-body');
+                        if (tableBodyEl) {
+                            tableBodyEl.innerHTML = completedRows || 
+                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
+                        } else {
+                            console.error('completed-payment-table-body element not found when trying to render');
+                        }
                             
                         renderPagination('supplier-completed-payment-pagination');
                     }
@@ -14533,21 +14572,26 @@
                         </div>
                     `;
                     
-                    // Add event listeners
-                    document.getElementById('completed-payment-date-range')?.addEventListener('change', () => {
-                        window.paginationState.currentPage = 1;
-                        renderFilteredCompletedPayments();
-                    });
-                    document.getElementById('completed-payment-clear')?.addEventListener('click', () => {
-                        document.getElementById('completed-payment-date-range').value = '';
-                        window.paginationState.currentPage = 1;
-                        renderFilteredCompletedPayments();
-                    });
-                    
-                    // Initial pagination setup - will be set in renderFilteredCompletedPayments
-                    
-                    // Initial render
-                    renderFilteredCompletedPayments();
+                    // Add event listeners and initial render after DOM is ready
+                    setTimeout(() => {
+                        document.getElementById('completed-payment-date-range')?.addEventListener('change', () => {
+                            window.paginationState.currentPage = 1;
+                            renderFilteredCompletedPayments();
+                        });
+                        document.getElementById('completed-payment-clear')?.addEventListener('click', () => {
+                            document.getElementById('completed-payment-date-range').value = '';
+                            window.paginationState.currentPage = 1;
+                            renderFilteredCompletedPayments();
+                        });
+                        
+                        // Initial render - ensure DOM element exists
+                        const tableBody = document.getElementById('completed-payment-table-body');
+                        if (tableBody) {
+                            renderFilteredCompletedPayments();
+                        } else {
+                            console.error('completed-payment-table-body element not found');
+                        }
+                    }, 0);
                     break;
                 case 'pending':
                     // Supplier pending payments with date filter
@@ -14559,13 +14603,29 @@
                         const isSupplier = user.role === 'supplier';
                         
                         // Filter by status and supplier ID (if supplier)
-                        filteredSupplierPendingPayments = mockData.supplierPayouts.filter(p => {
-                            if (p.status !== 'pending') return false;
-                            if (isSupplier && user.supplierId != null) {
-                                const paymentSupplierId = getPaymentSupplierId(p);
-                                if (paymentSupplierId !== user.supplierId) return false;
+                        // For suppliers: show all payments if we can't determine supplier ID (mock data scenario)
+                        filteredSupplierPendingPayments = (mockData.supplierPayouts || []).filter(p => {
+                            if (!p || p.status !== 'pending') return false;
+                            if (isSupplier) {
+                                // Only filter by supplier ID if we have a supplier ID and can determine payment supplier
+                                if (user.supplierId != null) {
+                                    const paymentSupplierId = getPaymentSupplierId(p);
+                                    // If we can determine supplier ID and it doesn't match, exclude it
+                                    // If we can't determine supplier ID (null), include it (for mock data)
+                                    if (paymentSupplierId != null && paymentSupplierId !== user.supplierId) {
+                                        return false;
+                                    }
+                                }
+                                // If user.supplierId is null or paymentSupplierId is null, include the payment
                             }
                             return true;
+                        });
+                        
+                        console.log('Supplier pending payments filter:', {
+                            totalPayments: (mockData.supplierPayouts || []).length,
+                            filteredCount: filteredSupplierPendingPayments.length,
+                            userSupplierId: user.supplierId,
+                            isSupplier: isSupplier
                         });
                         
                         // Apply date range filter (based on expectedDate)
@@ -14606,7 +14666,7 @@
                         paginateData(filteredSupplierPendingPayments, window.paginationState.currentPage);
                         const paginatedPayments = window.paginationState.currentPageData || [];
                         
-                        const pendingRows = paginatedPayments.map(p => {
+                        const pendingRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
                         const breakdown = p.breakdown || {};
                         return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
                             <td class="p-3 text-sm text-gray-500">${p.id}</td>
@@ -14627,9 +14687,14 @@
                             </td>
                             <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Beklemede</span></td>
                         </tr>`;
-                        }).join('');
-                        document.getElementById('pending-payment-table-body').innerHTML = pendingRows || 
-                            '<tr><td colspan="7" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
+                        }).join('') : '';
+                        const tableBodyEl = document.getElementById('pending-payment-table-body');
+                        if (tableBodyEl) {
+                            tableBodyEl.innerHTML = pendingRows || 
+                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
+                        } else {
+                            console.error('pending-payment-table-body element not found when trying to render');
+                        }
                             
                         renderPagination('supplier-pending-payment-pagination');
                     }
@@ -14673,21 +14738,26 @@
                         </div>
                     `;
                     
-                    // Add event listeners
-                    document.getElementById('pending-payment-date-range')?.addEventListener('change', () => {
-                        window.paginationState.currentPage = 1;
-                        renderFilteredPendingPayments();
-                    });
-                    document.getElementById('pending-payment-clear')?.addEventListener('click', () => {
-                        document.getElementById('pending-payment-date-range').value = '';
-                        window.paginationState.currentPage = 1;
-                        renderFilteredPendingPayments();
-                    });
-                    
-                    // Initial pagination setup - will be set in renderFilteredPendingPayments
-                    
-                    // Initial render
-                    renderFilteredPendingPayments();
+                    // Add event listeners and initial render after DOM is ready
+                    setTimeout(() => {
+                        document.getElementById('pending-payment-date-range')?.addEventListener('change', () => {
+                            window.paginationState.currentPage = 1;
+                            renderFilteredPendingPayments();
+                        });
+                        document.getElementById('pending-payment-clear')?.addEventListener('click', () => {
+                            document.getElementById('pending-payment-date-range').value = '';
+                            window.paginationState.currentPage = 1;
+                            renderFilteredPendingPayments();
+                        });
+                        
+                        // Initial render - ensure DOM element exists
+                        const tableBody = document.getElementById('pending-payment-table-body');
+                        if (tableBody) {
+                            renderFilteredPendingPayments();
+                        } else {
+                            console.error('pending-payment-table-body element not found');
+                        }
+                    }, 0);
                     break;
                 case 'revenue-trend':
                     renderSupplierRevenueChart();
@@ -14907,6 +14977,153 @@
                                         <span class="text-gray-800">Net Ödeme Tutarı:</span>
                                         <span class="text-lg text-green-600">${payment.breakdown.netAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
                                     </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        ${isSupplierPayout && payment.orderDetails && payment.orderDetails.length > 0 ? `
+                            <div class="bg-white border border-gray-200 rounded-lg p-4 mt-4">
+                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-list-ul text-blue-600 mr-2"></i>
+                                    İşlem Listesi
+                                </h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş ID</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem Türü</th>
+                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
+                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            ${(() => {
+                                                // Build separate rows for revenue and costs
+                                                const transactionRows = [];
+                                                
+                                                payment.orderDetails.forEach(orderDetail => {
+                                                    const orderRevenue = orderDetail.amount || 0;
+                                                    const commission = orderDetail.commission || 0;
+                                                    const returnAmount = orderDetail.returnAmount || 0;
+                                                    
+                                                    // Find the actual order to get more details if available
+                                                    const actualOrder = mockData.orders?.find(o => o.id === orderDetail.orderId);
+                                                    const orderDate = actualOrder?.date ? new Date(actualOrder.date).toLocaleDateString('tr-TR') : '-';
+                                                    
+                                                    // Revenue row (positive)
+                                                    if (orderRevenue > 0) {
+                                                        transactionRows.push(`
+                                                            <tr class="hover:bg-green-50">
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="flex items-center">
+                                                                        <i class="fas fa-arrow-down text-green-600 mr-2"></i>
+                                                                        <span class="text-sm font-medium text-green-700">Sipariş Geliri</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                                                    ${orderDate !== '-' ? orderDate : '-'}
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                                                    <span class="font-semibold text-green-600">+${orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
+                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                                                        ${orderDetail.status === 'completed' ? 'Tamamlandı' :
+                                                                          orderDetail.status === 'returned' ? 'İade Edildi' :
+                                                                          orderDetail.status === 'partial_return' ? 'Kısmi İade' :
+                                                                          orderDetail.status || 'Bilinmiyor'}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        `);
+                                                    }
+                                                    
+                                                    // Commission cost row (negative)
+                                                    if (commission > 0) {
+                                                        transactionRows.push(`
+                                                            <tr class="hover:bg-red-50">
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="flex items-center">
+                                                                        <i class="fas fa-arrow-up text-red-600 mr-2"></i>
+                                                                        <span class="text-sm font-medium text-red-700">Komisyon</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                                                    ${orderDate !== '-' ? orderDate : '-'}
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                                                    <span class="font-semibold text-red-600">-${commission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
+                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Kesinti</span>
+                                                                </td>
+                                                            </tr>
+                                                        `);
+                                                    }
+                                                    
+                                                    // Return cost row (negative)
+                                                    if (returnAmount > 0) {
+                                                        transactionRows.push(`
+                                                            <tr class="hover:bg-red-50">
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap">
+                                                                    <div class="flex items-center">
+                                                                        <i class="fas fa-undo text-red-600 mr-2"></i>
+                                                                        <span class="text-sm font-medium text-red-700">İade</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                                                    ${orderDate !== '-' ? orderDate : '-'}
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                                                    <span class="font-semibold text-red-600">-${returnAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                                                </td>
+                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
+                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">İade</span>
+                                                                </td>
+                                                            </tr>
+                                                        `);
+                                                    }
+                                                });
+                                                
+                                                return transactionRows.join('');
+                                            })()}
+                                        </tbody>
+                                        <tfoot class="bg-gray-50">
+                                            <tr>
+                                                <td class="px-4 py-3 text-sm font-semibold text-gray-900" colspan="3">Toplam</td>
+                                                <td class="px-4 py-3 text-sm font-semibold text-right">
+                                                    <div class="space-y-1">
+                                                        <div class="text-green-600">
+                                                            Gelir: +${payment.orderDetails.reduce((sum, od) => sum + (od.amount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                                        </div>
+                                                        <div class="text-red-600">
+                                                            Kesintiler: -${payment.orderDetails.reduce((sum, od) => sum + (od.commission || 0) + (od.returnAmount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                                        </div>
+                                                        <div class="text-gray-900 border-t pt-1 mt-1">
+                                                            Net: ${payment.orderDetails.reduce((sum, od) => {
+                                                                const revenue = od.amount || 0;
+                                                                const commission = od.commission || 0;
+                                                                const returnAmt = od.returnAmount || 0;
+                                                                return sum + revenue - commission - returnAmt;
+                                                            }, 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3"></td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
                                 </div>
                             </div>
                         ` : ''}
@@ -16536,6 +16753,13 @@
         }
         
         function renderSimilarProducts(product) {
+            // This section is only for admins, not suppliers
+            const user = window.currentUser || {};
+            const isSupplier = user.role === 'supplier';
+            if (isSupplier) {
+                return '';
+            }
+            
             // Show similar products for draft products and new product requests
             const isNewProductRequest = product.status === 'draft' && product.supplierSubmission;
             const isDraftWithoutSubmission = product.status === 'draft' && !product.supplierSubmission;
@@ -17248,10 +17472,27 @@
             }
             // Remove any existing onclick handlers to avoid duplicates
             modalConfirm.onclick = null;
-            // Set the new onclick handler
-            modalConfirm.onclick = () => { 
-                onConfirm(); 
-                closeModal();
+            // Set the new onclick handler directly
+            modalConfirm.onclick = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Modal confirm button clicked, calling onConfirm');
+                let shouldClose = true;
+                try {
+                    // Call the callback and check if it returns false (indicating validation failure)
+                    const result = onConfirm();
+                    // If callback explicitly returns false, don't close
+                    if (result === false) {
+                        shouldClose = false;
+                    }
+                } catch (error) {
+                    console.error('Error in onConfirm callback:', error);
+                    alert('Bir hata oluştu: ' + error.message);
+                    shouldClose = false; // Don't close modal if there's an error
+                }
+                if (shouldClose) {
+                    closeModal();
+                }
             };
             
             modal.classList.remove('hidden');
@@ -19177,15 +19418,24 @@
                 handleRouteChange();
             });
             
-            const modalConfirmButton = document.getElementById('modal-confirm');
-            if(modalConfirmButton) {
-                modalConfirmButton.classList.remove('hidden');
-                modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
-            }
-            const modalCancelButton = document.getElementById('modal-cancel');
-            if(modalCancelButton) {
-                modalCancelButton.classList.remove('hidden');
-            }
+            // Ensure buttons are visible after modal is shown
+            setTimeout(() => {
+                const modalConfirmButton = document.getElementById('modal-confirm');
+                if(modalConfirmButton) {
+                    modalConfirmButton.classList.remove('hidden');
+                    modalConfirmButton.style.display = 'block';
+                    modalConfirmButton.style.visibility = 'visible';
+                    modalConfirmButton.style.opacity = '1';
+                    modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }
+                const modalCancelButton = document.getElementById('modal-cancel');
+                if(modalCancelButton) {
+                    modalCancelButton.classList.remove('hidden');
+                    modalCancelButton.style.display = 'block';
+                    modalCancelButton.style.visibility = 'visible';
+                    modalCancelButton.style.opacity = '1';
+                }
+            }, 50);
             
             // Setup category picker event listeners
             setTimeout(() => {
@@ -19969,38 +20219,8 @@
                             </div>
                         </div>
                         
-                        <!-- Right Column - Statistics & Actions -->
+                        <!-- Right Column - Actions -->
                         <div class="space-y-6">
-                            <!-- Statistics -->
-                            <div class="bg-white p-6 rounded-lg shadow-sm border">
-                                <h3 class="text-lg font-semibold mb-4 text-gray-800">İstatistikler</h3>
-                                <div class="space-y-4">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Toplam Varyant:</span>
-                                        <span class="font-medium">${mainProduct.variants.length}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Aktif Varyant:</span>
-                                        <span class="font-medium text-green-600">${activeVariants.length}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Toplam Stok:</span>
-                                        <span class="font-medium">${totalStock}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Stok Yok:</span>
-                                        <span class="font-medium text-red-600">${outOfStockVariants}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Fiyat Aralığı:</span>
-                                        <span class="font-medium">
-                                            ${mainProduct.priceRange.min.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                                            ${mainProduct.priceRange.min !== mainProduct.priceRange.max ? `- ${mainProduct.priceRange.max.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}` : ''}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            
                             <!-- Identifiers -->
                             <div class="bg-white p-6 rounded-lg shadow-sm border">
                                 <h3 class="text-lg font-semibold mb-4 text-gray-800">Tanımlayıcılar</h3>
@@ -20706,24 +20926,204 @@
         // --- Settings Functions ---
         function maskSecret(v) { return v ? '●'.repeat(10) : ''; }
         
+        // Bulk user actions functionality
+        function setupBulkUserActions() {
+            const selectAllCheckbox = document.getElementById('selectAllUsers');
+            const bulkActionsBtn = document.getElementById('bulkActionsBtn');
+            const bulkActionsDropdown = document.getElementById('bulkActionsDropdown');
+            const selectedUsersCount = document.getElementById('selectedUsersCount');
+            const bulkActivate = document.getElementById('bulkActivate');
+            const bulkDeactivate = document.getElementById('bulkDeactivate');
+            const bulkDelete = document.getElementById('bulkDelete');
+            
+            if (!bulkActionsBtn) return;
+            
+            // Update selected count and button state
+            const updateBulkActionsState = () => {
+                const checkboxes = document.querySelectorAll('.user-checkbox:checked');
+                const count = checkboxes.length;
+                
+                if (selectedUsersCount) {
+                    selectedUsersCount.textContent = count;
+                }
+                
+                if (bulkActionsBtn) {
+                    if (count > 0) {
+                        bulkActionsBtn.disabled = false;
+                        bulkActionsBtn.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+                        bulkActionsBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    } else {
+                        bulkActionsBtn.disabled = true;
+                        bulkActionsBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                        bulkActionsBtn.classList.add('bg-gray-400', 'hover:bg-gray-500');
+                    }
+                }
+                
+                // Update select all checkbox
+                if (selectAllCheckbox) {
+                    const allCheckboxes = document.querySelectorAll('.user-checkbox');
+                    const allChecked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+                    selectAllCheckbox.checked = allChecked;
+                    selectAllCheckbox.indeterminate = count > 0 && count < allCheckboxes.length;
+                }
+            };
+            
+            // Select all checkbox
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', (e) => {
+                    const checkboxes = document.querySelectorAll('.user-checkbox');
+                    checkboxes.forEach(cb => {
+                        cb.checked = e.target.checked;
+                    });
+                    updateBulkActionsState();
+                });
+            }
+            
+            // Individual checkboxes
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('user-checkbox')) {
+                    updateBulkActionsState();
+                }
+            });
+            
+            // Toggle dropdown
+            if (bulkActionsBtn) {
+                bulkActionsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!bulkActionsBtn.disabled && bulkActionsDropdown) {
+                        bulkActionsDropdown.classList.toggle('hidden');
+                    }
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (bulkActionsDropdown && !bulkActionsDropdown.contains(e.target) && !bulkActionsBtn?.contains(e.target)) {
+                    bulkActionsDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Bulk activate
+            if (bulkActivate) {
+                bulkActivate.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    selectedIds.forEach(userId => {
+                        const user = mockData.users.find(u => u.id === userId);
+                        if (user) {
+                            user.active = true;
+                        }
+                    });
+                    
+                    if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                    if (typeof showToast === 'function') {
+                        showToast(`${selectedIds.length} kullanıcı aktifleştirildi.`);
+                    }
+                    renderSettingsSubTab('users');
+                });
+            }
+            
+            // Bulk deactivate
+            if (bulkDeactivate) {
+                bulkDeactivate.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    selectedIds.forEach(userId => {
+                        const user = mockData.users.find(u => u.id === userId);
+                        if (user) {
+                            user.active = false;
+                        }
+                    });
+                    
+                    if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                    if (typeof showToast === 'function') {
+                        showToast(`${selectedIds.length} kullanıcı pasifleştirildi.`);
+                    }
+                    renderSettingsSubTab('users');
+                });
+            }
+            
+            // Bulk delete
+            if (bulkDelete) {
+                bulkDelete.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    if (confirm(`${selectedIds.length} kullanıcıyı silmek istediğinize emin misiniz?`)) {
+                        selectedIds.forEach(userId => {
+                            if (typeof deleteUser === 'function') {
+                                deleteUser(userId);
+                            } else {
+                                mockData.users = mockData.users.filter(u => u.id !== userId);
+                            }
+                        });
+                        
+                        if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                        if (typeof showToast === 'function') {
+                            showToast(`${selectedIds.length} kullanıcı silindi.`);
+                        }
+                        renderSettingsSubTab('users');
+                    }
+                });
+            }
+            
+            // Initial state
+            updateBulkActionsState();
+        }
+        
         function renderSettingsSubTab(tabName) {
             const container = document.getElementById('settings-tab-content');
             if (!container) return;
             
             if (tabName === 'users') {
                 // User Management tab
+                // Always read fresh data from mockData.users
                 const allUsers = mockData.users || [];
+                console.log('renderSettingsSubTab: Reading users, count:', allUsers.length, 'users:', allUsers);
                 
                 const renderUserRows = (users) => {
-                    return users.map(user => `
+                    return users.map((user, index) => {
+                        const username = user.username || (user.email ? user.email.split('@')[0] : '-');
+                        // Use supplierName from user object, or find from suppliers if supplierId exists
+                        let supplierName = '-';
+                        if (user.role === 'supplier') {
+                            if (user.supplierName) {
+                                supplierName = user.supplierName;
+                            } else if (user.supplierId) {
+                                const supplier = (mockData.suppliers || []).find(s => s.id === user.supplierId);
+                                supplierName = supplier ? supplier.name : '-';
+                            }
+                        }
+                        // Check if user has custom permissions
+                        const hasCustomPermissions = user.permissions && Object.keys(user.permissions).length > 0;
+                        const hasRestrictedPermissions = hasCustomPermissions && Object.values(user.permissions).some(p => p === false);
+                        return `
                         <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 text-sm font-medium">${user.name}</td>
+                            <td class="p-3 text-sm">
+                                <input type="checkbox" class="user-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-user-id="${user.id}">
+                            </td>
+                            <td class="p-3 text-sm font-medium">${username}</td>
+                            <td class="p-3 text-sm font-medium">
+                                <div class="flex items-center">
+                                    ${user.name}
+                                    ${hasRestrictedPermissions ? '<i class="fas fa-key text-purple-500 ml-2 text-xs" title="Özel izinler tanımlı"></i>' : ''}
+                                </div>
+                            </td>
                             <td class="p-3 text-sm">${user.email}</td>
                             <td class="p-3 text-sm">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
-                                    ${user.role === 'admin' ? 'Admin' : 'Tedarikçi'}
+                                    ${user.role === 'admin' ? 'Admin' : 'Tedarikçi Admin'}
                                 </span>
                             </td>
+                            <td class="p-3 text-sm">${supplierName}</td>
                             <td class="p-3 text-sm">${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString('tr-TR') : 'Hiç giriş yapmamış'}</td>
                             <td class="p-3 text-sm">
                                 <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
@@ -20731,22 +21131,63 @@
                                 </span>
                             </td>
                             <td class="p-3 text-right">
-                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-user" data-id="${user.id}"><i class="fas fa-edit"></i></button>
-                                <button class="p-2 text-gray-500 hover:text-red-600 del-user" data-id="${user.id}"><i class="fas fa-trash"></i></button>
+                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-user" data-id="${user.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
+                                <button class="p-2 text-gray-500 hover:text-red-600 del-user" data-id="${user.id}" title="Sil"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
-                    `).join('');
+                    `;
+                    }).join('');
                 };
                 
                 const renderUsersTable = () => {
-                    const paginatedUsers = paginateData(filteredUsers, window.paginationState.currentPage);
+                    // Always read fresh data - apply current filters to latest mockData.users
+                    const searchInput = document.getElementById('userSearchInput');
+                    const roleFilter = document.getElementById('userRoleFilter');
+                    const statusFilter = document.getElementById('userStatusFilter');
+                    
+                    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+                    const selectedRole = roleFilter?.value || '';
+                    const selectedStatus = statusFilter?.value || '';
+                    
+                    // Always read fresh data from mockData.users
+                    const currentUsers = mockData.users || [];
+                    console.log('renderUsersTable: Reading fresh data, count:', currentUsers.length, 'users:', currentUsers);
+                    const currentFilteredUsers = currentUsers.filter(user => {
+                        // Search filter
+                        if (searchTerm) {
+                            const name = (user.name || '').toLowerCase();
+                            const email = (user.email || '').toLowerCase();
+                            if (!name.includes(searchTerm) && !email.includes(searchTerm)) {
+                                return false;
+                            }
+                        }
+                        
+                        // Role filter
+                        if (selectedRole && user.role !== selectedRole) {
+                            return false;
+                        }
+                        
+                        // Status filter
+                        if (selectedStatus) {
+                            if (selectedStatus === 'active' && !user.active) {
+                                return false;
+                            }
+                            if (selectedStatus === 'inactive' && user.active) {
+                                return false;
+                            }
+                        }
+                        
+                        return true;
+                    });
+                    
+                    const paginatedUsers = paginateData(currentFilteredUsers, window.paginationState.currentPage);
                     const tableBody = document.getElementById('userTableBody');
                     
                     if (tableBody) {
                         if (paginatedUsers.length === 0) {
                             tableBody.innerHTML = `
                                 <tr>
-                                    <td colspan="6" class="p-6 text-center text-gray-500">
+                                    <td colspan="8" class="p-6 text-center text-gray-500">
                                         <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
                                         <p>Sonuç bulunamadı</p>
                                     </td>
@@ -20769,7 +21210,8 @@
                 };
                 
                 window.paginationState.renderFunction = renderUsersTable;
-                let filteredUsers = [...allUsers];
+                // Use fresh data for initial render
+                let filteredUsers = [...(mockData.users || [])];
                 paginateData(filteredUsers, 1);
                 
                 const initialRows = renderUserRows(paginateData(filteredUsers, 1));
@@ -20777,7 +21219,7 @@
                 container.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <div><h3 class="text-lg font-semibold">${t('settings_users')}</h3></div>
-                        <button id="addUserBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        <button id="addUserBtn" onclick="showAddUserModal()" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
                             <i class="fas fa-user-plus mr-2"></i> Yeni Kullanıcı Ekle
                         </button>
                     </div>
@@ -20803,7 +21245,7 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                     <option value="">Tüm Roller</option>
                                     <option value="admin">Admin</option>
-                                    <option value="supplier">Tedarikçi</option>
+                                    <option value="supplier">Tedarikçi Admin</option>
                                 </select>
                             </div>
                             
@@ -20823,27 +21265,88 @@
                         <div id="userSearchResults" class="mt-3 text-sm text-gray-500 hidden">
                             <span id="userSearchCount"></span>
                         </div>
+                        
+                        <!-- Bulk Actions -->
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="text-sm text-gray-600">
+                                <span id="selectedUsersCount">0</span> kullanıcı seçildi
+                            </div>
+                            <div class="relative">
+                                <button id="bulkActionsBtn" disabled class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+                                    <i class="fas fa-tasks mr-2"></i> Toplu İşlemler
+                                    <i class="fas fa-chevron-down ml-2"></i>
+                                </button>
+                                <div id="bulkActionsDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                    <div class="py-1">
+                                        <button id="bulkActivate" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
+                                            <i class="fas fa-check-circle mr-2"></i> Aktifleştir
+                                        </button>
+                                        <button id="bulkDeactivate" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700">
+                                            <i class="fas fa-pause-circle mr-2"></i> Pasifleştir
+                                        </button>
+                                        <button id="bulkDelete" class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50">
+                                            <i class="fas fa-trash mr-2"></i> Sil
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead class="table-header">
                                 <tr>
+                                    <th class="p-3 text-sm font-semibold w-12">
+                                        <input type="checkbox" id="selectAllUsers" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                    </th>
+                                    <th class="p-3 text-sm font-semibold">${t('username')}</th>
                                     <th class="p-3 text-sm font-semibold">Ad Soyad</th>
                                     <th class="p-3 text-sm font-semibold">E-posta</th>
                                     <th class="p-3 text-sm font-semibold">Rol</th>
+                                    <th class="p-3 text-sm font-semibold">Tedarikçi</th>
                                     <th class="p-3 text-sm font-semibold">Son Giriş</th>
                                     <th class="p-3 text-sm font-semibold">${t('status_header')}</th>
                                     <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                                 </tr>
                             </thead>
-                            <tbody id="userTableBody">${initialRows || `<tr><td colspan="6" class="p-6 text-center text-gray-500">Kullanıcı bulunamadı.</td></tr>`}</tbody>
+                            <tbody id="userTableBody">${initialRows || `<tr><td colspan="9" class="p-6 text-center text-gray-500">Kullanıcı bulunamadı.</td></tr>`}</tbody>
                         </table>
                     </div>
                     <div id="admin-user-pagination"></div>
                 `;
                 
-                document.getElementById('addUserBtn')?.addEventListener('click', showAddUserModal);
+                // Use event delegation on table body for all action buttons
+                // This works for both initial and dynamically added rows
+                setTimeout(() => {
+                    const tableBodyEl = document.getElementById('userTableBody');
+                    if (tableBodyEl) {
+                        // Add event delegation - this will work for all rows, including re-rendered ones
+                        tableBodyEl.addEventListener('click', (e) => {
+                            const target = e.target.closest('button');
+                            if (!target) return;
+                            
+                            if (target.classList.contains('edit-user')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const userId = parseInt(target.dataset.id);
+                                if (userId && typeof showAddUserModal === 'function') {
+                                    showAddUserModal(userId);
+                                }
+                            } else if (target.classList.contains('del-user')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const userId = parseInt(target.dataset.id);
+                                if (userId && typeof deleteUser === 'function') {
+                                    deleteUser(userId);
+                                }
+                            }
+                        });
+                    }
+                    
+                    // Setup bulk actions functionality
+                    setupBulkUserActions();
+                }, 100);
                 
                 // Search and Filter Functionality
                 const searchInput = document.getElementById('userSearchInput');
@@ -20858,7 +21361,9 @@
                     const selectedRole = roleFilter?.value || '';
                     const selectedStatus = statusFilter?.value || '';
                     
-                    filteredUsers = allUsers.filter(user => {
+                    // Always read fresh data from mockData.users
+                    const currentUsers = mockData.users || [];
+                    filteredUsers = currentUsers.filter(user => {
                         // Search filter
                         if (searchTerm) {
                             const name = (user.name || '').toLowerCase();
@@ -21490,99 +21995,177 @@
             
             showModal(title, body, t('save'), () => saveCommission(editId));
             
-            // Handle type change
-            document.getElementById('commission-type').addEventListener('change', (e) => {
-                const type = e.target.value;
-                const supplierDiv = document.getElementById('supplier-selection');
-                const categoryDiv = document.getElementById('category-selection');
+            // Ensure buttons are visible after modal is shown
+            setTimeout(() => {
+                const modalConfirm = document.getElementById('modal-confirm');
+                const modalCancel = document.getElementById('modal-cancel');
+                const modalFooter = document.getElementById('modal-footer');
                 
-                if (type === 'supplier') {
-                    supplierDiv.classList.remove('hidden');
-                    categoryDiv.classList.add('hidden');
-                } else if (type === 'category') {
-                    supplierDiv.classList.add('hidden');
-                    categoryDiv.classList.remove('hidden');
-                } else if (type === 'supplier_category') {
-                    supplierDiv.classList.remove('hidden');
-                    categoryDiv.classList.remove('hidden');
+                if (modalConfirm) {
+                    modalConfirm.classList.remove('hidden');
+                    modalConfirm.style.display = 'block';
+                    modalConfirm.style.visibility = 'visible';
+                    modalConfirm.textContent = t('save') || 'Kaydet';
                 }
-            });
+                if (modalCancel) {
+                    modalCancel.classList.remove('hidden');
+                    modalCancel.style.display = 'block';
+                    modalCancel.style.visibility = 'visible';
+                    modalCancel.textContent = t('cancel') || 'İptal';
+                }
+                if (modalFooter) {
+                    modalFooter.classList.remove('hidden');
+                    modalFooter.style.display = 'flex';
+                }
+            }, 50);
+            
+            // Handle type change
+            setTimeout(() => {
+                const typeSelect = document.getElementById('commission-type');
+                if (typeSelect) {
+                    typeSelect.addEventListener('change', (e) => {
+                        const type = e.target.value;
+                        const supplierDiv = document.getElementById('supplier-selection');
+                        const categoryDiv = document.getElementById('category-selection');
+                        
+                        if (type === 'supplier') {
+                            supplierDiv.classList.remove('hidden');
+                            categoryDiv.classList.add('hidden');
+                        } else if (type === 'category') {
+                            supplierDiv.classList.add('hidden');
+                            categoryDiv.classList.remove('hidden');
+                        } else if (type === 'supplier_category') {
+                            supplierDiv.classList.remove('hidden');
+                            categoryDiv.classList.remove('hidden');
+                        }
+                    });
+                }
+            }, 50);
         }
 
         function saveCommission(editId) {
-            const type = document.getElementById('commission-type').value;
-            const supplierId = document.getElementById('commission-supplier').value ? parseInt(document.getElementById('commission-supplier').value) : null;
-            const categoryId = document.getElementById('commission-category').value ? parseInt(document.getElementById('commission-category').value) : null;
-            const rate = parseFloat(document.getElementById('commission-rate').value);
-            const defaultRate = parseFloat(document.getElementById('commission-default-rate').value);
-            const startDate = document.getElementById('commission-start-date').value;
-            const endDate = document.getElementById('commission-end-date').value;
-            
-            if (!type || isNaN(rate) || rate < 0 || rate > 100) {
-                alert('Lütfen tüm alanları doğru doldurun.');
-                return;
-            }
-            
-            // Validate date range
-            if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-                alert('Başlangıç tarihi bitiş tarihinden sonra olamaz.');
-                return;
-            }
-            
-            if (editId !== null) {
-                const rule = mockData.commissionRules.find(x => x.id === editId);
-                if (rule) {
-                    rule.type = type;
-                    rule.supplierId = supplierId;
-                    rule.categoryId = categoryId;
-                    rule.rate = rate;
-                    rule.defaultRate = isNaN(defaultRate) ? null : defaultRate;
-                    rule.startDate = startDate || null;
-                    rule.endDate = endDate || null;
-                    rule.updatedAt = new Date().toISOString();
+            try {
+                const typeEl = document.getElementById('commission-type');
+                const supplierEl = document.getElementById('commission-supplier');
+                const categoryEl = document.getElementById('commission-category');
+                const rateEl = document.getElementById('commission-rate');
+                const defaultRateEl = document.getElementById('commission-default-rate');
+                const startDateEl = document.getElementById('commission-start-date');
+                const endDateEl = document.getElementById('commission-end-date');
+                
+                if (!typeEl || !rateEl) {
+                    console.error('Required form elements not found');
+                    alert('Form alanları bulunamadı. Lütfen sayfayı yenileyin.');
+                    return false; // Return false to prevent modal from closing
+                }
+                
+                const type = typeEl.value;
+                const supplierId = supplierEl && supplierEl.value ? parseInt(supplierEl.value) : null;
+                const categoryId = categoryEl && categoryEl.value ? parseInt(categoryEl.value) : null;
+                const rate = parseFloat(rateEl.value);
+                const defaultRate = defaultRateEl ? parseFloat(defaultRateEl.value) : NaN;
+                const startDate = startDateEl ? startDateEl.value : '';
+                const endDate = endDateEl ? endDateEl.value : '';
+                
+                // Validation
+                if (!type || isNaN(rate) || rate < 0 || rate > 100) {
+                    alert('Lütfen tüm alanları doğru doldurun. Komisyon oranı 0-100 arasında olmalıdır.');
+                    return false; // Return false to prevent modal from closing
+                }
+                
+                // Validate date range
+                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+                    alert('Başlangıç tarihi bitiş tarihinden sonra olamaz.');
+                    return false; // Return false to prevent modal from closing
+                }
+                
+                // Ensure commissionRules array exists
+                if (!mockData.commissionRules) {
+                    mockData.commissionRules = [];
+                }
+                
+                if (editId !== null) {
+                    const rule = mockData.commissionRules.find(x => x.id === editId);
+                    if (rule) {
+                        rule.type = type;
+                        rule.supplierId = supplierId;
+                        rule.categoryId = categoryId;
+                        rule.rate = rate;
+                        rule.defaultRate = isNaN(defaultRate) ? null : defaultRate;
+                        rule.startDate = startDate || null;
+                        rule.endDate = endDate || null;
+                        rule.updatedAt = new Date().toISOString();
+                        
+                        // Update names
+                        if (supplierId) {
+                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+                            rule.supplierName = supplier?.name;
+                        }
+                        if (categoryId) {
+                            const category = mockData.categories.find(c => c.id === categoryId);
+                            rule.categoryName = category ? t(category.name) : null;
+                        }
+                    } else {
+                        alert('Düzenlenecek kural bulunamadı.');
+                        return false; // Return false to prevent modal from closing
+                    }
+                } else {
+                    const newId = mockData.commissionRules.length > 0 
+                        ? Math.max(...mockData.commissionRules.map(x => x.id || 0), 0) + 1 
+                        : 1;
+                    const now = new Date().toISOString();
                     
-                    // Update names
+                    const newRule = {
+                        id: newId,
+                        type,
+                        supplierId,
+                        categoryId,
+                        rate,
+                        defaultRate: isNaN(defaultRate) ? null : defaultRate,
+                        startDate: startDate || null,
+                        endDate: endDate || null,
+                        createdAt: now,
+                        updatedAt: now
+                    };
+                    
+                    // Set names
                     if (supplierId) {
                         const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                        rule.supplierName = supplier?.name;
+                        newRule.supplierName = supplier?.name;
                     }
                     if (categoryId) {
                         const category = mockData.categories.find(c => c.id === categoryId);
-                        rule.categoryName = category ? t(category.name) : null;
+                        newRule.categoryName = category ? t(category.name) : null;
                     }
-                }
-            } else {
-                const newId = Math.max(...mockData.commissionRules.map(x => x.id), 0) + 1;
-                const now = new Date().toISOString();
-                
-                const newRule = {
-                    id: newId,
-                    type,
-                    supplierId,
-                    categoryId,
-                    rate,
-                    defaultRate: isNaN(defaultRate) ? null : defaultRate,
-                    startDate: startDate || null,
-                    endDate: endDate || null,
-                    createdAt: now,
-                    updatedAt: now
-                };
-                
-                // Set names
-                if (supplierId) {
-                    const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                    newRule.supplierName = supplier?.name;
-                }
-                if (categoryId) {
-                    const category = mockData.categories.find(c => c.id === categoryId);
-                    newRule.categoryName = category ? t(category.name) : null;
+                    
+                    mockData.commissionRules.push(newRule);
                 }
                 
-                mockData.commissionRules.push(newRule);
+                // Show success message
+                showToast(editId ? 'Komisyon kuralı güncellendi!' : 'Komisyon kuralı eklendi!', 'success');
+                
+                // Refresh the page to show the new rule
+                setTimeout(() => {
+                    // Check if we're on the commission management page
+                    const currentHash = window.location.hash;
+                    if (currentHash.includes('#settings/commissions') || currentHash.includes('#commission')) {
+                        if (typeof renderSettingsSubTab === 'function') {
+                            renderSettingsSubTab('commissions');
+                        } else {
+                            handleRouteChange();
+                        }
+                    } else {
+                        handleRouteChange();
+                    }
+                }, 100);
+                
+                // Return true to indicate success (modal will close)
+                return true;
+            } catch (error) {
+                console.error('Error saving commission rule:', error);
+                alert('Komisyon kuralı kaydedilirken bir hata oluştu: ' + error.message);
+                return false; // Return false to prevent modal from closing on error
             }
-            
-            closeModal();
-            renderSettingsSubTab('commissions');
         }
 
         function deleteCommission(id) {
@@ -21904,10 +22487,148 @@
         }
 
         // --- User Management Functions ---
+        // Helper function to build permissions HTML
+        function buildPermissionsHTML(user, isSupplierContext) {
+            // Initialize pagePermissions if not exists
+            if (!user.pagePermissions && user.permissions) {
+                user.pagePermissions = {};
+            }
+            const permissionsToUse = user.pagePermissions || user.permissions || {};
+            
+            // Define all available pages based on navigation structure
+            const allPages = [];
+            
+            if (isSupplierContext) {
+                // Supplier navigation pages
+                allPages.push(
+                    { id: 'dashboard', name: 'Dashboard', icon: 'fa-tachometer-alt', category: 'Ana Menü' },
+                    { id: 'products/aktif', name: 'Ürün Listesi', icon: 'fa-box', category: 'Ürünler', parent: 'products' },
+                    { id: 'bulk-upload', name: 'Toplu İşlemler', icon: 'fa-upload', category: 'Ürünler', parent: 'products' },
+                    { id: 'supplier-orders', name: 'Siparişler', icon: 'fa-shopping-basket', category: 'Siparişler', parent: 'orders' },
+                    { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
+                    { id: 'finance', name: 'Finans', icon: 'fa-coins', category: 'Ana Menü' },
+                    { id: 'supplier-settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
+                );
+            } else {
+                // Admin navigation pages
+                allPages.push(
+                    { id: 'dashboard', name: 'Dashboard', icon: 'fa-tachometer-alt', category: 'Ana Menü' },
+                    { id: 'products', name: 'Ürün Listesi', icon: 'fa-box', category: 'Ürün Yönetimi', parent: 'products' },
+                    { id: 'categories', name: 'Kategoriler', icon: 'fa-sitemap', category: 'Ürün Yönetimi', parent: 'products' },
+                    { id: 'attributes', name: 'Özellikler', icon: 'fa-tags', category: 'Ürün Yönetimi', parent: 'products' },
+                    { id: 'orders', name: 'Siparişler', icon: 'fa-shopping-bag', category: 'Siparişler', parent: 'orders' },
+                    { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
+                    { id: 'finance', name: 'Finans Dashboard', icon: 'fa-chart-line', category: 'Finans', parent: 'finance' },
+                    { id: 'commissions', name: 'Komisyon Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
+                    { id: 'settings/suppliers', name: 'Tedarikçi Listesi', icon: 'fa-truck-loading', category: 'Tedarikçiler', parent: 'suppliers' },
+                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Kısıtlamaları', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
+                    { id: 'settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
+                );
+            }
+            
+            // Group pages by category
+            const pagesByCategory = {};
+            const parentCategories = {};
+            
+            allPages.forEach(page => {
+                if (page.parent) {
+                    if (!parentCategories[page.parent]) {
+                        parentCategories[page.parent] = [];
+                    }
+                    parentCategories[page.parent].push(page);
+                } else {
+                    if (!pagesByCategory[page.category]) {
+                        pagesByCategory[page.category] = [];
+                    }
+                    pagesByCategory[page.category].push(page);
+                }
+            });
+            
+            // Add parent categories with their children
+            Object.keys(parentCategories).forEach(parentId => {
+                const children = parentCategories[parentId];
+                if (children.length > 0) {
+                    const parentCategory = children[0].category;
+                    if (!pagesByCategory[parentCategory]) {
+                        pagesByCategory[parentCategory] = [];
+                    }
+                    children.forEach(child => {
+                        pagesByCategory[parentCategory].push(child);
+                    });
+                }
+            });
+            
+            // Build permissions HTML
+            let permissionsHTML = '';
+            Object.keys(pagesByCategory).sort().forEach(category => {
+                const pages = pagesByCategory[category];
+                if (pages.length === 0) return;
+                
+                permissionsHTML += `
+                    <div class="mb-4">
+                        <h4 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2 flex items-center">
+                            <i class="fas ${pages[0].icon || 'fa-circle'} mr-2 text-gray-500"></i>
+                            ${category}
+                        </h4>
+                        <div class="space-y-2 ml-6">
+                            ${pages.map(page => {
+                                const isChecked = permissionsToUse[page.id] !== false;
+                                const indentClass = page.parent ? 'ml-4' : '';
+                                return `
+                                    <label class="flex items-center p-2 bg-gray-50 rounded hover:bg-gray-100 cursor-pointer ${indentClass}">
+                                        <input type="checkbox" 
+                                               class="permission-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                               data-page="${page.id}"
+                                               ${isChecked ? 'checked' : ''}>
+                                        <i class="fas ${page.icon} ml-2 text-gray-600 w-4"></i>
+                                        <span class="ml-2 text-sm text-gray-700">${page.name}</span>
+                                        ${page.parent ? '<span class="ml-2 text-xs text-gray-400">(Alt menü)</span>' : ''}
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return permissionsHTML;
+        }
+        
         function showAddUserModal(editId = null) {
             const isEditing = editId !== null;
-            const user = isEditing ? mockData.users.find(x => x.id === editId) : null;
-            const title = isEditing ? 'Kullanıcıyı Düzenle' : 'Yeni Kullanıcı Ekle';
+            const currentUser = window.currentUser || {};
+            const isSupplierContext = currentUser.role === 'supplier';
+            
+            // For suppliers, check supplierUsers; for admins, check mockData.users
+            const user = isEditing ? (
+                isSupplierContext 
+                    ? (window.supplierUsers || []).find(x => x.id === editId)
+                    : mockData.users.find(x => x.id === editId)
+            ) : null;
+            
+            const title = isEditing ? 'Kullanıcı Güncelle' : 'Yeni Kullanıcı Ekle';
+            
+            // Get available suppliers (only for admin context)
+            const suppliers = mockData.suppliers || [];
+            const supplierOptions = suppliers.map(s => 
+                `<option value="${s.id}" ${user?.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`
+            ).join('');
+            
+            // Role options differ for suppliers vs admins
+            let roleOptions = '';
+            if (isSupplierContext) {
+                // Supplier context: team member roles
+                roleOptions = `
+                    <option value="Admin" ${user?.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                    <option value="Standart Kullanıcı" ${user?.role === 'Standart Kullanıcı' ? 'selected' : ''}>Standart Kullanıcı</option>
+                `;
+            } else {
+                // Admin context: admin and supplier admin roles
+                roleOptions = `
+                    <option value="admin" ${user?.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="supplier" ${user?.role === 'supplier' ? 'selected' : ''}>Tedarikçi Admin</option>
+                `;
+            }
             
             const body = `
                 <div class="space-y-4">
@@ -21922,18 +22643,30 @@
                     <div>
                         <label for="user-role" class="block text-sm font-medium text-gray-700">Rol</label>
                         <select id="user-role" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="admin" ${user?.role === 'admin' ? 'selected' : ''}>Admin</option>
-                            <option value="supplier" ${user?.role === 'supplier' ? 'selected' : ''}>Tedarikçi</option>
+                            ${roleOptions}
                         </select>
                     </div>
-                    <div>
-                        <label for="user-password" class="block text-sm font-medium text-gray-700">${isEditing ? 'Yeni Parola (boş bırakırsanız değişmez)' : 'Parola'}</label>
-                        <input type="password" id="user-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="${isEditing ? 'Yeni parola girin' : 'Parola girin'}">
+                    ${!isSupplierContext ? `
+                    <div id="user-supplier-container" class="${user?.role === 'supplier' ? '' : 'hidden'}">
+                        <label for="user-supplier" class="block text-sm font-medium text-gray-700">Tedarikçi</label>
+                        <select id="user-supplier" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                            <option value="">Tedarikçi Seçin</option>
+                            ${supplierOptions}
+                        </select>
                     </div>
+                    ` : ''}
                     <div class="flex items-center">
-                        <input type="checkbox" id="user-active" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" ${user?.active !== false ? 'checked' : ''}>
+                        <input type="checkbox" id="user-active" class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" ${user?.active !== false && user?.status !== 'inactive' ? 'checked' : ''}>
                         <label for="user-active" class="ml-2 block text-sm text-gray-700">Aktif</label>
                     </div>
+                    ${isEditing ? `
+                    <div class="border-t pt-4 mt-4">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-3">Sayfa Erişim İzinleri</h3>
+                        <div class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            ${buildPermissionsHTML(user, isSupplierContext)}
+                        </div>
+                    </div>
+                    ` : ''}
                 </div>
             `;
             
@@ -21941,41 +22674,161 @@
                 const name = document.getElementById('user-name').value.trim();
                 const email = document.getElementById('user-email').value.trim();
                 const role = document.getElementById('user-role').value;
-                const password = document.getElementById('user-password').value;
+                const supplierId = !isSupplierContext ? (document.getElementById('user-supplier')?.value || null) : null;
                 const active = document.getElementById('user-active').checked;
                 
-                if (!name || !email || (!isEditing && !password)) {
+                if (!name || !email) {
                     alert('Lütfen tüm gerekli alanları doldurun.');
-                    return;
+                    return false;
+                }
+                
+                // Validate supplier selection for Tedarikçi Admin role (admin context only)
+                if (!isSupplierContext && role === 'supplier' && !supplierId) {
+                    alert('Tedarikçi Admin rolü için bir tedarikçi seçmelisiniz.');
+                    return false;
+                }
+                
+                // Collect permissions if editing
+                let newPermissions = {};
+                if (isEditing) {
+                    const checkboxes = document.querySelectorAll('.permission-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        const pageId = checkbox.dataset.page;
+                        newPermissions[pageId] = checkbox.checked;
+                    });
                 }
                 
                 if (isEditing) {
-                    const existingUser = mockData.users.find(x => x.id === editId);
-                    if (existingUser) {
-                        existingUser.name = name;
-                        existingUser.email = email;
-                        existingUser.role = role;
-                        existingUser.active = active;
-                        if (password) {
-                            existingUser.password = password; // In real app, this should be hashed
+                    if (isSupplierContext) {
+                        // Edit supplier team member
+                        const existingUser = (window.supplierUsers || []).find(x => x.id === editId);
+                        if (existingUser) {
+                            existingUser.name = name;
+                            existingUser.email = email;
+                            existingUser.role = role;
+                            existingUser.title = role; // Update title to match role
+                            existingUser.status = active ? 'active' : 'inactive';
+                            // Update permissions
+                            existingUser.pagePermissions = newPermissions;
+                        }
+                    } else {
+                        // Edit admin user
+                        const existingUser = mockData.users.find(x => x.id === editId);
+                        if (existingUser) {
+                            existingUser.name = name;
+                            existingUser.email = email;
+                            existingUser.role = role;
+                            existingUser.active = active;
+                            if (role === 'supplier') {
+                                existingUser.supplierId = supplierId ? parseInt(supplierId) : null;
+                                const selectedSupplier = suppliers.find(s => s.id === parseInt(supplierId));
+                                existingUser.supplierName = selectedSupplier ? selectedSupplier.name : null;
+                            } else {
+                                existingUser.supplierId = null;
+                                existingUser.supplierName = null;
+                            }
+                            // Update permissions
+                            existingUser.permissions = newPermissions;
                         }
                     }
                 } else {
-                    const newUser = {
-                        id: Date.now(),
-                        name,
-                        email,
-                        role,
-                        password, // In real app, this should be hashed
-                        active,
-                        lastLogin: null
-                    };
-                    mockData.users.push(newUser);
+                    if (isSupplierContext) {
+                        // Create new supplier team member
+                        const newUser = {
+                            id: Date.now(),
+                            name,
+                            email,
+                            role,
+                            title: role, // Use role as title
+                            status: active ? 'active' : 'pending',
+                            lastLogin: '-',
+                            permissions: [],
+                            pagePermissions: {},
+                            avatarColor: 'blue',
+                            avatarInitials: name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+                        };
+                        if (!window.supplierUsers) {
+                            window.supplierUsers = [];
+                        }
+                        window.supplierUsers.push(newUser);
+                    } else {
+                        // Create new admin user
+                        const newUser = {
+                            id: Date.now(),
+                            name,
+                            email,
+                            role,
+                            active,
+                            lastLogin: null
+                        };
+                        if (role === 'supplier') {
+                            newUser.supplierId = supplierId ? parseInt(supplierId) : null;
+                            const selectedSupplier = suppliers.find(s => s.id === parseInt(supplierId));
+                            newUser.supplierName = selectedSupplier ? selectedSupplier.name : null;
+                        }
+                        // Ensure mockData.users exists and is an array
+                        if (!mockData.users) {
+                            mockData.users = [];
+                        }
+                        mockData.users.push(newUser);
+                        console.log('New admin user added:', newUser);
+                        console.log('Total users in mockData.users:', mockData.users.length);
+                        console.log('All users:', mockData.users);
+                    }
                 }
                 
                 closeModal();
-                renderSettingsSubTab('users');
+                
+                // Refresh based on context
+                if (isSupplierContext) {
+                    // Refresh supplier user management
+                    console.log('Refreshing supplier user management, supplierUsers count:', window.supplierUsers?.length);
+                    if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                        renderers.supplierUserManagement();
+                    } else {
+                        handleRouteChange();
+                    }
+                } else {
+                    // Refresh admin user management
+                    console.log('Refreshing admin user management, mockData.users count:', mockData.users.length);
+                    // Reset pagination state first
+                    if (window.paginationState) {
+                        window.paginationState.currentPage = 1;
+                    }
+                    
+                    // Re-render the users tab (this will re-read mockData.users)
+                    renderSettingsSubTab('users');
+                    
+                    // Trigger a re-render of the table to show the new user
+                    setTimeout(() => {
+                        console.log('Triggering table re-render, mockData.users count:', mockData.users.length);
+                        if (window.paginationState && window.paginationState.renderFunction) {
+                            window.paginationState.renderFunction();
+                        } else {
+                            console.error('renderFunction not found in paginationState');
+                        }
+                    }, 100);
+                }
+                return true;
             });
+            
+            // Add event listener for role change to show/hide supplier dropdown (admin context only)
+            if (!isSupplierContext) {
+                setTimeout(() => {
+                    const roleSelect = document.getElementById('user-role');
+                    const supplierContainer = document.getElementById('user-supplier-container');
+                    
+                    if (roleSelect && supplierContainer) {
+                        roleSelect.addEventListener('change', function() {
+                            if (this.value === 'supplier') {
+                                supplierContainer.classList.remove('hidden');
+                            } else {
+                                supplierContainer.classList.add('hidden');
+                            }
+                        });
+                    }
+                }, 100);
+            }
             
             const modalConfirmButton = document.getElementById('modal-confirm');
             if(modalConfirmButton) {
@@ -21989,11 +22842,347 @@
             }
         }
 
+        function showUserPermissionsModal(userId) {
+            // Try to find user in different data sources
+            const user = mockData.users?.find(x => x.id === userId) || 
+                        (window.supplierUsers || []).find(x => x.id === userId);
+            
+            if (!user) {
+                alert('Kullanıcı bulunamadı.');
+                return;
+            }
+            
+            // Determine if this is a supplier's team member (not an admin user)
+            const currentUser = window.currentUser || {};
+            const isSupplierContext = currentUser.role === 'supplier';
+            const userRole = user.role || (isSupplierContext ? 'supplier_team' : 'admin');
+            
+            // Use pagePermissions if it exists, otherwise use permissions
+            if (!user.pagePermissions && user.permissions) {
+                user.pagePermissions = {};
+            }
+            // Use pagePermissions for the modal
+            const permissionsToUse = user.pagePermissions || user.permissions || {};
+            
+            // Define all available pages based on navigation structure, including parent items and children
+            const allPages = [];
+            
+            if (isSupplierContext) {
+                // Supplier navigation pages (from navLinksSupplier)
+                allPages.push(
+                    { id: 'dashboard', name: 'Dashboard', icon: 'fa-tachometer-alt', category: 'Ana Menü' },
+                    // Ürünler parent with children
+                    { id: 'products/aktif', name: 'Ürün Listesi', icon: 'fa-box', category: 'Ürünler', parent: 'products' },
+                    { id: 'bulk-upload', name: 'Toplu İşlemler', icon: 'fa-upload', category: 'Ürünler', parent: 'products' },
+                    // Siparişler parent with children
+                    { id: 'supplier-orders', name: 'Siparişler', icon: 'fa-shopping-basket', category: 'Siparişler', parent: 'orders' },
+                    { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
+                    { id: 'finance', name: 'Finans', icon: 'fa-coins', category: 'Ana Menü' },
+                    // Ayarlar parent with children
+                    { id: 'supplier-settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
+                );
+            } else {
+                // Admin navigation pages (from navLinksAdmin)
+                allPages.push(
+                    { id: 'dashboard', name: 'Dashboard', icon: 'fa-tachometer-alt', category: 'Ana Menü' },
+                    // Ürün Yönetimi parent with children
+                    { id: 'products', name: 'Ürün Listesi', icon: 'fa-box', category: 'Ürün Yönetimi', parent: 'products' },
+                    { id: 'categories', name: 'Kategoriler', icon: 'fa-sitemap', category: 'Ürün Yönetimi', parent: 'products' },
+                    { id: 'attributes', name: 'Özellikler', icon: 'fa-tags', category: 'Ürün Yönetimi', parent: 'products' },
+                    // Siparişler parent with children
+                    { id: 'orders', name: 'Siparişler', icon: 'fa-shopping-bag', category: 'Siparişler', parent: 'orders' },
+                    { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
+                    // Finans parent with children
+                    { id: 'finance', name: 'Finans Dashboard', icon: 'fa-chart-line', category: 'Finans', parent: 'finance' },
+                    { id: 'commissions', name: 'Komisyon Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
+                    // Tedarikçiler parent with children
+                    { id: 'settings/suppliers', name: 'Tedarikçi Listesi', icon: 'fa-truck-loading', category: 'Tedarikçiler', parent: 'suppliers' },
+                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Kısıtlamaları', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
+                    // Ayarlar parent with children
+                    { id: 'settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
+                );
+            }
+            
+            // Filter pages based on context (admin vs supplier)
+            const context = isSupplierContext ? 'supplier' : 'admin';
+            const availablePages = allPages.filter(page => !page.context || page.context === context);
+            
+            // Group pages by category, and organize parent/child relationships
+            const pagesByCategory = {};
+            const parentCategories = {};
+            
+            availablePages.forEach(page => {
+                if (page.parent) {
+                    // This is a child page
+                    if (!parentCategories[page.parent]) {
+                        parentCategories[page.parent] = [];
+                    }
+                    parentCategories[page.parent].push(page);
+                } else {
+                    // This is a top-level page or category
+                    if (!pagesByCategory[page.category]) {
+                        pagesByCategory[page.category] = [];
+                    }
+                    pagesByCategory[page.category].push(page);
+                }
+            });
+            
+            // Add parent categories with their children
+            Object.keys(parentCategories).forEach(parentId => {
+                const children = parentCategories[parentId];
+                if (children.length > 0) {
+                    // Find the parent category name from the first child
+                    const parentCategory = children[0].category;
+                    if (!pagesByCategory[parentCategory]) {
+                        pagesByCategory[parentCategory] = [];
+                    }
+                    // Add children under the parent category
+                    children.forEach(child => {
+                        pagesByCategory[parentCategory].push(child);
+                    });
+                }
+            });
+            
+            // Initialize pagePermissions if not exists (for supplier users)
+            if (!user.pagePermissions) {
+                user.pagePermissions = {};
+            }
+            // For admin users, use permissions; for supplier users, use pagePermissions
+            const permissionsToCheck = isSupplierContext ? user.pagePermissions : (user.permissions || {});
+            
+            // Build permissions HTML with parent/child structure
+            let permissionsHTML = '';
+            Object.keys(pagesByCategory).sort().forEach(category => {
+                const pages = pagesByCategory[category];
+                if (pages.length === 0) return;
+                
+                permissionsHTML += `
+                    <div class="mb-6">
+                        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3 flex items-center">
+                            <i class="fas ${pages[0].icon || 'fa-circle'} mr-2 text-gray-500"></i>
+                            ${category}
+                        </h3>
+                        <div class="space-y-2 ml-6">
+                            ${pages.map(page => {
+                                const isChecked = permissionsToCheck[page.id] !== false; // Default to true if not set
+                                const indentClass = page.parent ? 'ml-4' : '';
+                                return `
+                                    <label class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer ${indentClass}">
+                                        <input type="checkbox" 
+                                               class="permission-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                               data-page="${page.id}"
+                                               ${isChecked ? 'checked' : ''}>
+                                        <i class="fas ${page.icon} ml-3 text-gray-600 w-5"></i>
+                                        <span class="ml-2 text-sm text-gray-700">${page.name}</span>
+                                        ${page.parent ? '<span class="ml-2 text-xs text-gray-400">(Alt menü)</span>' : ''}
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const body = `
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>${user.name}</strong> kullanıcısının sayfa erişim izinlerini yönetin. 
+                                    İşaretlenmemiş sayfalara kullanıcı erişemez.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    ${permissionsHTML}
+                </div>
+            `;
+            
+            showModal(`İzin Yönetimi - ${user.name}`, body, 'Kaydet', () => {
+                // Collect all permission checkboxes
+                const checkboxes = document.querySelectorAll('.permission-checkbox');
+                const newPermissions = {};
+                
+                checkboxes.forEach(checkbox => {
+                    const pageId = checkbox.dataset.page;
+                    newPermissions[pageId] = checkbox.checked;
+                });
+                
+                // Update user permissions based on context
+                if (isSupplierContext) {
+                    // For supplier users, use pagePermissions
+                    user.pagePermissions = newPermissions;
+                } else {
+                    // For admin users, use permissions
+                    user.permissions = newPermissions;
+                }
+                
+                showToast('İzinler başarıyla güncellendi!', 'success');
+                closeModal();
+                
+                // Refresh based on context
+                if (isSupplierContext) {
+                    // If we're in supplier context, refresh supplier user management
+                    if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                        renderers.supplierUserManagement();
+                    } else {
+                        handleRouteChange();
+                    }
+                } else {
+                    // Admin context - refresh admin user management
+                    renderSettingsSubTab('users');
+                }
+                return true;
+            });
+            
+            // Ensure modal buttons are visible
+            setTimeout(() => {
+                const modalConfirmButton = document.getElementById('modal-confirm');
+                if(modalConfirmButton) {
+                    modalConfirmButton.classList.remove('hidden');
+                    modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }
+                const modalCancelButton = document.getElementById('modal-cancel');
+                if(modalCancelButton) {
+                    modalCancelButton.textContent = t('cancel');
+                    modalCancelButton.classList.remove('hidden');
+                }
+            }, 50);
+        }
+
         function deleteUser(id) {
             if (confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?')) {
                 mockData.users = mockData.users.filter(x => x.id !== id);
                 renderSettingsSubTab('users');
             }
+        }
+
+        // Supplier User Permissions Modal (similar to admin but for supplier users)
+        function showSupplierUserPermissionsModal(userId) {
+            // This would be for supplier's own team members
+            // For now, we'll use the same function but with supplier-specific pages
+            const user = mockData.users?.find(x => x.id === userId) || 
+                        (window.supplierUsers || []).find(x => x.id === userId);
+            
+            if (!user) {
+                alert('Kullanıcı bulunamadı.');
+                return;
+            }
+            
+            // Define supplier-specific pages
+            const supplierPages = [
+                { id: 'dashboard', name: 'Dashboard', icon: 'fa-tachometer-alt', category: 'Ana Menü' },
+                { id: 'products/aktif', name: 'Ürünler', icon: 'fa-box', category: 'Ana Menü' },
+                { id: 'supplier-orders', name: 'Siparişler', icon: 'fa-shopping-cart', category: 'Ana Menü' },
+                { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Ana Menü' },
+                { id: 'finance', name: 'Finans', icon: 'fa-chart-line', category: 'Ana Menü' },
+                { id: 'bulk-upload', name: 'Toplu Yükleme', icon: 'fa-upload', category: 'Ana Menü' },
+                { id: 'supplier-settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar' },
+                { id: 'support', name: 'Destek', icon: 'fa-headset', category: 'Diğer' },
+                { id: 'faq', name: 'SSS', icon: 'fa-question-circle', category: 'Diğer' }
+            ];
+            
+            // Group pages by category
+            const pagesByCategory = {};
+            supplierPages.forEach(page => {
+                if (!pagesByCategory[page.category]) {
+                    pagesByCategory[page.category] = [];
+                }
+                pagesByCategory[page.category].push(page);
+            });
+            
+            // Initialize permissions if not exists
+            if (!user.permissions) {
+                user.permissions = {};
+            }
+            
+            // Build permissions HTML
+            let permissionsHTML = '';
+            Object.keys(pagesByCategory).forEach(category => {
+                permissionsHTML += `
+                    <div class="mb-6">
+                        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">${category}</h3>
+                        <div class="space-y-2">
+                            ${pagesByCategory[category].map(page => {
+                                const isChecked = user.permissions[page.id] !== false; // Default to true if not set
+                                return `
+                                    <label class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                        <input type="checkbox" 
+                                               class="permission-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" 
+                                               data-page="${page.id}"
+                                               ${isChecked ? 'checked' : ''}>
+                                        <i class="fas ${page.icon} ml-3 text-gray-600 w-5"></i>
+                                        <span class="ml-2 text-sm text-gray-700">${page.name}</span>
+                                    </label>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            const body = `
+                <div class="space-y-4 max-h-96 overflow-y-auto">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    <strong>${user.name}</strong> kullanıcısının sayfa erişim izinlerini yönetin. 
+                                    İşaretlenmemiş sayfalara kullanıcı erişemez.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    ${permissionsHTML}
+                </div>
+            `;
+            
+            showModal(`İzin Yönetimi - ${user.name}`, body, 'Kaydet', () => {
+                // Collect all permission checkboxes
+                const checkboxes = document.querySelectorAll('.permission-checkbox');
+                const newPermissions = {};
+                
+                checkboxes.forEach(checkbox => {
+                    const pageId = checkbox.dataset.page;
+                    newPermissions[pageId] = checkbox.checked;
+                });
+                
+                // Update user permissions
+                user.permissions = newPermissions;
+                
+                showToast('İzinler başarıyla güncellendi!', 'success');
+                closeModal();
+                
+                // Refresh the page - check if we're in supplier user management
+                if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                    renderers.supplierUserManagement();
+                } else {
+                    // Fallback: reload the current page
+                    handleRouteChange();
+                }
+                return true;
+            });
+            
+            // Ensure modal buttons are visible
+            setTimeout(() => {
+                const modalConfirmButton = document.getElementById('modal-confirm');
+                if(modalConfirmButton) {
+                    modalConfirmButton.classList.remove('hidden');
+                    modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }
+                const modalCancelButton = document.getElementById('modal-cancel');
+                if(modalCancelButton) {
+                    modalCancelButton.textContent = t('cancel');
+                    modalCancelButton.classList.remove('hidden');
+                }
+            }, 50);
         }
 
         // --- RETURN MANAGEMENT FUNCTIONS ---

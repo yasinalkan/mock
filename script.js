@@ -1289,12 +1289,18 @@ window.mockData.orders = window.mockData.orders || [
             }
             
             // Supplier users data - representing team members
-            const supplierUsers = [
-                { id: 1, name: 'Ahmet Yılmaz', email: 'ahmet@modatedarik.com', role: 'Admin', title: 'Sahip', status: 'active', lastLogin: '2 saat önce', permissions: ['Ürün Yönetimi', 'Sipariş Yönetimi', 'Kullanıcı Yönetimi'], avatarColor: 'blue', avatarInitials: 'AY' },
-                { id: 2, name: 'Elif Demir', email: 'elif@modatedarik.com', role: 'Ürün Uzmanı', title: 'Ürün Uzmanı', status: 'active', lastLogin: '1 gün önce', permissions: ['Ürün Yönetimi', 'Stok Güncelleme'], avatarColor: 'green', avatarInitials: 'ED' },
-                { id: 3, name: 'Mehmet Kaya', email: 'mehmet@modatedarik.com', role: 'Sipariş Uzmanı', title: 'Sipariş Uzmanı', status: 'active', lastLogin: '3 saat önce', permissions: ['Sipariş Yönetimi', 'Müşteri Hizmetleri'], avatarColor: 'orange', avatarInitials: 'MK' },
-                { id: 4, name: 'Zeynep Aktaş', email: 'zeynep@modatedarik.com', role: 'Stajyer', title: 'Stajyer', status: 'pending', lastLogin: '-', permissions: ['Sadece Görüntüleme'], avatarColor: 'yellow', avatarInitials: 'ZA' }
-            ];
+            // Store in window for access by permissions modal
+            // Only initialize if it doesn't exist to preserve newly added users
+            if (!window.supplierUsers || window.supplierUsers.length === 0) {
+                window.supplierUsers = [
+                    { id: 1, name: 'Ahmet Yılmaz', email: 'ahmet@modatedarik.com', role: 'Admin', title: 'Sahip', status: 'active', lastLogin: '2 saat önce', permissions: ['Ürün Yönetimi', 'Sipariş Yönetimi', 'Kullanıcı Yönetimi'], pagePermissions: {}, avatarColor: 'blue', avatarInitials: 'AY' },
+                    { id: 2, name: 'Elif Demir', email: 'elif@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'active', lastLogin: '1 gün önce', permissions: ['Ürün Yönetimi', 'Stok Güncelleme'], pagePermissions: {}, avatarColor: 'green', avatarInitials: 'ED' },
+                    { id: 3, name: 'Mehmet Kaya', email: 'mehmet@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'active', lastLogin: '3 saat önce', permissions: ['Sipariş Yönetimi', 'Müşteri Hizmetleri'], pagePermissions: {}, avatarColor: 'orange', avatarInitials: 'MK' },
+                    { id: 4, name: 'Zeynep Aktaş', email: 'zeynep@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'pending', lastLogin: '-', permissions: ['Sadece Görüntüleme'], pagePermissions: {}, avatarColor: 'yellow', avatarInitials: 'ZA' }
+                ];
+            }
+            
+            const supplierUsers = window.supplierUsers;
             
             const renderUserRows = (users) => {
                 return users.map(u => {
@@ -1311,9 +1317,7 @@ window.mockData.orders = window.mockData.orders || [
                     const getRoleBadge = (role) => {
                         const roleClasses = {
                             'Admin': 'bg-purple-100 text-purple-800',
-                            'Ürün Uzmanı': 'bg-blue-100 text-blue-800',
-                            'Sipariş Uzmanı': 'bg-green-100 text-green-800',
-                            'Stajyer': 'bg-gray-100 text-gray-800'
+                            'Standart Kullanıcı': 'bg-blue-100 text-blue-800'
                         };
                         const roleClass = roleClasses[role] || 'bg-gray-100 text-gray-800';
                         return `<span class="px-2 py-1 text-xs font-semibold rounded-full ${roleClass}">${role}</span>`;
@@ -1329,39 +1333,30 @@ window.mockData.orders = window.mockData.orders || [
                         return colors[color] || 'bg-gray-100 text-gray-600';
                     };
                     
-                    const permissionsHTML = u.permissions.map(perm => {
-                        const permColors = {
-                            'Ürün Yönetimi': 'bg-green-100 text-green-800',
-                            'Sipariş Yönetimi': 'bg-blue-100 text-blue-800',
-                            'Kullanıcı Yönetimi': 'bg-purple-100 text-purple-800',
-                            'Stok Güncelleme': 'bg-yellow-100 text-yellow-800',
-                            'Müşteri Hizmetleri': 'bg-gray-100 text-gray-800',
-                            'Sadece Görüntüleme': 'bg-gray-100 text-gray-800'
-                        };
-                        const permClass = permColors[perm] || 'bg-gray-100 text-gray-800';
-                        return `<span class="px-2 py-1 text-xs ${permClass} rounded">${perm}</span>`;
-                    }).join('');
+                    // Check if user has custom page permissions (pagePermissions object)
+                    const hasRestrictedPermissions = u.pagePermissions && typeof u.pagePermissions === 'object' && Object.keys(u.pagePermissions).length > 0 && Object.values(u.pagePermissions).some(p => p === false);
+                    const permissionIndicator = hasRestrictedPermissions ? '<i class="fas fa-key text-purple-500 ml-1 text-xs" title="Özel izinler tanımlı"></i>' : '';
                     
                     const actionButtons = u.status === 'pending' ? `
-                        <button onclick="approveUser(${u.id})" class="text-green-600 hover:text-green-900">
+                        <button onclick="approveUser(${u.id})" class="text-green-600 hover:text-green-900" title="Onayla">
                             <i class="fas fa-check"></i>
                         </button>
-                        <button onclick="rejectUser(${u.id})" class="text-red-600 hover:text-red-900">
+                        <button onclick="rejectUser(${u.id})" class="text-red-600 hover:text-red-900" title="Reddet">
                             <i class="fas fa-times"></i>
                         </button>
-                        <button onclick="viewUserDetails(${u.id})" class="text-blue-600 hover:text-blue-900">
+                        <button onclick="viewUserDetails(${u.id})" class="text-blue-600 hover:text-blue-900" title="Detaylar">
                             <i class="fas fa-eye"></i>
                         </button>
                     ` : `
-                        <button onclick="editUser(${u.id})" class="text-blue-600 hover:text-blue-900">
+                        <button onclick="showAddUserModal(${u.id})" class="text-blue-600 hover:text-blue-900" title="Düzenle">
                             <i class="fas fa-edit"></i>
                         </button>
                         ${u.status === 'active' ? `
-                        <button onclick="toggleUserStatus(${u.id})" class="text-yellow-600 hover:text-yellow-900">
+                        <button onclick="toggleUserStatus(${u.id})" class="text-yellow-600 hover:text-yellow-900" title="Duraklat">
                             <i class="fas fa-pause"></i>
                         </button>
                         ` : ''}
-                        <button onclick="viewUserDetails(${u.id})" class="text-green-600 hover:text-green-900">
+                        <button onclick="viewUserDetails(${u.id})" class="text-green-600 hover:text-green-900" title="Detaylar">
                             <i class="fas fa-eye"></i>
                         </button>
                     `;
@@ -1369,21 +1364,24 @@ window.mockData.orders = window.mockData.orders || [
                     return `
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="checkbox" class="supplier-user-checkbox rounded border-gray-300 text-blue-600 focus:ring-blue-500" data-user-id="${u.id}">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="w-10 h-10 ${getAvatarColor(u.avatarColor)} rounded-full flex items-center justify-center mr-3">
                                         <span class="font-semibold">${u.avatarInitials}</span>
                                     </div>
                                     <div>
-                                        <div class="text-sm font-medium text-gray-900">${u.name}</div>
+                                        <div class="text-sm font-medium text-gray-900 flex items-center">
+                                            ${u.name}
+                                            ${permissionIndicator}
+                                        </div>
                                         <div class="text-sm text-gray-500">${u.title}</div>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${u.email}</td>
                             <td class="px-6 py-4 whitespace-nowrap">${getRoleBadge(u.role)}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <div class="flex flex-wrap gap-1">${permissionsHTML}</div>
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap">${getStatusBadge(u.status)}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${u.lastLogin}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -1431,9 +1429,7 @@ window.mockData.orders = window.mockData.orders || [
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">Tüm Roller</option>
                                         <option value="Admin">Admin</option>
-                                        <option value="Ürün Uzmanı">Ürün Uzmanı</option>
-                                        <option value="Sipariş Uzmanı">Sipariş Uzmanı</option>
-                                        <option value="Stajyer">Stajyer</option>
+                                        <option value="Standart Kullanıcı">Standart Kullanıcı</option>
                                     </select>
                                     </div>
                                 
@@ -1454,16 +1450,44 @@ window.mockData.orders = window.mockData.orders || [
                             <div id="supplierUserSearchResults" class="mt-3 text-sm text-gray-500 hidden">
                                 <span id="supplierUserSearchCount"></span>
                             </div>
+                            
+                            <!-- Bulk Actions -->
+                            <div class="mt-4 flex items-center justify-between">
+                                <div class="text-sm text-gray-600">
+                                    <span id="selectedSupplierUsersCount">0</span> kullanıcı seçildi
+                                </div>
+                                <div class="relative">
+                                    <button id="bulkSupplierActionsBtn" disabled class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center">
+                                        <i class="fas fa-tasks mr-2"></i> Toplu İşlemler
+                                        <i class="fas fa-chevron-down ml-2"></i>
+                                    </button>
+                                    <div id="bulkSupplierActionsDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                        <div class="py-1">
+                                            <button id="bulkSupplierActivate" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700">
+                                                <i class="fas fa-check-circle mr-2"></i> Aktifleştir
+                                            </button>
+                                            <button id="bulkSupplierDeactivate" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 hover:text-yellow-700">
+                                                <i class="fas fa-pause-circle mr-2"></i> Pasifleştir
+                                            </button>
+                                            <button id="bulkSupplierDelete" class="block w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-red-50">
+                                                <i class="fas fa-trash mr-2"></i> Sil
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                                     </div>
                         
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                                            <input type="checkbox" id="selectAllSupplierUsers" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                        </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kullanıcı</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">E-posta</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rol</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yetkiler</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Son Giriş</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlemler</th>
@@ -1495,7 +1519,7 @@ window.mockData.orders = window.mockData.orders || [
                 if (paginatedUsers.length === 0) {
                     tableBody.innerHTML = `
                         <tr>
-                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">
                                 <i class="fas fa-search text-4xl mb-2 text-gray-300"></i>
                                 <p>Sonuç bulunamadı</p>
                             </td>
@@ -1563,7 +1587,165 @@ window.mockData.orders = window.mockData.orders || [
             
             // Initial render
             renderPagination('supplier-user-pagination');
+            
+            // Setup bulk actions functionality
+            setTimeout(() => {
+                setupBulkSupplierUserActions();
+            }, 100);
         };
+        
+        // Bulk supplier user actions functionality
+        function setupBulkSupplierUserActions() {
+            const selectAllCheckbox = document.getElementById('selectAllSupplierUsers');
+            const bulkActionsBtn = document.getElementById('bulkSupplierActionsBtn');
+            const bulkActionsDropdown = document.getElementById('bulkSupplierActionsDropdown');
+            const selectedUsersCount = document.getElementById('selectedSupplierUsersCount');
+            const bulkActivate = document.getElementById('bulkSupplierActivate');
+            const bulkDeactivate = document.getElementById('bulkSupplierDeactivate');
+            const bulkDelete = document.getElementById('bulkSupplierDelete');
+            
+            if (!bulkActionsBtn) return;
+            
+            // Update selected count and button state
+            const updateBulkActionsState = () => {
+                const checkboxes = document.querySelectorAll('.supplier-user-checkbox:checked');
+                const count = checkboxes.length;
+                
+                if (selectedUsersCount) {
+                    selectedUsersCount.textContent = count;
+                }
+                
+                if (bulkActionsBtn) {
+                    if (count > 0) {
+                        bulkActionsBtn.disabled = false;
+                        bulkActionsBtn.classList.remove('bg-gray-400', 'hover:bg-gray-500');
+                        bulkActionsBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    } else {
+                        bulkActionsBtn.disabled = true;
+                        bulkActionsBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                        bulkActionsBtn.classList.add('bg-gray-400', 'hover:bg-gray-500');
+                    }
+                }
+                
+                // Update select all checkbox
+                if (selectAllCheckbox) {
+                    const allCheckboxes = document.querySelectorAll('.supplier-user-checkbox');
+                    const allChecked = allCheckboxes.length > 0 && checkboxes.length === allCheckboxes.length;
+                    selectAllCheckbox.checked = allChecked;
+                    selectAllCheckbox.indeterminate = count > 0 && count < allCheckboxes.length;
+                }
+            };
+            
+            // Select all checkbox
+            if (selectAllCheckbox) {
+                selectAllCheckbox.addEventListener('change', (e) => {
+                    const checkboxes = document.querySelectorAll('.supplier-user-checkbox');
+                    checkboxes.forEach(cb => {
+                        cb.checked = e.target.checked;
+                    });
+                    updateBulkActionsState();
+                });
+            }
+            
+            // Individual checkboxes
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('supplier-user-checkbox')) {
+                    updateBulkActionsState();
+                }
+            });
+            
+            // Toggle dropdown
+            if (bulkActionsBtn) {
+                bulkActionsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!bulkActionsBtn.disabled && bulkActionsDropdown) {
+                        bulkActionsDropdown.classList.toggle('hidden');
+                    }
+                });
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (bulkActionsDropdown && !bulkActionsDropdown.contains(e.target) && !bulkActionsBtn?.contains(e.target)) {
+                    bulkActionsDropdown.classList.add('hidden');
+                }
+            });
+            
+            // Bulk activate
+            if (bulkActivate) {
+                bulkActivate.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.supplier-user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    selectedIds.forEach(userId => {
+                        const user = (window.supplierUsers || []).find(u => u.id === userId);
+                        if (user) {
+                            user.status = 'active';
+                        }
+                    });
+                    
+                    if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                    if (typeof showToast === 'function') {
+                        showToast(`${selectedIds.length} kullanıcı aktifleştirildi.`);
+                    }
+                    if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                        renderers.supplierUserManagement();
+                    }
+                });
+            }
+            
+            // Bulk deactivate
+            if (bulkDeactivate) {
+                bulkDeactivate.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.supplier-user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    selectedIds.forEach(userId => {
+                        const user = (window.supplierUsers || []).find(u => u.id === userId);
+                        if (user) {
+                            user.status = 'inactive';
+                        }
+                    });
+                    
+                    if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                    if (typeof showToast === 'function') {
+                        showToast(`${selectedIds.length} kullanıcı pasifleştirildi.`);
+                    }
+                    if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                        renderers.supplierUserManagement();
+                    }
+                });
+            }
+            
+            // Bulk delete
+            if (bulkDelete) {
+                bulkDelete.addEventListener('click', () => {
+                    const selectedIds = Array.from(document.querySelectorAll('.supplier-user-checkbox:checked'))
+                        .map(cb => parseInt(cb.dataset.userId));
+                    
+                    if (selectedIds.length === 0) return;
+                    
+                    if (confirm(`${selectedIds.length} kullanıcıyı silmek istediğinize emin misiniz?`)) {
+                        window.supplierUsers = (window.supplierUsers || []).filter(u => !selectedIds.includes(u.id));
+                        
+                        if (bulkActionsDropdown) bulkActionsDropdown.classList.add('hidden');
+                        if (typeof showToast === 'function') {
+                            showToast(`${selectedIds.length} kullanıcı silindi.`);
+                        }
+                        if (typeof renderers !== 'undefined' && renderers.supplierUserManagement) {
+                            renderers.supplierUserManagement();
+                        }
+                    }
+                });
+            }
+            
+            // Initial state
+            updateBulkActionsState();
+        }
         renderers['supplierOrders'] = () => {
   const user = window.currentUser || {};
   if (user.role !== 'supplier' || user.supplierId == null) {
@@ -3496,7 +3678,8 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
         
         // For suppliers: show editable form if it's a draft/new product OR if there's a toBeRevised request
         // When there's a toBeRevised request, always show editable form (even if product is not draft)
-        if (isDraftEditable && !hasToBeRevisedRequest) {
+        // For new products, always show editable form with category dropdown
+        if ((isDraftEditable && !hasToBeRevisedRequest) || (product.isNew && isSupplier)) {
             // Editable version for draft products
             const categoryOptions = mockData.categories.map(c => 
                 `<option value="${c.id}" ${c.id === product.categoryId ? 'selected' : ''}>${t(c.name)}</option>`
@@ -3859,34 +4042,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                     </div>
                     
                     <div class="space-y-6">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-4">İstatistikler</h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Orijinallik Skoru:</span>
-                                    <span class="font-medium">${product.originalityScore}%</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Son Güncelleme:</span>
-                                    <span class="font-medium">${new Date(product.lastUpdated).toLocaleDateString('tr-TR')}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-4">Hızlı Erişim</h3>
-                            <div class="space-y-2">
-                                <a href="#products/detail/${product.id}?tab=images" class="block w-full px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-center">
-                                    <i class="fas fa-images mr-2"></i>Görselleri Görüntüle
-                                </a>
-                                ${!isSupplier ? `
-                                    <a href="#products/detail/${product.id}?tab=variants" class="block w-full px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200 text-center">
-                                        <i class="fas fa-layer-group mr-2"></i>Varyantları Yönet
-                                    </a>
-                                ` : ''}
-                            </div>
-                        </div>
-                        
                         ${(() => {
                             if (!isSupplier) return '';
                             const user = window.currentUser || {};
