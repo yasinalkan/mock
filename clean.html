@@ -546,6 +546,13 @@
             all_categories: { tr: 'Tüm Kategoriler', en: 'All Categories' },
             select_supplier: { tr: 'Tedarikçi Seçin', en: 'Select Supplier' },
             select_category: { tr: 'Kategori Seçin', en: 'Select Category' },
+            search: { tr: 'Ara', en: 'Search' },
+            selected: { tr: 'Seçilen', en: 'Selected' },
+            no_category_selected: { tr: 'Kategori seçilmedi', en: 'No category selected' },
+            no_supplier_selected: { tr: 'Tedarikçi seçilmedi', en: 'No supplier selected' },
+            category_picker_description: { tr: 'Kategori ağacından bir kategori seçin veya arama yaparak bulun.', en: 'Select a category from the category tree or search to find it.' },
+            supplier_picker_description: { tr: 'Tedarikçi listesinden bir tedarikçi seçin veya arama yaparak bulun.', en: 'Select a supplier from the supplier list or search to find it.' },
+            no_supplier_found: { tr: 'Tedarikçi bulunamadı', en: 'No supplier found' },
             rule_created: { tr: 'Kural Oluşturuldu', en: 'Rule Created' },
             rule_updated: { tr: 'Kural Güncellendi', en: 'Rule Updated' },
             rule_deleted: { tr: 'Kural Silindi', en: 'Rule Deleted' },
@@ -2447,10 +2454,10 @@
             supplierProducts: [
                 // Product 1 - Taş Pamuk Elastan Dümeli Bermuda
                 { productId: 1, supplierId: 1, stock: 100, price: 499.99, isArchived: false, isBanned: false },
-                { productId: 1, supplierId: 2, stock: 50, price: 510.00, isArchived: false, isBanned: true },
+                { productId: 1, supplierId: 2, stock: 50, price: 510.00, isArchived: true, isBanned: false },
                 
                 // Product 2 - Siyah Deri Ayakkabı
-                { productId: 2, supplierId: 1, stock: 25, price: 1250.00, isArchived: false, isBanned: true },
+                { productId: 2, supplierId: 1, stock: 25, price: 1250.00, isArchived: true, isBanned: false },
                 { productId: 2, supplierId: 2, stock: 40, price: 1299.00, isArchived: false, isBanned: false },
                 
                 // Product 3 - Mavi Gömlek
@@ -2458,12 +2465,12 @@
                 { productId: 3, supplierId: 2, stock: 45, price: 1120.00, isArchived: false, isBanned: false },
                 
                 // Product 4 - Beyaz T-Shirt
-                { productId: 4, supplierId: 1, stock: 80, price: 620.00, isArchived: false, isBanned: true },
+                { productId: 4, supplierId: 1, stock: 80, price: 620.00, isArchived: true, isBanned: false },
                 { productId: 4, supplierId: 2, stock: 205, price: 650.00, isArchived: false, isBanned: false },
                 
                 // Product 5 - Kahverengi Pantolon
                 { productId: 5, supplierId: 1, stock: 200, price: 299.50, isArchived: true, isBanned: false },
-                { productId: 5, supplierId: 2, stock: 150, price: 295.00, isArchived: false, isBanned: true },
+                { productId: 5, supplierId: 2, stock: 150, price: 295.00, isArchived: true, isBanned: false },
                 
                 // Product 6 - Kırmızı Elbise
                 { productId: 6, supplierId: 1, stock: 5, price: 450.00, isArchived: false, isBanned: false },
@@ -2471,7 +2478,7 @@
                 
                 // Product 7 - Siyah Ceket
                 { productId: 7, supplierId: 1, stock: 75, price: 299.99, isArchived: false, isBanned: false },
-                { productId: 7, supplierId: 2, stock: 45, price: 310.00, isArchived: false, isBanned: true },
+                { productId: 7, supplierId: 2, stock: 45, price: 310.00, isArchived: true, isBanned: false },
                 
                 // Product 8 - Beyaz Ayakkabı
                 { productId: 8, supplierId: 1, stock: 40, price: 850.00, isArchived: false, isBanned: false },
@@ -2479,26 +2486,26 @@
                 
                 // Product 9 - Siyah Deri Ceket
                 { productId: 9, supplierId: 1, stock: 0, price: 199.99, isArchived: false, isBanned: false },
-                { productId: 9, supplierId: 2, stock: 15, price: 210.00, isArchived: false, isBanned: true },
+                { productId: 9, supplierId: 2, stock: 15, price: 210.00, isArchived: true, isBanned: false },
                 
                 // Product 10 - Kırmızı Elbise
                 { productId: 10, supplierId: 1, stock: 40, price: 465.00, isArchived: false, isBanned: false },
                 { productId: 10, supplierId: 2, stock: 30, price: 470.00, isArchived: false, isBanned: false },
                 
                 // Product 11 - Mavi Jean Pantolon
-                { productId: 11, supplierId: 1, stock: 65, price: 85.00, isArchived: false, isBanned: true },
+                { productId: 11, supplierId: 1, stock: 65, price: 85.00, isArchived: true, isBanned: false },
                 { productId: 11, supplierId: 2, stock: 80, price: 89.99, isArchived: false, isBanned: false },
                 
                 // Product 12 - Gri Sweatshirt
                 { productId: 12, supplierId: 1, stock: 90, price: 610.00, isArchived: false, isBanned: false },
-                { productId: 12, supplierId: 2, stock: 20, price: 620.00, isArchived: false, isBanned: true },
+                { productId: 12, supplierId: 2, stock: 20, price: 620.00, isArchived: true, isBanned: false },
                 
                 // Product 13 - Siyah Bot
                 { productId: 13, supplierId: 1, stock: 25, price: 180.00, isArchived: false, isBanned: false },
                 { productId: 13, supplierId: 2, stock: 15, price: 185.00, isArchived: false, isBanned: false },
                 
                 // Product 14 - Beyaz Spor Ayakkabı
-                { productId: 14, supplierId: 1, stock: 20, price: 1320.00, isArchived: false, isBanned: true },
+                { productId: 14, supplierId: 1, stock: 20, price: 1320.00, isArchived: true, isBanned: false },
                 { productId: 14, supplierId: 2, stock: 35, price: 1300.00, isArchived: false, isBanned: false },
                 
                 // Product 15 - Siyah Çanta
@@ -2511,10 +2518,10 @@
                 
                 // Product 17 - Kahverengi Çanta
                 { productId: 17, supplierId: 1, stock: 35, price: 199.99, isArchived: false, isBanned: false },
-                { productId: 17, supplierId: 2, stock: 25, price: 205.00, isArchived: false, isBanned: true },
+                { productId: 17, supplierId: 2, stock: 25, price: 205.00, isArchived: true, isBanned: false },
                 
                 // Product 18 - Siyah Bot
-                { productId: 18, supplierId: 1, stock: 20, price: 170.00, isArchived: false, isBanned: true },
+                { productId: 18, supplierId: 1, stock: 20, price: 170.00, isArchived: true, isBanned: false },
                 { productId: 18, supplierId: 2, stock: 15, price: 175.00, isArchived: false, isBanned: false },
                 
                 // Product 19 - Beyaz Spor Ayakkabı
@@ -2535,10 +2542,10 @@
                 
                 // Product 23 - Mavi T-Shirt
                 { productId: 23, supplierId: 1, stock: 0, price: 89.99, isArchived: false, isBanned: false },
-                { productId: 23, supplierId: 2, stock: 15, price: 92.00, isArchived: false, isBanned: true },
+                { productId: 23, supplierId: 2, stock: 15, price: 92.00, isArchived: true, isBanned: false },
                 
                 // Product 24 - Kırmızı T-Shirt
-                { productId: 24, supplierId: 1, stock: 30, price: 395.00, isArchived: false, isBanned: true },
+                { productId: 24, supplierId: 1, stock: 30, price: 395.00, isArchived: true, isBanned: false },
                 { productId: 24, supplierId: 2, stock: 45, price: 399.99, isArchived: false, isBanned: false },
                 
                 // Product 25 - Yeşil T-Shirt
@@ -2547,12 +2554,12 @@
                 
                 // Supplier data for variant products
                 { productId: 101, supplierId: 1, stock: 15, price: 499.99, isArchived: false, isBanned: false },
-                { productId: 101, supplierId: 2, stock: 20, price: 510.00, isArchived: false, isBanned: true },
+                { productId: 101, supplierId: 2, stock: 20, price: 510.00, isArchived: true, isBanned: false },
                 
                 { productId: 102, supplierId: 1, stock: 20, price: 499.99, isArchived: false, isBanned: false },
                 { productId: 102, supplierId: 2, stock: 15, price: 510.00, isArchived: false, isBanned: false },
                 
-                { productId: 201, supplierId: 1, stock: 12, price: 1250.00, isArchived: false, isBanned: true },
+                { productId: 201, supplierId: 1, stock: 12, price: 1250.00, isArchived: true, isBanned: false },
                 { productId: 201, supplierId: 2, stock: 8, price: 1299.00, isArchived: false, isBanned: false },
                 
                 { productId: 202, supplierId: 1, stock: 15, price: 1250.00, isArchived: false, isBanned: false },
@@ -4967,28 +4974,17 @@
                             </label>
                         </div>
                     </div>
-                    
-                    <div>
-                        <label for="custom-reason-text" class="block text-sm font-medium text-gray-700 mb-2">${t('custom_reason')} (İsteğe bağlı)</label>
-                        <textarea id="custom-reason-text" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Ek revizyon nedenlerinizi buraya yazabilirsiniz..."></textarea>
-                    </div>
-                    
-                    <div>
-                        <label for="revision-message" class="block text-sm font-medium text-gray-700 mb-2">Tedarikçiye Mesaj (İsteğe bağlı)</label>
-                        <textarea id="revision-message" class="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" placeholder="Tedarikçiye göndermek istediğiniz ek bilgileri buraya yazabilirsiniz. Bu mesaj tedarikçiye iletilecektir..."></textarea>
-                        <p class="mt-1 text-xs text-gray-500">Bu mesaj tedarikçiye gönderilecek ve revizyon sürecinde rehber olacaktır.</p>
-                    </div>
                 </div>
             `;
             
             showModal('Talep Revizyonu', body, 'Revize İste', () => {
                 const selectedCheckboxes = document.querySelectorAll('.revision-reason-checkbox:checked');
-                const customReason = document.getElementById('custom-reason-text').value.trim();
-                const revisionMessage = document.getElementById('revision-message').value.trim();
+                const customReason = '';
+                const revisionMessage = '';
                 
-                if (selectedCheckboxes.length === 0 && !customReason) {
+                if (selectedCheckboxes.length === 0) {
                     alert(t('please_provide_reason'));
-                    return;
+                    return false; // Prevent modal from closing
                 }
                 
                 // Collect selected reasons
@@ -5024,9 +5020,6 @@
                 }
                 showToast(successMessage, 'info');
                 
-                // Close modal first
-                closeModal();
-                
                 // Navigate to the appropriate sub-tab based on request type
                 let targetTab = '#products/yeni-urun-talepleri'; // default
                 if (request) {
@@ -5048,35 +5041,56 @@
                 }, 200);
             });
             
-            // Explicitly ensure buttons are visible after modal is shown
-            setTimeout(() => {
+            // Explicitly ensure buttons are visible immediately and after modal is shown
+            const ensureButtonsVisible = () => {
                 const modalConfirm = document.getElementById('modal-confirm');
                 const modalCancel = document.getElementById('modal-cancel');
                 const modalFooter = document.getElementById('modal-footer');
+                
+                console.log('Ensuring buttons visible:', { modalConfirm: !!modalConfirm, modalCancel: !!modalCancel, modalFooter: !!modalFooter });
+                
+                if (modalFooter) {
+                    modalFooter.classList.remove('hidden');
+                    modalFooter.style.display = 'flex';
+                    modalFooter.style.visibility = 'visible';
+                    modalFooter.style.opacity = '1';
+                    console.log('Modal footer set to visible');
+                }
                 
                 if (modalConfirm) {
                     modalConfirm.classList.remove('hidden');
                     modalConfirm.style.display = 'block';
                     modalConfirm.style.visibility = 'visible';
+                    modalConfirm.style.opacity = '1';
+                    modalConfirm.style.pointerEvents = 'auto';
                     modalConfirm.textContent = 'Revize İste';
+                    // Add yellow styling for revision action
+                    modalConfirm.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    modalConfirm.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
+                    console.log('Modal confirm button set to visible with text:', modalConfirm.textContent);
+                } else {
+                    console.error('modal-confirm button not found!');
                 }
+                
                 if (modalCancel) {
                     modalCancel.classList.remove('hidden');
                     modalCancel.style.display = 'block';
                     modalCancel.style.visibility = 'visible';
+                    modalCancel.style.opacity = '1';
+                    modalCancel.style.pointerEvents = 'auto';
                     modalCancel.textContent = t('cancel') || 'İptal';
+                    console.log('Modal cancel button set to visible');
                 }
-                if (modalFooter) {
-                    modalFooter.classList.remove('hidden');
-                    modalFooter.style.display = 'flex';
-                }
-                
-                // Add yellow styling for revision action
-                if (modalConfirm) {
-                    modalConfirm.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                    modalConfirm.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
-                }
-            }, 50);
+            };
+            
+            // Ensure buttons are visible immediately
+            ensureButtonsVisible();
+            
+            // Also ensure after a short delay in case of timing issues
+            setTimeout(ensureButtonsVisible, 10);
+            setTimeout(ensureButtonsVisible, 50);
+            setTimeout(ensureButtonsVisible, 100);
+            setTimeout(ensureButtonsVisible, 200);
         }
 
         function applyRequestToProduct(request) {
@@ -5220,6 +5234,95 @@
 
         function getProductDetailHash(productId) {
             return `#products/detail/${productId}`;
+        }
+
+        function showSupplierPriceInfo(productId) {
+            const productSuppliers = mockData.supplierProducts.filter(sp => sp.productId === productId);
+            if (productSuppliers.length === 0) return;
+            
+            const tooltipContent = productSuppliers.map(sp => {
+                const supplier = mockData.suppliers.find(s => s.id === sp.supplierId);
+                const supplierName = supplier ? supplier.name : 'Bilinmeyen Tedarikçi';
+                const price = sp.price ? `${sp.price.toFixed(2)} ₺` : '-';
+                
+                return `
+                    <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center mr-2">
+                                ${supplierName.charAt(0).toUpperCase()}
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">${supplierName}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-semibold text-gray-900">${price}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const tooltipHTML = `
+                <div class="max-h-64 overflow-y-auto">
+                    ${tooltipContent}
+                </div>
+            `;
+            
+            // Show modal with supplier price info
+            showModal('Tedarikçi Fiyat Bilgileri', tooltipHTML, 'Kapat', () => {
+                closeModal();
+            });
+            
+            // Hide cancel button for this modal
+            setTimeout(() => {
+                const modalCancel = document.getElementById('modal-cancel');
+                if (modalCancel) {
+                    modalCancel.style.display = 'none';
+                }
+            }, 50);
+        }
+
+        function showSupplierStockInfo(productId) {
+            const productSuppliers = mockData.supplierProducts.filter(sp => sp.productId === productId);
+            if (productSuppliers.length === 0) return;
+            
+            const tooltipContent = productSuppliers.map(sp => {
+                const supplier = mockData.suppliers.find(s => s.id === sp.supplierId);
+                const supplierName = supplier ? supplier.name : 'Bilinmeyen Tedarikçi';
+                const stock = sp.stock || 0;
+                const stockText = stock > 0 ? `${stock} adet` : '<span class="text-red-500">Tükendi</span>';
+                
+                return `
+                    <div class="flex items-center justify-between py-2 border-b border-gray-200 last:border-0">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center mr-2">
+                                ${supplierName.charAt(0).toUpperCase()}
+                            </div>
+                            <span class="text-sm font-medium text-gray-900">${supplierName}</span>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm font-semibold text-gray-900">${stockText}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            const tooltipHTML = `
+                <div class="max-h-64 overflow-y-auto">
+                    ${tooltipContent}
+                </div>
+            `;
+            
+            // Show modal with supplier stock info
+            showModal('Tedarikçi Stok Bilgileri', tooltipHTML, 'Kapat', () => {
+                closeModal();
+            });
+            
+            // Hide cancel button for this modal
+            setTimeout(() => {
+                const modalCancel = document.getElementById('modal-cancel');
+                if (modalCancel) {
+                    modalCancel.style.display = 'none';
+                }
+            }, 50);
         }
 
         function getProductStatusDescription(product, activeTab = null) {
@@ -5636,28 +5739,9 @@
                         return mockData.supplierProducts.some(sp => sp.productId === p.id && Number(sp.stock) === 0);
                     }).length;
                 
-                // Count banned products per supplier - must match filtering logic
-                const bannedCount = isCurrentUserSupplier && currentUserSupplierId ? 
-                    mockData.products.filter(p => {
-                        // Only count active products
-                        if (p.status !== 'active') return false;
-                        // Exclude product-level archived and banned
-                        if (p.isArchived === true) return false;
-                        if (p.isBanned === true) return false;
-                        
-                        const sp = mockData.supplierProducts.find(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId);
-                        return sp && sp.isBanned === true;
-                    }).length :
-                    mockData.products.filter(p => {
-                        // Only count active products
-                        if (p.status !== 'active') return false;
-                        // Exclude product-level archived and banned
-                        if (p.isArchived === true) return false;
-                        if (p.isBanned === true) return false;
-                        
-                        // Check if any supplier has this product as banned
-                        return mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isBanned === true);
-                    }).length;
+                // Count banned products per supplier - tab is hidden for now, so return 0
+                // All banned products have been moved to archived
+                const bannedCount = 0;
 
                 const isSupplier = (window.currentUser||{}).role === 'supplier';
                 const tabsHTML = isSupplier ? 
@@ -5705,10 +5789,11 @@
                                         <span class="font-medium">Stoğu Bitenler</span>
                                         <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
                                     </a>
-                                    <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
+                                    <!-- Yasaklananlar tab hidden for now - will be used later -->
+                                    <!-- <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
                                         <span class="font-medium">Yasaklananlar</span>
                                         <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">${bannedCount}</span>
-                                    </a>
+                                    </a> -->
                                     <a href="#products/archived-items" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-slate-50 hover:text-slate-700 transition-all duration-200 border-l-4 border-transparent hover:border-slate-500">
                                         <span class="font-medium">Arşivlenenler</span>
                                         <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">${archivedItemsCount}</span>
@@ -5757,10 +5842,11 @@
                                                 <span class="font-medium">Stoğu Bitenler</span>
                                                 <span class="bg-red-100 text-red-700 text-xs font-bold px-2.5 py-1 rounded-full">${outOfStockCount}</span>
                                             </a>
-                                            <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
+                                            <!-- Yasaklananlar tab hidden for now - will be used later -->
+                                            <!-- <a href="#products/banned" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-all duration-200 border-l-4 border-transparent hover:border-orange-500">
                                                 <span class="font-medium">Yasaklananlar</span>
                                                 <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">${bannedCount}</span>
-                                            </a>
+                                            </a> -->
                                             <a href="#products/archived-items" class="flex items-center justify-between px-4 py-3 text-sm text-gray-700 hover:bg-slate-50 hover:text-slate-700 transition-all duration-200 border-l-4 border-transparent hover:border-slate-500">
                                                 <span class="font-medium">Arşivlenenler</span>
                                                 <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">${archivedItemsCount}</span>
@@ -5809,10 +5895,7 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <div class="flex items-center border rounded-md">
-                                        <button id="listViewBtn" class="p-2 hover:bg-gray-100 rounded-md"><i class="fas fa-list"></i></button>
-                                        <button id="gridViewBtn" class="p-2 hover:bg-gray-100 rounded-r-md hidden"><i class="fas fa-th-large"></i></button>
-                                    </div>
+                                    <!-- List view button removed -->
                                     <button id="openFilterPanel" class="px-4 py-2 border rounded-md hover:bg-gray-100"><i class="fas fa-filter mr-2"></i> ${t('filters')}</button>
                                     <div class="relative">
                                         <button id="actionsBtn" class="px-4 py-2 border rounded-md hover:bg-gray-100 opacity-50 cursor-not-allowed" disabled><i class="fas fa-cogs mr-2"></i> İşlemler</button>
@@ -5831,10 +5914,7 @@
                 // Initialize pagination
                 initializePagination();
                 switchProductView(activeTab, view);
-                const listViewBtn = document.getElementById('listViewBtn');
-                const gridViewBtn = document.getElementById('gridViewBtn');
-                if (listViewBtn) listViewBtn.addEventListener('click', () => switchProductView(activeTab, 'list'));
-                if (gridViewBtn) gridViewBtn.addEventListener('click', () => switchProductView(activeTab, 'grid'));
+                // List view button removed
                 const openFilterPanelBtn = document.getElementById('openFilterPanel');
                 const addProductBtnEl = document.getElementById('addProductBtn');
                 if (openFilterPanelBtn) openFilterPanelBtn.addEventListener('click', openFilterPanel);
@@ -6898,11 +6978,15 @@
             commissionManagement: () => {
                 pageTitle.textContent = t('commission_management');
                 
-                // Get all commission rules
-                const rules = mockData.commissionRules || [];
+                // Initialize pagination
+                window.paginationState.currentPage = 1;
                 
-                // Create rows for all commission rules
-                const rows = rules.map(rule => {
+                // Sort state
+                let sortColumn = 'updatedAt';
+                let sortDirection = 'desc';
+                
+                // Helper function to get rule display info
+                const getRuleInfo = (rule) => {
                     let targetName = '';
                     let ruleType = '';
                     
@@ -6923,30 +7007,167 @@
                         ruleType = 'Tedarikçi + Kategori';
                     }
                     
-                    const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
-                    const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
-                    const defaultRate = rule.defaultRate ? `${rule.defaultRate}%` : '-';
+                    return { targetName, ruleType };
+                };
+                
+                // Render table rows
+                const renderRows = (rules) => {
+                    return rules.map(rule => {
+                        const { targetName, ruleType } = getRuleInfo(rule);
+                        const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
+                        const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
+                        const defaultIndicator = rule.isDefault ? ' <span class="text-red-500 font-bold">*</span>' : '';
+                        
+                        return `
+                            <tr class="border-b hover:bg-gray-50">
+                                <td class="p-3 text-sm font-medium">${targetName}${defaultIndicator}</td>
+                                <td class="p-3 text-sm">${rule.rate}%</td>
+                                <td class="p-3 text-sm">${ruleType}</td>
+                                <td class="p-3 text-sm">${startDate}</td>
+                                <td class="p-3 text-sm">${endDate}</td>
+                                <td class="p-3 text-sm">${new Date(rule.updatedAt).toLocaleDateString('tr-TR')}</td>
+                                <td class="p-3 text-right">
+                                    <button class="p-2 text-gray-500 hover:text-blue-600 view-commission" data-id="${rule.id}" title="Detayları Görüntüle">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="p-2 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="p-2 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                };
+                
+                // Filter and sort rules
+                const filterAndSortRules = () => {
+                    let filtered = [...(mockData.commissionRules || [])];
                     
-                    return `
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 text-sm font-medium">${targetName}</td>
-                            <td class="p-3 text-sm">${rule.rate}%</td>
-                            <td class="p-3 text-sm">${defaultRate}</td>
-                            <td class="p-3 text-sm">${ruleType}</td>
-                            <td class="p-3 text-sm">${startDate}</td>
-                            <td class="p-3 text-sm">${endDate}</td>
-                            <td class="p-3 text-sm">${new Date(rule.updatedAt).toLocaleDateString('tr-TR')}</td>
-                            <td class="p-3 text-right">
-                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="p-2 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
+                    // Apply search filter
+                    const searchQuery = (document.getElementById('commission-search')?.value || '').toLowerCase();
+                    if (searchQuery) {
+                        filtered = filtered.filter(rule => {
+                            const { targetName } = getRuleInfo(rule);
+                            return targetName.toLowerCase().includes(searchQuery) ||
+                                   rule.rate.toString().includes(searchQuery) ||
+                                   (rule.startDate && rule.startDate.includes(searchQuery)) ||
+                                   (rule.endDate && rule.endDate.includes(searchQuery));
+                        });
+                    }
+                    
+                    // Apply type filter
+                    const typeFilter = document.getElementById('commission-type-filter')?.value || '';
+                    if (typeFilter) {
+                        filtered = filtered.filter(rule => rule.type === typeFilter);
+                    }
+                    
+                    // Apply default filter
+                    const defaultFilter = document.getElementById('commission-default-filter')?.value || '';
+                    if (defaultFilter === 'yes') {
+                        filtered = filtered.filter(rule => rule.isDefault === true);
+                    } else if (defaultFilter === 'no') {
+                        filtered = filtered.filter(rule => rule.isDefault !== true);
+                    }
+                    
+                    // Apply sorting
+                    filtered.sort((a, b) => {
+                        let aVal, bVal;
+                        
+                        switch(sortColumn) {
+                            case 'target':
+                                aVal = getRuleInfo(a).targetName.toLowerCase();
+                                bVal = getRuleInfo(b).targetName.toLowerCase();
+                                break;
+                            case 'rate':
+                                aVal = a.rate || 0;
+                                bVal = b.rate || 0;
+                                break;
+                            case 'type':
+                                aVal = getRuleInfo(a).ruleType.toLowerCase();
+                                bVal = getRuleInfo(b).ruleType.toLowerCase();
+                                break;
+                            case 'startDate':
+                                aVal = a.startDate ? new Date(a.startDate).getTime() : 0;
+                                bVal = b.startDate ? new Date(b.startDate).getTime() : 0;
+                                break;
+                            case 'endDate':
+                                aVal = a.endDate ? new Date(a.endDate).getTime() : 0;
+                                bVal = b.endDate ? new Date(b.endDate).getTime() : 0;
+                                break;
+                            case 'updatedAt':
+                            default:
+                                aVal = new Date(a.updatedAt || a.createdAt || 0).getTime();
+                                bVal = new Date(b.updatedAt || b.createdAt || 0).getTime();
+                                break;
+                        }
+                        
+                        if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+                        if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+                        return 0;
+                    });
+                    
+                    return filtered;
+                };
+                
+                // Render table
+                const renderTable = () => {
+                    const filtered = filterAndSortRules();
+                    const paginated = paginateData(filtered, window.paginationState.currentPage);
+                    const tbody = document.getElementById('commission-table-body');
+                    
+                    if (tbody) {
+                        if (paginated.length === 0) {
+                            tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-gray-500">Sonuç bulunamadı.</td></tr>`;
+                        } else {
+                            tbody.innerHTML = renderRows(paginated);
+                            
+                            // Re-attach event listeners
+                            document.querySelectorAll('.view-commission').forEach(btn => {
+                                btn.addEventListener('click', () => showCommissionDetailModal(parseInt(btn.dataset.id)));
+                            });
+                            document.querySelectorAll('.edit-commission').forEach(btn => {
+                                btn.addEventListener('click', () => showAddCommissionModal(parseInt(btn.dataset.id)));
+                            });
+                            document.querySelectorAll('.del-commission').forEach(btn => {
+                                btn.addEventListener('click', () => deleteCommission(parseInt(btn.dataset.id)));
+                            });
+                        }
+                    }
+                    
+                    // Update count
+                    const countEl = document.getElementById('commission-count');
+                    if (countEl) {
+                        countEl.textContent = `Görüntülenen: ${paginated.length} / Toplam: ${filtered.length} kural`;
+                    }
+                    
+                    // Render pagination
+                    renderPagination('commission-pagination');
+                };
+                
+                window.paginationState.renderFunction = renderTable;
+                
+                // Get sort icon
+                const getSortIcon = (column) => {
+                    if (sortColumn !== column) return '<i class="fas fa-sort text-gray-400"></i>';
+                    return sortDirection === 'asc' 
+                        ? '<i class="fas fa-sort-up text-blue-600"></i>'
+                        : '<i class="fas fa-sort-down text-blue-600"></i>';
+                };
+                
+                // Handle column sort
+                const handleSort = (column) => {
+                    if (sortColumn === column) {
+                        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortColumn = column;
+                        sortDirection = 'asc';
+                    }
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                };
                 
                 pageContent.innerHTML = `
                     <!-- Commission Management Page Info -->
@@ -6977,31 +7198,127 @@
                                     <i class="fas fa-plus mr-2"></i> ${t('add_commission_rule')}
                                 </button>
                             </div>
+                            
+                            <!-- Filter Section -->
+                            <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
+                                        <div class="relative">
+                                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                            <input type="text" id="commission-search" 
+                                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                                   placeholder="Hedef, oran veya tarih ile ara...">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Komisyon Tipi</label>
+                                        <select id="commission-type-filter" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm Tipler</option>
+                                            <option value="supplier">Tedarikçi Bazlı</option>
+                                            <option value="category">Kategori Bazlı</option>
+                                            <option value="supplier_category">Tedarikçi + Kategori</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Varsayılan</label>
+                                        <select id="commission-default-filter" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tümü</option>
+                                            <option value="yes">Varsayılan</option>
+                                            <option value="no">Varsayılan Değil</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button id="commission-clear-filters" 
+                                                class="w-full px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300">
+                                            <i class="fas fa-times mr-2"></i> Filtreleri Temizle
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="commission-count" class="mt-3 text-sm text-gray-600"></div>
+                            </div>
+                            
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left">
                                     <thead class="table-header">
                                         <tr>
-                                            <th class="p-3 text-sm font-semibold">Hedef</th>
-                                            <th class="p-3 text-sm font-semibold">${t('commission_rate')}</th>
-                                            <th class="p-3 text-sm font-semibold">${t('default_rate')}</th>
-                                            <th class="p-3 text-sm font-semibold">${t('rule_type')}</th>
-                                            <th class="p-3 text-sm font-semibold">${t('start_date')}</th>
-                                            <th class="p-3 text-sm font-semibold">${t('end_date')}</th>
-                                            <th class="p-3 text-sm font-semibold">Güncellenme</th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('target')">
+                                                Hedef <span id="sort-icon-target">${getSortIcon('target')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('rate')">
+                                                ${t('commission_rate')} <span id="sort-icon-rate">${getSortIcon('rate')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('type')">
+                                                ${t('rule_type')} <span id="sort-icon-type">${getSortIcon('type')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('startDate')">
+                                                ${t('start_date')} <span id="sort-icon-startDate">${getSortIcon('startDate')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('endDate')">
+                                                ${t('end_date')} <span id="sort-icon-endDate">${getSortIcon('endDate')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('updatedAt')">
+                                                Güncellenme <span id="sort-icon-updatedAt">${getSortIcon('updatedAt')}</span>
+                                            </th>
                                             <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                                         </tr>
                                     </thead>
-                                    <tbody>${rows || `<tr><td colspan="8" class="p-6 text-center text-gray-500">Henüz kural tanımlanmamış.</td></tr>`}</tbody>
+                                    <tbody id="commission-table-body"></tbody>
                                 </table>
                             </div>
+                            <div id="commission-pagination" class="mt-4"></div>
                         </div>
                     </div>
                 `;
                 
+                // Update sort icons after render
+                const updateSortIcons = () => {
+                    ['target', 'rate', 'type', 'startDate', 'endDate', 'updatedAt'].forEach(col => {
+                        const iconEl = document.getElementById(`sort-icon-${col}`);
+                        if (iconEl) {
+                            iconEl.innerHTML = getSortIcon(col);
+                        }
+                    });
+                };
+                
+                // Override handleSort to also update icons
+                const handleSortWithIcons = (column) => {
+                    handleSort(column);
+                    updateSortIcons();
+                };
+                
+                // Store sort handler in global scope
+                window.handleCommissionSort = handleSortWithIcons;
+                
                 // Add event listeners
-                document.getElementById('addCommissionBtn')?.addEventListener('click', showAddCommissionModal);
-                document.querySelectorAll('.edit-commission').forEach(btn => btn.addEventListener('click', () => showAddCommissionModal(parseInt(btn.dataset.id))));
-                document.querySelectorAll('.del-commission').forEach(btn => btn.addEventListener('click', () => deleteCommission(parseInt(btn.dataset.id))));
+                document.getElementById('addCommissionBtn')?.addEventListener('click', () => showAddCommissionModal());
+                
+                // Filter event listeners
+                document.getElementById('commission-search')?.addEventListener('input', () => {
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
+                document.getElementById('commission-type-filter')?.addEventListener('change', () => {
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
+                document.getElementById('commission-default-filter')?.addEventListener('change', () => {
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
+                document.getElementById('commission-clear-filters')?.addEventListener('click', () => {
+                    document.getElementById('commission-search').value = '';
+                    document.getElementById('commission-type-filter').value = '';
+                    document.getElementById('commission-default-filter').value = '';
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
+                
+                // Initial render
+                renderTable();
+                updateSortIcons();
             },
             settings: (activeTab = 'suppliers') => {
                 pageTitle.textContent = t('settings');
@@ -10597,12 +10914,7 @@
             }
             
             // Re-attach other important event listeners
-            const listViewBtn = document.getElementById('listViewBtn');
-            if (listViewBtn) {
-                const newListViewBtn = listViewBtn.cloneNode(true);
-                listViewBtn.parentNode.replaceChild(newListViewBtn, listViewBtn);
-                newListViewBtn.addEventListener('click', () => switchProductView(activeTab, 'list'));
-            }
+            // List view button removed
             
             const gridViewBtn = document.getElementById('gridViewBtn');
             if (gridViewBtn) {
@@ -10698,6 +11010,9 @@
                 return;
             }
 
+            // Store current view
+            window.currentProductView = view;
+
             console.log('First switchProductView called with activeTab:', activeTab, 'view:', view);
             const isSupplier = (window.currentUser||{}).role === 'supplier';
             
@@ -10707,8 +11022,13 @@
             // Re-attach event listeners for buttons that might be missing after tab switches
             reattachProductPageEventListeners(activeTab, isSupplier);
             
-            // Filter products based on active tab and user role
+            // Check if we have filtered products from the filter panel
             let filteredProducts = [];
+            if (window.hasActiveFilters && window.filteredProducts) {
+                // Use filtered products from filter panel
+                filteredProducts = window.filteredProducts;
+            } else {
+                // Filter products based on active tab and user role
             
             if (isSupplier) {
                  // Suppliers can see approved, rejected, and their update requests
@@ -10893,6 +11213,7 @@
                     });
                 }
             }
+            }
             
 
             // Apply category filter
@@ -10961,21 +11282,24 @@
             if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') {
                 headers += `
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">Talep Durumu</th>
-                <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('last_updated_header')}</th>
+                <!-- Last Updated column hidden -->
+            `;
+            } else if (activeTab === 'aktif' || activeTab === 'out-of-stock' || activeTab === 'banned' || activeTab === 'archived-items') {
+                // Exclude status description for Aktif and Pasif tabs
+                headers += `
+                <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('status_header')}</th>
+                <!-- Last Updated column hidden -->
             `;
             } else {
                 headers += `
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('status_description_header')}</th>
                 <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('status_header')}</th>
-                <th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('last_updated_header')}</th>
+                <!-- Last Updated column hidden -->
             `;
             }
             
             
-            // Only show actions column for admins, not for suppliers
-            if (!isSupplier) {
-                headers += `<th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>`;
-            }
+            // Actions column removed
 
             const rows = products.map(product => {
                 const category = mockData.categories.find(c => c.id === product.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
@@ -11184,94 +11508,23 @@
                 `;
                 }
                 
-                row += `
+                // Conditionally add status description column (exclude for Aktif and Pasif tabs)
+                if (activeTab !== 'aktif' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'archived-items' && activeTab !== 'yeni-urun-talepleri' && activeTab !== 'urun-guncelleme') {
+                    row += `
                         <td class="p-3 text-sm text-gray-600">
                             <div class="max-w-xs truncate" title="${statusDescription.replace(/<[^>]*>/g, '')}">${statusDescription}</div>
                         </td>
+                    `;
+                }
+                
+                row += `
                         <td class="p-3">
                             <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${statusText}</span>
                         </td>
-                        <td class="p-3 text-sm text-gray-500">${lastUpdated}</td>
+                        <!-- Last Updated column hidden -->
                 `;
                 
-                // Show actions column for admins and suppliers (for request tabs)
-                if (!isSupplier) {
-                    // For request tabs, show inspection buttons instead of detail buttons
-                    if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') {
-                        // Find the request for this product
-                        const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
-                        const request = mockData.requests.find(r => 
-                            r.type === requestType && r.productId === product.id && (r.status === 'submitted' || r.status === 'toBeRevised')
-                        );
-                        if (request) {
-                            row += `
-                            <td class="p-3 text-right">
-                                <div class="flex gap-1 justify-end">
-                                    <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo(\'#request-detail/\' + ${request.id});">
-                                        <i class="fas fa-search-plus mr-1"></i>İncele
-                                    </button>
-                                </div>
-                            </td>
-                            `;
-                        } else {
-                            row += `<td class="p-3 text-right"></td>`;
-                        }
-                    } else {
-                    row += `
-                    <td class="p-3 text-right">
-                        <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
-                            Detay <i class="fas fa-chevron-right ml-1"></i>
-                        </button>
-                    </td>
-                `;
-                    }
-                } else if (isSupplier) {
-                    // For suppliers, show cancel button in request tabs
-                    if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme' || activeTab === 'fiyat-stok-istekleri') {
-                        // Find the request for this product
-                        let requestType = '';
-                        if (activeTab === 'yeni-urun-talepleri') {
-                            requestType = 'product_create';
-                        } else if (activeTab === 'urun-guncelleme') {
-                            requestType = 'product_update';
-                        } else if (activeTab === 'fiyat-stok-istekleri') {
-                            requestType = 'stock_price_update';
-                        }
-                        
-                        const currentUserSupplierId = (window.currentUser||{}).supplierId;
-                        const request = mockData.requests.find(r => 
-                            r.type === requestType && 
-                            r.productId === product.id && 
-                            r.supplierId === currentUserSupplierId &&
-                            (r.status === 'submitted' || r.status === 'toBeRevised')
-                        );
-                        
-                        if (request) {
-                            row += `
-                            <td class="p-3 text-right">
-                                <div class="flex gap-1 justify-end">
-                                    <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); showRequestDetailModal(${request.id});">
-                                        <i class="fas fa-search-plus mr-1"></i>İncele
-                                    </button>
-                                    <button class="px-3 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded-md hover:bg-red-200" onclick="event.stopPropagation(); cancelSupplierRequest(${request.id});">
-                                        <i class="fas fa-times mr-1"></i>İptal
-                                    </button>
-                                </div>
-                            </td>
-                            `;
-                        } else {
-                            row += `<td class="p-3 text-right"></td>`;
-                        }
-                    } else {
-                        row += `
-                        <td class="p-3 text-right">
-                            <button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(product.id)}');">
-                                Detay <i class="fas fa-chevron-right ml-1"></i>
-                            </button>
-                        </td>
-                    `;
-                    }
-                }
+                // Actions column removed
                 
                 row += `</tr>`;
                 
@@ -15660,6 +15913,9 @@
             const displayEl = document.getElementById('product-display');
             if (!displayEl) return;
 
+            // Store current view
+            window.currentProductView = view;
+
             console.log('Second switchProductView called with activeTab:', activeTab, 'view:', view);
             
             // Redirect pasif tab to out-of-stock if accessed directly
@@ -15686,8 +15942,14 @@
                 activeTab = 'yeni-urun-talepleri';
             }
 
+            // Check if we have filtered products from the filter panel
             let filteredProducts = [];
-            switch (activeTab) {
+            if (window.hasActiveFilters && window.filteredProducts) {
+                // Use filtered products from filter panel
+                filteredProducts = window.filteredProducts;
+            } else {
+                // Filter products based on active tab and user role
+                switch (activeTab) {
                 case 'yeni-gelenler':
                     // Show products created by admins (not submitted by suppliers)
                     filteredProducts = mockData.products.filter(p => p.status === 'draft' && !p.supplierSubmission);
@@ -15854,6 +16116,7 @@
                     );
                 });
             }
+            }
 
             // Apply category filter
             filteredProducts = applyCategoryFilter(filteredProducts);
@@ -15932,9 +16195,36 @@
 
             const productRows = products.map(p => {
                 const category = mockData.categories.find(c => c.id === p.categoryId) || { name: { tr: 'Kategorisiz', en: 'Uncategorized' } };
-                const price = getProductPrice(p.id);
-                const priceText = price ? `${price.toFixed(2)} ₺` : '-';
-                const stock = getProductStock(p.id);
+                
+                // Get all suppliers for this product
+                const productSuppliers = mockData.supplierProducts.filter(sp => sp.productId === p.id);
+                const supplierCount = productSuppliers.length;
+                
+                // For admin in aktif tab: show supplier-specific info
+                let price, priceText, stock, stockText;
+                if (!isSupplier && isAktifTab && supplierCount > 0) {
+                    if (supplierCount === 1) {
+                        // Single supplier: show that supplier's price and stock
+                        const singleSupplier = productSuppliers[0];
+                        price = singleSupplier.price;
+                        priceText = price ? `${price.toFixed(2)} ₺` : '-';
+                        stock = singleSupplier.stock || 0;
+                        stockText = stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`;
+                    } else {
+                        // Multiple suppliers: show info icon with tooltip
+                        const minPrice = Math.min(...productSuppliers.map(sp => sp.price || Infinity));
+                        const totalStock = productSuppliers.reduce((sum, sp) => sum + (sp.stock || 0), 0);
+                        priceText = minPrice !== Infinity ? `${minPrice.toFixed(2)} ₺'den başlayan` : '-';
+                        stockText = totalStock > 0 ? totalStock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`;
+                    }
+                } else {
+                    // Default behavior for other tabs
+                    price = getProductPrice(p.id);
+                    priceText = price ? `${price.toFixed(2)} ₺` : '-';
+                    stock = getProductStock(p.id);
+                    stockText = stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`;
+                }
+                
                 let statusDescription = getProductStatusDescription(p, activeTab);
                 
                 // Debug price requests
@@ -15982,12 +16272,13 @@
                 const isRejected = p.status === 'rejected';
                 const rowClass = 'border-b hover:bg-gray-50 cursor-pointer';
                 
-                // For suppliers in update requests tab, navigate to request detail if there's a pending request
+                // For update requests and new product requests tabs (both admin and supplier), navigate to request detail if there's a pending request
                 let clickHandler = `onclick="navigateTo('#products/detail/${p.id}')"`;
                 let requestId = null;
-                if (isSupplier && isAwaitingApprovalTab) {
+                if (isAwaitingApprovalTab || isNewProductRequestsTab) {
+                    const requestType = isNewProductRequestsTab ? 'product_create' : 'product_update';
                     const request = mockData.requests.find(r => 
-                        r.type === 'product_update' && 
+                        r.type === requestType && 
                         r.productId === p.id && 
                         (r.status === 'submitted' || r.status === 'toBeRevised')
                     );
@@ -16085,6 +16376,14 @@
                     <td class="p-3 text-sm font-medium">
                         <div class="flex items-center">
                             <span>${priceText}</span>
+                            ${!isSupplier && isAktifTab && supplierCount > 1 ? `
+                            <button 
+                                class="ml-2 text-blue-500 hover:text-blue-700 relative group" 
+                                onclick="event.stopPropagation(); showSupplierPriceInfo(${p.id})"
+                                title="Tedarikçi fiyat bilgileri">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            ` : ''}
                         </div>
                     </td>
                     ${(() => {
@@ -16140,7 +16439,19 @@
                         }
                         return '';
                     })()}
-                    <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">${t('stock_out')}</span>`}</td>
+                    <td class="p-3 text-sm">
+                        <div class="flex items-center">
+                            ${stockText}
+                            ${!isSupplier && isAktifTab && supplierCount > 1 ? `
+                            <button 
+                                class="ml-2 text-blue-500 hover:text-blue-700 relative group" 
+                                onclick="event.stopPropagation(); showSupplierStockInfo(${p.id})"
+                                title="Tedarikçi stok bilgileri">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </td>
                     <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusInfo.class}">${statusInfo.text}</span></td>
                     ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `
                     <td class="p-3">
@@ -16159,6 +16470,20 @@
                         </div>
                     </td>
                     ` : ''}
+                    ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `
+                    <td class="p-3 text-sm text-gray-600">
+                        ${(() => {
+                            let requestType = 'product_create';
+                            if (isAwaitingApprovalTab) requestType = 'product_update';
+                            const req = mockData.requests.find(r => r.productId === p.id && (r.status === 'submitted' || r.status === 'toBeRevised'));
+                            if (req && (req.submittedAt || req.createdAt)) {
+                                const date = new Date(req.submittedAt || req.createdAt);
+                                return date.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                            }
+                            return '-';
+                        })()}
+                    </td>
+                    ` : ''}
                     ${isNewArrivalsTab ? `
                     <td class="p-3">
                         <div class="flex items-center">
@@ -16169,15 +16494,9 @@
                         </div>
                     </td>
                     ` : ''}
-                    ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? '' : `<td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>`}
-                    <td class="p-3 text-sm text-gray-500">${formatTimeAgo(p.lastUpdated)}</td>
-                    <td class="p-3 text-right">
-                        ${((activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') && !isSupplier) ? (() => {
-                            const requestType = activeTab === 'yeni-urun-talepleri' ? 'product_create' : 'product_update';
-                            const req = mockData.requests.find(r => r.type === requestType && r.productId === p.id && (r.status === 'submitted' || r.status === 'toBeRevised'));
-                            return req ? `<button class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200" onclick="event.stopPropagation(); navigateTo('#request-detail/' + ${req.id});"><i class="fas fa-search-plus mr-1"></i>İncele</button>` : '';
-                        })() : `<button class="p-2 text-gray-500 hover:text-blue-600" onclick="event.stopPropagation(); navigateTo('${getProductDetailHash(p.id)}');"><i class="fas fa-edit"></i></button>`}
-                    </td>
+                    ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab || isAktifTab || isOutOfStockTab || isBannedTab || isArchivedItemsTab) ? '' : `<td class="p-3 text-sm text-gray-600" style="max-width: 200px;">${statusDescription}</td>`}
+                    <!-- Last Updated column hidden -->
+                    <!-- Actions column removed -->
                 </tr>
                 `;
             }).join('');
@@ -16198,10 +16517,10 @@
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('stock_header')}</th>
                                 <th class="p-3 text-sm font-semibold sortable-header sort-none">${isSupplier && isSentTab ? 'Durum' : t('status_header')}</th>
                                 ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Talep Durumu</th>` : ''}
+                                ${(isNewProductRequestsTab || isAwaitingApprovalTab || isTaleplerTab) ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">Oluşturulma Tarihi</th>` : ''}
                                 ${isNewArrivalsTab ? `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('originality_header')}</th>` : ''}
-                                ${(isNewProductRequestsTab || isAwaitingApprovalTab) ? '' : `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('status_description_header')}</th>`}
-                                <th class="p-3 text-sm font-semibold sortable-header sort-none">${t('last_updated_header')}</th>
-                                <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
+                                ${(isNewProductRequestsTab || isAwaitingApprovalTab || isAktifTab || isOutOfStockTab || isBannedTab || isArchivedItemsTab) ? '' : `<th class="p-3 text-sm font-semibold sortable-header sort-none">${t('status_description_header')}</th>`}
+                                <!-- Last Updated column hidden -->
                             </tr>
                         </thead>
                         <tbody>${productRows}</tbody>
@@ -16222,8 +16541,8 @@
                 checkbox.addEventListener('change', updateBulkActionsVisibility);
             });
             
-            // Add click event listener for supplier update requests
-            if (isSupplier && isAwaitingApprovalTab) {
+            // Add click event listener for update requests and new product requests (both admin and supplier)
+            if (isAwaitingApprovalTab || isNewProductRequestsTab) {
                 const tableBody = container.querySelector('tbody');
                 if (tableBody) {
                     tableBody.addEventListener('click', (e) => {
@@ -16294,8 +16613,6 @@
                 const priceChange = currentPrice > 0 ? ((requestedPrice - currentPrice) / currentPrice * 100).toFixed(1) : 0;
                 const changeColor = priceChange > 0 ? 'text-red-600' : 'text-green-600';
                 const changeIcon = priceChange > 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-                const recommendationColor = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'text-green-600' : 'text-red-600';
-                const recommendationIcon = request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'fa-check-circle' : 'fa-times-circle';
 
                 return `
                     <tr class="border-b hover:bg-gray-50 cursor-pointer" data-request-id="${request.id}">
@@ -16340,18 +16657,11 @@
                                 <span class="font-medium ${changeColor}">${priceChange}%</span>
                             </div>
                         </td>
-                        <td class="p-4">
-                            <div class="flex items-center">
-                                <i class="fas ${recommendationIcon} ${recommendationColor} mr-1"></i>
-                                <span class="font-medium ${recommendationColor}">
-                                    ${request.validationInfo && request.validationInfo.recommendation === 'approve' ? 'Onayla' : 'Reddet'}
-                                </span>
-                            </div>
-                        </td>
-                        <td class="p-4">
-                            <div class="text-sm text-gray-600 max-w-xs">
-                                ${request.reason}
-                            </div>
+                        <td class="p-4 text-sm text-gray-600">
+                            ${request.submittedAt || request.createdAt ? (() => {
+                                const date = new Date(request.submittedAt || request.createdAt);
+                                return date.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                            })() : '-'}
                         </td>
                         <td class="p-4">
                             <div class="flex items-center">
@@ -16380,8 +16690,7 @@
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Mevcut Fiyat</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Talep Edilen Fiyat</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Değişim</th>
-                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Öneri</th>
-                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Neden</th>
+                                <th class="p-4 text-sm font-semibold sortable-header sort-none">Oluşturulma Tarihi</th>
                                 <th class="p-4 text-sm font-semibold sortable-header sort-none">Durum</th>
                             </tr>
                         </thead>
@@ -16753,6 +17062,9 @@
         }
         
         function renderSimilarProducts(product) {
+            // Benzer Ürünler section hidden for now
+            return '';
+            
             // This section is only for admins, not suppliers
             const user = window.currentUser || {};
             const isSupplier = user.role === 'supplier';
@@ -17048,6 +17360,331 @@
                 
                 <input type="hidden" id="category-picker-input" value="${selectedId || ''}">
             </div>`;
+        }
+
+        // Enhanced category picker with search for commission rules
+        function createCommissionCategoryPicker(selectedId = null) {
+            const categories = mockData.categories || [];
+            const selectedCategory = selectedId ? categories.find(c => c.id == selectedId) : null;
+            const selectedName = selectedCategory ? t(selectedCategory.name) : (t('no_category_selected') || 'Kategori seçilmedi');
+            
+            // Build tree HTML with search support
+            function buildCategoryTreeWithSearch(categories, parentId = null, depth = 0, searchTerm = '') {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                
+                // Get ancestors for matching categories
+                const getAncestors = (catId) => {
+                    let ancestors = new Set();
+                    let current = categories.find(c => c.id === catId);
+                    while (current && current.parentId !== null) {
+                        ancestors.add(current.parentId);
+                        current = categories.find(c => c.id === current.parentId);
+                    }
+                    return ancestors;
+                };
+                
+                let filteredCategories = categories;
+                let ancestorIds = new Set();
+                
+                if (searchTerm) {
+                    const matchingCategories = categories.filter(c => {
+                        const name = typeof c.name === 'object' ? t(c.name) : c.name;
+                        return name.toLowerCase().includes(lowerCaseSearchTerm);
+                    });
+                    matchingCategories.forEach(c => {
+                        getAncestors(c.id).forEach(id => ancestorIds.add(id));
+                    });
+                    filteredCategories = categories.filter(c => 
+                        matchingCategories.some(mc => mc.id === c.id) || ancestorIds.has(c.id)
+                    );
+                }
+                
+                const treeItems = filteredCategories
+                    .filter(c => c.parentId === parentId)
+                    .map(c => {
+                        const children = buildCategoryTreeWithSearch(categories, c.id, depth + 1, searchTerm);
+                        const hasChildren = categories.some(cat => cat.parentId === c.id);
+                        const uniqueId = `commission-cat-children-${c.id}`;
+                        const shouldShow = !searchTerm || ancestorIds.has(c.id) || 
+                            (typeof c.name === 'object' ? t(c.name) : c.name).toLowerCase().includes(lowerCaseSearchTerm);
+                        const childrenHTML = children && shouldShow ? 
+                            `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 ${searchTerm ? '' : 'hidden'}">${children}</div>` : '';
+                        const toggleIcon = hasChildren ? 
+                            `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="commission-icon-${c.id}" style="display: inline-block; width: 12px; ${searchTerm ? 'transform: rotate(90deg);' : ''}"></i>` : 
+                            '<span style="display: inline-block; width: 12px;"></span>';
+                        
+                        const categoryName = typeof c.name === 'object' ? t(c.name) : c.name;
+                        const isSelected = selectedId && c.id == selectedId;
+                        
+                        return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded ${isSelected ? 'bg-blue-100' : ''}" data-category-id="${c.id}">
+                            <div class="flex items-center">
+                                ${hasChildren ? `<span onclick="toggleCommissionCategoryChildren('${uniqueId}', 'commission-icon-${c.id}'); event.stopPropagation();" style="cursor: pointer; display: flex; align-items: center;">${toggleIcon}</span>` : toggleIcon}
+                                ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                                <span class="text-sm text-gray-700 ml-1 category-name flex-1" style="cursor: pointer;" onclick="selectCommissionCategory('${c.id}');">${categoryName}</span>
+                            </div>
+                            ${childrenHTML}
+                        </div>`;
+                    })
+                    .join('');
+                
+                return treeItems;
+            }
+            
+            const treeHTML = buildCategoryTreeWithSearch(categories, null, 0, '');
+            
+            return `<div class="space-y-3">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-sitemap text-blue-600"></i>
+                        <label class="block text-sm font-semibold text-gray-700">${t('category') || 'Kategori'}</label>
+                    </div>
+                    <p class="text-xs text-gray-600">${t('category_picker_description') || 'Kategori ağacından bir kategori seçin veya arama yaparak bulun.'}</p>
+                </div>
+                
+                <div id="commission-category-tree-container" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4">
+                    <div class="mb-3 pb-3 border-b border-gray-200">
+                        <div class="relative">
+                            <input type="text" id="commission-category-search" 
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   placeholder="${t('search') || 'Ara'}...">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="commission-category-tree">
+                        ${treeHTML}
+                    </div>
+                </div>
+                
+                <div id="commission-selected-category-display" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <small class="text-gray-600">${t('selected') || 'Seçilen'}: </small>
+                    <span id="commission-selected-cat-name" class="font-semibold text-blue-700">
+                        ${selectedName}
+                    </span>
+                </div>
+                
+                <input type="hidden" id="commission-category" value="${selectedId || ''}">
+            </div>`;
+        }
+
+        function toggleCommissionCategoryChildren(elementId, iconId) {
+            const element = document.getElementById(elementId);
+            const icon = document.getElementById(iconId);
+            if (element) {
+                element.classList.toggle('hidden');
+                if (icon) {
+                    icon.style.transform = element.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                }
+            }
+        }
+
+        function selectCommissionCategory(categoryId) {
+            const hiddenInput = document.getElementById('commission-category');
+            const displaySpan = document.getElementById('commission-selected-cat-name');
+            
+            if (hiddenInput) {
+                hiddenInput.value = categoryId || '';
+            }
+            
+            // Update display
+            if (categoryId) {
+                const category = mockData.categories.find(c => c.id == categoryId);
+                const categoryName = category ? (typeof category.name === 'object' ? t(category.name) : category.name) : '';
+                if (displaySpan) {
+                    displaySpan.textContent = categoryName || (t('no_category_selected') || 'Kategori seçilmedi');
+                }
+            } else {
+                if (displaySpan) {
+                    displaySpan.textContent = t('no_category_selected') || 'Kategori seçilmedi';
+                }
+            }
+            
+            // Update visual selection
+            document.querySelectorAll('#commission-category-tree-container [data-category-id]').forEach(el => {
+                el.classList.remove('bg-blue-100');
+            });
+            if (categoryId) {
+                const selectedEl = document.querySelector(`#commission-category-tree-container [data-category-id="${categoryId}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('bg-blue-100');
+                }
+            }
+        }
+
+        function filterCommissionCategoryTree(searchTerm) {
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            const treeContainer = document.getElementById('commission-category-tree');
+            if (!treeContainer) return;
+            
+            // Get ancestors for matching categories
+            const getAncestors = (catId) => {
+                let ancestors = new Set();
+                let current = mockData.categories.find(c => c.id === catId);
+                while (current && current.parentId !== null) {
+                    ancestors.add(current.parentId);
+                    current = mockData.categories.find(c => c.id === current.parentId);
+                }
+                return ancestors;
+            };
+            
+            let ancestorIds = new Set();
+            if (searchTerm) {
+                const matchingCategories = mockData.categories.filter(c => {
+                    const name = typeof c.name === 'object' ? t(c.name) : c.name;
+                    return name.toLowerCase().includes(lowerCaseSearchTerm);
+                });
+                matchingCategories.forEach(c => {
+                    getAncestors(c.id).forEach(id => ancestorIds.add(id));
+                });
+            }
+            
+            function buildFilteredTree(categories, parentId = null, depth = 0) {
+                const treeItems = categories
+                    .filter(c => c.parentId === parentId)
+                    .map(c => {
+                        const shouldShow = !searchTerm || ancestorIds.has(c.id) || 
+                            (typeof c.name === 'object' ? t(c.name) : c.name).toLowerCase().includes(lowerCaseSearchTerm);
+                        
+                        if (!shouldShow && !categories.some(cat => cat.parentId === c.id && 
+                            ((typeof cat.name === 'object' ? t(cat.name) : cat.name).toLowerCase().includes(lowerCaseSearchTerm) || ancestorIds.has(cat.id)))) {
+                            return '';
+                        }
+                        
+                        const children = buildFilteredTree(categories, c.id, depth + 1);
+                        const hasChildren = categories.some(cat => cat.parentId === c.id);
+                        const uniqueId = `commission-cat-children-${c.id}`;
+                        const childrenHTML = children ? 
+                            `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 ${searchTerm ? '' : 'hidden'}">${children}</div>` : '';
+                        const toggleIcon = hasChildren ? 
+                            `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="commission-icon-${c.id}" style="display: inline-block; width: 12px; ${searchTerm ? 'transform: rotate(90deg);' : ''}"></i>` : 
+                            '<span style="display: inline-block; width: 12px;"></span>';
+                        
+                        const categoryName = typeof c.name === 'object' ? t(c.name) : c.name;
+                        const isSelected = document.getElementById('commission-category')?.value == c.id;
+                        
+                        return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded ${isSelected ? 'bg-blue-100' : ''}" data-category-id="${c.id}">
+                            <div class="flex items-center">
+                                ${hasChildren ? `<span onclick="toggleCommissionCategoryChildren('${uniqueId}', 'commission-icon-${c.id}'); event.stopPropagation();" style="cursor: pointer; display: flex; align-items: center;">${toggleIcon}</span>` : toggleIcon}
+                                ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                                <span class="text-sm text-gray-700 ml-1 category-name flex-1" style="cursor: pointer;" onclick="selectCommissionCategory('${c.id}');">${categoryName}</span>
+                            </div>
+                            ${childrenHTML}
+                        </div>`;
+                    })
+                    .filter(html => html !== '')
+                    .join('');
+                
+                return treeItems;
+            }
+            
+            treeContainer.innerHTML = buildFilteredTree(mockData.categories, null, 0);
+        }
+
+        // Searchable supplier picker for commission rules
+        function createCommissionSupplierPicker(selectedId = null) {
+            const suppliers = mockData.suppliers || [];
+            const selectedSupplier = selectedId ? suppliers.find(s => s.id == selectedId) : null;
+            const selectedName = selectedSupplier ? selectedSupplier.name : (t('no_supplier_selected') || 'Tedarikçi seçilmedi');
+            
+            const supplierListHTML = suppliers.map(s => {
+                const isSelected = selectedId && s.id == selectedId;
+                return `<div class="py-2 px-3 hover:bg-gray-100 transition-colors rounded cursor-pointer ${isSelected ? 'bg-blue-100' : ''}" data-supplier-id="${s.id}" onclick="selectCommissionSupplier('${s.id}');">
+                    <div class="flex items-center">
+                        <i class="fas fa-building text-gray-400 text-xs mr-2"></i>
+                        <span class="text-sm text-gray-700 supplier-name">${s.name}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            return `<div class="space-y-3">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-building text-blue-600"></i>
+                        <label class="block text-sm font-semibold text-gray-700">${t('supplier') || 'Tedarikçi'}</label>
+                    </div>
+                    <p class="text-xs text-gray-600">${t('supplier_picker_description') || 'Tedarikçi listesinden bir tedarikçi seçin veya arama yaparak bulun.'}</p>
+                </div>
+                
+                <div id="commission-supplier-container" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4">
+                    <div class="mb-3 pb-3 border-b border-gray-200">
+                        <div class="relative">
+                            <input type="text" id="commission-supplier-search" 
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   placeholder="${t('search') || 'Ara'}...">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="commission-supplier-list">
+                        ${supplierListHTML}
+                    </div>
+                </div>
+                
+                <div id="commission-selected-supplier-display" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <small class="text-gray-600">${t('selected') || 'Seçilen'}: </small>
+                    <span id="commission-selected-supplier-name" class="font-semibold text-blue-700">
+                        ${selectedName}
+                    </span>
+                </div>
+                
+                <input type="hidden" id="commission-supplier" value="${selectedId || ''}">
+            </div>`;
+        }
+
+        function selectCommissionSupplier(supplierId) {
+            const hiddenInput = document.getElementById('commission-supplier');
+            const displaySpan = document.getElementById('commission-selected-supplier-name');
+            
+            if (hiddenInput) {
+                hiddenInput.value = supplierId || '';
+            }
+            
+            // Update display
+            if (supplierId) {
+                const supplier = mockData.suppliers.find(s => s.id == supplierId);
+                const supplierName = supplier ? supplier.name : '';
+                if (displaySpan) {
+                    displaySpan.textContent = supplierName || (t('no_supplier_selected') || 'Tedarikçi seçilmedi');
+                }
+            } else {
+                if (displaySpan) {
+                    displaySpan.textContent = t('no_supplier_selected') || 'Tedarikçi seçilmedi';
+                }
+            }
+            
+            // Update visual selection
+            document.querySelectorAll('#commission-supplier-container [data-supplier-id]').forEach(el => {
+                el.classList.remove('bg-blue-100');
+            });
+            if (supplierId) {
+                const selectedEl = document.querySelector(`#commission-supplier-container [data-supplier-id="${supplierId}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('bg-blue-100');
+                }
+            }
+        }
+
+        function filterCommissionSupplierList(searchTerm) {
+            const lowerCaseSearchTerm = searchTerm.toLowerCase();
+            const supplierList = document.getElementById('commission-supplier-list');
+            if (!supplierList) return;
+            
+            const suppliers = mockData.suppliers || [];
+            const filteredSuppliers = suppliers.filter(s => 
+                s.name.toLowerCase().includes(lowerCaseSearchTerm)
+            );
+            
+            const selectedSupplierId = document.getElementById('commission-supplier')?.value;
+            
+            const supplierListHTML = filteredSuppliers.map(s => {
+                const isSelected = selectedSupplierId && s.id == selectedSupplierId;
+                return `<div class="py-2 px-3 hover:bg-gray-100 transition-colors rounded cursor-pointer ${isSelected ? 'bg-blue-100' : ''}" data-supplier-id="${s.id}" onclick="selectCommissionSupplier('${s.id}');">
+                    <div class="flex items-center">
+                        <i class="fas fa-building text-gray-400 text-xs mr-2"></i>
+                        <span class="text-sm text-gray-700 supplier-name">${s.name}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            supplierList.innerHTML = supplierListHTML || `<div class="py-2 px-3 text-sm text-gray-500 text-center">${t('no_supplier_found') || 'Tedarikçi bulunamadı'}</div>`;
         }
 
         function unarchiveSupplierProduct(productId) {
@@ -17452,7 +18089,9 @@
             const modalFooter = document.getElementById('modal-footer');
             if (modalFooter) {
                 modalFooter.classList.remove('hidden');
-                modalFooter.style.display = '';
+                modalFooter.style.display = 'flex';
+                modalFooter.style.visibility = 'visible';
+                modalFooter.style.opacity = '1';
             }
             
             // Ensure modal-confirm button is visible and functional
@@ -17461,6 +18100,11 @@
             modalConfirm.style.display = "block";
             modalConfirm.style.visibility = "visible";
             modalConfirm.style.opacity = "1";
+            modalConfirm.style.pointerEvents = "auto";
+            modalConfirm.style.width = "auto";
+            modalConfirm.style.height = "auto";
+            modalConfirm.style.minWidth = "auto";
+            modalConfirm.style.minHeight = "auto";
             
             // Also ensure modal-cancel button is visible
             const modalCancel = document.getElementById('modal-cancel');
@@ -17512,6 +18156,12 @@
         async function generateWithGemini(prompt) { const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`; const payload = { contents: [{ parts: [{ text: prompt }] }] }; try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { const errorData = await response.json(); console.error("API Error:", errorData); throw new Error(`API isteği başarısız oldu: ${response.status}`); } const data = await response.json(); if (data.candidates && data.candidates.length > 0 && data.candidates[0].content.parts.length > 0) { return data.candidates[0].content.parts[0].text; } else { console.error("Beklenmedik API yanıt yapısı:", data); return "AI'dan geçerli bir yanıt alınamadı. Lütfen API anahtarınızı kontrol edin."; } } catch (error) { console.error("Gemini API çağrısında hata:", error); return `AI ile iletişim kurarken bir hata oluştu. API anahtarınızın geçerli ve etkin olduğundan emin olun. (${error.message})`; } }
         const filterPanel = document.getElementById('filterPanel'); const filterPanelContent = document.getElementById('filterPanelContent');
         function openFilterPanel() { 
+            // Detect current active tab from URL hash
+            const currentHash = window.location.hash || '';
+            const isRequestTab = currentHash.includes('yeni-urun-talepleri') || 
+                                currentHash.includes('urun-guncelleme') || 
+                                currentHash.includes('fiyat-stok-istekleri');
+            
             filterPanelContent.innerHTML = `
                 <div class="space-y-6">
                     <!-- Filter Header with Clear All -->
@@ -17520,8 +18170,69 @@
                         <button id="clearAllFilters" class="text-xs text-blue-600 hover:text-blue-800 font-medium">Tümünü Temizle</button>
                     </div>
 
+                    ${isRequestTab ? `
+                    <!-- Request Status Filter (for request tabs) -->
+                    <div class="filter-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="font-semibold text-sm text-gray-700 flex items-center">
+                                <i class="fas fa-clipboard-check text-blue-600 mr-2"></i>
+                                Talep Durumu
+                            </label>
+                            <span id="request-status-count" class="text-xs text-gray-500">0 seçili</span>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                <input type="checkbox" id="f_req_submitted" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                    Gönderildi
+                                </span>
+                            </label>
+                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                <input type="checkbox" id="f_req_toBeRevised" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                                    Revize Edilecek
+                                </span>
+                            </label>
+                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                <input type="checkbox" id="f_req_accepted" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                    Kabul Edildi
+                                </span>
+                            </label>
+                            <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                <input type="checkbox" id="f_req_rejected" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500 mr-3">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                    Reddedildi
+                                </span>
+                            </label>
+                        </div>
+                    </div>
 
-                    <!-- Product Status Filter -->
+                    <!-- Request Date Range Filter -->
+                    <div class="filter-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="font-semibold text-sm text-gray-700 flex items-center">
+                                <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>
+                                Talep Tarihi
+                            </label>
+                        </div>
+                        <div class="space-y-2">
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Başlangıç Tarihi</label>
+                                <input type="date" id="f_req_date_from" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-600 mb-1">Bitiş Tarihi</label>
+                                <input type="date" id="f_req_date_to" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors text-sm">
+                            </div>
+                        </div>
+                    </div>
+                    ` : `
+                    <!-- Product Status Filter (for product tabs) -->
                     <div class="filter-section">
                         <div class="flex items-center justify-between mb-3">
                             <label class="font-semibold text-sm text-gray-700 flex items-center">
@@ -17554,22 +18265,23 @@
                             </label>
                         </div>
                     </div>
+                    `}
 
-                    <!-- Stock Status Filter -->
+                    ${!isRequestTab ? `
+                    <!-- Stock Count Filter (only for product tabs) -->
                     <div class="filter-section">
                         <div class="flex items-center justify-between mb-3">
                             <label class="font-semibold text-sm text-gray-700 flex items-center">
                                 <i class="fas fa-boxes text-blue-600 mr-2"></i>
-                                Stok Durumu
+                                Stok Sayısı
                             </label>
                         </div>
-                        <select id="f_stock" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                            <option value="">Tümü</option>
-                            <option value="in_stock">Stokta Var</option>
-                            <option value="low_stock">Düşük Stok</option>
-                            <option value="out_of_stock">Tükenmiş</option>
-                        </select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="f_stock_min" placeholder="Min" min="0" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                            <input type="number" id="f_stock_max" placeholder="Max" min="0" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                        </div>
                     </div>
+                    ` : ''}
 
                     <!-- Category Filter -->
                     <div class="filter-section">
@@ -17585,6 +18297,20 @@
                         </select>
                     </div>
 
+                    <!-- Brand Filter -->
+                    <div class="filter-section">
+                        <div class="flex items-center justify-between mb-3">
+                            <label class="font-semibold text-sm text-gray-700 flex items-center">
+                                <i class="fas fa-certificate text-blue-600 mr-2"></i>
+                                Marka
+                            </label>
+                        </div>
+                        <select id="f_brand" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                            <option value="">Tümü</option>
+                            ${mockData.brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('')}
+                        </select>
+                    </div>
+
                     <!-- Price Range Filter -->
                     <div class="filter-section">
                         <div class="flex items-center justify-between mb-3">
@@ -17593,16 +18319,9 @@
                                 Fiyat Aralığı
                             </label>
                         </div>
-                        <div class="space-y-3">
-                            <div class="grid grid-cols-2 gap-2">
-                                <input type="number" id="f_price_min" placeholder="Min" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                                <input type="number" id="f_price_max" placeholder="Max" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-                            </div>
-                            <div class="flex space-x-2">
-                                <button type="button" class="price-preset text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" data-min="0" data-max="100">0-100₺</button>
-                                <button type="button" class="price-preset text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" data-min="100" data-max="500">100-500₺</button>
-                                <button type="button" class="price-preset text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded" data-min="500" data-max="1000">500-1000₺</button>
-                            </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="f_price_min" placeholder="Min" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                            <input type="number" id="f_price_max" placeholder="Max" class="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
                         </div>
                     </div>
 
@@ -17775,40 +18494,35 @@
         
         // Filter event listeners and logic
         function setupFilterEventListeners() {
-            // Clear all filters
+            // Remove old event listeners by cloning and replacing elements
+            // Clear all filters button
             const clearAllBtn = document.getElementById('clearAllFilters');
             if (clearAllBtn) {
-                clearAllBtn.addEventListener('click', clearAllFilters);
+                const newClearAllBtn = clearAllBtn.cloneNode(true);
+                clearAllBtn.parentNode.replaceChild(newClearAllBtn, clearAllBtn);
+                newClearAllBtn.addEventListener('click', clearAllFilters);
             }
             
             // Reset button
             const resetBtn = document.getElementById('filterPanelResetBtn');
             if (resetBtn) {
-                resetBtn.addEventListener('click', clearAllFilters);
+                const newResetBtn = resetBtn.cloneNode(true);
+                resetBtn.parentNode.replaceChild(newResetBtn, resetBtn);
+                newResetBtn.addEventListener('click', clearAllFilters);
             }
             
-            // Apply button
+            // Apply button - clone to remove old listeners
             const applyBtn = document.getElementById('filterPanelApplyBtn');
             if (applyBtn) {
-                applyBtn.addEventListener('click', applyFilters);
-            }
-            
-            
-            // Price preset buttons
-            document.querySelectorAll('.price-preset').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    // Remove active class from all presets
-                    document.querySelectorAll('.price-preset').forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked preset
-                    e.target.classList.add('active');
-                    
-                    const min = e.target.dataset.min;
-                    const max = e.target.dataset.max;
-                    document.getElementById('f_price_min').value = min;
-                    document.getElementById('f_price_max').value = max;
+                const newApplyBtn = applyBtn.cloneNode(true);
+                applyBtn.parentNode.replaceChild(newApplyBtn, applyBtn);
+                newApplyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     applyFilters();
                 });
-            });
+            }
+            
             
             // Status checkboxes
             document.querySelectorAll('input[id^="f_"]').forEach(input => {
@@ -17840,6 +18554,14 @@
                 }, 300));
             });
             
+            // Date inputs (for request date filters)
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    updateActiveFiltersCount();
+                    applyFilters();
+                });
+            });
+            
             // Attribute filter inputs
             document.querySelectorAll('#attribute-filters-container input, #attribute-filters-container select').forEach(input => {
                 if (input.type === 'number') {
@@ -17862,20 +18584,52 @@
         }
         
         function updateStatusCount() {
-            const statusCheckboxes = document.querySelectorAll('input[id^="f_active"], input[id^="f_passive"], input[id^="f_draft"]');
-            const checkedCount = Array.from(statusCheckboxes).filter(cb => cb.checked).length;
-            const statusCountEl = document.getElementById('status-count');
-            if (statusCountEl) {
-                statusCountEl.textContent = `${checkedCount} seçili`;
+            const currentHash = window.location.hash || '';
+            const isRequestTab = currentHash.includes('yeni-urun-talepleri') || 
+                                currentHash.includes('urun-guncelleme') || 
+                                currentHash.includes('fiyat-stok-istekleri');
+            
+            if (isRequestTab) {
+                // Update request status count
+                const requestStatusCheckboxes = document.querySelectorAll('input[id^="f_req_"]');
+                const checkedCount = Array.from(requestStatusCheckboxes).filter(cb => cb.checked).length;
+                const requestStatusCountEl = document.getElementById('request-status-count');
+                if (requestStatusCountEl) {
+                    requestStatusCountEl.textContent = `${checkedCount} seçili`;
+                }
+            } else {
+                // Update product status count
+                const statusCheckboxes = document.querySelectorAll('input[id^="f_active"], input[id^="f_passive"], input[id^="f_draft"]');
+                const checkedCount = Array.from(statusCheckboxes).filter(cb => cb.checked).length;
+                const statusCountEl = document.getElementById('status-count');
+                if (statusCountEl) {
+                    statusCountEl.textContent = `${checkedCount} seçili`;
+                }
             }
         }
         
         function updateActiveFiltersCount() {
             let activeCount = 0;
+            const currentHash = window.location.hash || '';
+            const isRequestTab = currentHash.includes('yeni-urun-talepleri') || 
+                                currentHash.includes('urun-guncelleme') || 
+                                currentHash.includes('fiyat-stok-istekleri');
             
-            // Count checked status filters
-            const statusCheckboxes = document.querySelectorAll('input[id^="f_active"], input[id^="f_passive"], input[id^="f_draft"]');
-            activeCount += Array.from(statusCheckboxes).filter(cb => cb.checked).length;
+            if (isRequestTab) {
+                // Count checked request status filters
+                const requestStatusCheckboxes = document.querySelectorAll('input[id^="f_req_"]');
+                activeCount += Array.from(requestStatusCheckboxes).filter(cb => cb.checked).length;
+                
+                // Count request date filters
+                const requestDateFrom = document.getElementById('f_req_date_from')?.value || '';
+                const requestDateTo = document.getElementById('f_req_date_to')?.value || '';
+                if (requestDateFrom) activeCount++;
+                if (requestDateTo) activeCount++;
+            } else {
+                // Count checked status filters
+                const statusCheckboxes = document.querySelectorAll('input[id^="f_active"], input[id^="f_passive"], input[id^="f_draft"]');
+                activeCount += Array.from(statusCheckboxes).filter(cb => cb.checked).length;
+            }
             
             // Count selected dropdowns
             const selects = document.querySelectorAll('select[id^="f_"]');
@@ -17908,7 +18662,9 @@
         function clearAllFilters() {
             // Clear all checkboxes
             document.querySelectorAll('input[id^="f_"]').forEach(input => {
-                input.checked = false;
+                if (input.type === 'checkbox') {
+                    input.checked = false;
+                }
             });
             
             // Clear all selects
@@ -17916,8 +18672,13 @@
                 select.selectedIndex = 0;
             });
             
-            // Clear all inputs
+            // Clear all number inputs
             document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.value = '';
+            });
+            
+            // Clear all date inputs
+            document.querySelectorAll('input[type="date"]').forEach(input => {
                 input.value = '';
             });
             
@@ -17930,10 +18691,6 @@
                 }
             });
             
-            // Clear price preset active states
-            document.querySelectorAll('.price-preset').forEach(btn => {
-                btn.classList.remove('active');
-            });
             
             updateStatusCount();
             updateActiveFiltersCount();
@@ -17954,20 +18711,154 @@
         
         function applyFilters() {
             const filters = getCurrentFilters();
-            const filteredProducts = filterProducts(mockData.products, filters);
-            updateProductDisplay(filteredProducts);
+            let filteredProducts;
+            
+            if (filters.isRequestTab) {
+                // For request tabs, filter based on requests
+                filteredProducts = filterRequestProducts(mockData.products, filters);
+            } else {
+                // For regular product tabs, use standard filtering
+                filteredProducts = filterProducts(mockData.products, filters);
+            }
+            
+            // Store filtered products globally so switchProductView can use them
+            window.filteredProducts = filteredProducts;
+            window.hasActiveFilters = true;
+            
+            // Get current activeTab and view
+            const currentHash = window.location.hash || '';
+            let activeTab = 'aktif';
+            if (currentHash.includes('yeni-urun-talepleri')) activeTab = 'yeni-urun-talepleri';
+            else if (currentHash.includes('urun-guncelleme')) activeTab = 'urun-guncelleme';
+            else if (currentHash.includes('fiyat-stok-istekleri')) activeTab = 'fiyat-stok-istekleri';
+            else if (currentHash.includes('out-of-stock')) activeTab = 'out-of-stock';
+            else if (currentHash.includes('archived-items')) activeTab = 'archived-items';
+            else if (currentHash.includes('aktif')) activeTab = 'aktif';
+            
+            // Get current view (list or grid)
+            const view = window.currentProductView || 'list';
+            
+            // Re-render with filtered products
+            switchProductView(activeTab, view);
             updateFilterResultsCount(filteredProducts.length);
         }
         
+        function updateProductDisplay(filteredProducts) {
+            // This function is called by applyFilters - it's a wrapper
+            // The actual rendering is done by switchProductView
+            window.filteredProducts = filteredProducts;
+            window.hasActiveFilters = true;
+            
+            const currentHash = window.location.hash || '';
+            let activeTab = 'aktif';
+            if (currentHash.includes('yeni-urun-talepleri')) activeTab = 'yeni-urun-talepleri';
+            else if (currentHash.includes('urun-guncelleme')) activeTab = 'urun-guncelleme';
+            else if (currentHash.includes('fiyat-stok-istekleri')) activeTab = 'fiyat-stok-istekleri';
+            else if (currentHash.includes('out-of-stock')) activeTab = 'out-of-stock';
+            else if (currentHash.includes('archived-items')) activeTab = 'archived-items';
+            else if (currentHash.includes('aktif')) activeTab = 'aktif';
+            
+            const view = window.currentProductView || 'list';
+            switchProductView(activeTab, view);
+        }
+        
+        function filterRequestProducts(products, filters) {
+            const currentHash = window.location.hash || '';
+            const isSupplier = (window.currentUser || {}).role === 'supplier';
+            const currentSupplierId = (window.currentUser || {}).supplierId;
+            
+            // Determine request type from URL
+            let requestType = null;
+            if (currentHash.includes('yeni-urun-talepleri')) {
+                requestType = 'product_create';
+            } else if (currentHash.includes('urun-guncelleme')) {
+                requestType = 'product_update';
+            } else if (currentHash.includes('fiyat-stok-istekleri')) {
+                requestType = 'stock_price_update';
+            }
+            
+            // Get requests based on type and user role
+            let requests = mockData.requests || [];
+            if (requestType) {
+                requests = requests.filter(r => r.type === requestType);
+            }
+            if (isSupplier && currentSupplierId) {
+                requests = requests.filter(r => r.supplierId == currentSupplierId);
+            }
+            
+            // Filter by request status
+            if (filters.requestStatus.submitted || filters.requestStatus.toBeRevised || 
+                filters.requestStatus.accepted || filters.requestStatus.rejected) {
+                requests = requests.filter(r => {
+                    return (filters.requestStatus.submitted && r.status === 'submitted') ||
+                           (filters.requestStatus.toBeRevised && r.status === 'toBeRevised') ||
+                           (filters.requestStatus.accepted && r.status === 'accepted') ||
+                           (filters.requestStatus.rejected && r.status === 'rejected');
+                });
+            }
+            
+            // Filter by request date range
+            if (filters.requestDateFrom || filters.requestDateTo) {
+                requests = requests.filter(r => {
+                    const requestDate = r.submittedAt || r.requestDate || r.createdAt;
+                    if (!requestDate) return false;
+                    
+                    const reqDate = new Date(requestDate);
+                    if (filters.requestDateFrom) {
+                        const fromDate = new Date(filters.requestDateFrom);
+                        fromDate.setHours(0, 0, 0, 0);
+                        if (reqDate < fromDate) return false;
+                    }
+                    if (filters.requestDateTo) {
+                        const toDate = new Date(filters.requestDateTo);
+                        toDate.setHours(23, 59, 59, 999);
+                        if (reqDate > toDate) return false;
+                    }
+                    return true;
+                });
+            }
+            
+            // Filter by supplier
+            if (filters.supplier) {
+                requests = requests.filter(r => r.supplierId == filters.supplier);
+            }
+            
+            // Get products associated with filtered requests
+            const productIds = requests.map(r => r.productId).filter(Boolean);
+            let filteredProducts = products.filter(p => productIds.includes(p.id));
+            
+            // Apply standard product filters (category, brand, price, attributes)
+            filteredProducts = filterProducts(filteredProducts, filters);
+            
+            return filteredProducts;
+        }
+        
         function getCurrentFilters() {
+            // Detect if we're on a request tab
+            const currentHash = window.location.hash || '';
+            const isRequestTab = currentHash.includes('yeni-urun-talepleri') || 
+                                currentHash.includes('urun-guncelleme') || 
+                                currentHash.includes('fiyat-stok-istekleri');
+            
             const filters = {
+                isRequestTab: isRequestTab,
                 status: {
                     active: document.getElementById('f_active')?.checked || false,
                     passive: document.getElementById('f_passive')?.checked || false,
                     draft: document.getElementById('f_draft')?.checked || false
                 },
-                stock: document.getElementById('f_stock')?.value || '',
+                requestStatus: {
+                    submitted: document.getElementById('f_req_submitted')?.checked || false,
+                    toBeRevised: document.getElementById('f_req_toBeRevised')?.checked || false,
+                    accepted: document.getElementById('f_req_accepted')?.checked || false,
+                    rejected: document.getElementById('f_req_rejected')?.checked || false
+                },
+                requestDateFrom: document.getElementById('f_req_date_from')?.value || '',
+                requestDateTo: document.getElementById('f_req_date_to')?.value || '',
+                stockMin: document.getElementById('f_stock_min')?.value || '',
+                stockMax: document.getElementById('f_stock_max')?.value || '',
                 category: document.getElementById('f_category')?.value || '',
+                brand: document.getElementById('f_brand')?.value || '',
                 priceMin: document.getElementById('f_price_min')?.value || '',
                 priceMax: document.getElementById('f_price_max')?.value || '',
                 supplier: document.getElementById('f_supplier')?.value || '',
@@ -18027,18 +18918,20 @@
                     if (!statusMatch) return false;
                 }
                 
-                // Stock filter
-                if (filters.stock) {
+                // Stock count filter (min/max range)
+                if (filters.stockMin || filters.stockMax) {
                     const stock = getProductStock(product.id);
-                    const stockMatch = 
-                        (filters.stock === 'in_stock' && stock > 10) ||
-                        (filters.stock === 'low_stock' && stock > 0 && stock <= 10) ||
-                        (filters.stock === 'out_of_stock' && stock === 0);
-                    if (!stockMatch) return false;
+                    if (filters.stockMin && stock < parseFloat(filters.stockMin)) return false;
+                    if (filters.stockMax && stock > parseFloat(filters.stockMax)) return false;
                 }
                 
                 // Category filter
                 if (filters.category && product.categoryId != filters.category) {
+                    return false;
+                }
+                
+                // Brand filter
+                if (filters.brand && product.brandId != filters.brand) {
                     return false;
                 }
                 
@@ -18770,7 +19663,7 @@
             }
         }
         
-        function showAddProductModal() { const title = 'Ürünler / Güncelle'; const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">Barkod / SKU ile Ürün Ara</label><div class="mt-1 flex rounded-md shadow-sm"><input type="text" id="product-search-sku" class="flex-1 block w-full rounded-none rounded-l-md border-gray-300" placeholder="Barkod numarasını girin..."><button type="button" id="product-search-btn" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100"><i class="fas fa-search"></i></button></div></div><div id="product-form-container" class="pt-4 border-t"><p class="text-sm text-gray-500">Mevcut bir ürünü güncellemek veya yeni bir ürün eklemek için barkod ile arama yapın.</p></div></div>`; showModal(title, body, 'Kaydet', () => { saveProduct(); closeModal(); }); 
+        function showAddProductModal() { const title = 'Ürün Ekle'; const body = `<div class="space-y-4"><div><label class="block text-sm font-medium text-gray-700">Barkod ile ürün Ara</label><div class="mt-1 flex rounded-md shadow-sm"><input type="text" id="product-search-sku" class="flex-1 block w-full rounded-none rounded-l-md border-gray-300" placeholder="Barkod numarasını girin..."><button type="button" id="product-search-btn" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100"><i class="fas fa-search"></i></button></div></div><div id="product-form-container" class="pt-4 border-t"><p class="text-sm text-gray-500">Mevcut bir ürünü güncellemek veya yeni bir ürün eklemek için barkod ile arama yapın.</p></div></div>`; showModal(title, body, 'Kaydet', () => { saveProduct(); closeModal(); }); 
             // Ensure modal footer is visible and set up initial buttons
             updateProductModalButtons();
             document.getElementById('product-search-btn').addEventListener('click', handleProductSearch); }
@@ -20781,11 +21674,10 @@
                 const targetName = target ? t(target.name) : 'Bilinmiyor'; 
                 const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
                 const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
-                const defaultRate = rule.defaultRate ? `${rule.defaultRate}%` : '-';
+                const defaultIndicator = rule.isDefault ? ' <span class="text-red-500 font-bold">*</span>' : '';
                 return `<tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 text-sm font-medium">${targetName}</td>
+                    <td class="p-3 text-sm font-medium">${targetName}${defaultIndicator}</td>
                     <td class="p-3 text-sm">${rule.rate}%</td>
-                    <td class="p-3 text-sm">${defaultRate}</td>
                     <td class="p-3 text-sm">${startDate}</td>
                     <td class="p-3 text-sm">${endDate}</td>
                     <td class="p-3 text-right">
@@ -20811,14 +21703,13 @@
                             <tr>
                                 <th class="p-3 text-sm font-semibold">${header}</th>
                                 <th class="p-3 text-sm font-semibold">${t('commission_rate')}</th>
-                                <th class="p-3 text-sm font-semibold">${t('default_rate')}</th>
                                 <th class="p-3 text-sm font-semibold">${t('start_date')}</th>
                                 <th class="p-3 text-sm font-semibold">${t('end_date')}</th>
                                 <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${rows.length > 0 ? rows : `<tr><td colspan="6" class="text-center p-6 text-gray-500">Henüz kural tanımlanmamış.</td></tr>`}
+                            ${rows.length > 0 ? rows : `<tr><td colspan="5" class="text-center p-6 text-gray-500">Henüz kural tanımlanmamış.</td></tr>`}
                         </tbody>
                     </table>
                 </div>
@@ -21132,7 +22023,6 @@
                             </td>
                             <td class="p-3 text-right">
                                 <button class="p-2 text-gray-500 hover:text-blue-600 edit-user" data-id="${user.id}" title="Düzenle"><i class="fas fa-edit"></i></button>
-                                <button class="p-2 text-gray-500 hover:text-red-600 del-user" data-id="${user.id}" title="Sil"><i class="fas fa-trash"></i></button>
                             </td>
                         </tr>
                     `;
@@ -21196,12 +22086,9 @@
                         } else {
                             tableBody.innerHTML = renderUserRows(paginatedUsers);
                             
-                            // Re-attach event listeners for edit and delete buttons
+                            // Re-attach event listeners for edit buttons
                             container.querySelectorAll('.edit-user').forEach(btn => {
                                 btn.addEventListener('click', () => showAddUserModal(parseInt(btn.dataset.id)));
-                            });
-                            container.querySelectorAll('.del-user').forEach(btn => {
-                                btn.addEventListener('click', () => deleteUser(parseInt(btn.dataset.id)));
                             });
                         }
                     }
@@ -21333,13 +22220,6 @@
                                 if (userId && typeof showAddUserModal === 'function') {
                                     showAddUserModal(userId);
                                 }
-                            } else if (target.classList.contains('del-user')) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const userId = parseInt(target.dataset.id);
-                                if (userId && typeof deleteUser === 'function') {
-                                    deleteUser(userId);
-                                }
                             }
                         });
                     }
@@ -21414,9 +22294,8 @@
                     statusFilter.addEventListener('change', applyFilters);
                 }
                 
-                // Initial event listeners for edit and delete buttons
+                // Initial event listeners for edit buttons
                 container.querySelectorAll('.edit-user').forEach(btn => btn.addEventListener('click', () => showAddUserModal(parseInt(btn.dataset.id))));
-                container.querySelectorAll('.del-user').forEach(btn => btn.addEventListener('click', () => deleteUser(parseInt(btn.dataset.id))));
                 
                 // Initial render
                 renderPagination('admin-user-pagination');
@@ -21942,53 +22821,138 @@
         }
 
         function showAddCommissionModal(editId = null) {
-            const isEditing = editId !== null;
+            // Explicitly check if we're editing - only if editId is a valid number
+            const isEditing = editId !== null && editId !== undefined && editId !== '' && !isNaN(Number(editId)) && Number(editId) > 0;
             const rule = isEditing ? mockData.commissionRules.find(x => x.id === editId) : null;
             const title = isEditing ? t('edit_rule') : t('add_commission_rule');
+            
+            console.log('showAddCommissionModal called:', { editId, isEditing, title });
             
             const supplierOptions = mockData.suppliers.map(s => `<option value="${s.id}" ${rule?.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
             const categoryOptions = mockData.categories.map(c => `<option value="${c.id}" ${rule?.categoryId === c.id ? 'selected' : ''}>${t(c.name)}</option>`).join('');
             
-            const body = `
+            // Get display names for read-only fields in edit mode
+            let supplierName = '';
+            let categoryName = '';
+            let ruleTypeName = '';
+            if (isEditing && rule) {
+                if (rule.type === 'supplier' && rule.supplierId) {
+                    const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
+                    supplierName = supplier ? supplier.name : 'Bilinmiyor';
+                    ruleTypeName = 'Tedarikçi Bazlı';
+                } else if (rule.type === 'category' && rule.categoryId) {
+                    const category = mockData.categories.find(c => c.id === rule.categoryId);
+                    categoryName = category ? t(category.name) : 'Bilinmiyor';
+                    ruleTypeName = 'Kategori Bazlı';
+                } else if (rule.type === 'supplier_category') {
+                    const supplier = rule.supplierId ? mockData.suppliers.find(s => s.id === rule.supplierId) : null;
+                    const category = rule.categoryId ? mockData.categories.find(c => c.id === rule.categoryId) : null;
+                    supplierName = supplier ? supplier.name : '';
+                    categoryName = category ? t(category.name) : '';
+                    ruleTypeName = 'Tedarikçi + Kategori Bazlı';
+                }
+            }
+            
+            const body = isEditing ? `
                 <div class="space-y-4">
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle text-blue-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-blue-700">
+                                    Düzenleme modunda sadece komisyon oranı ve tarihler değiştirilebilir. Diğer alanlar salt okunurdur.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Kural Bilgileri (Salt Okunur)</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('rule_type')}</label>
+                                <div class="text-sm font-medium text-gray-900">${ruleTypeName}</div>
+                            </div>
+                            ${rule?.type !== 'category' ? `
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('supplier')}</label>
+                                <div class="text-sm font-medium text-gray-900">${supplierName || 'Tüm Tedarikçiler'}</div>
+                            </div>
+                            ` : ''}
+                            ${rule?.type !== 'supplier' ? `
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('category')}</label>
+                                <div class="text-sm font-medium text-gray-900">${categoryName || 'Tüm Kategoriler'}</div>
+                            </div>
+                            ` : ''}
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Varsayılan</label>
+                                <div class="text-sm font-medium text-gray-900">${rule?.isDefault ? 'Evet' : 'Hayır'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3">Düzenlenebilir Alanlar</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="commission-rate" class="block text-sm font-medium text-gray-700">${t('commission_rate')}</label>
+                                <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.rate || ''}" placeholder="15" min="0" max="100" step="0.1">
+                            </div>
+                            <div>
+                                <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
+                                <input type="date" id="commission-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.startDate || ''}" ${rule?.isDefault ? 'disabled' : ''}>
+                            </div>
+                            <div>
+                                <label for="commission-end-date" class="block text-sm font-medium text-gray-700">${t('end_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
+                                <input type="date" id="commission-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.endDate || ''}" ${rule?.isDefault ? 'disabled' : ''}>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="space-y-4">
+                    <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-plus-circle text-green-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-green-700">
+                                    Yeni komisyon kuralı oluşturmak için tüm alanları doldurun.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                     <div>
                         <label for="commission-type" class="block text-sm font-medium text-gray-700">${t('rule_type')}</label>
-                        <select id="commission-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        <select id="commission-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             <option value="supplier" ${rule?.type === 'supplier' ? 'selected' : ''}>Tedarikçi Bazlı</option>
                             <option value="category" ${rule?.type === 'category' ? 'selected' : ''}>Kategori Bazlı</option>
                             <option value="supplier_category" ${rule?.type === 'supplier_category' ? 'selected' : ''}>Tedarikçi + Kategori Bazlı</option>
                         </select>
                     </div>
                     <div id="supplier-selection" class="${rule?.type === 'category' ? 'hidden' : ''}">
-                        <label for="commission-supplier" class="block text-sm font-medium text-gray-700">${t('supplier')}</label>
-                        <select id="commission-supplier" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="">${t('all_suppliers')}</option>
-                            ${supplierOptions}
-                        </select>
+                        ${createCommissionSupplierPicker(rule?.supplierId || null)}
                     </div>
                     <div id="category-selection" class="${rule?.type === 'supplier' ? 'hidden' : ''}">
-                        <label for="commission-category" class="block text-sm font-medium text-gray-700">${t('category')}</label>
-                        <select id="commission-category" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="">${t('all_categories')}</option>
-                            ${categoryOptions}
-                        </select>
+                        ${createCommissionCategoryPicker(rule?.categoryId || null)}
                     </div>
                     <div>
                         <label for="commission-rate" class="block text-sm font-medium text-gray-700">${t('commission_rate')}</label>
-                        <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="${rule?.rate || ''}" placeholder="15" min="0" max="100" step="0.1">
+                        <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.rate || ''}" placeholder="15" min="0" max="100" step="0.1">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="commission-default" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" ${rule?.isDefault ? 'checked' : ''}>
+                        <label for="commission-default" class="ml-2 block text-sm font-medium text-gray-700">Varsayılan</label>
                     </div>
                     <div>
-                        <label for="commission-default-rate" class="block text-sm font-medium text-gray-700">${t('default_rate')}</label>
-                        <input type="number" id="commission-default-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="${rule?.defaultRate || ''}" placeholder="10" min="0" max="100" step="0.1">
-                        <p class="mt-1 text-xs text-gray-500">Bu oran, bitiş tarihi geçtikten sonra uygulanacak varsayılan orandır.</p>
+                        <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
+                        <input type="date" id="commission-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.startDate || ''}" ${rule?.isDefault ? 'disabled' : 'required'}>
                     </div>
                     <div>
-                        <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')}</label>
-                        <input type="date" id="commission-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="${rule?.startDate || ''}">
-                    </div>
-                    <div>
-                        <label for="commission-end-date" class="block text-sm font-medium text-gray-700">${t('end_date')}</label>
-                        <input type="date" id="commission-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="${rule?.endDate || ''}">
+                        <label for="commission-end-date" class="block text-sm font-medium text-gray-700">${t('end_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
+                        <input type="date" id="commission-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.endDate || ''}" ${rule?.isDefault ? 'disabled' : 'required'}>
                     </div>
                 </div>
             `;
@@ -22019,32 +22983,357 @@
                 }
             }, 50);
             
-            // Handle type change
-            setTimeout(() => {
-                const typeSelect = document.getElementById('commission-type');
-                if (typeSelect) {
-                    typeSelect.addEventListener('change', (e) => {
-                        const type = e.target.value;
-                        const supplierDiv = document.getElementById('supplier-selection');
-                        const categoryDiv = document.getElementById('category-selection');
-                        
-                        if (type === 'supplier') {
-                            supplierDiv.classList.remove('hidden');
-                            categoryDiv.classList.add('hidden');
-                        } else if (type === 'category') {
-                            supplierDiv.classList.add('hidden');
-                            categoryDiv.classList.remove('hidden');
-                        } else if (type === 'supplier_category') {
-                            supplierDiv.classList.remove('hidden');
-                            categoryDiv.classList.remove('hidden');
+            // Handle type change (only in create mode, not edit mode)
+            if (!isEditing) {
+                setTimeout(() => {
+                    const typeSelect = document.getElementById('commission-type');
+                    if (typeSelect) {
+                        typeSelect.addEventListener('change', (e) => {
+                            const type = e.target.value;
+                            const supplierDiv = document.getElementById('supplier-selection');
+                            const categoryDiv = document.getElementById('category-selection');
+                            
+                            if (type === 'supplier') {
+                                supplierDiv.classList.remove('hidden');
+                                categoryDiv.classList.add('hidden');
+                            } else if (type === 'category') {
+                                supplierDiv.classList.add('hidden');
+                                categoryDiv.classList.remove('hidden');
+                            } else if (type === 'supplier_category') {
+                                supplierDiv.classList.remove('hidden');
+                                categoryDiv.classList.remove('hidden');
+                            }
+                        });
+                    }
+                    
+                    // Add search functionality for supplier picker
+                    const supplierSearchInput = document.getElementById('commission-supplier-search');
+                    if (supplierSearchInput) {
+                        supplierSearchInput.addEventListener('input', (e) => {
+                            filterCommissionSupplierList(e.target.value);
+                        });
+                    }
+                    
+                    // Add click handlers for supplier list items
+                    const supplierContainer = document.getElementById('commission-supplier-container');
+                    if (supplierContainer) {
+                        supplierContainer.addEventListener('click', (e) => {
+                            const supplierItem = e.target.closest('[data-supplier-id]');
+                            if (supplierItem) {
+                                const supplierId = supplierItem.getAttribute('data-supplier-id');
+                                selectCommissionSupplier(supplierId);
+                            }
+                        });
+                    }
+                    
+                    // Add search functionality for category picker
+                    const categorySearchInput = document.getElementById('commission-category-search');
+                    if (categorySearchInput) {
+                        categorySearchInput.addEventListener('input', (e) => {
+                            filterCommissionCategoryTree(e.target.value);
+                        });
+                    }
+                    
+                    // Add click handlers for category tree items
+                    const categoryTreeContainer = document.getElementById('commission-category-tree-container');
+                    if (categoryTreeContainer) {
+                        categoryTreeContainer.addEventListener('click', (e) => {
+                            const categoryItem = e.target.closest('[data-category-id]');
+                            if (categoryItem && !e.target.closest('i.fa-chevron-right')) {
+                                const categoryId = categoryItem.getAttribute('data-category-id');
+                                selectCommissionCategory(categoryId);
+                            }
+                        });
+                    }
+                }, 50);
+            } else {
+                // In edit mode, still add search functionality if supplier/category selection is visible
+                setTimeout(() => {
+                    // Supplier search
+                    const supplierSearchInput = document.getElementById('commission-supplier-search');
+                    if (supplierSearchInput) {
+                        supplierSearchInput.addEventListener('input', (e) => {
+                            filterCommissionSupplierList(e.target.value);
+                        });
+                    }
+                    
+                    const supplierContainer = document.getElementById('commission-supplier-container');
+                    if (supplierContainer) {
+                        supplierContainer.addEventListener('click', (e) => {
+                            const supplierItem = e.target.closest('[data-supplier-id]');
+                            if (supplierItem) {
+                                const supplierId = supplierItem.getAttribute('data-supplier-id');
+                                selectCommissionSupplier(supplierId);
+                            }
+                        });
+                    }
+                    
+                    // Category search
+                    const categorySearchInput = document.getElementById('commission-category-search');
+                    if (categorySearchInput) {
+                        categorySearchInput.addEventListener('input', (e) => {
+                            filterCommissionCategoryTree(e.target.value);
+                        });
+                    }
+                    
+                    const categoryTreeContainer = document.getElementById('commission-category-tree-container');
+                    if (categoryTreeContainer) {
+                        categoryTreeContainer.addEventListener('click', (e) => {
+                            const categoryItem = e.target.closest('[data-category-id]');
+                            if (categoryItem && !e.target.closest('i.fa-chevron-right')) {
+                                const categoryId = categoryItem.getAttribute('data-category-id');
+                                selectCommissionCategory(categoryId);
+                            }
+                        });
+                    }
+                }, 50);
+            }
+            
+            // Handle default checkbox change - disable/enable date fields (only in create mode)
+            if (!isEditing) {
+                setTimeout(() => {
+                    const defaultCheckbox = document.getElementById('commission-default');
+                    const startDateInput = document.getElementById('commission-start-date');
+                    const endDateInput = document.getElementById('commission-end-date');
+                    
+                    if (defaultCheckbox && startDateInput && endDateInput) {
+                    const startDateLabel = document.querySelector('label[for="commission-start-date"]');
+                    const endDateLabel = document.querySelector('label[for="commission-end-date"]');
+                    
+                    // Store base label text (remove asterisk if present)
+                    const getBaseLabelText = (label) => {
+                        if (!label) return '';
+                        const text = label.textContent || label.innerText || '';
+                        return text.replace(/\*/g, '').trim();
+                    };
+                    const startDateLabelText = startDateLabel ? getBaseLabelText(startDateLabel) : t('start_date');
+                    const endDateLabelText = endDateLabel ? getBaseLabelText(endDateLabel) : t('end_date');
+                    
+                    // Set initial state
+                    const toggleDateFields = (disabled, clearValues = false) => {
+                        startDateInput.disabled = disabled;
+                        endDateInput.disabled = disabled;
+                        if (disabled) {
+                            startDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                            endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
+                            startDateInput.removeAttribute('required');
+                            endDateInput.removeAttribute('required');
+                            // Remove required asterisk from labels
+                            if (startDateLabel) {
+                                startDateLabel.innerHTML = startDateLabelText;
+                            }
+                            if (endDateLabel) {
+                                endDateLabel.innerHTML = endDateLabelText;
+                            }
+                            // Clear date values only when explicitly requested (user toggled checkbox)
+                            if (clearValues) {
+                                startDateInput.value = '';
+                                endDateInput.value = '';
+                            }
+                        } else {
+                            startDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                            endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                            startDateInput.setAttribute('required', 'required');
+                            endDateInput.setAttribute('required', 'required');
+                            // Add required asterisk to labels
+                            if (startDateLabel) {
+                                startDateLabel.innerHTML = startDateLabelText + ' <span class="text-red-500">*</span>';
+                            }
+                            if (endDateLabel) {
+                                endDateLabel.innerHTML = endDateLabelText + ' <span class="text-red-500">*</span>';
+                            }
                         }
+                    };
+                    
+                    // Set initial state based on checkbox (don't clear values on initial load)
+                    toggleDateFields(defaultCheckbox.checked, false);
+                    
+                    // Add event listener (clear values when user toggles)
+                    defaultCheckbox.addEventListener('change', (e) => {
+                        toggleDateFields(e.target.checked, true);
                     });
-                }
-            }, 50);
+                    }
+                }, 50);
+            }
+        }
+
+        function showCommissionDetailModal(ruleId) {
+            const rule = mockData.commissionRules.find(x => x.id === ruleId);
+            if (!rule) {
+                alert('Komisyon kuralı bulunamadı.');
+                return;
+            }
+            
+            // Get rule display info
+            let targetName = '';
+            let ruleType = '';
+            
+            if (rule.type === 'supplier') {
+                const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
+                targetName = supplier ? supplier.name : 'Bilinmiyor';
+                ruleType = 'Tedarikçi Bazlı';
+            } else if (rule.type === 'category') {
+                const category = mockData.categories.find(c => c.id === rule.categoryId);
+                targetName = category ? t(category.name) : 'Bilinmiyor';
+                ruleType = 'Kategori Bazlı';
+            } else if (rule.type === 'supplier_category') {
+                const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
+                const category = mockData.categories.find(c => c.id === rule.categoryId);
+                const supplierName = supplier ? supplier.name : 'Bilinmiyor';
+                const categoryName = category ? t(category.name) : 'Bilinmiyor';
+                targetName = `${supplierName} - ${categoryName}`;
+                ruleType = 'Tedarikçi + Kategori Bazlı';
+            }
+            
+            const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
+            const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
+            const defaultIndicator = rule.isDefault ? ' <span class="text-red-500 font-bold">*</span>' : '';
+            
+            // Format change logs
+            const changeLogs = rule.changeLogs || [];
+            let changeLogsHTML = '';
+            
+            if (changeLogs.length === 0) {
+                changeLogsHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-500">Henüz değişiklik kaydı bulunmuyor.</p>
+                    </div>
+                `;
+            } else {
+                // Group logs by date
+                const groupedLogs = changeLogs.reduce((groups, log) => {
+                    const date = new Date(log.timestamp).toLocaleDateString('tr-TR');
+                    if (!groups[date]) {
+                        groups[date] = [];
+                    }
+                    groups[date].push(log);
+                    return groups;
+                }, {});
+                
+                const sortedDates = Object.keys(groupedLogs).sort((a, b) => {
+                    return new Date(b) - new Date(a);
+                });
+                
+                changeLogsHTML = sortedDates.map(date => {
+                    const dayLogs = groupedLogs[date].sort((a, b) => {
+                        return new Date(b.timestamp) - new Date(a.timestamp);
+                    });
+                    
+                    const dayLogEntries = dayLogs.map(log => {
+                        const time = new Date(log.timestamp).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                        const actionIcons = {
+                            'rule_created': 'fas fa-plus-circle text-green-500',
+                            'rule_updated': 'fas fa-edit text-blue-500',
+                            'rule_deleted': 'fas fa-trash text-red-500'
+                        };
+                        const iconClass = actionIcons[log.action] || 'fas fa-circle text-gray-500';
+                        
+                        let changesHTML = '';
+                        if (log.details && log.details.changes && log.details.changes.length > 0) {
+                            changesHTML = `
+                                <div class="mt-2 space-y-1 pl-4 border-l-2 border-gray-200">
+                                    ${log.details.changes.map(change => `
+                                        <div class="text-sm text-gray-600 py-1">
+                                            <span class="font-medium text-gray-700">${change.field}:</span>
+                                            <span class="text-red-600 line-through ml-2">${change.oldValue}</span>
+                                            <span class="mx-2 text-gray-400">→</span>
+                                            <span class="text-green-600 font-medium">${change.newValue}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            `;
+                        }
+                        
+                        return `
+                            <div class="flex items-start space-x-3 py-3 border-b border-gray-100 last:border-0">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="${iconClass}"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">${log.actionLabel || log.description}</p>
+                                            <p class="text-xs text-gray-500 mt-1">
+                                                ${log.user} • ${time}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    ${changesHTML}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    return `
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">${date}</h4>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                ${dayLogEntries}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            const body = `
+                <div class="space-y-6">
+                    <!-- Rule Information -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-4">Kural Bilgileri</h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Hedef</label>
+                                <div class="text-sm font-medium text-gray-900">${targetName}${defaultIndicator}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Komisyon Tipi</label>
+                                <div class="text-sm font-medium text-gray-900">${ruleType}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Komisyon Oranı</label>
+                                <div class="text-sm font-medium text-gray-900">${rule.rate}%</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Varsayılan</label>
+                                <div class="text-sm font-medium text-gray-900">${rule.isDefault ? 'Evet' : 'Hayır'}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Başlangıç Tarihi</label>
+                                <div class="text-sm font-medium text-gray-900">${startDate}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Bitiş Tarihi</label>
+                                <div class="text-sm font-medium text-gray-900">${endDate}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Oluşturulma</label>
+                                <div class="text-sm font-medium text-gray-900">${rule.createdAt ? new Date(rule.createdAt).toLocaleDateString('tr-TR') : '-'}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Son Güncelleme</label>
+                                <div class="text-sm font-medium text-gray-900">${rule.updatedAt ? new Date(rule.updatedAt).toLocaleDateString('tr-TR') : '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Change Logs -->
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-700 mb-4">Değişiklik Geçmişi</h4>
+                        <div class="max-h-96 overflow-y-auto">
+                            ${changeLogsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showModal('Komisyon Kuralı Detayları', body, 'Kapat', closeModal);
         }
 
         function saveCommission(editId) {
             try {
+                const isEditing = editId !== null && editId !== undefined && !isNaN(editId) && editId > 0;
+                
                 const typeEl = document.getElementById('commission-type');
                 const supplierEl = document.getElementById('commission-supplier');
                 const categoryEl = document.getElementById('commission-category');
@@ -22052,31 +23341,67 @@
                 const defaultRateEl = document.getElementById('commission-default-rate');
                 const startDateEl = document.getElementById('commission-start-date');
                 const endDateEl = document.getElementById('commission-end-date');
+                const defaultCheckboxEl = document.getElementById('commission-default');
                 
-                if (!typeEl || !rateEl) {
+                // In edit mode, we don't need typeEl, supplierEl, categoryEl, or defaultCheckboxEl
+                // Only rateEl is required
+                if (!rateEl) {
                     console.error('Required form elements not found');
                     alert('Form alanları bulunamadı. Lütfen sayfayı yenileyin.');
                     return false; // Return false to prevent modal from closing
                 }
                 
-                const type = typeEl.value;
-                const supplierId = supplierEl && supplierEl.value ? parseInt(supplierEl.value) : null;
-                const categoryId = categoryEl && categoryEl.value ? parseInt(categoryEl.value) : null;
+                // In edit mode, get values from the original rule instead of form fields
+                let type, supplierId, categoryId, isDefault;
+                if (isEditing) {
+                    const rule = mockData.commissionRules.find(x => x.id === editId);
+                    if (!rule) {
+                        alert('Düzenlenecek kural bulunamadı.');
+                        return false;
+                    }
+                    type = rule.type;
+                    supplierId = rule.supplierId;
+                    categoryId = rule.categoryId;
+                    isDefault = rule.isDefault;
+                } else {
+                    // Create mode - get values from form fields
+                    if (!typeEl) {
+                        console.error('Required form elements not found');
+                        alert('Form alanları bulunamadı. Lütfen sayfayı yenileyin.');
+                        return false;
+                    }
+                    type = typeEl.value;
+                    supplierId = supplierEl && supplierEl.value && supplierEl.value.trim() !== '' ? parseInt(supplierEl.value) : null;
+                    categoryId = categoryEl && categoryEl.value && categoryEl.value.trim() !== '' ? parseInt(categoryEl.value) : null;
+                    isDefault = defaultCheckboxEl ? defaultCheckboxEl.checked : false;
+                }
+                
                 const rate = parseFloat(rateEl.value);
                 const defaultRate = defaultRateEl ? parseFloat(defaultRateEl.value) : NaN;
-                const startDate = startDateEl ? startDateEl.value : '';
-                const endDate = endDateEl ? endDateEl.value : '';
+                // Clear dates if default is checked
+                const startDate = isDefault ? '' : (startDateEl ? startDateEl.value : '');
+                const endDate = isDefault ? '' : (endDateEl ? endDateEl.value : '');
                 
                 // Validation
-                if (!type || isNaN(rate) || rate < 0 || rate > 100) {
+                if ((!isEditing && !type) || isNaN(rate) || rate < 0 || rate > 100) {
                     alert('Lütfen tüm alanları doğru doldurun. Komisyon oranı 0-100 arasında olmalıdır.');
                     return false; // Return false to prevent modal from closing
                 }
                 
-                // Validate date range
-                if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-                    alert('Başlangıç tarihi bitiş tarihinden sonra olamaz.');
-                    return false; // Return false to prevent modal from closing
+                // Validate dates are required when not default
+                if (!isDefault) {
+                    if (!startDate) {
+                        alert('Başlangıç tarihi gereklidir.');
+                        return false; // Return false to prevent modal from closing
+                    }
+                    if (!endDate) {
+                        alert('Bitiş tarihi gereklidir.');
+                        return false; // Return false to prevent modal from closing
+                    }
+                    if (new Date(startDate) > new Date(endDate)) {
+                        alert('Başlangıç tarihi bitiş tarihinden sonra olamaz.');
+                        return false; // Return false to prevent modal from closing
+                    }
                 }
                 
                 // Ensure commissionRules array exists
@@ -22084,27 +23409,166 @@
                     mockData.commissionRules = [];
                 }
                 
-                if (editId !== null) {
+                // Check for duplicate or overlapping commission rule (only when creating new, not editing)
+                if (editId === null || editId === undefined || isNaN(editId)) {
+                    const conflictingRule = mockData.commissionRules.find(existingRule => {
+                        // Check if type matches
+                        if (existingRule.type !== type) return false;
+                        
+                        // Check if parameters match (supplierId and categoryId)
+                        if (existingRule.supplierId !== supplierId) return false;
+                        if (existingRule.categoryId !== categoryId) return false;
+                        
+                        // If both are default, they conflict
+                        if (isDefault && existingRule.isDefault) {
+                            return true;
+                        }
+                        
+                        // If one is default and the other is not, they don't conflict
+                        if (isDefault !== existingRule.isDefault) {
+                            return false;
+                        }
+                        
+                        // Both are not default - check for date overlap
+                        if (!isDefault && !existingRule.isDefault) {
+                            const existingStartDate = existingRule.startDate || '';
+                            const existingEndDate = existingRule.endDate || '';
+                            
+                            // If existing rule has no dates, skip
+                            if (!existingStartDate || !existingEndDate) {
+                                return false;
+                            }
+                            
+                            // If new rule has no dates, skip (shouldn't happen due to validation, but check anyway)
+                            if (!startDate || !endDate) {
+                                return false;
+                            }
+                            
+                            // Check for date overlap
+                            // Two date ranges overlap if:
+                            // newStart <= existingEnd AND newEnd >= existingStart
+                            // Normalize dates to start of day for accurate comparison
+                            const newStart = new Date(startDate);
+                            newStart.setHours(0, 0, 0, 0);
+                            const newEnd = new Date(endDate);
+                            newEnd.setHours(23, 59, 59, 999); // End of day
+                            
+                            const existingStart = new Date(existingStartDate);
+                            existingStart.setHours(0, 0, 0, 0);
+                            const existingEnd = new Date(existingEndDate);
+                            existingEnd.setHours(23, 59, 59, 999); // End of day
+                            
+                            // Check if dates overlap
+                            // Overlap occurs when: newStart <= existingEnd AND newEnd >= existingStart
+                            const hasOverlap = newStart.getTime() <= existingEnd.getTime() && newEnd.getTime() >= existingStart.getTime();
+                            
+                            if (hasOverlap) {
+                                console.log('Date overlap detected:', {
+                                    newStart: startDate,
+                                    newEnd: endDate,
+                                    existingStart: existingStartDate,
+                                    existingEnd: existingEndDate
+                                });
+                                return true; // Dates overlap
+                            }
+                        }
+                        
+                        return false;
+                    });
+                    
+                    if (conflictingRule) {
+                        let conflictMessage = 'Aynı parametrelere sahip ve tarihleri çakışan bir komisyon kuralı zaten mevcut:\n\n';
+                        conflictMessage += `- Komisyon Tipi: ${type === 'supplier' ? 'Tedarikçi Bazlı' : type === 'category' ? 'Kategori Bazlı' : 'Tedarikçi + Kategori Bazlı'}\n`;
+                        
+                        if (supplierId) {
+                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+                            conflictMessage += `- Tedarikçi: ${supplier ? supplier.name : 'Bilinmiyor'}\n`;
+                        }
+                        if (categoryId) {
+                            const category = mockData.categories.find(c => c.id === categoryId);
+                            conflictMessage += `- Kategori: ${category ? t(category.name) : 'Bilinmiyor'}\n`;
+                        }
+                        conflictMessage += `- Varsayılan: ${isDefault ? 'Evet' : 'Hayır'}\n`;
+                        
+                        if (!isDefault && !conflictingRule.isDefault) {
+                            conflictMessage += `\nMevcut Kural Tarihleri:\n`;
+                            conflictMessage += `- Başlangıç: ${conflictingRule.startDate ? new Date(conflictingRule.startDate).toLocaleDateString('tr-TR') : '-'}\n`;
+                            conflictMessage += `- Bitiş: ${conflictingRule.endDate ? new Date(conflictingRule.endDate).toLocaleDateString('tr-TR') : '-'}\n`;
+                            conflictMessage += `\nYeni Kural Tarihleri:\n`;
+                            conflictMessage += `- Başlangıç: ${startDate ? new Date(startDate).toLocaleDateString('tr-TR') : '-'}\n`;
+                            conflictMessage += `- Bitiş: ${endDate ? new Date(endDate).toLocaleDateString('tr-TR') : '-'}\n`;
+                        }
+                        
+                        alert(conflictMessage);
+                        return false; // Return false to prevent modal from closing
+                    }
+                }
+                
+                // Check if editing (editId is a valid number) or creating new (editId is null/undefined)
+                if (editId !== null && editId !== undefined && !isNaN(editId)) {
                     const rule = mockData.commissionRules.find(x => x.id === editId);
                     if (rule) {
-                        rule.type = type;
-                        rule.supplierId = supplierId;
-                        rule.categoryId = categoryId;
+                        // Track changes for change log
+                        const changes = [];
+                        const currentUser = window.currentUser || { name: 'Admin', role: 'admin' };
+                        
+                        if (rule.rate !== rate) {
+                            changes.push({
+                                field: 'Komisyon Oranı',
+                                oldValue: `${rule.rate}%`,
+                                newValue: `${rate}%`
+                            });
+                        }
+                        if (rule.defaultRate !== (isNaN(defaultRate) ? null : defaultRate)) {
+                            changes.push({
+                                field: 'Varsayılan Oran',
+                                oldValue: rule.defaultRate ? `${rule.defaultRate}%` : '-',
+                                newValue: isNaN(defaultRate) ? '-' : `${defaultRate}%`
+                            });
+                        }
+                        if (rule.startDate !== (startDate || null)) {
+                            changes.push({
+                                field: 'Başlangıç Tarihi',
+                                oldValue: rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-',
+                                newValue: startDate ? new Date(startDate).toLocaleDateString('tr-TR') : '-'
+                            });
+                        }
+                        if (rule.endDate !== (endDate || null)) {
+                            changes.push({
+                                field: 'Bitiş Tarihi',
+                                oldValue: rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-',
+                                newValue: endDate ? new Date(endDate).toLocaleDateString('tr-TR') : '-'
+                            });
+                        }
+                        
+                        // When editing, only update rate and dates (type, supplierId, categoryId, isDefault are read-only)
                         rule.rate = rate;
                         rule.defaultRate = isNaN(defaultRate) ? null : defaultRate;
                         rule.startDate = startDate || null;
                         rule.endDate = endDate || null;
                         rule.updatedAt = new Date().toISOString();
                         
-                        // Update names
-                        if (supplierId) {
-                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                            rule.supplierName = supplier?.name;
+                        // Add change log entry if there are changes
+                        if (changes.length > 0) {
+                            if (!rule.changeLogs) {
+                                rule.changeLogs = [];
+                            }
+                            rule.changeLogs.unshift({
+                                id: Date.now(),
+                                timestamp: new Date().toISOString(),
+                                user: currentUser.name || 'Admin',
+                                userRole: currentUser.role || 'admin',
+                                action: 'rule_updated',
+                                actionLabel: 'Kural Güncellendi',
+                                description: 'Komisyon kuralı güncellendi',
+                                details: {
+                                    changes: changes
+                                }
+                            });
                         }
-                        if (categoryId) {
-                            const category = mockData.categories.find(c => c.id === categoryId);
-                            rule.categoryName = category ? t(category.name) : null;
-                        }
+                        
+                        // Note: type, supplierId, categoryId, and isDefault are preserved from original rule
+                        // They are disabled in the edit modal, so we don't update them
                     } else {
                         alert('Düzenlenecek kural bulunamadı.');
                         return false; // Return false to prevent modal from closing
@@ -22115,6 +23579,8 @@
                         : 1;
                     const now = new Date().toISOString();
                     
+                    const currentUser = window.currentUser || { name: 'Admin', role: 'admin' };
+                    
                     const newRule = {
                         id: newId,
                         type,
@@ -22124,8 +23590,63 @@
                         defaultRate: isNaN(defaultRate) ? null : defaultRate,
                         startDate: startDate || null,
                         endDate: endDate || null,
+                        isDefault: isDefault,
                         createdAt: now,
-                        updatedAt: now
+                        updatedAt: now,
+                        changeLogs: [{
+                            id: Date.now(),
+                            timestamp: now,
+                            user: currentUser.name || 'Admin',
+                            userRole: currentUser.role || 'admin',
+                            action: 'rule_created',
+                            actionLabel: 'Kural Oluşturuldu',
+                            description: 'Yeni komisyon kuralı oluşturuldu',
+                            details: {
+                                changes: [
+                                    {
+                                        field: 'Komisyon Tipi',
+                                        oldValue: '-',
+                                        newValue: type === 'supplier' ? 'Tedarikçi Bazlı' : type === 'category' ? 'Kategori Bazlı' : 'Tedarikçi + Kategori Bazlı'
+                                    },
+                                    ...(supplierId ? [{
+                                        field: 'Tedarikçi',
+                                        oldValue: '-',
+                                        newValue: (() => {
+                                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
+                                            return supplier ? supplier.name : 'Bilinmiyor';
+                                        })()
+                                    }] : []),
+                                    ...(categoryId ? [{
+                                        field: 'Kategori',
+                                        oldValue: '-',
+                                        newValue: (() => {
+                                            const category = mockData.categories.find(c => c.id === categoryId);
+                                            return category ? t(category.name) : 'Bilinmiyor';
+                                        })()
+                                    }] : []),
+                                    {
+                                        field: 'Komisyon Oranı',
+                                        oldValue: '-',
+                                        newValue: `${rate}%`
+                                    },
+                                    {
+                                        field: 'Varsayılan',
+                                        oldValue: '-',
+                                        newValue: isDefault ? 'Evet' : 'Hayır'
+                                    },
+                                    ...(startDate ? [{
+                                        field: 'Başlangıç Tarihi',
+                                        oldValue: '-',
+                                        newValue: new Date(startDate).toLocaleDateString('tr-TR')
+                                    }] : []),
+                                    ...(endDate ? [{
+                                        field: 'Bitiş Tarihi',
+                                        oldValue: '-',
+                                        newValue: new Date(endDate).toLocaleDateString('tr-TR')
+                                    }] : [])
+                                ]
+                            }
+                        }]
                     };
                     
                     // Set names
@@ -22144,20 +23665,20 @@
                 // Show success message
                 showToast(editId ? 'Komisyon kuralı güncellendi!' : 'Komisyon kuralı eklendi!', 'success');
                 
-                // Refresh the page to show the new rule
+                // Refresh the commission management page after modal closes (accounting for 300ms animation)
                 setTimeout(() => {
-                    // Check if we're on the commission management page
                     const currentHash = window.location.hash;
-                    if (currentHash.includes('#settings/commissions') || currentHash.includes('#commission')) {
-                        if (typeof renderSettingsSubTab === 'function') {
+                    if (currentHash.includes('#commissions') || currentHash.includes('#settings/commissions') || currentHash.includes('#commission')) {
+                        // Refresh the commission management page
+                        if (typeof renderers !== 'undefined' && typeof renderers.commissionManagement === 'function') {
+                            renderers.commissionManagement();
+                        } else if (typeof renderSettingsSubTab === 'function') {
                             renderSettingsSubTab('commissions');
-                        } else {
+                        } else if (typeof handleRouteChange === 'function') {
                             handleRouteChange();
                         }
-                    } else {
-                        handleRouteChange();
                     }
-                }, 100);
+                }, 400);
                 
                 // Return true to indicate success (modal will close)
                 return true;

@@ -1296,7 +1296,7 @@ window.mockData.orders = window.mockData.orders || [
                     { id: 1, name: 'Ahmet Yılmaz', email: 'ahmet@modatedarik.com', role: 'Admin', title: 'Sahip', status: 'active', lastLogin: '2 saat önce', permissions: ['Ürün Yönetimi', 'Sipariş Yönetimi', 'Kullanıcı Yönetimi'], pagePermissions: {}, avatarColor: 'blue', avatarInitials: 'AY' },
                     { id: 2, name: 'Elif Demir', email: 'elif@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'active', lastLogin: '1 gün önce', permissions: ['Ürün Yönetimi', 'Stok Güncelleme'], pagePermissions: {}, avatarColor: 'green', avatarInitials: 'ED' },
                     { id: 3, name: 'Mehmet Kaya', email: 'mehmet@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'active', lastLogin: '3 saat önce', permissions: ['Sipariş Yönetimi', 'Müşteri Hizmetleri'], pagePermissions: {}, avatarColor: 'orange', avatarInitials: 'MK' },
-                    { id: 4, name: 'Zeynep Aktaş', email: 'zeynep@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'pending', lastLogin: '-', permissions: ['Sadece Görüntüleme'], pagePermissions: {}, avatarColor: 'yellow', avatarInitials: 'ZA' }
+                    { id: 4, name: 'Zeynep Aktaş', email: 'zeynep@modatedarik.com', role: 'Standart Kullanıcı', title: 'Standart Kullanıcı', status: 'inactive', lastLogin: '-', permissions: ['Sadece Görüntüleme'], pagePermissions: {}, avatarColor: 'yellow', avatarInitials: 'ZA' }
                 ];
             }
             
@@ -1307,8 +1307,6 @@ window.mockData.orders = window.mockData.orders || [
                     const getStatusBadge = (status) => {
                         if (status === 'active') {
                             return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>';
-                        } else if (status === 'pending') {
-                            return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Bekliyor</span>';
                         } else {
                             return '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Pasif</span>';
                         }
@@ -1337,27 +1335,9 @@ window.mockData.orders = window.mockData.orders || [
                     const hasRestrictedPermissions = u.pagePermissions && typeof u.pagePermissions === 'object' && Object.keys(u.pagePermissions).length > 0 && Object.values(u.pagePermissions).some(p => p === false);
                     const permissionIndicator = hasRestrictedPermissions ? '<i class="fas fa-key text-purple-500 ml-1 text-xs" title="Özel izinler tanımlı"></i>' : '';
                     
-                    const actionButtons = u.status === 'pending' ? `
-                        <button onclick="approveUser(${u.id})" class="text-green-600 hover:text-green-900" title="Onayla">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button onclick="rejectUser(${u.id})" class="text-red-600 hover:text-red-900" title="Reddet">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <button onclick="viewUserDetails(${u.id})" class="text-blue-600 hover:text-blue-900" title="Detaylar">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    ` : `
+                    const actionButtons = `
                         <button onclick="showAddUserModal(${u.id})" class="text-blue-600 hover:text-blue-900" title="Düzenle">
                             <i class="fas fa-edit"></i>
-                        </button>
-                        ${u.status === 'active' ? `
-                        <button onclick="toggleUserStatus(${u.id})" class="text-yellow-600 hover:text-yellow-900" title="Duraklat">
-                            <i class="fas fa-pause"></i>
-                        </button>
-                        ` : ''}
-                        <button onclick="viewUserDetails(${u.id})" class="text-green-600 hover:text-green-900" title="Detaylar">
-                            <i class="fas fa-eye"></i>
                         </button>
                     `;
                     
@@ -1440,7 +1420,6 @@ window.mockData.orders = window.mockData.orders || [
                                             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                                         <option value="">Tüm Durumlar</option>
                                         <option value="active">Aktif</option>
-                                        <option value="pending">Bekliyor</option>
                                         <option value="inactive">Pasif</option>
                                     </select>
                                     </div>
@@ -3454,7 +3433,7 @@ function renderProductTab(tabName, product) {
                  
                  <!-- Submission Info -->
                  <div class="bg-white rounded-lg shadow-sm border p-6">
-                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div class="flex items-center space-x-3">
                              <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                  <i class="fas fa-calendar-alt text-blue-600"></i>
@@ -3471,15 +3450,6 @@ function renderProductTab(tabName, product) {
                              <div>
                                  <p class="text-sm font-medium text-gray-700">Tedarikçi</p>
                                  <p class="text-sm text-gray-600">${mockData.suppliers.find(s => s.id === submission.supplierId)?.name || 'Bilinmeyen Tedarikçi'}</p>
-                             </div>
-                         </div>
-                         <div class="flex items-center space-x-3">
-                             <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                                 <i class="fas fa-edit text-orange-600"></i>
-                             </div>
-                             <div>
-                                 <p class="text-sm font-medium text-gray-700">Güncellenen Alanlar</p>
-                                 <p class="text-sm text-gray-600">${Object.keys(submission.attributes || {}).length + (submission.name ? 1 : 0)} alan</p>
                              </div>
                          </div>
                      </div>
