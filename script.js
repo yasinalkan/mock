@@ -3440,9 +3440,10 @@ function renderProductTab(tabName, product) {
                              </div>
                              <div>
                                  <p class="text-sm font-medium text-gray-700">Gönderim Tarihi</p>
-                                 <p class="text-sm text-gray-600">${new Date(submission.submittedAt).toLocaleDateString('tr-TR')}</p>
+                                 <p class="text-sm text-gray-600">${new Date(submission.submittedAt).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                              </div>
                          </div>
+                         ${!isSupplier ? `
                          <div class="flex items-center space-x-3">
                              <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                  <i class="fas fa-user text-green-600"></i>
@@ -3452,6 +3453,7 @@ function renderProductTab(tabName, product) {
                                  <p class="text-sm text-gray-600">${mockData.suppliers.find(s => s.id === submission.supplierId)?.name || 'Bilinmeyen Tedarikçi'}</p>
                              </div>
                          </div>
+                         ` : ''}
                      </div>
                  </div>
                  
@@ -3590,29 +3592,7 @@ function renderProductTab(tabName, product) {
                           </div>
                       </div>
                  </div>
-                 
-                 <!-- Status Information -->
-                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                     <div class="flex items-start space-x-3">
-                         <div class="flex-shrink-0">
-                             <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
-                         </div>
-                         <div class="flex-1">
-                             <h4 class="text-sm font-medium text-blue-800">Güncelleme Talebi Durumu</h4>
-                             <p class="text-sm text-blue-700 mt-1">
-                                 Güncelleme talebiniz admin tarafından incelenmektedir. İnceleme tamamlandığında size bilgi verilecektir.
-                             </p>
-                         </div>
-                     </div>
-                 </div>
-                 
-                 <!-- Submission Info -->
-                 <div class="flex justify-between items-center">
-                     <div class="text-sm text-gray-600">
-                         <i class="fas fa-clock mr-1"></i>
-                         Gönderim: ${new Date(submission.submittedAt).toLocaleString('tr-TR')}
-                     </div>
-                 </div>
+
              </div>
          `;
          
@@ -3650,10 +3630,113 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
         // When there's a toBeRevised request, always show editable form (even if product is not draft)
         // For new products, always show editable form with category dropdown
         if ((isDraftEditable && !hasToBeRevisedRequest) || (product.isNew && isSupplier)) {
-            // Editable version for draft products
-            const categoryOptions = mockData.categories.map(c => 
-                `<option value="${c.id}" ${c.id === product.categoryId ? 'selected' : ''}>${t(c.name)}</option>`
-            ).join('');
+            // Build category tree HTML with search for new products
+            const buildCategoryTreeForProduct = (categories, parentId = null, depth = 0, searchTerm = '') => {
+                const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                
+                // Get ancestors for matching categories
+                const getAncestors = (catId) => {
+                    let ancestors = new Set();
+                    let current = categories.find(c => c.id === catId);
+                    while (current && current.parentId !== null) {
+                        ancestors.add(current.parentId);
+                        current = categories.find(c => c.id === current.parentId);
+                    }
+                    return ancestors;
+                };
+                
+                let filteredCategories = categories;
+                let ancestorIds = new Set();
+                
+                if (searchTerm) {
+                    const matchingCategories = categories.filter(c => {
+                        const name = typeof c.name === 'object' ? t(c.name) : c.name;
+                        return name.toLowerCase().includes(lowerCaseSearchTerm);
+                    });
+                    matchingCategories.forEach(c => {
+                        getAncestors(c.id).forEach(id => ancestorIds.add(id));
+                    });
+                    filteredCategories = categories.filter(c => 
+                        matchingCategories.some(mc => mc.id === c.id) || ancestorIds.has(c.id)
+                    );
+                }
+                
+                const treeItems = filteredCategories
+                    .filter(c => c.parentId === parentId)
+                    .map(c => {
+                        const children = buildCategoryTreeForProduct(categories, c.id, depth + 1, searchTerm);
+                        const hasChildren = categories.some(cat => cat.parentId === c.id);
+                        const uniqueId = `product-cat-children-${c.id}`;
+                        const shouldShow = !searchTerm || ancestorIds.has(c.id) || 
+                            (typeof c.name === 'object' ? t(c.name) : c.name).toLowerCase().includes(lowerCaseSearchTerm);
+                        const childrenHTML = children && shouldShow ? 
+                            `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 ${searchTerm ? '' : 'hidden'}">${children}</div>` : '';
+                        const toggleIcon = hasChildren ? 
+                            `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="product-cat-icon-${c.id}" style="display: inline-block; width: 12px; ${searchTerm ? 'transform: rotate(90deg);' : ''}"></i>` : 
+                            '<span style="display: inline-block; width: 12px;"></span>';
+                        
+                        const categoryName = typeof c.name === 'object' ? t(c.name) : c.name;
+                        const isSelected = product.categoryId && c.id == product.categoryId;
+                        
+                        return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded ${isSelected ? 'bg-blue-100' : ''}" data-category-id="${c.id}">
+                            <div class="flex items-center">
+                                ${hasChildren ? `<span onclick="toggleProductCategoryChildren('${uniqueId}', 'product-cat-icon-${c.id}'); event.stopPropagation();" style="cursor: pointer; display: flex; align-items: center;">${toggleIcon}</span>` : toggleIcon}
+                                ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                                <span class="text-sm text-gray-700 ml-1 category-name flex-1" style="cursor: pointer;" onclick="selectProductCategory('${c.id}');">${categoryName}</span>
+                            </div>
+                            ${childrenHTML}
+                        </div>`;
+                    })
+                    .join('');
+                
+                return treeItems;
+            };
+            
+            const selectedCategory = product.categoryId ? mockData.categories.find(c => c.id === product.categoryId) : null;
+            const selectedName = selectedCategory ? (typeof selectedCategory.name === 'object' ? t(selectedCategory.name) : selectedCategory.name) : 'Kategori seçilmedi';
+            const treeHTML = buildCategoryTreeForProduct(mockData.categories, null, 0, '');
+            
+            // Use category tree for new products, simple select for draft products
+            const categoryFieldHTML = product.isNew ? `
+                <div class="space-y-3">
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <i class="fas fa-sitemap text-blue-600"></i>
+                            <label class="block text-sm font-semibold text-gray-700">Kategori</label>
+                        </div>
+                        <p class="text-xs text-gray-600">Kategori ağacından bir kategori seçin veya arama yaparak bulun.</p>
+                    </div>
+                    
+                    <div id="product-category-tree-container" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4">
+                        <div class="mb-3 pb-3 border-b border-gray-200">
+                            <div class="relative">
+                                <input type="text" id="product-category-search" 
+                                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                       placeholder="Kategori ara...">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div id="product-category-tree">
+                            ${treeHTML}
+                        </div>
+                    </div>
+                    
+                    <div id="product-selected-category-display" class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <small class="text-gray-600">Seçilen: </small>
+                        <span id="product-selected-cat-name" class="font-semibold text-blue-700">
+                            ${selectedName}
+                        </span>
+                    </div>
+                    
+                    <input type="hidden" id="edit-product-category" value="${product.categoryId || ''}">
+                </div>
+            ` : `
+                <select id="edit-product-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    ${mockData.categories.map(c => 
+                        `<option value="${c.id}" ${c.id === product.categoryId ? 'selected' : ''}>${t(c.name)}</option>`
+                    ).join('')}
+                </select>
+            `;
             
             container.innerHTML = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -3671,22 +3754,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
-                                    <select id="edit-product-category" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                        ${categoryOptions}
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Durum</label>
-                                    <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Taslak</span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ana Ürün ID</label>
-                                    <div class="flex items-center space-x-2">
-                                        <input type="text" value="${product.mainProductId || product.id}" class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-100" readonly>
-                                        <a href="#main-product/${product.mainProductId || product.id}" class="px-3 py-2 text-sm bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors" title="Ana ürün detaylarını görüntüle">
-                                            <i class="fas fa-external-link-alt"></i>
-                                        </a>
-                                    </div>
+                                    ${categoryFieldHTML}
                                 </div>
                                 
                             </div>
@@ -3702,17 +3770,157 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                     </div>
                 </div>
             `;
-            // Add event listener for category change
-            const categorySelect = document.getElementById('edit-product-category');
-            if (categorySelect) {
-                categorySelect.addEventListener('change', (e) => {
-                    const selectedCategoryId = e.target.value;
-                    renderCategoryAttributes(selectedCategoryId);
-                });
+            // Add event listeners for category change
+            if (product.isNew) {
+                // For new products with category tree
+                // Add search functionality
+                const searchInput = document.getElementById('product-category-search');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        filterProductCategoryTree(e.target.value);
+                    });
+                }
+                
+                // Make selectProductCategory and toggleProductCategoryChildren available globally
+                window.selectProductCategory = function(categoryId) {
+                    const hiddenInput = document.getElementById('edit-product-category');
+                    const displaySpan = document.getElementById('product-selected-cat-name');
+                    
+                    if (hiddenInput) {
+                        hiddenInput.value = categoryId || '';
+                    }
+                    
+                    // Update display
+                    if (categoryId) {
+                        const category = mockData.categories.find(c => c.id == categoryId);
+                        const categoryName = category ? (typeof category.name === 'object' ? t(category.name) : category.name) : '';
+                        if (displaySpan) {
+                            displaySpan.textContent = categoryName || 'Kategori seçilmedi';
+                        }
+                    } else {
+                        if (displaySpan) {
+                            displaySpan.textContent = 'Kategori seçilmedi';
+                        }
+                    }
+                    
+                    // Update visual selection
+                    const container = document.getElementById('product-category-tree-container');
+                    if (container) {
+                        container.querySelectorAll('[data-category-id]').forEach(el => {
+                            el.classList.remove('bg-blue-100');
+                        });
+                        if (categoryId) {
+                            const selectedEl = container.querySelector(`[data-category-id="${categoryId}"]`);
+                            if (selectedEl) {
+                                selectedEl.classList.add('bg-blue-100');
+                            }
+                        }
+                    }
+                    
+                    // Render category attributes
+                    if (categoryId && typeof renderCategoryAttributes === 'function') {
+                        renderCategoryAttributes(categoryId);
+                    }
+                };
+                
+                window.toggleProductCategoryChildren = function(elementId, iconId) {
+                    const element = document.getElementById(elementId);
+                    const icon = document.getElementById(iconId);
+                    if (element) {
+                        element.classList.toggle('hidden');
+                        if (icon) {
+                            icon.style.transform = element.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(90deg)';
+                        }
+                    }
+                };
+                
+                window.filterProductCategoryTree = function(searchTerm) {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    const treeContainer = document.getElementById('product-category-tree');
+                    if (!treeContainer) return;
+                    
+                    const buildFilteredTree = (categories, parentId = null, depth = 0) => {
+                        // Get ancestors for matching categories
+                        const getAncestors = (catId) => {
+                            let ancestors = new Set();
+                            let current = categories.find(c => c.id === catId);
+                            while (current && current.parentId !== null) {
+                                ancestors.add(current.parentId);
+                                current = categories.find(c => c.id === current.parentId);
+                            }
+                            return ancestors;
+                        };
+                        
+                        let filteredCategories = categories;
+                        let ancestorIds = new Set();
+                        
+                        if (searchTerm) {
+                            const matchingCategories = categories.filter(c => {
+                                const name = typeof c.name === 'object' ? t(c.name) : c.name;
+                                return name.toLowerCase().includes(lowerCaseSearchTerm);
+                            });
+                            matchingCategories.forEach(c => {
+                                getAncestors(c.id).forEach(id => ancestorIds.add(id));
+                            });
+                            filteredCategories = categories.filter(c => 
+                                matchingCategories.some(mc => mc.id === c.id) || ancestorIds.has(c.id)
+                            );
+                        }
+                        
+                        const treeItems = filteredCategories
+                            .filter(c => c.parentId === parentId)
+                            .map(c => {
+                                const children = buildFilteredTree(categories, c.id, depth + 1);
+                                const hasChildren = categories.some(cat => cat.parentId === c.id);
+                                const uniqueId = `product-cat-children-${c.id}`;
+                                const shouldShow = !searchTerm || ancestorIds.has(c.id) || 
+                                    (typeof c.name === 'object' ? t(c.name) : c.name).toLowerCase().includes(lowerCaseSearchTerm);
+                                const childrenHTML = children && shouldShow ? 
+                                    `<div id="${uniqueId}" class="ml-3 border-l border-gray-200 ${searchTerm ? '' : 'hidden'}">${children}</div>` : '';
+                                const toggleIcon = hasChildren ? 
+                                    `<i class="fas fa-chevron-right text-gray-400 mr-1 text-xs transition-transform" id="product-cat-icon-${c.id}" style="display: inline-block; width: 12px; ${searchTerm ? 'transform: rotate(90deg);' : ''}"></i>` : 
+                                    '<span style="display: inline-block; width: 12px;"></span>';
+                                
+                                const categoryName = typeof c.name === 'object' ? t(c.name) : c.name;
+                                const hiddenInput = document.getElementById('edit-product-category');
+                                const isSelected = hiddenInput && hiddenInput.value && c.id == hiddenInput.value;
+                                
+                                return `<div class="py-1 px-2 hover:bg-gray-100 transition-colors rounded ${isSelected ? 'bg-blue-100' : ''}" data-category-id="${c.id}">
+                                    <div class="flex items-center">
+                                        ${hasChildren ? `<span onclick="toggleProductCategoryChildren('${uniqueId}', 'product-cat-icon-${c.id}'); event.stopPropagation();" style="cursor: pointer; display: flex; align-items: center;">${toggleIcon}</span>` : toggleIcon}
+                                        ${hasChildren ? '<i class="fas fa-folder text-gray-400 text-xs"></i>' : '<i class="fas fa-file text-gray-300 text-xs"></i>'}
+                                        <span class="text-sm text-gray-700 ml-1 category-name flex-1" style="cursor: pointer;" onclick="selectProductCategory('${c.id}');">${categoryName}</span>
+                                    </div>
+                                    ${childrenHTML}
+                                </div>`;
+                            })
+                            .join('');
+                        
+                        return treeItems;
+                    };
+                    
+                    treeContainer.innerHTML = buildFilteredTree(mockData.categories, null, 0);
+                };
                 
                 // Render attributes for the current category if one is selected
-                if (product.categoryId) {
+                if (product.categoryId && typeof renderCategoryAttributes === 'function') {
                     renderCategoryAttributes(product.categoryId);
+                }
+            } else {
+                // For draft products with select dropdown
+                const categorySelect = document.getElementById('edit-product-category');
+                if (categorySelect) {
+                    categorySelect.addEventListener('change', (e) => {
+                        const selectedCategoryId = e.target.value;
+                        if (typeof renderCategoryAttributes === 'function') {
+                            renderCategoryAttributes(selectedCategoryId);
+                        }
+                    });
+                    
+                    // Render attributes for the current category if one is selected
+                    if (product.categoryId && typeof renderCategoryAttributes === 'function') {
+                        renderCategoryAttributes(product.categoryId);
+                    }
                 }
             }
         } else if (isSupplier) {
@@ -3751,13 +3959,32 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                     const attrData = productAttributes[attribute.id] || productAttributes[String(attribute.id)] || {};
                     // Get value from request data if it exists, otherwise from product
                     const value = typeof attrData.value !== 'undefined' && attrData.value !== null ? String(attrData.value) : '';
-                    const inputType = attribute.type === 'number' ? 'number' : 'text';
                     
                     // Check if this attribute was rejected
                     const isRejected = attrData.validationStatus === 'rejected';
                     const rejectionReason = attrData.rejectionReason || '';
                     const borderClass = isRejected ? 'border-red-300 bg-red-50' : 'border-gray-300';
                     const inputClass = isRejected ? 'border-red-300 bg-red-50' : 'border-gray-300';
+                    
+                    // Generate input field based on attribute type
+                    let inputField = '';
+                    if (attribute.type === 'Select' && attribute.options && attribute.options.length > 0) {
+                        // Render as select dropdown with options
+                        const optionsHtml = attribute.options.map(opt => {
+                            const isSelected = value === String(opt);
+                            return `<option value="${opt.replace(/"/g, '&quot;')}" ${isSelected ? 'selected' : ''}>${opt}</option>`;
+                        }).join('');
+                        inputField = `<select class="w-full px-2 py-1 border rounded text-sm supplier-attr-input ${inputClass}" data-attr-id="${attribute.id}">
+                            <option value="">Seçiniz...</option>
+                            ${optionsHtml}
+                        </select>`;
+                    } else if (attribute.type === 'Number') {
+                        // Render as number input
+                        inputField = `<input type="number" value="${value.replace(/"/g, '&quot;')}" class="w-full px-2 py-1 border rounded text-sm supplier-attr-input ${inputClass}" data-attr-id="${attribute.id}" placeholder="${t(attribute.label)}">`;
+                    } else {
+                        // Render as text input (default)
+                        inputField = `<input type="text" value="${value.replace(/"/g, '&quot;')}" class="w-full px-2 py-1 border rounded text-sm supplier-attr-input ${inputClass}" data-attr-id="${attribute.id}" placeholder="${t(attribute.label)}">`;
+                    }
                     
                     return `
                         <div class="grid grid-cols-3 gap-4 p-3 border rounded-md ${borderClass}">
@@ -3769,7 +3996,7 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                 ${isRejected && rejectionReason ? `<div class="text-xs text-red-600 mt-1">${rejectionReason}</div>` : ''}
                             </div>
                             <div>
-                                <input type="${inputType}" value="${value.replace(/"/g, '&quot;')}" class="w-full px-2 py-1 border rounded text-sm supplier-attr-input ${inputClass}" data-attr-id="${attribute.id}" placeholder="${t(attribute.label)}">
+                                ${inputField}
                             </div>
                             <div class="text-right">
                                 ${isRejected ? 
@@ -3787,12 +4014,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
-                                ${(() => {
-                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
-                                    const isArch = product.isArchived || (spProd?.isArchived);
-                                    if (!isArch) return '';
-                                    return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
-                                })()}
                             </div>
                             <div class="space-y-3">
                                 <div>
@@ -3872,21 +4093,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                             </button>
                         </div>
                     </div>
-                    <div class="space-y-6">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h3 class="text-lg font-semibold mb-4">İstatistikler</h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Orijinallik Skoru:</span>
-                                    <span class="font-medium">${product.originalityScore}%</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Son Güncelleme:</span>
-                                    <span class="font-medium">${new Date(product.lastUpdated).toLocaleDateString('tr-TR')}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             `;
             // Wire up save
@@ -3902,12 +4108,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-start mb-4">
                                 <h3 class="text-lg font-semibold">Temel Bilgiler</h3>
-                                ${(() => {
-                                    const spProd = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
-                                    const isArch = product.isArchived || (spProd?.isArchived);
-                                    if (!isArch) return '';
-                                    return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-3 py-1 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 font-medium flex items-center space-x-1"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
-                                })()}
                             </div>
                             <div class="space-y-3">
                                 <div class="flex justify-between">
@@ -4027,9 +4227,6 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
                                             <i class="fas fa-archive text-yellow-600 mr-2"></i>
                                             <span class="text-yellow-800">Bu ürün arşivlenmiş durumda</span>
                                         </div>
-                                        <button onclick="unarchiveSupplierProduct(${product.id})" class="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium">
-                                            <i class="fas fa-redo mr-2"></i>Aktifleştir
-                                        </button>
                                     </div>
                                 </div>
                             `;
@@ -4507,7 +4704,7 @@ function renderImagesTab(container, product, isSupplier) {
             <div class="bg-white border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                 <!-- Image Preview -->
                 <div class="relative group">
-                    <img src="${imageUrl}" alt="${imageAlt}" class="w-full h-48 object-cover">
+                    <img src="${imageUrl}" class="w-full h-48 object-cover">
                     <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-200 flex items-center justify-center">
                         <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                             <button onclick="viewImageFullscreen('${imageUrl}')" class="px-3 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100">
@@ -4581,16 +4778,21 @@ function renderVariantsTab(container, product) {
             
             return `<tr class="border-b hover:bg-gray-50">
                 <td class="p-3">
-                    <input type="checkbox" class="variant-checkbox">
+                    <a href="#products/detail/${variant.id}" class="flex items-center space-x-3 hover:text-blue-600">
+                        <img src="${variant.imageUrl}" alt="${t(variant.name)}" class="w-10 h-10 rounded-md object-cover">
+                        <div>
+                            <div class="font-medium text-sm">${t(variant.name)}</div>
+                            <div class="text-xs text-gray-500">${variant.sku}</div>
+                        </div>
+                    </a>
                 </td>
                 ${variantAttrs}
-                <td class="p-3 text-sm text-gray-600">${variant.sku}</td>
                 <td class="p-3 text-sm font-medium">${priceText}</td>
                 <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">Tükendi</span>`}</td>
                 <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${variant.status === 'active' ? 'Aktif' : 'Pasif'}</span></td>
                 <td class="p-3 text-right">
                     <a href="#products/detail/${variant.id}" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200">
-                        ${t(variant.name)} <i class="fas fa-chevron-right ml-1"></i>
+                        Görüntüle <i class="fas fa-chevron-right ml-1"></i>
                     </a>
                 </td>
             </tr>`;
@@ -4605,7 +4807,7 @@ function renderVariantsTab(container, product) {
                             <tr>
                                 <th class="p-3 w-10"><input type="checkbox"></th>
                                 ${variantAttributeLabels.map(attr => `<th class="p-3 text-sm font-semibold">${attr ? t(attr.label) : ''}</th>`).join('')}
-                                <th class="p-3 text-sm font-semibold">SKU</th>
+                                <th class="p-3 text-sm font-semibold">${t('sku_header')}</th>
                                 <th class="p-3 text-sm font-semibold">Fiyat</th>
                                 <th class="p-3 text-sm font-semibold">Stok</th>
                                 <th class="p-3 text-sm font-semibold">Durum</th>
@@ -4659,9 +4861,12 @@ function showImagesInAssetsTab() {
 }
 function renderLogsTab(container, product) {
     try {
-    const changeLogs = product.changeLogs || [];
+    // Store product ID for pagination
+    window.currentProductId = product.id;
     
-    if (changeLogs.length === 0) {
+    const allChangeLogs = product.changeLogs || [];
+    
+    if (allChangeLogs.length === 0) {
         container.innerHTML = `
             <div class="text-center py-8">
                 <i class="fas fa-history text-4xl text-gray-400 mb-4"></i>
@@ -4672,23 +4877,80 @@ function renderLogsTab(container, product) {
         return;
     }
     
-    // Group logs by date
-    const groupedLogs = changeLogs.reduce((groups, log) => {
-        const date = new Date(log.timestamp).toLocaleDateString('tr-TR');
-        if (!groups[date]) {
-            groups[date] = [];
-        }
-        groups[date].push(log);
-        return groups;
-    }, {});
+    // Get unique actions for filter dropdown
+    const uniqueActions = [...new Set(allChangeLogs.map(log => log.action))];
+    const actionLabels = {
+        'product_updated': 'Ürün Güncellendi',
+        'image_uploaded': 'Görsel Yüklendi',
+        'status_changed': 'Durum Değiştirildi',
+        'stock_updated': 'Stok Güncellendi',
+        'attribute_approved': 'Özellik Onaylandı',
+        'attribute_rejected': 'Özellik Reddedildi',
+        'price_updated': 'Fiyat Güncellendi',
+        'category_changed': 'Kategori Değiştirildi',
+        'description_updated': 'Açıklama Güncellendi'
+    };
     
-    // Sort dates in descending order
-    const sortedDates = Object.keys(groupedLogs).sort((a, b) => new Date(b) - new Date(a));
-    
-    const logEntries = sortedDates.map(date => {
-        const dayLogs = groupedLogs[date].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    // Filter logs based on current filters (will be set by filter controls)
+    const filterLogs = (logs) => {
+        const actionFilter = document.getElementById('logActionFilter')?.value || '';
+        const roleFilter = document.getElementById('logRoleFilter')?.value || '';
+        const startDateFilter = document.getElementById('logStartDate')?.value || '';
+        const endDateFilter = document.getElementById('logEndDate')?.value || '';
         
-        const dayLogEntries = dayLogs.map(log => {
+        return logs.filter(log => {
+            // Action filter
+            if (actionFilter && log.action !== actionFilter) {
+                return false;
+            }
+            
+            // Role filter
+            if (roleFilter && log.userRole !== roleFilter) {
+                return false;
+            }
+            
+            // Date filter
+            const logDate = new Date(log.timestamp);
+            if (startDateFilter) {
+                const startDate = new Date(startDateFilter);
+                startDate.setHours(0, 0, 0, 0);
+                if (logDate < startDate) {
+                    return false;
+                }
+            }
+            if (endDateFilter) {
+                const endDate = new Date(endDateFilter);
+                endDate.setHours(23, 59, 59, 999);
+                if (logDate > endDate) {
+                    return false;
+                }
+            }
+            
+            return true;
+        });
+    };
+    
+    // Initialize pagination state for logs
+    if (!window.logPaginationState) {
+        window.logPaginationState = {
+            currentPage: 1,
+            itemsPerPage: 10,
+            totalItems: 0,
+            totalPages: 0,
+            currentData: []
+        };
+    }
+    
+    // Initial render with all logs
+    const changeLogs = filterLogs(allChangeLogs);
+    
+    // Sort all logs by timestamp in descending order (newest first)
+    const sortedLogs = changeLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    // Paginate logs
+    const paginatedLogs = paginateLogs(sortedLogs, window.logPaginationState.currentPage);
+    
+    const logEntries = paginatedLogs.map(log => {
             const actionIcons = {
                 'product_updated': 'fas fa-edit',
                 'image_uploaded': 'fas fa-image',
@@ -4724,10 +4986,17 @@ function renderLogsTab(container, product) {
                 'supplier': 'bg-green-100 text-green-800'
             };
             
-            const time = new Date(log.timestamp).toLocaleTimeString('tr-TR', { 
+            const logDate = new Date(log.timestamp);
+            const dateStr = logDate.toLocaleDateString('tr-TR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            const timeStr = logDate.toLocaleTimeString('tr-TR', { 
                 hour: '2-digit', 
                 minute: '2-digit' 
             });
+            const dateTimeStr = `${dateStr} ${timeStr}`;
             
             let detailsHtml = '';
             if (log.details) {
@@ -4798,13 +5067,9 @@ function renderLogsTab(container, product) {
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-2">
                                 <span class="font-medium text-gray-900">${log.actionLabel}</span>
-                                <span class="px-2 py-1 text-xs font-medium rounded-full ${categoryColors[log.category] || 'bg-gray-100 text-gray-800'}">
-                                    ${categoryLabels[log.category] || log.category}
-                                </span>
                             </div>
-                            <span class="text-xs text-gray-500">${time}</span>
+                            <span class="text-xs text-gray-500">${dateTimeStr}</span>
                         </div>
-                        <p class="text-sm text-gray-600 mt-1">${log.description}</p>
                         ${detailsHtml}
                         <div class="flex items-center justify-between mt-2">
                             <div class="flex items-center space-x-2">
@@ -4817,24 +5082,6 @@ function renderLogsTab(container, product) {
                     </div>
                 </div>
             `;
-        }).join('');
-        
-        return `
-            <div class="mb-6">
-                <div class="flex items-center mb-3">
-                    <div class="flex-1 border-t border-gray-200"></div>
-                    <div class="px-3">
-                        <span class="text-sm font-medium text-gray-500 bg-white px-2 py-1 rounded-full border">
-                            ${date}
-                        </span>
-                    </div>
-                    <div class="flex-1 border-t border-gray-200"></div>
-                </div>
-                <div class="space-y-1">
-                    ${dayLogEntries}
-                </div>
-            </div>
-        `;
     }).join('');
     
     // Calculate statistics
@@ -4849,7 +5096,7 @@ function renderLogsTab(container, product) {
     container.innerHTML = `
         <div class="space-y-6">
             <!-- Statistics Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-white border rounded-lg p-4">
                     <div class="flex items-center">
                         <i class="fas fa-history text-2xl text-blue-600 mr-3"></i>
@@ -4881,15 +5128,15 @@ function renderLogsTab(container, product) {
                     <div class="flex items-center">
                         <i class="fas fa-calendar text-2xl text-purple-600 mr-3"></i>
                         <div>
-                            <div class="text-2xl font-bold text-purple-600">${sortedDates.length}</div>
+                            <div class="text-2xl font-bold text-purple-600">${new Set(changeLogs.map(log => new Date(log.timestamp).toLocaleDateString('tr-TR'))).size}</div>
                             <div class="text-sm text-gray-600">Gün</div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             
             <!-- Category Breakdown -->
-            <div class="bg-white border rounded-lg p-6">
+            <!-- <div class="bg-white border rounded-lg p-6">
                 <h3 class="text-lg font-semibold mb-4">Değişiklik Kategorileri</h3>
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     ${Object.entries(categoryStats).map(([category, count]) => {
@@ -4917,26 +5164,82 @@ function renderLogsTab(container, product) {
                         `;
                     }).join('')}
                 </div>
-            </div>
+            </div> -->
             <!-- Change Log Timeline -->
             <div class="bg-white border rounded-lg p-6">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-lg font-semibold">Değişiklik Geçmişi</h3>
-                    <div class="flex items-center space-x-2">
-                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
+                    <div class="flex items-center space-x-3">
+                        <!-- Date Range Picker -->
+                        <div class="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                            <input type="date" id="logStartDate" class="px-3 py-2 border-0 focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Başlangıç">
+                            <span class="text-gray-500 px-2 border-l border-gray-300">-</span>
+                            <input type="date" id="logEndDate" class="px-3 py-2 border-0 border-l border-gray-300 focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Bitiş">
+                        </div>
+                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200" onclick="document.getElementById('logFiltersPanel').classList.toggle('hidden')">
                             <i class="fas fa-filter mr-1"></i>Filtrele
-                        </button>
-                        <button class="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">
-                            <i class="fas fa-download mr-1"></i>Dışa Aktar
                         </button>
                     </div>
                 </div>
-                <div class="space-y-4">
-                    ${logEntries}
+                
+                <!-- Filter Panel -->
+                <div id="logFiltersPanel" class="hidden mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Action Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">İşlem Tipi</label>
+                            <select id="logActionFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Tüm İşlemler</option>
+                                ${uniqueActions.map(action => `
+                                    <option value="${action}">${actionLabels[action] || action}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        
+                        <!-- Role Filter -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kullanıcı Rolü</label>
+                            <select id="logRoleFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Tüm Roller</option>
+                                <option value="admin">Admin</option>
+                                <option value="supplier">Tedarikçi</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-between">
+                        <button id="clearLogFilters" class="text-sm text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-times mr-1"></i>Filtreleri Temizle
+                        </button>
+                        <div class="text-sm text-gray-600">
+                            <span id="filteredLogCount">${changeLogs.length}</span> / <span>${allChangeLogs.length}</span> kayıt gösteriliyor
+                        </div>
+                    </div>
                 </div>
+                
+                <div id="logEntriesContainer" class="space-y-4">
+                    ${changeLogs.length === 0 ? `
+                        <div class="text-center py-8">
+                            <i class="fas fa-filter text-4xl text-gray-400 mb-4"></i>
+                            <h3 class="text-lg font-semibold text-gray-600 mb-2">Sonuç Bulunamadı</h3>
+                            <p class="text-gray-500">Seçilen filtrelere uygun kayıt bulunamadı.</p>
+                        </div>
+                    ` : logEntries}
+                </div>
+                
+                ${changeLogs.length > 0 ? `<div id="log-pagination" class="mt-6"></div>` : ''}
             </div>
         </div>
     `;
+    
+    // Setup filter event listeners
+    setupLogFilters(container, product, allChangeLogs, actionLabels);
+    
+    // Render pagination
+    if (changeLogs.length > 0) {
+        renderLogPagination();
+    }
+    
     } catch (error) {
         console.error('Error rendering logs tab:', error);
         container.innerHTML = `
@@ -4947,6 +5250,397 @@ function renderLogsTab(container, product) {
                 <p class="text-xs text-gray-400 mt-2">${error.message}</p>
         </div>
     `;
+    }
+}
+
+// Pagination helper for logs
+function paginateLogs(data, page = 1, itemsPerPage = 10) {
+    if (!window.logPaginationState) {
+        window.logPaginationState = {
+            currentPage: 1,
+            itemsPerPage: 10,
+            totalItems: 0,
+            totalPages: 0,
+            currentData: []
+        };
+    }
+    
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    
+    window.logPaginationState.currentPage = page;
+    window.logPaginationState.itemsPerPage = itemsPerPage;
+    window.logPaginationState.totalItems = data.length;
+    window.logPaginationState.totalPages = Math.ceil(data.length / itemsPerPage);
+    window.logPaginationState.currentData = data.slice(startIndex, endIndex);
+    
+    return window.logPaginationState.currentData;
+}
+
+// Render pagination for logs
+function renderLogPagination() {
+    const container = document.getElementById('log-pagination');
+    if (!container || !window.logPaginationState) {
+        return;
+    }
+    
+    const { currentPage, totalPages, totalItems, itemsPerPage } = window.logPaginationState;
+    
+    const startItem = (currentPage - 1) * itemsPerPage + 1;
+    const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+    
+    let paginationHTML = `
+        <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+            <div class="text-sm text-gray-700">
+                <span>${startItem}-${endItem}</span> / <span>${totalItems}</span> kayıt gösteriliyor
+            </div>
+            <div class="flex items-center space-x-2">
+    `;
+    
+    // Previous button
+    if (currentPage > 1) {
+        paginationHTML += `
+            <button onclick="changeLogPage(${currentPage - 1})" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        `;
+    } else {
+        paginationHTML += `
+            <button disabled class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-300 bg-white cursor-not-allowed">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        `;
+    }
+    
+    // Page numbers
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage < maxVisiblePages - 1) {
+        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    if (startPage > 1) {
+        paginationHTML += `
+            <button onclick="changeLogPage(1)" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">1</button>
+        `;
+        if (startPage > 2) {
+            paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+        }
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginationHTML += `
+                <button class="px-3 py-2 border border-blue-500 rounded-md text-sm font-medium text-blue-600 bg-blue-50">${i}</button>
+            `;
+        } else {
+            paginationHTML += `
+                <button onclick="changeLogPage(${i})" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">${i}</button>
+            `;
+        }
+    }
+    
+    if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+            paginationHTML += `<span class="px-2 text-gray-500">...</span>`;
+        }
+        paginationHTML += `
+            <button onclick="changeLogPage(${totalPages})" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">${totalPages}</button>
+        `;
+    }
+    
+    // Next button
+    if (currentPage < totalPages) {
+        paginationHTML += `
+            <button onclick="changeLogPage(${currentPage + 1})" class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+    } else {
+        paginationHTML += `
+            <button disabled class="px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-300 bg-white cursor-not-allowed">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+    }
+    
+    paginationHTML += `
+            </div>
+        </div>
+    `;
+    
+    container.innerHTML = paginationHTML;
+}
+
+// Change log page function (needs to be global for onclick)
+window.changeLogPage = function(page) {
+    if (!window.logPaginationState) return;
+    
+    const container = document.getElementById('product-tab-content');
+    if (!container) return;
+    
+    // Get the current product
+    const productId = window.currentProductId;
+    if (!productId) return;
+    
+    const product = mockData.products.find(p => p.id === productId);
+    if (!product) return;
+    
+    // Update page
+    window.logPaginationState.currentPage = page;
+    
+    // Re-render logs tab
+    renderLogsTab(container, product);
+};
+
+function setupLogFilters(container, product, allChangeLogs, actionLabels) {
+    const logActionFilter = document.getElementById('logActionFilter');
+    const logRoleFilter = document.getElementById('logRoleFilter');
+    const logStartDate = document.getElementById('logStartDate');
+    const logEndDate = document.getElementById('logEndDate');
+    const clearLogFilters = document.getElementById('clearLogFilters');
+    const logEntriesContainer = document.getElementById('logEntriesContainer');
+    const filteredLogCount = document.getElementById('filteredLogCount');
+    
+    const renderFilteredLogs = () => {
+        // Reset to page 1 when filters change
+        if (window.logPaginationState) {
+            window.logPaginationState.currentPage = 1;
+        }
+        // Get filter values
+        const actionFilter = logActionFilter?.value || '';
+        const roleFilter = logRoleFilter?.value || '';
+        const startDateFilter = logStartDate?.value || '';
+        const endDateFilter = logEndDate?.value || '';
+        
+        // Filter logs
+        const filteredLogs = allChangeLogs.filter(log => {
+            // Action filter
+            if (actionFilter && log.action !== actionFilter) {
+                return false;
+            }
+            
+            // Role filter
+            if (roleFilter && log.userRole !== roleFilter) {
+                return false;
+            }
+            
+            // Date filter
+            const logDate = new Date(log.timestamp);
+            if (startDateFilter) {
+                const startDate = new Date(startDateFilter);
+                startDate.setHours(0, 0, 0, 0);
+                if (logDate < startDate) {
+                    return false;
+                }
+            }
+            if (endDateFilter) {
+                const endDate = new Date(endDateFilter);
+                endDate.setHours(23, 59, 59, 999);
+                if (logDate > endDate) {
+                    return false;
+                }
+            }
+            
+            return true;
+        });
+        
+        // Update count
+        if (filteredLogCount) {
+            filteredLogCount.textContent = filteredLogs.length;
+        }
+        
+        // Sort all logs by timestamp in descending order (newest first)
+        const sortedLogs = filteredLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+        // Paginate logs
+        const paginatedLogs = paginateLogs(sortedLogs, window.logPaginationState?.currentPage || 1);
+        
+        // Render log entries
+        const logEntries = paginatedLogs.map(log => {
+                const actionIcons = {
+                    'product_updated': 'fas fa-edit',
+                    'image_uploaded': 'fas fa-image',
+                    'status_changed': 'fas fa-toggle-on',
+                    'stock_updated': 'fas fa-boxes',
+                    'attribute_approved': 'fas fa-check-circle',
+                    'attribute_rejected': 'fas fa-times-circle',
+                    'price_updated': 'fas fa-dollar-sign',
+                    'category_changed': 'fas fa-tags',
+                    'description_updated': 'fas fa-align-left'
+                };
+                
+                const categoryColors = {
+                    'product_info': 'bg-blue-100 text-blue-800',
+                    'media': 'bg-purple-100 text-purple-800',
+                    'status': 'bg-green-100 text-green-800',
+                    'inventory': 'bg-orange-100 text-orange-800',
+                    'attributes': 'bg-yellow-100 text-yellow-800',
+                    'pricing': 'bg-red-100 text-red-800'
+                };
+                
+                const categoryLabels = {
+                    'product_info': 'Ürün Bilgileri',
+                    'media': 'Medya',
+                    'status': 'Durum',
+                    'inventory': 'Envanter',
+                    'attributes': 'Özellikler',
+                    'pricing': 'Fiyatlandırma'
+                };
+                
+                const userRoleColors = {
+                    'admin': 'bg-blue-100 text-blue-800',
+                    'supplier': 'bg-green-100 text-green-800'
+                };
+                
+                const logDate = new Date(log.timestamp);
+                const dateStr = logDate.toLocaleDateString('tr-TR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                const timeStr = logDate.toLocaleTimeString('tr-TR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                const dateTimeStr = `${dateStr} ${timeStr}`;
+                
+                let detailsHtml = '';
+                if (log.details) {
+                    if (log.details.changes) {
+                        detailsHtml = `
+                            <div class="mt-2 space-y-1">
+                                ${log.details.changes.map(change => `
+                                    <div class="text-xs text-gray-600">
+                                        <span class="font-medium">${change.field}:</span>
+                                        <span class="text-red-600 line-through">${change.oldValue}</span>
+                                        <span class="mx-1">→</span>
+                                        <span class="text-green-600 font-medium">${change.newValue}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else if (log.details.oldStatus && log.details.newStatus) {
+                        detailsHtml = `
+                            <div class="mt-2 text-xs text-gray-600">
+                                <span class="text-red-600 line-through">${log.details.oldStatus}</span>
+                                <span class="mx-1">→</span>
+                                <span class="text-green-600 font-medium">${log.details.newStatus}</span>
+                                ${log.details.reason ? `<div class="mt-1 text-gray-500">${log.details.reason}</div>` : ''}
+                            </div>
+                        `;
+                    } else if (log.details.oldStock !== undefined && log.details.newStock !== undefined) {
+                        detailsHtml = `
+                            <div class="mt-2 text-xs text-gray-600">
+                                <span class="text-red-600 line-through">${log.details.oldStock} adet</span>
+                                <span class="mx-1">→</span>
+                                <span class="text-green-600 font-medium">${log.details.newStock} adet</span>
+                                ${log.details.supplier ? `<div class="mt-1 text-gray-500">Tedarikçi: ${log.details.supplier}</div>` : ''}
+                            </div>
+                        `;
+                    } else if (log.details.oldPrice && log.details.newPrice) {
+                        detailsHtml = `
+                            <div class="mt-2 text-xs text-gray-600">
+                                <span class="text-red-600 line-through">${log.details.oldPrice} ₺</span>
+                                <span class="mx-1">→</span>
+                                <span class="text-green-600 font-medium">${log.details.newPrice} ₺</span>
+                                ${log.details.reason ? `<div class="mt-1 text-gray-500">${log.details.reason}</div>` : ''}
+                            </div>
+                        `;
+                    } else if (log.details.attribute) {
+                        detailsHtml = `
+                            <div class="mt-2 text-xs text-gray-600">
+                                <span class="font-medium">Özellik:</span> ${log.details.attribute}
+                                <div><span class="font-medium">Değer:</span> ${log.details.value}</div>
+                                ${log.details.reason ? `<div class="text-red-600">Sebep: ${log.details.reason}</div>` : ''}
+                            </div>
+                        `;
+                    } else if (log.details.imageUrl) {
+                        detailsHtml = `
+                            <div class="mt-2 text-xs text-gray-600">
+                                <div><span class="font-medium">Tip:</span> ${log.details.imageType}</div>
+                                <div><span class="font-medium">Kalite:</span> ${log.details.quality}%</div>
+                            </div>
+                        `;
+                    }
+                }
+                
+                return `
+                    <div class="flex items-start space-x-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div class="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <i class="${actionIcons[log.action] || 'fas fa-circle'} text-sm text-gray-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="font-medium text-gray-900">${log.actionLabel}</span>
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${categoryColors[log.category] || 'bg-gray-100 text-gray-800'}">
+                                        ${categoryLabels[log.category] || log.category}
+                                    </span>
+                                </div>
+                                <span class="text-xs text-gray-500">${dateTimeStr}</span>
+                            </div>
+                            <p class="text-sm text-gray-600 mt-1">${log.description}</p>
+                            ${detailsHtml}
+                            <div class="flex items-center justify-between mt-2">
+                                <div class="flex items-center space-x-2">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full ${userRoleColors[log.userRole] || 'bg-gray-100 text-gray-800'}">
+                                        ${log.userRole === 'admin' ? 'Admin' : 'Tedarikçi'}
+                                    </span>
+                                    <span class="text-xs text-gray-500">${log.user}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+        }).join('');
+        
+        // Update the container
+        if (logEntriesContainer) {
+            if (filteredLogs.length === 0) {
+                logEntriesContainer.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-filter text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-600 mb-2">Sonuç Bulunamadı</h3>
+                        <p class="text-gray-500">Seçilen filtrelere uygun kayıt bulunamadı.</p>
+                    </div>
+                `;
+                // Hide pagination
+                const paginationContainer = document.getElementById('log-pagination');
+                if (paginationContainer) {
+                    paginationContainer.innerHTML = '';
+                }
+            } else {
+                logEntriesContainer.innerHTML = logEntries;
+                // Render pagination
+                renderLogPagination();
+            }
+        }
+    };
+    
+    // Add event listeners
+    if (logActionFilter) {
+        logActionFilter.addEventListener('change', renderFilteredLogs);
+    }
+    if (logRoleFilter) {
+        logRoleFilter.addEventListener('change', renderFilteredLogs);
+    }
+    if (logStartDate) {
+        logStartDate.addEventListener('change', renderFilteredLogs);
+    }
+    if (logEndDate) {
+        logEndDate.addEventListener('change', renderFilteredLogs);
+    }
+    if (clearLogFilters) {
+        clearLogFilters.addEventListener('click', () => {
+            if (logActionFilter) logActionFilter.value = '';
+            if (logRoleFilter) logRoleFilter.value = '';
+            if (logStartDate) logStartDate.value = '';
+            if (logEndDate) logEndDate.value = '';
+            renderFilteredLogs();
+        });
     }
 }
 // Image management functions
