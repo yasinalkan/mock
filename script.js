@@ -4054,6 +4054,39 @@ function renderGeneralTab(container, product, isSupplier, supplierId) {
 }
 // Save handler for supplier product edits
 
+function archiveSupplierProduct(productId) {
+    const currentUser = window.currentUser || {};
+    const currentSupplierId = currentUser.supplierId;
+    
+    if (!currentSupplierId) {
+        showToast('Tedarikçi bilgisi bulunamadı', 'error');
+        return;
+    }
+    
+    let supplierProduct = mockData.supplierProducts.find(sp => 
+        sp.productId === productId && sp.supplierId === currentSupplierId
+    );
+    
+    if (!supplierProduct) {
+        // Create supplier product entry if it doesn't exist
+        supplierProduct = {
+            productId: productId,
+            supplierId: currentSupplierId,
+            stock: 0,
+            price: 0,
+            isArchived: false,
+            isBanned: false
+        };
+        mockData.supplierProducts.push(supplierProduct);
+    }
+    
+    if (confirm('Bu ürünü arşivlemek istediğinizden emin misiniz?')) {
+        supplierProduct.isArchived = true;
+        showToast('Ürün başarıyla arşivlendi', 'success');
+        handleRouteChange();
+    }
+}
+
 function unarchiveSupplierProduct(productId) {
     const currentUser = window.currentUser || {};
     const currentSupplierId = currentUser.supplierId;
@@ -4247,11 +4280,9 @@ function renderStockPriceTab(container, product, isSupplier) {
                             <div class="flex justify-between items-center">
                                 <div>
                                     <div class="font-medium text-gray-900">${supplier.name}</div>
-                                    ${!isSupplier ? `<div class="text-sm text-gray-500">${supplier.email || ''}</div>` : ''}
                                 </div>
                                 <div class="text-right">
                                     <div class="text-2xl font-bold text-blue-600">${commissionRate.toFixed(1)}%</div>
-                                    <div class="text-xs text-gray-500">Komisyon Oranı</div>
                                 </div>
                             </div>
                         </div>
@@ -4281,9 +4312,8 @@ function renderStockPriceTab(container, product, isSupplier) {
                                 <input type="number" id="edit-product-stock" value="${stock || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                             </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Liste Fiyatı (TRY)</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Fiyat (TRY)</label>
                                     <input type="number" step="0.01" id="edit-product-list-price-try" value="${product.listPrice || 0}" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0.00">
-                                    <p class="text-xs text-gray-500 mt-1">Normal satış fiyatı (Türk Lirası)</p>
                             </div>
                             
                         </div>
@@ -4369,10 +4399,7 @@ function renderStockPriceTab(container, product, isSupplier) {
                                                         <p class="text-sm text-gray-500">Tedarikçi ID: ${sp.supplierId}</p>
                                                     </div>
                                                 </div>
-                                                <div class="text-right">
-                                                    <span class="text-sm text-gray-500">Son Güncelleme</span>
-                                                    <p class="text-sm font-medium">${new Date(sp.lastUpdated || Date.now()).toLocaleDateString('tr-TR')}</p>
-                                                </div>
+
                                             </div>
                                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div class="bg-gray-50 p-3 rounded-lg">
@@ -4380,23 +4407,22 @@ function renderStockPriceTab(container, product, isSupplier) {
                                                         <span class="text-sm text-gray-600">Stok Miktarı</span>
                                                         <span class="text-lg font-semibold ${sp.stock > 0 ? 'text-green-600' : 'text-red-600'}">${sp.stock || 0} adet</span>
                                                     </div>
-                                                    ${sp.stock > 0 ? '<p class="text-xs text-green-600 mt-1">Stokta mevcut</p>' : '<p class="text-xs text-red-600 mt-1">Stokta yok</p>'}
+                                                    ${sp.stock > 0 ? '<p class="text-xs text-green-600 mt-1"></p>' : '<p class="text-xs text-red-600 mt-1">Stokta yok</p>'}
                                                 </div>
                                                 <div class="bg-gray-50 p-3 rounded-lg">
                                                     <div class="flex items-center justify-between">
                                                         <span class="text-sm text-gray-600">Son Güncelleme</span>
                                                         <span class="text-sm font-medium text-gray-700">${new Date(sp.lastUpdated || Date.now()).toLocaleDateString('tr-TR')}</span>
                                                     </div>
-                                                    <p class="text-xs text-gray-500 mt-1">Tedarikçi güncellemesi</p>
+
                                                 </div>
                                             </div>
                                             <div class="mt-4">
                                                 <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
                                                     <div class="flex items-center justify-between mb-2">
-                                                        <span class="text-sm font-medium text-blue-800">Liste Fiyatı (TRY)</span>
+                                                        <span class="text-sm font-medium text-blue-800">Fiyat (TRY)</span>
                                                         <span class="text-lg font-semibold text-blue-600">${sp.listPrice ? sp.listPrice.toFixed(2) + ' ₺' : 'Belirtilmemiş'}</span>
                                                     </div>
-                                                    <p class="text-xs text-blue-600">Normal fiyat (Türk Lirası)</p>
                                                 </div>
                                             </div>
                                             
@@ -4555,21 +4581,16 @@ function renderVariantsTab(container, product) {
             
             return `<tr class="border-b hover:bg-gray-50">
                 <td class="p-3">
-                    <a href="#products/detail/${variant.id}" class="flex items-center space-x-3 hover:text-blue-600">
-                        <img src="${variant.imageUrl}" alt="${t(variant.name)}" class="w-10 h-10 rounded-md object-cover">
-                        <div>
-                            <div class="font-medium text-sm">${t(variant.name)}</div>
-                            <div class="text-xs text-gray-500">${variant.sku}</div>
-                        </div>
-                    </a>
+                    <input type="checkbox" class="variant-checkbox">
                 </td>
                 ${variantAttrs}
+                <td class="p-3 text-sm text-gray-600">${variant.sku}</td>
                 <td class="p-3 text-sm font-medium">${priceText}</td>
                 <td class="p-3 text-sm">${stock > 0 ? stock : `<span class="text-red-500 font-semibold">Tükendi</span>`}</td>
                 <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">${variant.status === 'active' ? 'Aktif' : 'Pasif'}</span></td>
                 <td class="p-3 text-right">
                     <a href="#products/detail/${variant.id}" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md hover:bg-blue-200">
-                        Görüntüle <i class="fas fa-chevron-right ml-1"></i>
+                        ${t(variant.name)} <i class="fas fa-chevron-right ml-1"></i>
                     </a>
                 </td>
             </tr>`;
@@ -4584,7 +4605,7 @@ function renderVariantsTab(container, product) {
                             <tr>
                                 <th class="p-3 w-10"><input type="checkbox"></th>
                                 ${variantAttributeLabels.map(attr => `<th class="p-3 text-sm font-semibold">${attr ? t(attr.label) : ''}</th>`).join('')}
-                                <th class="p-3 text-sm font-semibold">${t('sku_header')}</th>
+                                <th class="p-3 text-sm font-semibold">SKU</th>
                                 <th class="p-3 text-sm font-semibold">Fiyat</th>
                                 <th class="p-3 text-sm font-semibold">Stok</th>
                                 <th class="p-3 text-sm font-semibold">Durum</th>
@@ -5452,108 +5473,55 @@ function filterAdminFinanceData(startDate, endDate) {
         function generateActionsDropdown(activeTab, isSupplier) {
             let actions = [];
             
+            // Admin users should not see actions button (handled in HTML), but return empty for safety
+            if (!isSupplier) {
+                return '';
+            }
+            
+            // Supplier actions based on requirements
             if (activeTab === 'yeni-urun-talepleri') {
-                if (isSupplier) {
-                    // Supplier view - New product requests
-                    actions = [
-                        '<a href="#" id="action-submit-for-review" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-paper-plane w-4 mr-2 text-blue-500"></i>İnceleme için Gönder</a>',
-                        '<a href="#" id="action-edit-selected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Seçilenleri Düzenle</a>'
-                    ];
-                } else {
-                    // Admin view - New product requests
-                    actions = [
-                        '<a href="#" id="action-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
-                        '<a href="#" id="action-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>'
-                    ];
-                }
-            } else if (activeTab === 'gonderilenler' || activeTab === 'submitted') {
-                if (isSupplier) {
-                    // Submitted products - Supplier view
-                    actions = [
-                        '<a href="#" id="action-withdraw-submission" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Gönderimi Geri Çek</a>',
-                        '<a href="#" id="action-edit-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Gönderilenleri Düzenle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Gönderilenleri Dışa Aktar</a>'
-                    ];
-                } else {
-                    // Submitted products - Admin view
-                    actions = [
-                        '<a href="#" id="action-approve-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Gönderilenleri Onayla</a>',
-                        '<a href="#" id="action-reject-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Gönderilenleri Reddet</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-assign-reviewer" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-user-check w-4 mr-2 text-blue-500"></i>İnceleyici Ata</a>',
-                        '<a href="#" id="action-set-priority" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-flag w-4 mr-2 text-orange-500"></i>Öncelik Belirle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-submitted" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Gönderilenleri Dışa Aktar</a>'
-                    ];
-                }
-            } else if (activeTab === 'aktif' || activeTab === 'approved') {
-                if (isSupplier) {
-                    // Approved products - Supplier view
-                    actions = [
-                        '<a href="#" id="action-update-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-boxes w-4 mr-2 text-blue-500"></i>Stok Güncelle</a>',
-                        '<a href="#" id="action-update-price" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-tag w-4 mr-2 text-green-500"></i>Fiyat Güncelle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-request-price-update" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Fiyat Güncelleme Talebi</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Aktif Ürünleri Dışa Aktar</a>'
-                    ];
-                } else {
-                    // Approved products - Admin view
-                    actions = [
-                        '<a href="#" id="action-activate-products" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-toggle-on w-4 mr-2 text-blue-500"></i>Ürünleri Aktif Et</a>',
-                        '<a href="#" id="action-deactivate-products" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-toggle-off w-4 mr-2 text-gray-500"></i>Ürünleri Pasif Et</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-update-stock-price" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Stok/Fiyat Güncelle</a>',
-                        '<a href="#" id="action-assign-supplier" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-handshake w-4 mr-2 text-indigo-500"></i>Tedarikçi Ata</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-approved" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Aktif Ürünleri Dışa Aktar</a>'
-                    ];
-                }
-            } else if (activeTab === 'rejected') {
-                if (isSupplier) {
-                    // Rejected products - Supplier view
-                    actions = [
-                        '<a href="#" id="action-resubmit-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-redo w-4 mr-2 text-blue-500"></i>Tekrar Gönder</a>',
-                        '<a href="#" id="action-edit-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-edit w-4 mr-2 text-yellow-500"></i>Reddedilenleri Düzenle</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-delete-rejected" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Reddedilenleri Sil</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Reddedilenleri Dışa Aktar</a>'
-                    ];
-                } else {
-                    // Rejected products - Admin view
-                    actions = [
-                        '<a href="#" id="action-reapprove-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Tekrar Onayla</a>',
-                        '<a href="#" id="action-delete-rejected" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-trash-alt w-4 mr-2"></i>Reddedilenleri Sil</a>',
-                        '<div class="border-t border-gray-100 my-1"></div>',
-                        '<a href="#" id="action-export-rejected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Reddedilenleri Dışa Aktar</a>'
-                    ];
-                }
-            } else if (activeTab === 'fiyat-stok-istekleri') {
-                // Price update requests - Admin only
+                // Supplier view - New product requests: Talebi geri çek
                 actions = [
-                    '<a href="#" id="action-approve-price-requests" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-check-circle w-4 mr-2 text-green-500"></i>Fiyat Taleplerini Onayla</a>',
-                    '<a href="#" id="action-reject-price-requests" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-times-circle w-4 mr-2 text-red-500"></i>Fiyat Taleplerini Reddet</a>',
+                    '<a href="#" id="action-withdraw-request" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Talebi Geri Çek</a>'
+                ];
+            } else if (activeTab === 'urun-guncelleme') {
+                // Supplier view - Product update requests: Talebi geri çekme
+                actions = [
+                    '<a href="#" id="action-withdraw-request" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Talebi Geri Çek</a>'
+                ];
+            } else if (activeTab === 'fiyat-stok-istekleri') {
+                // Supplier view - Price & Stock update requests: Talebi geri çekme
+                actions = [
+                    '<a href="#" id="action-withdraw-request" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Talebi Geri Çek</a>'
+                ];
+            } else if (activeTab === 'aktif' || activeTab === 'approved') {
+                // Supplier view - Aktif Ürünler: arşivleme ve stok güncelleme
+                actions = [
+                    '<a href="#" id="action-update-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-boxes w-4 mr-2 text-blue-500"></i>Stok Güncelle</a>',
                     '<div class="border-t border-gray-100 my-1"></div>',
-                    '<a href="#" id="action-export-price-requests" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Fiyat Taleplerini Dışa Aktar</a>'
+                    '<a href="#" id="action-archive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-archive w-4 mr-2 text-orange-500"></i>Arşivle</a>'
+                ];
+            } else if (activeTab === 'out-of-stock') {
+                // Supplier view - Pasif > Stoğu Bitenler: stok güncelleme
+                actions = [
+                    '<a href="#" id="action-update-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-boxes w-4 mr-2 text-blue-500"></i>Stok Güncelle</a>'
+                ];
+            } else if (activeTab === 'archived-items') {
+                // Supplier view - Pasif > Arşivlenenler: arşivden çıkarma
+                actions = [
+                    '<a href="#" id="action-unarchive" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-redo w-4 mr-2 text-green-500"></i>Arşivden Çıkar</a>'
+                ];
+            } else if (activeTab === 'gonderilenler' || activeTab === 'submitted') {
+                // Submitted products - Supplier view (fallback)
+                actions = [
+                    '<a href="#" id="action-withdraw-submission" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-undo w-4 mr-2 text-orange-500"></i>Gönderimi Geri Çek</a>'
                 ];
             } else {
                 // Default actions for any other tab
-                actions = [
-                    '<a href="#" id="action-export-selected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>',
-                    '<a href="#" id="action-update-stock" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-boxes w-4 mr-2 text-blue-500"></i>Stok Güncelle</a>',
-                    '<a href="#" id="action-update-price" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-tag w-4 mr-2 text-green-500"></i>Fiyat Güncelle</a>'
-                ];
+                actions = [];
             }
             
-            // Ensure we always have at least some actions
-            if (actions.length === 0) {
-                actions = [
-                    '<a href="#" id="action-export-selected" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-download w-4 mr-2 text-purple-500"></i>Seçilenleri Dışa Aktar</a>'
-                ];
-            }
-            
+            // Return empty string if no actions (button will be disabled)
             return actions.join('');
         }
         // Setup dynamic bulk action event listeners
@@ -5712,6 +5680,15 @@ function filterAdminFinanceData(startDate, endDate) {
             // Default actions
             const actionExportSelected = document.getElementById('action-export-selected');
             if (actionExportSelected) actionExportSelected.addEventListener('click', (e) => { e.preventDefault(); handleAction('export-selected'); actionsDropdown.classList.add('hidden'); });
+            
+            // New supplier-specific actions
+            const actionWithdrawRequest = document.getElementById('action-withdraw-request');
+            const actionArchive = document.getElementById('action-archive');
+            const actionUnarchive = document.getElementById('action-unarchive');
+            
+            if (actionWithdrawRequest) actionWithdrawRequest.addEventListener('click', (e) => { e.preventDefault(); handleAction('withdraw-request'); actionsDropdown.classList.add('hidden'); });
+            if (actionArchive) actionArchive.addEventListener('click', (e) => { e.preventDefault(); handleAction('archive'); actionsDropdown.classList.add('hidden'); });
+            if (actionUnarchive) actionUnarchive.addEventListener('click', (e) => { e.preventDefault(); handleAction('unarchive'); actionsDropdown.classList.add('hidden'); });
         }
         function handleAction(actionType) {
             const selectedProductIds = getSelectedProductIds();
@@ -5920,6 +5897,59 @@ function filterAdminFinanceData(startDate, endDate) {
                     
                 case 'export-price-requests':
                     showToast(`${selectedCount} fiyat talebi dışa aktarılıyor...`);
+                    break;
+                    
+                case 'withdraw-request':
+                    // Withdraw request for supplier (for yeni-urun-talepleri, urun-guncelleme, fiyat-stok-istekleri)
+                    selectedProductIds.forEach(id => {
+                        // Find and update the request
+                        const request = mockData.requests?.find(r => r.productId === id && (r.status === 'submitted' || r.status === 'toBeRevised'));
+                        if (request) {
+                            request.status = 'withdrawn';
+                            request.withdrawnAt = new Date().toISOString();
+                        }
+                        // Also update product status if applicable
+                        const product = mockData.products.find(p => p.id === id);
+                        if (product && product.status === 'draft' && product.supplierSubmission) {
+                            product.supplierSubmission.status = 'withdrawn';
+                        }
+                    });
+                    showToast(`${selectedCount} talep geri çekildi.`);
+                    break;
+                    
+                case 'archive':
+                    // Archive products for supplier (Aktif Ürünler tab)
+                    const user = window.currentUser || {};
+                    const supplierId = user.supplierId;
+                    selectedProductIds.forEach(id => {
+                        let supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === supplierId);
+                        if (!supplierProduct) {
+                            supplierProduct = {
+                                productId: id,
+                                supplierId: supplierId,
+                                stock: 0,
+                                price: 0,
+                                isArchived: false,
+                                isBanned: false
+                            };
+                            mockData.supplierProducts.push(supplierProduct);
+                        }
+                        supplierProduct.isArchived = true;
+                    });
+                    showToast(`${selectedCount} ürün arşivlendi.`);
+                    break;
+                    
+                case 'unarchive':
+                    // Unarchive products for supplier (Arşivlenenler tab)
+                    const currentUser = window.currentUser || {};
+                    const currentSupplierId = currentUser.supplierId;
+                    selectedProductIds.forEach(id => {
+                        const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === id && sp.supplierId === currentSupplierId);
+                        if (supplierProduct) {
+                            supplierProduct.isArchived = false;
+                        }
+                    });
+                    showToast(`${selectedCount} ürün arşivden çıkarıldı.`);
                     break;
                     
                 case 'export-selected':
@@ -6215,8 +6245,11 @@ renderers['supplierProductDetail'] = (productId) => {
                             const supplierId = supplierUser.supplierId;
                             const supplierProduct = mockData.supplierProducts.find(sp => sp.productId === product.id && sp.supplierId === supplierId);
                             const isArchived = product.isArchived || (supplierProduct?.isArchived);
-                            if (!isArchived) return '';
-                            return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium flex items-center space-x-2"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
+                            if (isArchived) {
+                                return `<button onclick="unarchiveSupplierProduct(${product.id})" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 font-medium flex items-center space-x-2"><i class="fas fa-redo"></i><span>Aktifleştir</span></button>`;
+                            } else {
+                                return `<button onclick="archiveSupplierProduct(${product.id})" class="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 font-medium flex items-center space-x-2"><i class="fas fa-archive"></i><span>Arşivle</span></button>`;
+                            }
                         })()}
                         <div>
                             <div class="text-sm text-gray-500">Son Güncelleme</div>
