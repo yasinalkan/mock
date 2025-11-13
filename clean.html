@@ -11374,6 +11374,9 @@
                 if (activeTab === 'aktif') {
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Must be active status
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned flags
@@ -11415,13 +11418,19 @@
                 } else if (activeTab === 'pasif') {
                     // Show archived products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
-                    filteredProducts = mockData.products.filter(p => 
-                        mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true)
-                    );
+                    filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
+                        return mockData.supplierProducts.some(sp => sp.productId === p.id && sp.supplierId === currentUserSupplierId && sp.isArchived === true);
+                    });
                 } else if (activeTab === 'out-of-stock') {
                     // Show active products with 0 stock for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active status products
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned
@@ -11435,6 +11444,9 @@
                     // Show banned products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active products
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned
@@ -11458,6 +11470,9 @@
                     // Show archived products for current supplier
                     const currentUserSupplierId = (window.currentUser||{}).supplierId;
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active products
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned
@@ -11484,8 +11499,8 @@
                     ).filter(Boolean);
                 } else if (activeTab === 'aktif') {
                     filteredProducts = mockData.products.filter(p => {
-                        // Exclude variant products (only show main products)
-                        if (p.mainProductId) return false;
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
                         
                         // Must be active status
                         if (p.status !== 'active') return false;
@@ -11507,12 +11522,18 @@
                         return !hasPassiveStatus;
                     });
                 } else if (activeTab === 'pasif') {
-                    filteredProducts = mockData.products.filter(p => 
-                        mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true)
-                    );
+                    filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
+                        return mockData.supplierProducts.some(sp => sp.productId === p.id && sp.isArchived === true);
+                    });
                 } else if (activeTab === 'out-of-stock') {
                     // Show active products with 0 stock for admin
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active products
                         if (p.status !== 'active') return false;
                         
@@ -11523,6 +11544,9 @@
                 } else if (activeTab === 'banned') {
                     // Show banned products for admin
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active products
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned
@@ -11544,6 +11568,9 @@
                 } else if (activeTab === 'archived-items') {
                     // Show archived products for admin
                     filteredProducts = mockData.products.filter(p => {
+                        // Show only variant products (exclude main products)
+                        if (!p.mainProductId) return false;
+                        
                         // Only show active products
                         if (p.status !== 'active') return false;
                         // Exclude product-level archived and banned
