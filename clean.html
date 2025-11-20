@@ -32,6 +32,65 @@
         #category-tree-container::-webkit-scrollbar-thumb:hover {
             background: #9ca3af;
         }
+        
+        /* Order vs Return Visual Distinction */
+        .order-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .order-badge i {
+            color: #3b82f6;
+        }
+        
+        .return-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .return-badge i {
+            color: #ef4444;
+        }
+        
+        .order-row {
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .return-row {
+            border-left: 3px solid #ef4444;
+        }
+        
+        .order-header {
+            background: linear-gradient(to right, #dbeafe, #eff6ff);
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .return-header {
+            background: linear-gradient(to right, #fee2e2, #fef2f2);
+            border-left: 4px solid #ef4444;
+        }
+        
+        .order-icon {
+            color: #3b82f6;
+        }
+        
+        .return-icon {
+            color: #ef4444;
+        }
     </style>
     </head>
 <body class="bg-gray-50 text-gray-800">
@@ -632,7 +691,7 @@
             price_review: { tr: 'Fiyat İnceleme', en: 'Price Review' },
             review_price: { tr: 'Fiyatı İncele', en: 'Review Price' },
             price_requests: { tr: 'Fiyat Talepleri', en: 'Price Requests' },
-            price_stock_requests: { tr: 'Fiyat ve Stok İstekleri', en: 'Price and Stock Requests' },
+            price_stock_requests: { tr: 'Fiyat ve Stok Talepleri', en: 'Price and Stock Requests' },
             current_price: { tr: 'Mevcut Fiyat', en: 'Current Price' },
             requested_price: { tr: 'Talep Edilen Fiyat', en: 'Requested Price' },
             price_change: { tr: 'Fiyat Değişimi', en: 'Price Change' },
@@ -3225,6 +3284,7 @@
             supplierPayouts: [
                 { 
                     id: 'PO-001', 
+                    supplierId: 1,
                     date: '2025-09-15', 
                     amount: 12500.00, 
                     status: 'completed', 
@@ -3252,14 +3312,15 @@
                     },
                     orderDetails: [
                         { orderId: 'ORD-101', amount: 1299.00, commission: 129.90, carrierCost: 15.50, status: 'completed' },
-                        { orderId: 'ORD-102', amount: 1150.00, commission: 138.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-102', amount: 1150.00, commission: 138.00, carrierCost: 12.00, status: 'completed', returnAmount: 350.00, returnId: 'RET-001' },
                         { orderId: 'ORD-103', amount: 650.00, commission: 97.50, carrierCost: 8.50, status: 'completed' },
-                        { orderId: 'ORD-104', amount: 850.00, commission: 127.50, carrierCost: 10.00, status: 'completed' },
+                        { orderId: 'ORD-104', amount: 850.00, commission: 127.50, carrierCost: 10.00, status: 'completed', returnAmount: 250.00, returnId: 'RET-002' },
                         { orderId: 'ORD-105', amount: 1200.00, commission: 180.00, carrierCost: 15.00, status: 'completed' }
                     ]
                 },
                 { 
                     id: 'PO-002', 
+                    supplierId: 1,
                     date: '2025-08-15', 
                     amount: 9800.00, 
                     status: 'completed', 
@@ -3286,14 +3347,15 @@
                         netAmount: 10650.00
                     },
                     orderDetails: [
-                        { orderId: 'ORD-201', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-201', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed', returnAmount: 200.00, returnId: 'RET-003' },
                         { orderId: 'ORD-202', amount: 1200.00, commission: 144.00, carrierCost: 15.00, status: 'completed' },
                         { orderId: 'ORD-203', amount: 750.00, commission: 90.00, carrierCost: 9.50, status: 'completed' },
-                        { orderId: 'ORD-204', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' }
+                        { orderId: 'ORD-204', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed', returnAmount: 450.00, returnId: 'RET-004' }
                     ]
                 },
                 { 
                     id: 'PO-003', 
+                    supplierId: 2,
                     date: '2025-07-15', 
                     amount: 11200.00, 
                     status: 'completed', 
@@ -3321,13 +3383,14 @@
                     },
                     orderDetails: [
                         { orderId: 'ORD-301', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' },
-                        { orderId: 'ORD-302', amount: 850.00, commission: 102.00, carrierCost: 11.00, status: 'completed' },
+                        { orderId: 'ORD-302', amount: 850.00, commission: 102.00, carrierCost: 11.00, status: 'completed', returnAmount: 75.00, returnId: 'RET-005' },
                         { orderId: 'ORD-303', amount: 1300.00, commission: 156.00, carrierCost: 16.50, status: 'completed' },
                         { orderId: 'ORD-304', amount: 750.00, commission: 90.00, carrierCost: 9.50, status: 'completed' }
                     ]
                 },
                 { 
                     id: 'PO-004', 
+                    supplierId: 1,
                     date: '2025-09-30', 
                     amount: 15600.00, 
                     status: 'pending', 
@@ -3355,7 +3418,7 @@
                     },
                     orderDetails: [
                         { orderId: 'ORD-401', amount: 1350.00, commission: 162.00, carrierCost: 17.00, status: 'completed' },
-                        { orderId: 'ORD-402', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-402', amount: 950.00, commission: 114.00, carrierCost: 12.00, status: 'completed', returnAmount: 142.00, returnId: 'RET-006' },
                         { orderId: 'ORD-403', amount: 1200.00, commission: 144.00, carrierCost: 15.00, status: 'completed' },
                         { orderId: 'ORD-404', amount: 1100.00, commission: 132.00, carrierCost: 14.00, status: 'completed' },
                         { orderId: 'ORD-405', amount: 850.00, commission: 102.00, carrierCost: 11.00, status: 'completed' }
@@ -3363,6 +3426,7 @@
                 },
                 { 
                     id: 'PO-005', 
+                    supplierId: 2,
                     date: '2025-10-15', 
                     amount: 18200.00, 
                     status: 'pending', 
@@ -3378,6 +3442,130 @@
                     expectedDate: '2025-11-05',
                     paymentMethod: 'Banka Havalesi',
                     approvalStatus: 'Dönem kapanışı bekleniyor'
+                },
+                { 
+                    id: 'PO-006', 
+                    supplierId: 1,
+                    date: '2025-06-15', 
+                    amount: 14300.00, 
+                    status: 'completed', 
+                    period: 'Mayıs 2025', 
+                    orders: 55, 
+                    commission: 2145.00,
+                    grossAmount: 16445.00,
+                    netAmount: 14300.00,
+                    bank: 'Garanti BBVA (TR...5678)',
+                    bankName: 'Garanti BBVA',
+                    iban: 'TR44 0062 0001 2345 6789 0123 45',
+                    description: 'Mayıs 2025 dönemi hakediş ödemesi',
+                    processedBy: 'Finans Departmanı',
+                    processedAt: '2025-06-15T10:15:00Z',
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 18700.00,
+                        carrierCosts: 550.00,
+                        commissionCosts: 2145.00,
+                        platformFees: 175.00,
+                        returnDeductions: 120.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 2990.00,
+                        netAmount: 15710.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-501', amount: 1450.00, commission: 217.50, carrierCost: 18.00, status: 'completed' },
+                        { orderId: 'ORD-502', amount: 1100.00, commission: 165.00, carrierCost: 14.00, status: 'completed', returnAmount: 120.00, returnId: 'RET-007' },
+                        { orderId: 'ORD-503', amount: 950.00, commission: 142.50, carrierCost: 12.00, status: 'completed' },
+                        { orderId: 'ORD-504', amount: 1300.00, commission: 195.00, carrierCost: 16.50, status: 'completed' },
+                        { orderId: 'ORD-505', amount: 1050.00, commission: 157.50, carrierCost: 13.00, status: 'completed' }
+                    ]
+                },
+                { 
+                    id: 'PO-007', 
+                    supplierId: 2,
+                    date: '2025-06-15', 
+                    amount: 10500.00, 
+                    status: 'completed', 
+                    period: 'Mayıs 2025', 
+                    orders: 41, 
+                    commission: 1260.00,
+                    grossAmount: 11760.00,
+                    netAmount: 10500.00,
+                    bank: 'Garanti BBVA (TR...5678)',
+                    bankName: 'Garanti BBVA',
+                    iban: 'TR44 0062 0001 2345 6789 0123 45',
+                    description: 'Mayıs 2025 dönemi hakediş ödemesi',
+                    processedBy: 'Sistem Otomatik',
+                    processedAt: '2025-06-15T09:30:00Z',
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 13200.00,
+                        carrierCosts: 410.00,
+                        commissionCosts: 1260.00,
+                        platformFees: 132.00,
+                        returnDeductions: 98.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 1900.00,
+                        netAmount: 11300.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-601', amount: 980.00, commission: 117.60, carrierCost: 12.30, status: 'completed' },
+                        { orderId: 'ORD-602', amount: 1150.00, commission: 138.00, carrierCost: 14.50, status: 'completed', returnAmount: 98.00, returnId: 'RET-008' },
+                        { orderId: 'ORD-603', amount: 850.00, commission: 102.00, carrierCost: 10.70, status: 'completed' }
+                    ]
+                },
+                { 
+                    id: 'PO-008', 
+                    supplierId: 1,
+                    date: '2025-11-15', 
+                    amount: 16800.00, 
+                    status: 'pending', 
+                    period: 'Kasım 2025', 
+                    orders: 71, 
+                    commission: 2520.00,
+                    grossAmount: 19320.00,
+                    netAmount: 16800.00,
+                    bank: 'Garanti BBVA (TR...5678)',
+                    bankName: 'Garanti BBVA',
+                    iban: 'TR44 0062 0001 2345 6789 0123 45',
+                    description: 'Kasım 2025 dönemi hakediş ödemesi (beklemede)',
+                    expectedDate: '2025-12-05',
+                    paymentMethod: 'Banka Havalesi',
+                    approvalStatus: 'Finans departmanında'
+                },
+                { 
+                    id: 'PO-009', 
+                    supplierId: 2,
+                    date: '2025-05-15', 
+                    amount: 13400.00, 
+                    status: 'completed', 
+                    period: 'Nisan 2025', 
+                    orders: 51, 
+                    commission: 1608.00,
+                    grossAmount: 15008.00,
+                    netAmount: 13400.00,
+                    bank: 'Garanti BBVA (TR...5678)',
+                    bankName: 'Garanti BBVA',
+                    iban: 'TR44 0062 0001 2345 6789 0123 45',
+                    description: 'Nisan 2025 dönemi hakediş ödemesi',
+                    processedBy: 'Finans Departmanı',
+                    processedAt: '2025-05-15T13:45:00Z',
+                    paymentMethod: 'Banka Havalesi',
+                    breakdown: {
+                        orderRevenue: 16800.00,
+                        carrierCosts: 480.00,
+                        commissionCosts: 1608.00,
+                        platformFees: 168.00,
+                        returnDeductions: 150.00,
+                        otherDeductions: 0.00,
+                        totalDeductions: 2406.00,
+                        netAmount: 14394.00
+                    },
+                    orderDetails: [
+                        { orderId: 'ORD-701', amount: 1200.00, commission: 180.00, carrierCost: 15.00, status: 'completed' },
+                        { orderId: 'ORD-702', amount: 950.00, commission: 142.50, carrierCost: 12.00, status: 'completed', returnAmount: 150.00, returnId: 'RET-009' },
+                        { orderId: 'ORD-703', amount: 1350.00, commission: 202.50, carrierCost: 17.00, status: 'completed' },
+                        { orderId: 'ORD-704', amount: 1100.00, commission: 165.00, carrierCost: 14.00, status: 'completed' }
+                    ]
                 }
             ],
             // Admin commission data
@@ -4418,6 +4606,57 @@
                     }
                 }
             }
+            
+            // For product_update requests, save edited values if they exist (from inline editing form)
+            if (request.type === 'product_update' || request.type === 'product_create') {
+                const productNameInput = document.getElementById('request-edit-product-name');
+                const productBrandInput = document.getElementById('request-edit-product-brand');
+                const productModelInput = document.getElementById('request-edit-product-model');
+                const productDescriptionInput = document.getElementById('request-edit-product-description');
+                const productKeywordsInput = document.getElementById('request-edit-product-keywords');
+                
+                if (productNameInput) {
+                    // Form is visible, save the values
+                    const productName = productNameInput.value?.trim();
+                    const productBrandId = productBrandInput?.value;
+                    const productModel = productModelInput?.value?.trim();
+                    const productDescription = productDescriptionInput?.value?.trim();
+                    const productKeywords = productKeywordsInput?.value?.trim();
+                    
+                    if (productName) {
+                        // Get brand name from brandId
+                        const selectedBrand = mockData.brands.find(b => b.id == productBrandId);
+                        const productBrand = selectedBrand ? selectedBrand.name : '';
+                        
+                        // Collect product attributes from form
+                        const attributeInputs = document.querySelectorAll('.request-attr-input[data-attr-id]');
+                        const attributes = {};
+                        attributeInputs.forEach(input => {
+                            const attrId = input.getAttribute('data-attr-id');
+                            const value = input.value.trim();
+                            if (attrId) {
+                                attributes[attrId] = {
+                                    value: value,
+                                    status: 'pending'
+                                };
+                            }
+                        });
+                        
+                        // Update request data
+                        if (!request.data) {
+                            request.data = {};
+                        }
+                        
+                        request.data.name = productName;
+                        request.data.brand = productBrand;
+                        request.data.brandId = productBrandId ? parseInt(productBrandId) : undefined;
+                        request.data.model = productModel || '';
+                        request.data.description = productDescription || '';
+                        request.data.keywords = productKeywords || '';
+                        request.data.attributes = attributes;
+                    }
+                }
+            }
 
             showModal(
                 'Talebi Tekrar Gönder',
@@ -4438,6 +4677,110 @@
                     handleRouteChange();
                 }
             );
+        }
+
+        function toggleRequestEdit(requestId) {
+            // Initialize edit mode tracking if not exists
+            if (!window.requestEditMode) {
+                window.requestEditMode = {};
+            }
+
+            // Toggle edit mode for this request
+            window.requestEditMode[requestId] = !window.requestEditMode[requestId];
+
+            // Refresh the current view
+            handleRouteChange();
+        }
+
+        function saveRequestEdit(requestId) {
+            const user = window.currentUser || {};
+            if (user.role !== 'supplier') {
+                showToast('Bu işlem sadece tedarikçiler tarafından yapılabilir.', 'error');
+                return;
+            }
+
+            const supplierId = user.supplierId;
+            if (!supplierId) {
+                showToast('Tedarikçi bilgisi bulunamadı.', 'error');
+                return;
+            }
+
+            const request = mockData.requests.find(r => r.id === requestId);
+            if (!request) {
+                showToast('Talep bulunamadı.', 'error');
+                return;
+            }
+
+            // Verify that the supplier owns this request
+            if (request.supplierId !== supplierId) {
+                showToast('Bu talebi düzenleme yetkiniz yok.', 'error');
+                return;
+            }
+
+            // Only allow editing if request is in toBeRevised status
+            if (request.status !== 'toBeRevised') {
+                showToast('Sadece revize edilecek talepler düzenlenebilir.', 'error');
+                return;
+            }
+
+            // Get form values
+            const productName = document.getElementById('request-edit-product-name')?.value?.trim();
+            const productBrandId = document.getElementById('request-edit-product-brand')?.value;
+            const productModel = document.getElementById('request-edit-product-model')?.value?.trim();
+            const productDescription = document.getElementById('request-edit-product-description')?.value?.trim();
+            const productKeywords = document.getElementById('request-edit-product-keywords')?.value?.trim();
+
+            // Validate required fields
+            if (!productName) {
+                showToast('Ürün adı gereklidir.', 'error');
+                return;
+            }
+
+            // Get brand name from brandId
+            const selectedBrand = mockData.brands.find(b => b.id == productBrandId);
+            const productBrand = selectedBrand ? selectedBrand.name : '';
+
+            // Collect product attributes from form
+            const attributeInputs = document.querySelectorAll('.request-attr-input[data-attr-id]');
+            const attributes = {};
+            attributeInputs.forEach(input => {
+                const attrId = input.getAttribute('data-attr-id');
+                const value = input.value.trim();
+                if (attrId) {
+                    attributes[attrId] = {
+                        value: value,
+                        status: 'pending'
+                    };
+                }
+            });
+
+            // Update request data
+            if (!request.data) {
+                request.data = {};
+            }
+
+            request.data.name = productName;
+            request.data.brand = productBrand;
+            request.data.brandId = productBrandId ? parseInt(productBrandId) : undefined;
+            request.data.model = productModel || '';
+            request.data.description = productDescription || '';
+            request.data.keywords = productKeywords || '';
+            request.data.attributes = attributes;
+
+            // Update submitted timestamp
+            request.submittedAt = new Date().toISOString();
+
+            // Exit edit mode after saving
+            if (window.requestEditMode) {
+                window.requestEditMode[requestId] = false;
+            }
+
+            showToast('Talep başarıyla güncellendi. Tekrar göndermek için "Tekrar Gönder" butonuna tıklayın.', 'success');
+
+            // Refresh the current view to show updated data
+            setTimeout(() => {
+                showRequestDetailPage(requestId);
+            }, 500);
         }
 
         function getRequestCounts(supplierId = null) {
@@ -4688,8 +5031,20 @@
                 return;
             }
 
-            const pageContent_element = document.getElementById('pageContent');
-            if (!pageContent_element) return;
+            // Wait for pageContent element to be available
+            let pageContent_element = document.getElementById('pageContent');
+            if (!pageContent_element) {
+                // If element doesn't exist, wait a bit and try again
+                setTimeout(() => {
+                    showRequestDetailPage(requestId);
+                }, 200);
+                return;
+            }
+            
+            // Ensure pageContent is visible and ready
+            if (pageContent_element.style.display === 'none') {
+                pageContent_element.style.display = '';
+            }
             
             let pageContent = `
                 <div class="space-y-6">
@@ -4911,59 +5266,231 @@
                 `;
             } else {
                 // Product create/update request
-                const tempContainer = document.createElement('div');
-                
-                // Build tempSubmission from request.data, ensuring all submitted fields are included
-                // For product_update requests, prioritize submitted values from request.data
-                const tempSubmission = {
-                    supplierId: request.supplierId,
-                    status: request.status,
-                    submittedAt: request.submittedAt,
-                    // Convert name string to object format expected by renderComparisonTab
-                    // Use submitted name if provided, otherwise null (don't show if not submitted)
-                    name: request.data.name !== undefined ? { value: request.data.name, status: 'pending' } : null,
-                    // Include all submitted attributes
-                    attributes: request.data.attributes || {},
-                    // Use submitted values if they exist in request.data, otherwise fall back to product values
-                    categoryId: request.data.categoryId !== undefined ? request.data.categoryId : product.categoryId,
-                    brandId: request.data.brandId !== undefined ? request.data.brandId : product.brandId,
-                    brand: request.data.brand !== undefined ? request.data.brand : product.brand,
-                    model: request.data.model !== undefined ? request.data.model : product.model,
-                    keywords: request.data.keywords !== undefined ? request.data.keywords : product.keywords,
-                    sku: request.data.sku !== undefined ? request.data.sku : product.sku,
-                    // For description, use submitted value (even if empty string) if it exists in request.data
-                    description: request.data.description !== undefined ? request.data.description : (product.description || ''),
-                    imageUrl: request.data.imageUrl !== undefined ? request.data.imageUrl : (product.imageUrl || ''),
-                    images: request.data.images !== undefined ? request.data.images : (product.images || []),
-                    listPrice: request.data.listPrice !== undefined ? request.data.listPrice : 0,
-                    requestType: request.type
-                };
-                
-                const originalSubmission = product.supplierSubmission;
-                // Temporarily set the submission to show submitted values
-                product.supplierSubmission = tempSubmission;
-                renderComparisonTab(tempContainer, product, window.currentUser?.role === 'supplier');
-                // Restore original submission
-                product.supplierSubmission = originalSubmission;
-                
-                pageContent += tempContainer.innerHTML;
-                
-                // Add edit button for toBeRevised product requests
+                // For suppliers viewing toBeRevised requests, show read-only view with edit button
                 if (request.status === 'toBeRevised' && window.currentUser?.role === 'supplier') {
+                    // Check if we're in edit mode (stored in a global variable)
+                    const isEditMode = window.requestEditMode && window.requestEditMode[request.id];
+
+                    if (isEditMode) {
+                        // Render editable form for suppliers to edit the request in place
+                        const requestData = request.data || {};
+                        const productNameValue = requestData.name !== undefined ? (typeof requestData.name === 'string' ? requestData.name : (requestData.name?.tr || requestData.name?.en || '')) : (typeof product.name === 'string' ? product.name : (product.name?.tr || ''));
+                        const productBrandValue = requestData.brand !== undefined ? requestData.brand : (product.brand || '');
+                        const productModelValue = requestData.model !== undefined ? requestData.model : (product.model || '');
+                        const productDescriptionValue = requestData.description !== undefined ? requestData.description : (product.description || '');
+                        const productKeywordsValue = requestData.keywords !== undefined ? requestData.keywords : (product.keywords || '');
+                        const productBrandIdValue = requestData.brandId !== undefined ? requestData.brandId : product.brandId;
+                    
+                    // Get attributes from request data
+                    const requestAttributes = requestData.attributes || {};
+                    const productAttributes = product.attributes || {};
+                    
+                    // Build attributes HTML
+                    let attributesHTML = '';
+                    const category = mockData.categories.find(c => c.id === product.categoryId);
+                    if (category && category.attributes) {
+                        category.attributes.forEach(attr => {
+                            const attrId = attr.id;
+                            const requestAttrValue = requestAttributes[attrId]?.value || '';
+                            const productAttrValue = productAttributes[attrId]?.value || '';
+                            const displayValue = requestAttrValue || productAttrValue;
+                            const isEditable = !attr.isRequired || attr.isEditable !== false;
+                            
+                            if (isEditable) {
+                                attributesHTML += `
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">${attr.name}</label>
+                                        <input type="text" 
+                                               class="request-attr-input w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                               data-attr-id="${attrId}"
+                                               value="${(typeof displayValue === 'string' ? displayValue : (displayValue || '')).replace(/"/g, '&quot;')}" 
+                                               placeholder="${attr.name} girin">
+                                    </div>
+                                `;
+                            } else {
+                                attributesHTML += `
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">${attr.name}</label>
+                                        <input type="text" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100" 
+                                               value="${(typeof displayValue === 'string' ? displayValue : (displayValue || '')).replace(/"/g, '&quot;')}" 
+                                               readonly>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    
                     pageContent += `
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-edit text-yellow-600"></i>
-                                    <p class="font-medium text-yellow-800">Bu talebi düzenlemek için ürün sayfasına gidin</p>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-info-circle text-blue-600"></i>
+                                <p class="text-sm font-medium text-blue-800">Bu talebi doğrudan burada düzenleyebilirsiniz. Değişiklikleriniz kaydedildikten sonra tekrar gönderebilirsiniz.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h3 class="text-lg font-semibold mb-4">Ürün Bilgileri</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Adı <span class="text-red-500">*</span></label>
+                                        <input type="text" 
+                                               id="request-edit-product-name" 
+                                               value="${(typeof productNameValue === 'string' ? productNameValue : (productNameValue || '')).replace(/"/g, '&quot;')}" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                               placeholder="Ürün adını girin">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Marka</label>
+                                        <select id="request-edit-product-brand" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Marka Seçin</option>
+                                            ${mockData.brands.map(b => `<option value="${b.id}" ${productBrandIdValue == b.id ? 'selected' : ''}>${b.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Model</label>
+                                        <input type="text" 
+                                               id="request-edit-product-model" 
+                                               value="${(typeof productModelValue === 'string' ? productModelValue : (productModelValue || '')).replace(/"/g, '&quot;')}" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                               placeholder="Model adını girin">
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Ürün Açıklaması</label>
+                                        <textarea id="request-edit-product-description" 
+                                                  rows="5" 
+                                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                                  placeholder="Ürün açıklaması">${(typeof productDescriptionValue === 'string' ? productDescriptionValue : (productDescriptionValue || '')).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Anahtar Kelimeler</label>
+                                        <input type="text" 
+                                               id="request-edit-product-keywords" 
+                                               value="${(typeof productKeywordsValue === 'string' ? productKeywordsValue : (productKeywordsValue || '')).replace(/"/g, '&quot;')}" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                               placeholder="virgülle ayırın">
+                                    </div>
                                 </div>
-                                <button onclick="navigateTo('#products/detail/${product.id}'); setTimeout(() => { handleRouteChange(); }, 50);" 
-                                        class="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
-                                    <i class="fas fa-edit mr-2"></i>Ürünü Düzenle
+                            </div>
+                            
+                            ${attributesHTML ? `
+                            <div class="bg-gray-50 p-6 rounded-lg">
+                                <h3 class="text-lg font-semibold mb-4">Ürün Özellikleri</h3>
+                                <div class="space-y-3">
+                                    ${attributesHTML}
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            <div class="flex justify-end space-x-3 pt-4 border-t">
+                                <button onclick="toggleRequestEdit(${request.id})"
+                                        class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium">
+                                    <i class="fas fa-times mr-2"></i>İptal
+                                </button>
+                                <button onclick="saveRequestEdit(${request.id})"
+                                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                                    <i class="fas fa-save mr-2"></i>Değişiklikleri Kaydet
                                 </button>
                             </div>
                         </div>
                     `;
+                    } else {
+                        // Show read-only comparison view with edit button for suppliers
+                        const tempContainer = document.createElement('div');
+
+                        // Build tempSubmission from request.data, ensuring all submitted fields are included
+                        // For product_update requests, prioritize submitted values from request.data
+                        const tempSubmission = {
+                            supplierId: request.supplierId,
+                            status: request.status,
+                            submittedAt: request.submittedAt,
+                            // Convert name string to object format expected by renderComparisonTab
+                            // Use submitted name if provided, otherwise null (don't show if not submitted)
+                            name: request.data.name !== undefined ? { value: request.data.name, status: 'pending' } : null,
+                            // Include all submitted attributes
+                            attributes: request.data.attributes || {},
+                            // Use submitted values if they exist in request.data, otherwise fall back to product values
+                            categoryId: request.data.categoryId !== undefined ? request.data.categoryId : product.categoryId,
+                            brandId: request.data.brandId !== undefined ? request.data.brandId : product.brandId,
+                            brand: request.data.brand !== undefined ? request.data.brand : product.brand,
+                            model: request.data.model !== undefined ? request.data.model : product.model,
+                            keywords: request.data.keywords !== undefined ? request.data.keywords : product.keywords,
+                            sku: request.data.sku !== undefined ? request.data.sku : product.sku,
+                            // For description, use submitted value (even if empty string) if it exists in request.data
+                            description: request.data.description !== undefined ? request.data.description : (product.description || ''),
+                            imageUrl: request.data.imageUrl !== undefined ? request.data.imageUrl : (product.imageUrl || ''),
+                            images: request.data.images !== undefined ? request.data.images : (product.images || []),
+                            listPrice: request.data.listPrice !== undefined ? request.data.listPrice : 0,
+                            requestType: request.type
+                        };
+
+                        const originalSubmission = product.supplierSubmission;
+                        // Temporarily set the submission to show submitted values
+                        product.supplierSubmission = tempSubmission;
+                        renderComparisonTab(tempContainer, product, window.currentUser?.role === 'supplier');
+                        // Restore original submission
+                        product.supplierSubmission = originalSubmission;
+
+                        pageContent += tempContainer.innerHTML;
+
+                        // Add edit button for suppliers
+                        pageContent += `
+                            <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
+                                <button onclick="toggleRequestEdit(${request.id})"
+                                        class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium">
+                                    <i class="fas fa-edit mr-2"></i>Düzenle
+                                </button>
+                                <button onclick="cancelSupplierRequest(${request.id})"
+                                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                    <i class="fas fa-times mr-2"></i>Talebi İptal Et
+                                </button>
+                                <button onclick="resubmitRequest(${request.id})"
+                                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                    <i class="fas fa-paper-plane mr-2"></i>Tekrar Gönder
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    // Show comparison view for admins or non-revised requests
+                    const tempContainer = document.createElement('div');
+                    
+                    // Build tempSubmission from request.data, ensuring all submitted fields are included
+                    // For product_update requests, prioritize submitted values from request.data
+                    const tempSubmission = {
+                        supplierId: request.supplierId,
+                        status: request.status,
+                        submittedAt: request.submittedAt,
+                        // Convert name string to object format expected by renderComparisonTab
+                        // Use submitted name if provided, otherwise null (don't show if not submitted)
+                        name: request.data.name !== undefined ? { value: request.data.name, status: 'pending' } : null,
+                        // Include all submitted attributes
+                        attributes: request.data.attributes || {},
+                        // Use submitted values if they exist in request.data, otherwise fall back to product values
+                        categoryId: request.data.categoryId !== undefined ? request.data.categoryId : product.categoryId,
+                        brandId: request.data.brandId !== undefined ? request.data.brandId : product.brandId,
+                        brand: request.data.brand !== undefined ? request.data.brand : product.brand,
+                        model: request.data.model !== undefined ? request.data.model : product.model,
+                        keywords: request.data.keywords !== undefined ? request.data.keywords : product.keywords,
+                        sku: request.data.sku !== undefined ? request.data.sku : product.sku,
+                        // For description, use submitted value (even if empty string) if it exists in request.data
+                        description: request.data.description !== undefined ? request.data.description : (product.description || ''),
+                        imageUrl: request.data.imageUrl !== undefined ? request.data.imageUrl : (product.imageUrl || ''),
+                        images: request.data.images !== undefined ? request.data.images : (product.images || []),
+                        listPrice: request.data.listPrice !== undefined ? request.data.listPrice : 0,
+                        requestType: request.type
+                    };
+                    
+                    const originalSubmission = product.supplierSubmission;
+                    // Temporarily set the submission to show submitted values
+                    product.supplierSubmission = tempSubmission;
+                    renderComparisonTab(tempContainer, product, window.currentUser?.role === 'supplier');
+                    // Restore original submission
+                    product.supplierSubmission = originalSubmission;
+                    
+                    pageContent += tempContainer.innerHTML;
                 }
             }
 
@@ -5161,18 +5688,22 @@
             
             // Explicitly ensure buttons are visible immediately and after modal is shown
             const ensureButtonsVisible = () => {
+                const modalFooter = document.getElementById('modal-footer');
                 const modalConfirm = document.getElementById('modal-confirm');
                 const modalCancel = document.getElementById('modal-cancel');
-                const modalFooter = document.getElementById('modal-footer');
                 
-                console.log('Ensuring buttons visible:', { modalConfirm: !!modalConfirm, modalCancel: !!modalCancel, modalFooter: !!modalFooter });
+                console.log('Ensuring buttons visible for revision modal:', { 
+                    modalFooter: !!modalFooter, 
+                    modalConfirm: !!modalConfirm, 
+                    modalCancel: !!modalCancel 
+                });
                 
                 if (modalFooter) {
                     modalFooter.classList.remove('hidden');
                     modalFooter.style.display = 'flex';
                     modalFooter.style.visibility = 'visible';
                     modalFooter.style.opacity = '1';
-                    console.log('Modal footer set to visible');
+                    console.log('Revision modal footer set to visible');
                 }
                 
                 if (modalConfirm) {
@@ -5182,12 +5713,12 @@
                     modalConfirm.style.opacity = '1';
                     modalConfirm.style.pointerEvents = 'auto';
                     modalConfirm.textContent = 'Revize İste';
-                    // Add yellow styling for revision action
-                    modalConfirm.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    // Remove any conflicting color classes and add yellow styling for revision action
+                    modalConfirm.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'bg-red-600', 'hover:bg-red-700');
                     modalConfirm.classList.add('bg-yellow-600', 'hover:bg-yellow-700');
-                    console.log('Modal confirm button set to visible with text:', modalConfirm.textContent);
+                    console.log('Revision modal confirm button set to visible with text:', modalConfirm.textContent);
                 } else {
-                    console.error('modal-confirm button not found!');
+                    console.error('modal-confirm button not found in revision modal!');
                 }
                 
                 if (modalCancel) {
@@ -5197,18 +5728,27 @@
                     modalCancel.style.opacity = '1';
                     modalCancel.style.pointerEvents = 'auto';
                     modalCancel.textContent = t('cancel') || 'İptal';
-                    console.log('Modal cancel button set to visible');
+                    console.log('Revision modal cancel button set to visible');
                 }
             };
             
-            // Ensure buttons are visible immediately
-            ensureButtonsVisible();
-            
-            // Also ensure after a short delay in case of timing issues
+            // Ensure buttons are visible - use requestAnimationFrame and multiple timeouts
+            // to ensure the modal is fully rendered before showing buttons
+            // The modal animation completes after ~10ms, so we check at various intervals
+            requestAnimationFrame(() => {
+                ensureButtonsVisible();
+            });
             setTimeout(ensureButtonsVisible, 10);
             setTimeout(ensureButtonsVisible, 50);
             setTimeout(ensureButtonsVisible, 100);
             setTimeout(ensureButtonsVisible, 200);
+            setTimeout(ensureButtonsVisible, 300);
+            // Also check after modal animation should be complete
+            setTimeout(() => {
+                ensureButtonsVisible();
+                // Double-check that button is still visible after a moment
+                setTimeout(ensureButtonsVisible, 50);
+            }, 350);
         }
 
         function applyRequestToProduct(request) {
@@ -7040,10 +7580,15 @@
                 // Make the supplier product detail table sortable
                 setTimeout(() => makeTableSortable('supplier-product-detail-table'), 100);
             },
-            finance: (activeTab = 'transactions') => {
+            finance: (activeTab) => {
                 pageTitle.textContent = t('finance');
                 const user = window.currentUser || {};
                 const isSupplier = user.role === 'supplier';
+                
+                // Set default tab based on user role
+                if (!activeTab) {
+                    activeTab = isSupplier ? 'completed' : 'transactions';
+                }
                 
                 // For admin users, show supplier revenue data
                 if (!isSupplier) {
@@ -7064,7 +7609,6 @@
                     
                     const tabsHTML = `
                         <a href="#finance/supplier-revenue" class="tab-button ${activeTab === 'supplier-revenue' ? 'active' : 'text-gray-500'} font-medium py-4">Tedarikçi Gelirleri</a>
-                        <a href="#finance/orders" class="tab-button ${activeTab === 'orders' ? 'active' : 'text-gray-500'} font-medium py-4">Siparişler</a>
                         <a href="#finance/completed" class="tab-button ${activeTab === 'completed' ? 'active' : 'text-gray-500'} font-medium py-4">Geçmiş Ödemeler</a>
                         <a href="#finance/pending" class="tab-button ${activeTab === 'pending' ? 'active' : 'text-gray-500'} font-medium py-4">Bekleyen Ödemeler</a>
                         <!-- <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Gider Tablosu</a> -->
@@ -7102,9 +7646,11 @@
                 let totalPayout, pendingAmount, lastPayment;
                 
                 if (isSupplier) {
-                    // Supplier view - use supplierPayouts data
-                    const completedPayouts = mockData.supplierPayouts.filter(p => p.status === 'completed');
-                    const pendingPayouts = mockData.supplierPayouts.filter(p => p.status === 'pending');
+                    // Supplier view - use supplierPayouts data filtered by supplier
+                    const allPayouts = mockData.supplierPayouts || [];
+                    const supplierPayouts = allPayouts.filter(p => !user.supplierId || p.supplierId === user.supplierId);
+                    const completedPayouts = supplierPayouts.filter(p => p.status === 'completed');
+                    const pendingPayouts = supplierPayouts.filter(p => p.status === 'pending');
                     totalPayout = completedPayouts.reduce((sum, p) => sum + p.amount, 0);
                     pendingAmount = pendingPayouts.reduce((sum, p) => sum + p.amount, 0);
                     lastPayment = completedPayouts[0] || { amount: 0, date: 'N/A' };
@@ -7116,7 +7662,6 @@
                 }
 
                 const tabsHTML = isSupplier ? `
-                    <a href="#finance/orders" class="tab-button ${activeTab === 'orders' ? 'active' : 'text-gray-500'} font-medium py-4">Siparişler</a>
                     <a href="#finance/completed" class="tab-button ${activeTab === 'completed' ? 'active' : 'text-gray-500'} font-medium py-4">Geçmiş Ödemeler</a>
                     <a href="#finance/pending" class="tab-button ${activeTab === 'pending' ? 'active' : 'text-gray-500'} font-medium py-4">Bekleyen Ödemeler</a>
                     <!-- <a href="#finance/revenue-trend" class="tab-button ${activeTab === 'revenue-trend' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a> -->
@@ -7141,6 +7686,16 @@
                 `;
                 renderFinanceSubTab(activeTab);
                 document.getElementById('downloadReportBtn').addEventListener('click', showReportModal);
+                
+                // Set up tab navigation for supplier finance
+                const tabs = document.querySelectorAll('#finance-tabs .tab-button');
+                tabs.forEach(tab => tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = e.currentTarget.getAttribute('href');
+                    const parts = href.split('/');
+                    const sub = parts[1]; // Get the second part (index 1) - finance/completed -> completed
+                    navigateTo(`#finance/${sub}`);
+                }));
             },
             commissionManagement: () => {
                 pageTitle.textContent = t('commission_management');
@@ -7541,7 +8096,15 @@
                 });
             },
             returns: (activeTab = 'all') => {
-                pageTitle.textContent = t('returns');
+                pageTitle.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="return-badge">
+                            <i class="fas fa-undo return-icon"></i>
+                            <span>İADE</span>
+                        </span>
+                        <span>${t('returns')}</span>
+                    </div>
+                `;
                 const user = window.currentUser || {};
                 const isSupplier = user.role === 'supplier';
                 
@@ -7588,12 +8151,21 @@
                     <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6" id="returns-page-info">
                         <div class="flex">
                             <div class="flex-shrink-0">
-                                <i class="fas fa-undo text-red-400"></i>
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-undo text-red-600"></i>
+                                </div>
                             </div>
                             <div class="ml-3 flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="return-badge">
+                                        <i class="fas fa-undo return-icon"></i>
+                                        <span>İADE İŞLEMLERİ</span>
+                                    </span>
+                                </div>
                                 <h3 class="text-sm font-medium text-red-800">İade Yönetimi</h3>
                                 <div class="mt-2 text-sm text-red-700">
                                     <p>Bu sayfada müşteri iadelerini yönetebilirsiniz. İade taleplerini onaylayabilir, işleyebilir ve tamamlanan iadeleri takip edebilirsiniz.</p>
+                                    <p class="mt-1 font-semibold">⚠️ Bu sayfa <strong>İADE</strong> işlemleri içindir. Sipariş işlemleri için "Siparişler" sayfasını kullanın.</p>
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
@@ -7722,12 +8294,20 @@
                 const statusInfo = getReturnStatusInfo(returnItem.status);
                 const reasonInfo = getReturnReasonInfo(returnItem.reason);
                 
-                pageTitle.textContent = `${t('return_details')} - ${returnItem.id}`;
+                pageTitle.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="return-badge">
+                            <i class="fas fa-undo return-icon"></i>
+                            <span>İADE</span>
+                        </span>
+                        <span>${t('return_details')} - ${returnItem.id}</span>
+                    </div>
+                `;
                 
                 const itemsHTML = returnItem.items.map(item => `
-                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
-                        <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-box text-gray-500"></i>
+                    <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg border-l-2 border-red-300">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-box text-red-500"></i>
                         </div>
                         <div class="flex-1">
                             <div class="font-medium text-gray-900">${item.name}</div>
@@ -12448,7 +13028,7 @@
                 const completedRows = paginatedPayments.map(p => {
                     const breakdown = p.breakdown || {};
                     const supplierInfo = getPaymentSupplier(p);
-                    return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                    return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                         <td class="p-3 text-sm text-gray-500">${p.id}</td>
                         <td class="p-3 text-sm font-medium">${supplierInfo.name}</td>
                         <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
@@ -12466,12 +13046,11 @@
                                 <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                             </div>
                         </td>
-                        <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tamamlandı</span></td>
                     </tr>`;
                 }).join('');
                 
                 document.getElementById('admin-completed-payment-table-body').innerHTML = completedRows || 
-                    '<tr><td colspan="8" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
+                    '<tr><td colspan="7" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
                     
                 renderPagination('admin-completed-payment-pagination');
             }
@@ -12518,7 +13097,7 @@
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TEDARİKÇİ</th>
                             <th class="p-3 text-sm font-semibold">TARİH</th><th class="p-3 text-sm font-semibold">DÖNEM</th>
                             <th class="p-3 text-sm font-semibold">SİPARİŞ</th><th class="p-3 text-sm font-semibold">Tutar & Gelir</th>
-                            <th class="p-3 text-sm font-semibold">Kesintiler</th><th class="p-3 text-sm font-semibold">Durum</th>
+                            <th class="p-3 text-sm font-semibold">Kesintiler</th>
                         </tr></thead>
                         <tbody id="admin-completed-payment-table-body"></tbody>
                     </table></div>
@@ -12662,7 +13241,7 @@
                 const pendingRows = paginatedPayments.map(p => {
                     const breakdown = p.breakdown || {};
                     const supplierInfo = getPaymentSupplier(p);
-                    return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                    return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                         <td class="p-3 text-sm text-gray-500">${p.id}</td>
                         <td class="p-3 text-sm font-medium">${supplierInfo.name}</td>
                         <td class="p-3 text-sm">${p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi'}</td>
@@ -12680,12 +13259,11 @@
                                 <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                             </div>
                         </td>
-                        <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Beklemede</span></td>
                     </tr>`;
                 }).join('');
                 
                 document.getElementById('admin-pending-payment-table-body').innerHTML = pendingRows || 
-                    '<tr><td colspan="8" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
+                    '<tr><td colspan="7" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
                     
                 renderPagination('admin-pending-payment-pagination');
             }
@@ -12730,9 +13308,9 @@
                     <div class="overflow-x-auto"><table class="w-full text-left">
                         <thead class="table-header"><tr>
                             <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TEDARİKÇİ</th>
-                            <th class="p-3 text-sm font-semibold">BEKLENEN TARİH</th><th class="p-3 text-sm font-semibold">DÖNEM</th>
+                            <th class="p-3 text-sm font-semibold">TARİH</th><th class="p-3 text-sm font-semibold">DÖNEM</th>
                             <th class="p-3 text-sm font-semibold">SİPARİŞ</th><th class="p-3 text-sm font-semibold">Tutar & Gelir</th>
-                            <th class="p-3 text-sm font-semibold">Kesintiler</th><th class="p-3 text-sm font-semibold">Durum</th>
+                            <th class="p-3 text-sm font-semibold">Kesintiler</th>
                         </tr></thead>
                         <tbody id="admin-pending-payment-table-body"></tbody>
                     </table></div>
@@ -12849,13 +13427,11 @@
             
             const supplierRows = paginatedGroups.map(group => {
                 const avgCommissionRate = group.totalSales > 0 ? (group.totalCommission / group.totalSales * 100).toFixed(1) : 0;
-                const avgOrderValue = group.totalOrders > 0 ? (group.totalSales / group.totalOrders).toFixed(2) : 0;
                 
                 return `
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${group.supplierName}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${group.totalOrders}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${avgOrderValue} ₺</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${avgCommissionRate}%</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${group.totalSales.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${group.totalCommission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
@@ -12864,7 +13440,7 @@
             }).join('');
                 
                 document.getElementById('supplier-revenue-table-body').innerHTML = supplierRows || 
-                    `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">Filtreleme kriterlerine uygun veri bulunamadı.</td></tr>`;
+                    `<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Filtreleme kriterlerine uygun veri bulunamadı.</td></tr>`;
                     
                 renderPagination('supplier-revenue-pagination');
             }
@@ -12908,7 +13484,6 @@
                             <tr>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tedarikçi</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam Sipariş</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ortalama Sipariş Değeri</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Komisyon Oranı</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Toplam Satış</th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kazanılan Komisyon</th>
@@ -14494,6 +15069,330 @@
             }
         };
 
+        renderers['payoutDetail'] = (payoutId) => {
+            // First check in supplierPayouts
+            let payment = mockData.supplierPayouts.find(p => p.id === payoutId);
+            let isSupplierPayout = true;
+            
+            // If not found, check in paymentHistory
+            if (!payment) {
+                payment = mockData.paymentHistory.find(p => p.id === payoutId);
+                isSupplierPayout = false;
+            }
+            
+            if (!payment) {
+                const user = window.currentUser || {};
+                if (user.role === 'supplier') {
+                    navigateTo('#finance');
+                } else {
+                    navigateTo('#finance');
+                }
+                return;
+            }
+            
+            const user = window.currentUser || {};
+            const isSupplier = user.role === 'supplier';
+            
+            // Access control: Suppliers can only see their own payouts
+            if (isSupplier && isSupplierPayout) {
+                const paymentSupplierId = getPaymentSupplierId(payment);
+                if (paymentSupplierId != null && String(paymentSupplierId) !== String(user.supplierId)) {
+                    showModal('Erişim Yok', '<p>Bu hakedişi görüntüleme yetkiniz bulunmamaktadır.</p>', 'Kapat', closeModal);
+                    navigateTo('#finance');
+                    return;
+                }
+            }
+            
+            const backUrl = '#finance';
+            const backText = 'Finans Sayfasına Geri Dön';
+            
+            const statusClass = payment.status === 'completed' ? 'text-green-600' : payment.status === 'pending' ? 'text-yellow-600' : 'text-gray-600';
+            const statusText = payment.status === 'completed' ? 'Tamamlandı' : payment.status === 'pending' ? 'Beklemede' : payment.status;
+            const statusBadgeClass = payment.status === 'completed' ? 'bg-green-100 text-green-800' : payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800';
+            
+            // Build order details table if available
+            let orderDetailsTable = '';
+            if (isSupplierPayout && payment.orderDetails && payment.orderDetails.length > 0) {
+                const transactionRows = [];
+                
+                payment.orderDetails.forEach(orderDetail => {
+                    const orderRevenue = orderDetail.amount || 0;
+                    const commission = orderDetail.commission || 0;
+                    const commissionRate = orderRevenue > 0 ? ((commission / orderRevenue) * 100).toFixed(2) : 0;
+                    const returnAmount = orderDetail.returnAmount || 0;
+                    
+                    // Find the actual order to get more details if available
+                    const actualOrder = mockData.orders?.find(o => o.id === orderDetail.orderId);
+                    const orderDate = actualOrder?.date ? new Date(actualOrder.date).toLocaleDateString('tr-TR') : '-';
+                    
+                    // Find return information if there's a return
+                    let returnInfo = null;
+                    let returnId = null;
+                    if (returnAmount > 0) {
+                        // Try to find return by orderId or returnId if available
+                        returnInfo = mockData.returns?.find(r => r.orderId === orderDetail.orderId || r.id === orderDetail.returnId);
+                        returnId = returnInfo?.id || orderDetail.returnId || null;
+                    }
+                    
+                    // Create row for order (if orderRevenue > 0)
+                    if (orderRevenue > 0) {
+                        const statusText = orderDetail.status === 'completed' ? 'Tamamlandı' :
+                                          orderDetail.status === 'returned' ? 'İade Edildi' :
+                                          orderDetail.status === 'partial_return' ? 'Kısmi İade' :
+                                          orderDetail.status || 'Bilinmiyor';
+                        const statusClass = orderDetail.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                           orderDetail.status === 'returned' ? 'bg-red-100 text-red-800' :
+                                           orderDetail.status === 'partial_return' ? 'bg-yellow-100 text-yellow-800' :
+                                           'bg-gray-100 text-gray-800';
+                        
+                        transactionRows.push(`
+                            <tr class="hover:bg-green-50">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <a href="#orderDetail/${orderDetail.orderId}" onclick="event.stopPropagation(); navigateTo('#orderDetail/${orderDetail.orderId}'); return false;" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">${orderDetail.orderId}</a>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-arrow-down text-green-600 mr-2"></i>
+                                        <span class="text-sm font-medium text-green-700">Sipariş Geliri</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">-</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                    ${orderDate !== '-' ? orderDate : '-'}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                    <span class="font-semibold text-green-600">+${orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                    <div class="text-red-600 font-semibold">-${commission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    <div class="text-xs text-red-500">(%${commissionRate})</div>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                    
+                    // Create separate row for return (if returnAmount > 0)
+                    if (returnAmount > 0) {
+                        const returnStatusText = returnInfo?.status === 'completed' ? 'Tamamlandı' : 
+                                                returnInfo?.status === 'pending' || returnInfo?.status === 'pending_approval' ? 'Beklemede' : 
+                                                returnInfo?.status || 'İade';
+                        const returnStatusClass = returnInfo?.status === 'completed' ? 'bg-green-100 text-green-800' : 
+                                                 returnInfo?.status === 'pending' || returnInfo?.status === 'pending_approval' ? 'bg-yellow-100 text-yellow-800' : 
+                                                 'bg-red-100 text-red-800';
+                        
+                        // Calculate commission refund proportionally based on return amount
+                        const commissionRefund = orderRevenue > 0 ? (returnAmount / orderRevenue) * commission : 0;
+                        const commissionRefundRate = returnAmount > 0 ? ((commissionRefund / returnAmount) * 100).toFixed(2) : 0;
+                        
+                        transactionRows.push(`
+                            <tr class="hover:bg-red-50">
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <a href="#orderDetail/${orderDetail.orderId}" onclick="event.stopPropagation(); navigateTo('#orderDetail/${orderDetail.orderId}'); return false;" class="text-blue-600 hover:text-blue-800 hover:underline font-medium">${orderDetail.orderId}</a>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-undo text-red-600 mr-2"></i>
+                                        <span class="text-sm font-medium text-red-700">İade</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                    ${returnId ? `
+                                        <a href="#returnDetail/${returnId}" onclick="event.stopPropagation(); navigateTo('#returnDetail/${returnId}'); return false;" class="text-blue-600 hover:text-blue-800 hover:underline">${returnId}</a>
+                                    ` : '-'}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                    ${returnInfo?.date ? new Date(returnInfo.date).toLocaleDateString('tr-TR') : orderDate !== '-' ? orderDate : '-'}
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                    <span class="font-semibold text-red-600">-${returnAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                </td>
+                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                    ${commissionRefund > 0 ? `
+                                        <div class="text-green-600 font-semibold">+${commissionRefund.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        <div class="text-xs text-green-500">(%${commissionRefundRate})</div>
+                                    ` : '<span class="text-gray-500">-</span>'}
+                                </td>
+                            </tr>
+                        `);
+                    }
+                });
+                
+                // Transaction Summary (placed above transaction list)
+                const transactionSummary = `
+                    <!-- Transaction Summary -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h4 class="font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+                            Özet
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                            <!-- Total Orders -->
+                            <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                                <div class="text-xs font-medium text-blue-600 uppercase tracking-wider">Toplam Siparişler</div>
+                                <div class="text-2xl font-bold text-blue-900 mt-1">${payment.orderDetails.filter(od => od.amount > 0).length}</div>
+                            </div>
+                            
+                            <!-- Total Returns -->
+                            <div class="bg-red-50 rounded-lg p-4 border border-red-200">
+                                <div class="text-xs font-medium text-red-600 uppercase tracking-wider">Toplam İadeler</div>
+                                <div class="text-2xl font-bold text-red-900 mt-1">${payment.orderDetails.filter(od => od.returnAmount > 0).length}</div>
+                            </div>
+                            
+                            <!-- Sum of Orders -->
+                            <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                                <div class="text-xs font-medium text-green-600 uppercase tracking-wider">Sipariş Toplamı</div>
+                                <div class="text-2xl font-bold text-green-900 mt-1">+${payment.orderDetails.reduce((sum, od) => sum + (od.amount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                            </div>
+                            
+                            <!-- Sum of Returns -->
+                            <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                                <div class="text-xs font-medium text-orange-600 uppercase tracking-wider">İade Toplamı</div>
+                                <div class="text-2xl font-bold text-orange-900 mt-1">-${payment.orderDetails.reduce((sum, od) => sum + (od.returnAmount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                            </div>
+                            
+                            <!-- Sum of Commission -->
+                            <div class="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                                <div class="text-xs font-medium text-purple-600 uppercase tracking-wider">Komisyon Toplamı</div>
+                                <div class="text-2xl font-bold text-purple-900 mt-1">-${payment.orderDetails.reduce((sum, od) => sum + (od.commission || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                            </div>
+                            
+                            <!-- Net Amount -->
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <div class="text-xs font-medium text-gray-600 uppercase tracking-wider">Net Tutar</div>
+                                <div class="text-2xl font-bold text-gray-900 mt-1">${(() => {
+                                    const orderRevenue = payment.orderDetails.reduce((sum, od) => sum + (od.amount || 0), 0);
+                                    const returns = payment.orderDetails.reduce((sum, od) => sum + (od.returnAmount || 0), 0);
+                                    const commission = payment.orderDetails.reduce((sum, od) => sum + (od.commission || 0), 0);
+                                    const commissionRefunds = payment.orderDetails.reduce((sum, od) => {
+                                        const orderRevenue = od.amount || 0;
+                                        const commission = od.commission || 0;
+                                        const returnAmount = od.returnAmount || 0;
+                                        if (returnAmount > 0 && orderRevenue > 0) {
+                                            return sum + ((returnAmount / orderRevenue) * commission);
+                                        }
+                                        return sum;
+                                    }, 0);
+                                    const netAmount = orderRevenue - returns - commission + commissionRefunds;
+                                    return netAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                                })()}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Store transaction data for filtering
+                window.payoutTransactionState = {
+                    paymentId: payment.id,
+                    allTransactions: transactionRows,
+                    filterType: 'all'
+                };
+                
+                orderDetailsTable = `
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-semibold text-gray-800 flex items-center">
+                                <i class="fas fa-list-ul text-blue-600 mr-2"></i>
+                                İşlem Listesi
+                            </h4>
+                            <button onclick="exportTransactionList('${payment.id}')" class="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md flex items-center">
+                                <i class="fas fa-download mr-2"></i>
+                                Excel'e Aktar
+                            </button>
+                        </div>
+                        
+                        <!-- Filter Section -->
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <div>
+                                    <label for="transaction-search-${payment.id}" class="block text-xs font-medium text-gray-700 mb-1">Sipariş ID Ara</label>
+                                    <input type="text" id="transaction-search-${payment.id}" placeholder="Sipariş ID girin..." class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" onkeyup="filterPayoutTransactions('${payment.id}')">
+                                </div>
+                                <div>
+                                    <label for="transaction-type-${payment.id}" class="block text-xs font-medium text-gray-700 mb-1">İşlem Türü</label>
+                                    <select id="transaction-type-${payment.id}" class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" onchange="filterPayoutTransactions('${payment.id}')">
+                                        <option value="all">Tümü</option>
+                                        <option value="order">Sipariş Geliri</option>
+                                        <option value="return">İade</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-end">
+                                    <button onclick="clearPayoutTransactionFilters('${payment.id}')" class="w-full px-3 py-2 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
+                                        <i class="fas fa-times mr-1"></i>Temizle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş ID</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem Türü</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İade No</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Komisyon</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200" id="payout-transaction-tbody-${payment.id}">
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div id="payout-transaction-pagination-${payment.id}" class="mt-4"></div>
+                    </div>
+                `;
+                
+                // Initialize filtered transactions and render first page
+                window.payoutTransactionState.filteredTransactions = [...window.payoutTransactionState.allTransactions];
+                
+                // Set up render function for pagination
+                const currentPaymentId = payment.id;
+                window.paginationState.renderFunction = () => {
+                    renderPayoutTransactionPage(currentPaymentId);
+                };
+                
+                // Add event listeners for the transaction table after a brief delay to ensure DOM is ready
+                setTimeout(() => {
+                    renderPayoutTransactionPage(currentPaymentId);
+                }, 100);
+                
+                orderDetailsTable = transactionSummary + orderDetailsTable;
+            }
+            
+            pageTitle.textContent = `Hakediş Detayı - ${payment.id}`;
+            
+            pageContent.innerHTML = `
+                <div class="space-y-6">
+                    <!-- Back Button -->
+                    <div class="mb-6">
+                        <a href="${backUrl}" onclick="event.preventDefault(); navigateTo('${backUrl}'); return false;" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-arrow-left mr-2"></i>
+                            ${backText}
+                        </a>
+                    </div>
+                    
+                    <!-- Payout Header -->
+                    <div class="bg-white rounded-lg shadow-sm border">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h2 class="text-2xl font-bold text-gray-900">Hakediş ${payment.id}</h2>
+                                    <p class="text-sm text-gray-500 mt-1">${payment.period || 'Dönem bilgisi yok'}${payment.date ? ` • ${payment.status === 'pending' ? 'Oluşturma' : 'Ödeme'} Tarihi: ${new Date(payment.date).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}` : ''}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${isSupplierPayout ? `
+                        ${orderDetailsTable}
+                    ` : ''}
+                </div>
+            `;
+        };
+
         function showShipmentStatusModal(orderId) {
             const order = mockData.orders.find(o => o.id === orderId);
             if (!order || !order.shipping?.tracking) {
@@ -15046,13 +15945,6 @@
                             return true;
                         });
                         
-                        console.log('Supplier completed payments filter:', {
-                            totalPayments: (mockData.supplierPayouts || []).length,
-                            filteredCount: filteredSupplierCompletedPayments.length,
-                            userSupplierId: user.supplierId,
-                            isSupplier: isSupplier
-                        });
-                        
                         // Apply date range filter
                         if (dateRangeFilter) {
                             filteredSupplierCompletedPayments = filteredSupplierCompletedPayments.filter(p => {
@@ -15088,11 +15980,11 @@
                         
                         // Paginate the filtered payments
                         paginateData(filteredSupplierCompletedPayments, window.paginationState.currentPage);
-                        const paginatedPayments = window.paginationState.currentPageData || [];
+                        const paginatedPayments = window.paginationState.currentData || [];
                         
                         const completedRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
                             const breakdown = p.breakdown || {};
-                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                                 <td class="p-3 text-sm text-gray-500">${p.id}</td>
                                 <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
                                 <td class="p-3 text-sm">${p.period}</td>
@@ -15109,13 +16001,12 @@
                                         <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                                     </div>
                                 </td>
-                                <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Tamamlandı</span></td>
                             </tr>`;
                         }).join('') : '';
                         const tableBodyEl = document.getElementById('completed-payment-table-body');
                         if (tableBodyEl) {
                             tableBodyEl.innerHTML = completedRows || 
-                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
+                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
                         } else {
                             console.error('completed-payment-table-body element not found when trying to render');
                         }
@@ -15154,7 +16045,6 @@
                                     <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                                     <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
                                     <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
-                                    <th class="p-3 text-sm font-semibold">Durum</th>
                                 </tr></thead>
                                 <tbody id="completed-payment-table-body"></tbody>
                             </table></div>
@@ -15254,11 +16144,11 @@
                         
                         // Paginate the filtered payments
                         paginateData(filteredSupplierPendingPayments, window.paginationState.currentPage);
-                        const paginatedPayments = window.paginationState.currentPageData || [];
+                        const paginatedPayments = window.paginationState.currentData || [];
                         
                         const pendingRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
                         const breakdown = p.breakdown || {};
-                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                             <td class="p-3 text-sm text-gray-500">${p.id}</td>
                             <td class="p-3 text-sm">${p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi'}</td>
                             <td class="p-3 text-sm">${p.period}</td>
@@ -15275,13 +16165,12 @@
                                     <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                                 </div>
                             </td>
-                            <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Beklemede</span></td>
                         </tr>`;
                         }).join('') : '';
                         const tableBodyEl = document.getElementById('pending-payment-table-body');
                         if (tableBodyEl) {
                             tableBodyEl.innerHTML = pendingRows || 
-                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
+                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
                         } else {
                             console.error('pending-payment-table-body element not found when trying to render');
                         }
@@ -15317,10 +16206,9 @@
                             <!-- Payments Table -->
                             <div class="overflow-x-auto"><table class="w-full text-left">
                                 <thead class="table-header"><tr>
-                                    <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">BEKLENEN TARİH</th>
+                                    <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                                     <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
                                     <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
-                                    <th class="p-3 text-sm font-semibold">Durum</th>
                                 </tr></thead>
                                 <tbody id="pending-payment-table-body"></tbody>
                             </table></div>
@@ -15358,13 +16246,13 @@
                     const paymentRows = visiblePayments.map(p => {
                         const statusInfo = { completed: { text: { tr: 'Tamamlandı', en: 'Completed' }, class: 'bg-green-100 text-green-800' } };
                         const currentStatus = statusInfo[p.status];
-                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="showPaymentDetailModal('${p.id}')">
+                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                             <td class="p-3 text-sm text-gray-500">${p.id}</td>
                             <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
                             <td class="p-3 text-sm font-medium">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</td>
                             <td class="p-3 text-sm">${p.bank}</td>
                             <td class="p-3"><span class="px-2 py-1 text-xs font-semibold rounded-full ${currentStatus.class}">${t(currentStatus.text)}</span></td>
-                            <td class="p-3 text-right"><button onclick="event.stopPropagation(); showPaymentDetailModal('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
+                            <td class="p-3 text-right"><button onclick="event.stopPropagation(); navigateTo('#payoutDetail/${p.id}')" class="p-2 text-gray-400 hover:text-blue-600"><i class="fas fa-eye"></i></button></td>
                         </tr>`;
                     }).join('');
                      container.innerHTML += `<div class="overflow-x-auto"><table class="w-full text-left">
@@ -15473,267 +16361,31 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div class="space-y-3">
-                            <h4 class="font-semibold text-gray-800">Ödeme Bilgileri</h4>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Tutar:</span>
-                                <span class="font-bold text-lg text-green-600">${payment.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                            </div>
-                            ${isSupplierPayout ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Komisyon:</span>
-                                    <span class="text-red-600">-${payment.commission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Net Tutar:</span>
-                                    <span class="font-medium">${payment.netAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                </div>
-                            ` : ''}
-                            ${payment.date ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">${payment.status === 'pending' ? 'Oluşturma' : 'Ödeme'} Tarihi:</span>
-                                    <span>${new Date(payment.date).toLocaleDateString('tr-TR')}</span>
-                                </div>
-                            ` : ''}
-                            ${payment.expectedDate ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Beklenen Tarih:</span>
-                                    <span class="font-medium text-blue-600">${new Date(payment.expectedDate).toLocaleDateString('tr-TR')}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <h4 class="font-semibold text-gray-800">Banka Bilgileri</h4>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Banka:</span>
-                                <span>${payment.bankName || payment.bank}</span>
-                            </div>
-                            ${payment.iban ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">IBAN:</span>
-                                    <span class="font-mono text-xs">${payment.iban}</span>
-                                </div>
-                            ` : ''}
-                            ${payment.paymentMethod ? `
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Ödeme Yöntemi:</span>
-                                    <span>${payment.paymentMethod}</span>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                    
-                    ${isSupplierPayout ? `
-                        <div class="bg-blue-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-3">Dönem Bilgileri</h4>
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Dönem:</span>
-                                    <span class="font-medium">${payment.period}</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Sipariş Sayısı:</span>
-                                    <span class="font-medium">${payment.orders}</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        ${payment.breakdown ? `
-                            <div class="bg-green-50 p-4 rounded-lg">
-                                <h4 class="font-semibold text-gray-800 mb-3">Gelir Dağılımı</h4>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Toplam Sipariş Geliri:</span>
-                                        <span class="font-medium text-green-600">+${payment.breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Komisyon Maliyetleri:</span>
-                                        <span class="text-red-600">-${payment.breakdown.commissionCosts.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">İade Kesintileri:</span>
-                                        <span class="text-red-600">-${payment.breakdown.returnDeductions.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                    </div>
-                                    ${payment.breakdown.otherDeductions > 0 ? `
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600">Diğer Kesintiler:</span>
-                                            <span class="text-red-600">-${payment.breakdown.otherDeductions.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            ${isSupplierPayout && payment.orderDetails && payment.orderDetails.length > 0 ? `
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4 mt-4">
+                                        <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                            <i class="fas fa-list-ul text-blue-600 mr-2"></i>
+                                            İşlem Listesi
+                                        </h4>
+                                        <div class="overflow-x-auto">
+                                            <table class="min-w-full divide-y divide-gray-200">
+                                                <thead class="bg-gray-50">
+                                                    <tr>
+                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş ID</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem Türü</th>
+                                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
+                                                        <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="bg-white divide-y divide-gray-200" id="modal-transaction-tbody-${payment.id}">
+                                                </tbody>
+                                            </table>
                                         </div>
-                                    ` : ''}
-                                    <hr class="my-2">
-                                    <div class="flex justify-between font-semibold">
-                                        <span class="text-gray-800">Net Ödeme Tutarı:</span>
-                                        <span class="text-lg text-green-600">${payment.breakdown.netAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                                        <div id="modal-transaction-pagination-${payment.id}" class="mt-4"></div>
                                     </div>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                        ${isSupplierPayout && payment.orderDetails && payment.orderDetails.length > 0 ? `
-                            <div class="bg-white border border-gray-200 rounded-lg p-4 mt-4">
-                                <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
-                                    <i class="fas fa-list-ul text-blue-600 mr-2"></i>
-                                    İşlem Listesi
-                                </h4>
-                                <div class="overflow-x-auto">
-                                    <table class="min-w-full divide-y divide-gray-200">
-                                        <thead class="bg-gray-50">
-                                            <tr>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş ID</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem Türü</th>
-                                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
-                                                <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Tutar</th>
-                                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="bg-white divide-y divide-gray-200">
-                                            ${(() => {
-                                                // Build separate rows for revenue and costs
-                                                const transactionRows = [];
-                                                
-                                                payment.orderDetails.forEach(orderDetail => {
-                                                    const orderRevenue = orderDetail.amount || 0;
-                                                    const commission = orderDetail.commission || 0;
-                                                    const returnAmount = orderDetail.returnAmount || 0;
-                                                    
-                                                    // Find the actual order to get more details if available
-                                                    const actualOrder = mockData.orders?.find(o => o.id === orderDetail.orderId);
-                                                    const orderDate = actualOrder?.date ? new Date(actualOrder.date).toLocaleDateString('tr-TR') : '-';
-                                                    
-                                                    // Revenue row (positive)
-                                                    if (orderRevenue > 0) {
-                                                        transactionRows.push(`
-                                                            <tr class="hover:bg-green-50">
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-arrow-down text-green-600 mr-2"></i>
-                                                                        <span class="text-sm font-medium text-green-700">Sipariş Geliri</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                                                                    ${orderDate !== '-' ? orderDate : '-'}
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
-                                                                    <span class="font-semibold text-green-600">+${orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
-                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                                        ${orderDetail.status === 'completed' ? 'Tamamlandı' :
-                                                                          orderDetail.status === 'returned' ? 'İade Edildi' :
-                                                                          orderDetail.status === 'partial_return' ? 'Kısmi İade' :
-                                                                          orderDetail.status || 'Bilinmiyor'}
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                        `);
-                                                    }
-                                                    
-                                                    // Commission cost row (negative)
-                                                    if (commission > 0) {
-                                                        transactionRows.push(`
-                                                            <tr class="hover:bg-red-50">
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-arrow-up text-red-600 mr-2"></i>
-                                                                        <span class="text-sm font-medium text-red-700">Komisyon</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                                                                    ${orderDate !== '-' ? orderDate : '-'}
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
-                                                                    <span class="font-semibold text-red-600">-${commission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
-                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Kesinti</span>
-                                                                </td>
-                                                            </tr>
-                                                        `);
-                                                    }
-                                                    
-                                                    // Return cost row (negative)
-                                                    if (returnAmount > 0) {
-                                                        transactionRows.push(`
-                                                            <tr class="hover:bg-red-50">
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap">
-                                                                    <div class="flex items-center">
-                                                                        <i class="fas fa-undo text-red-600 mr-2"></i>
-                                                                        <span class="text-sm font-medium text-red-700">İade</span>
-                                                                    </div>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
-                                                                    ${orderDate !== '-' ? orderDate : '-'}
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
-                                                                    <span class="font-semibold text-red-600">-${returnAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
-                                                                </td>
-                                                                <td class="px-4 py-3 whitespace-nowrap text-center">
-                                                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">İade</span>
-                                                                </td>
-                                                            </tr>
-                                                        `);
-                                                    }
-                                                });
-                                                
-                                                return transactionRows.join('');
-                                            })()}
-                                        </tbody>
-                                        <tfoot class="bg-gray-50">
-                                            <tr>
-                                                <td class="px-4 py-3 text-sm font-semibold text-gray-900" colspan="3">Toplam</td>
-                                                <td class="px-4 py-3 text-sm font-semibold text-right">
-                                                    <div class="space-y-1">
-                                                        <div class="text-green-600">
-                                                            Gelir: +${payment.orderDetails.reduce((sum, od) => sum + (od.amount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                                                        </div>
-                                                        <div class="text-red-600">
-                                                            Kesintiler: -${payment.orderDetails.reduce((sum, od) => sum + (od.commission || 0) + (od.returnAmount || 0), 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                                                        </div>
-                                                        <div class="text-gray-900 border-t pt-1 mt-1">
-                                                            Net: ${payment.orderDetails.reduce((sum, od) => {
-                                                                const revenue = od.amount || 0;
-                                                                const commission = od.commission || 0;
-                                                                const returnAmt = od.returnAmount || 0;
-                                                                return sum + revenue - commission - returnAmt;
-                                                            }, 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-3"></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </div>
-                        ` : ''}
-                        
-                    ` : ''}
+                            ` : ''}
                     
-                    ${payment.description ? `
-                        <div class="border-t pt-4">
-                            <h4 class="font-semibold text-gray-800 mb-2">Açıklama</h4>
-                            <p class="text-sm text-gray-600">${payment.description}</p>
-                        </div>
-                    ` : ''}
-                    
-                    ${payment.processedBy || payment.approvalStatus ? `
-                        <div class="bg-gray-50 p-3 rounded-lg text-xs text-gray-500">
-                            ${payment.processedBy ? `<div>İşleme Alan: ${payment.processedBy}</div>` : ''}
-                            ${payment.processedAt ? `<div>İşlem Zamanı: ${new Date(payment.processedAt).toLocaleString('tr-TR')}</div>` : ''}
-                            ${payment.approvalStatus ? `<div>Onay Durumu: ${payment.approvalStatus}</div>` : ''}
-                        </div>
-                    ` : ''}
                 </div>
             `;
             
@@ -15744,6 +16396,193 @@
             if(modalCancelButton) {
                 modalCancelButton.textContent = t('close');
                 modalCancelButton.classList.remove('hidden');
+            }
+            
+            // Initialize pagination for modal transaction table if it exists
+            setTimeout(() => {
+                if (isSupplierPayout && payment.orderDetails && payment.orderDetails.length > 0) {
+                    initializeModalTransactionPagination(payment.id);
+                }
+            }, 100);
+        }
+        
+        function initializeModalTransactionPagination(paymentId) {
+            // Build transaction rows
+            const transactionRows = [];
+            let payment = mockData.supplierPayouts.find(p => p.id === paymentId);
+            
+            if (!payment) return;
+            
+            payment.orderDetails.forEach(orderDetail => {
+                const orderRevenue = orderDetail.amount || 0;
+                const commission = orderDetail.commission || 0;
+                const returnAmount = orderDetail.returnAmount || 0;
+                
+                const actualOrder = mockData.orders?.find(o => o.id === orderDetail.orderId);
+                const orderDate = actualOrder?.date ? new Date(actualOrder.date).toLocaleDateString('tr-TR') : '-';
+                
+                // Revenue row
+                if (orderRevenue > 0) {
+                    transactionRows.push(`
+                        <tr class="hover:bg-green-50">
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-arrow-down text-green-600 mr-2"></i>
+                                    <span class="text-sm font-medium text-green-700">Sipariş Geliri</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                ${orderDate !== '-' ? orderDate : '-'}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                <span class="font-semibold text-green-600">+${orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                    ${orderDetail.status === 'completed' ? 'Tamamlandı' :
+                                      orderDetail.status === 'returned' ? 'İade Edildi' :
+                                      orderDetail.status === 'partial_return' ? 'Kısmi İade' :
+                                      orderDetail.status || 'Bilinmiyor'}
+                                </span>
+                            </td>
+                        </tr>
+                    `);
+                }
+                
+                // Commission row
+                if (commission > 0) {
+                    transactionRows.push(`
+                        <tr class="hover:bg-red-50">
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-arrow-up text-red-600 mr-2"></i>
+                                    <span class="text-sm font-medium text-red-700">Komisyon</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                ${orderDate !== '-' ? orderDate : '-'}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                <span class="font-semibold text-red-600">-${commission.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Kesinti</span>
+                            </td>
+                        </tr>
+                    `);
+                }
+                
+                // Return row
+                if (returnAmount > 0) {
+                    transactionRows.push(`
+                        <tr class="hover:bg-red-50">
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">${orderDetail.orderId}</div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <i class="fas fa-undo text-red-600 mr-2"></i>
+                                    <span class="text-sm font-medium text-red-700">İade</span>
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                                ${orderDate !== '-' ? orderDate : '-'}
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-sm text-right">
+                                <span class="font-semibold text-red-600">-${returnAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">İade</span>
+                            </td>
+                        </tr>
+                    `);
+                }
+            });
+            
+            // Store state
+            window.modalTransactionState = {
+                paymentId: paymentId,
+                allTransactions: transactionRows,
+                currentPage: 1,
+                itemsPerPage: 5
+            };
+            
+            renderModalTransactionPage(paymentId);
+        }
+        
+        function renderModalTransactionPage(paymentId) {
+            const state = window.modalTransactionState;
+            if (!state || state.paymentId !== paymentId) return;
+            
+            const transactions = state.allTransactions || [];
+            const itemsPerPage = state.itemsPerPage;
+            const totalPages = Math.ceil(transactions.length / itemsPerPage);
+            
+            const startIdx = (state.currentPage - 1) * itemsPerPage;
+            const endIdx = startIdx + itemsPerPage;
+            const pageTransactions = transactions.slice(startIdx, endIdx);
+            
+            // Render rows
+            const tbody = document.getElementById(`modal-transaction-tbody-${paymentId}`);
+            if (tbody) {
+                tbody.innerHTML = pageTransactions.join('');
+            }
+            
+            // Render pagination
+            renderModalTransactionPagination(paymentId, state.currentPage, totalPages, transactions.length);
+        }
+        
+        function renderModalTransactionPagination(paymentId, currentPage, totalPages, totalItems) {
+            const container = document.getElementById(`modal-transaction-pagination-${paymentId}`);
+            if (!container) return;
+            
+            let html = '<div class="flex items-center justify-between mt-4">';
+            html += `<div class="text-xs text-gray-600">Toplam <strong>${totalItems}</strong> işlem</div>`;
+            html += '<div class="flex space-x-1">';
+            
+            if (currentPage > 1) {
+                html += `<button onclick="goToModalTransactionPage(${paymentId}, ${currentPage - 1})" class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50">← Önceki</button>`;
+            }
+            
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                html += `<button onclick="goToModalTransactionPage(${paymentId}, 1)" class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50">1</button>`;
+                if (startPage > 2) html += '<span class="px-1 text-xs">...</span>';
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<button class="px-2 py-1 text-xs bg-blue-600 text-white rounded-md">${i}</button>`;
+                } else {
+                    html += `<button onclick="goToModalTransactionPage(${paymentId}, ${i})" class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50">${i}</button>`;
+                }
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += '<span class="px-1 text-xs">...</span>';
+                html += `<button onclick="goToModalTransactionPage(${paymentId}, ${totalPages})" class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50">${totalPages}</button>`;
+            }
+            
+            if (currentPage < totalPages) {
+                html += `<button onclick="goToModalTransactionPage(${paymentId}, ${currentPage + 1})" class="px-2 py-1 text-xs border border-gray-300 rounded-md hover:bg-gray-50">Sonraki →</button>`;
+            }
+            
+            html += '</div></div>';
+            container.innerHTML = html;
+        }
+        
+        function goToModalTransactionPage(paymentId, page) {
+            if (window.modalTransactionState && window.modalTransactionState.paymentId === paymentId) {
+                window.modalTransactionState.currentPage = page;
+                renderModalTransactionPage(paymentId);
             }
         }
 
@@ -16691,7 +17530,7 @@
                     );
                     if (request) {
                         requestId = request.id;
-                        clickHandler = `data-request-id="${request.id}"`;
+                        clickHandler = `onclick="navigateTo('#request-detail/${request.id}'); setTimeout(() => handleRouteChange(), 50);"`;
                     }
                 }
 
@@ -16923,17 +17762,23 @@
                     tableBody.addEventListener('click', (e) => {
                         const row = e.target.closest('tr[data-request-id]');
                         if (!row) return;
-                        
+
                         // Don't navigate if clicking on checkbox, button, or link
-                        if (e.target.closest('input[type="checkbox"]') || 
-                            e.target.closest('button') || 
+                        if (e.target.closest('input[type="checkbox"]') ||
+                            e.target.closest('button') ||
                             e.target.closest('a')) {
                             return;
                         }
-                        
+
                         const requestId = row.getAttribute('data-request-id');
                         if (requestId) {
+                            e.preventDefault();
+                            e.stopPropagation();
                             navigateTo(`#request-detail/${requestId}`);
+                            // Ensure route is handled and pageContent is ready
+                            setTimeout(() => {
+                                handleRouteChange();
+                            }, 50);
                         }
                     });
                 }
@@ -17093,7 +17938,13 @@
                     
                     const requestId = row.getAttribute('data-request-id');
                     if (requestId) {
+                        e.preventDefault();
+                        e.stopPropagation();
                         navigateTo(`#request-detail/${requestId}`);
+                        // Ensure route is handled and pageContent is ready
+                        setTimeout(() => {
+                            handleRouteChange();
+                        }, 50);
                     }
                 });
             }
@@ -20478,6 +21329,54 @@
                 // Refresh the search results to show updated information
                 handleProductSearch();
             });
+            
+            // Ensure buttons are visible - use multiple timeouts to catch timing issues
+            const ensureButtonsVisible = () => {
+                const modalFooter = document.getElementById('modal-footer');
+                const modalConfirmButton = document.getElementById('modal-confirm');
+                const modalCancelButton = document.getElementById('modal-cancel');
+                
+                console.log('Ensuring buttons visible for stock update modal:', { 
+                    modalFooter: !!modalFooter, 
+                    modalConfirmButton: !!modalConfirmButton, 
+                    modalCancelButton: !!modalCancelButton 
+                });
+                
+                if (modalFooter) {
+                    modalFooter.classList.remove('hidden');
+                    modalFooter.style.display = 'flex';
+                    modalFooter.style.visibility = 'visible';
+                    modalFooter.style.opacity = '1';
+                }
+                
+                if (modalConfirmButton) {
+                    modalConfirmButton.classList.remove('hidden');
+                    modalConfirmButton.style.display = 'block';
+                    modalConfirmButton.style.visibility = 'visible';
+                    modalConfirmButton.style.opacity = '1';
+                    modalConfirmButton.style.pointerEvents = 'auto';
+                    modalConfirmButton.textContent = 'Güncelle';
+                    modalConfirmButton.classList.remove('bg-red-600', 'hover:bg-red-700', 'bg-yellow-600', 'hover:bg-yellow-700');
+                    modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    console.log('Stock update modal confirm button set to visible');
+                } else {
+                    console.error('modal-confirm button not found in stock update modal!');
+                }
+                
+                if (modalCancelButton) {
+                    modalCancelButton.classList.remove('hidden');
+                    modalCancelButton.style.display = 'block';
+                    modalCancelButton.style.visibility = 'visible';
+                    modalCancelButton.style.opacity = '1';
+                    modalCancelButton.style.pointerEvents = 'auto';
+                }
+            };
+            
+            // Ensure buttons are visible immediately and after delays
+            ensureButtonsVisible();
+            setTimeout(ensureButtonsVisible, 10);
+            setTimeout(ensureButtonsVisible, 50);
+            setTimeout(ensureButtonsVisible, 100);
         }
 
         function navigateToNewProductPage(sku) {
@@ -22392,6 +23291,162 @@
             if (window.paginationState.renderFunction) {
                 window.paginationState.renderFunction();
             }
+        }
+        
+        function exportTransactionList(paymentId) {
+            const payment = mockData.supplierPayouts?.find(p => p.id === paymentId);
+            if (!payment) {
+                showToast('Ödeme verisi bulunamadı');
+                return;
+            }
+            
+            // Prepare CSV data
+            let csvContent = 'Sipariş ID,İşlem Türü,İade No,Tarih,Tutar,Komisyon,Komisyon Oranı\n';
+            
+            payment.orderDetails.forEach(orderDetail => {
+                const orderRevenue = orderDetail.amount || 0;
+                const commission = orderDetail.commission || 0;
+                const commissionRate = orderRevenue > 0 ? ((commission / orderRevenue) * 100).toFixed(2) : 0;
+                const returnAmount = orderDetail.returnAmount || 0;
+                
+                const actualOrder = mockData.orders?.find(o => o.id === orderDetail.orderId);
+                const orderDate = actualOrder?.date ? new Date(actualOrder.date).toLocaleDateString('tr-TR') : '-';
+                
+                // Order row
+                if (orderRevenue > 0) {
+                    const orderId = orderDetail.orderId || '-';
+                    const transactionType = 'Sipariş Geliri';
+                    const returnId = '-';
+                    const amount = orderRevenue.toLocaleString('tr-TR');
+                    const commissionAmount = commission.toLocaleString('tr-TR');
+                    
+                    csvContent += `"${orderId}","${transactionType}","${returnId}","${orderDate}","${amount}","${commissionAmount}","%${commissionRate}"\n`;
+                }
+                
+                // Return row
+                if (returnAmount > 0) {
+                    const returnInfo = mockData.returns?.find(r => r.orderId === orderDetail.orderId || r.id === orderDetail.returnId);
+                    const returnDate = returnInfo?.date ? new Date(returnInfo.date).toLocaleDateString('tr-TR') : orderDate;
+                    const returnId = returnInfo?.id || orderDetail.returnId || '-';
+                    const orderId = orderDetail.orderId || '-';
+                    const transactionType = 'İade';
+                    const amount = returnAmount.toLocaleString('tr-TR');
+                    
+                    csvContent += `"${orderId}","${transactionType}","${returnId}","${returnDate}","-${amount}","-","0"\n`;
+                }
+            });
+            
+            // Add totals
+            const totalRevenue = payment.orderDetails.reduce((sum, od) => sum + (od.amount || 0), 0);
+            const totalCommission = payment.orderDetails.reduce((sum, od) => sum + (od.commission || 0), 0);
+            const totalReturns = payment.orderDetails.reduce((sum, od) => sum + (od.returnAmount || 0), 0);
+            const netAmount = totalRevenue - totalCommission - totalReturns;
+            
+            csvContent += '\n';
+            csvContent += `"Toplam Gelir","","","","${totalRevenue.toLocaleString('tr-TR')}","",""\n`;
+            csvContent += `"Toplam Komisyon","","","","","${totalCommission.toLocaleString('tr-TR')}",""\n`;
+            csvContent += `"Toplam İade","","","","-${totalReturns.toLocaleString('tr-TR')}","",""\n`;
+            csvContent += `"Net Tutar","","","","${netAmount.toLocaleString('tr-TR')}","",""\n`;
+            
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `İşlem_Listesi_${paymentId}_${new Date().toLocaleDateString('tr-TR').replace(/\./g, '-')}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showToast('İşlem listesi başarıyla indirildi');
+        }
+        
+        function filterPayoutTransactions(paymentId) {
+            const state = window.payoutTransactionState;
+            if (!state) return;
+            
+            // Convert both to strings for comparison
+            const statePaymentId = String(state.paymentId);
+            const inputPaymentId = String(paymentId);
+            if (statePaymentId !== inputPaymentId) return;
+            
+            const searchInput = document.getElementById(`transaction-search-${paymentId}`);
+            const typeFilter = document.getElementById(`transaction-type-${paymentId}`);
+            
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const filterType = typeFilter ? typeFilter.value : 'all';
+            
+            // Filter transactions
+            let filtered = [];
+            state.allTransactions.forEach(row => {
+                let match = true;
+                
+                // Search by order ID
+                if (searchTerm && !row.toLowerCase().includes(searchTerm)) {
+                    match = false;
+                }
+                
+                // Filter by transaction type
+                if (filterType !== 'all') {
+                    if (filterType === 'order' && !row.includes('Sipariş Geliri')) {
+                        match = false;
+                    } else if (filterType === 'return' && !row.includes('<span class="text-sm font-medium text-red-700">İade</span>')) {
+                        match = false;
+                    }
+                }
+                
+                if (match) {
+                    filtered.push(row);
+                }
+            });
+            
+            state.filteredTransactions = filtered;
+            window.paginationState.currentPage = 1;
+            
+            renderPayoutTransactionPage(paymentId);
+        }
+        
+        function clearPayoutTransactionFilters(paymentId) {
+            const searchInput = document.getElementById(`transaction-search-${paymentId}`);
+            const typeFilter = document.getElementById(`transaction-type-${paymentId}`);
+            
+            if (searchInput) searchInput.value = '';
+            if (typeFilter) typeFilter.value = 'all';
+            
+            window.payoutTransactionState.filteredTransactions = [...window.payoutTransactionState.allTransactions];
+            window.paginationState.currentPage = 1;
+            
+            renderPayoutTransactionPage(paymentId);
+        }
+        
+        function renderPayoutTransactionPage(paymentId) {
+            const state = window.payoutTransactionState;
+            if (!state) return;
+            
+            // Convert both to strings for comparison
+            const statePaymentId = String(state.paymentId);
+            const inputPaymentId = String(paymentId);
+            if (statePaymentId !== inputPaymentId) return;
+            
+            const transactions = state.filteredTransactions || state.allTransactions;
+            
+            // Use existing paginateData function
+            paginateData(transactions, window.paginationState.currentPage);
+            const pageTransactions = window.paginationState.currentData || [];
+            
+            // Render transactions
+            const tbody = document.getElementById(`payout-transaction-tbody-${paymentId}`);
+            if (tbody) {
+                tbody.innerHTML = pageTransactions.length > 0 
+                    ? pageTransactions.join('') 
+                    : '<tr><td colspan="6" class="px-4 py-6 text-center text-gray-500">İşlem bulunamadı</td></tr>';
+            }
+            
+            // Use existing renderPagination function
+            renderPagination(`payout-transaction-pagination-${paymentId}`);
         }
         
         function paginateData(data, page = 1, itemsPerPage = null) {
@@ -25765,9 +26820,22 @@
                     ? supplierName.charAt(0).toUpperCase()
                     : '?';
                 
-                let row = `<tr class="border-b hover:bg-gray-50 cursor-pointer" data-return-id="${returnItem.id}">
-                    <td class="p-3 text-sm font-medium text-blue-600">${returnItem.id}</td>
-                    <td class="p-3 text-sm text-gray-500">${returnItem.orderId}</td>`;
+                let row = `<tr class="return-row border-b hover:bg-red-50 cursor-pointer" data-return-id="${returnItem.id}">
+                    <td class="p-3 text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <span class="return-badge">
+                                <i class="fas fa-undo return-icon"></i>
+                                <span>İADE</span>
+                            </span>
+                            <span class="text-red-600 font-mono">${returnItem.id}</span>
+                        </div>
+                    </td>
+                    <td class="p-3 text-sm text-gray-500">
+                        <div class="flex items-center space-x-1">
+                            <i class="fas fa-shopping-cart text-gray-400 text-xs"></i>
+                            <span>${returnItem.orderId}</span>
+                        </div>
+                    </td>`;
                 
                 // Add supplier column for admin users
                 if (!isSupplier) {
@@ -25800,8 +26868,18 @@
             
             // Build table headers dynamically based on user role
             let headers = `
-                <th class="p-3 text-sm font-semibold">${t('return_id')}</th>
-                <th class="p-3 text-sm font-semibold">${t('order_id')}</th>`;
+                <th class="p-3 text-sm font-semibold return-header">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-undo return-icon"></i>
+                        <span>${t('return_id')}</span>
+                    </div>
+                </th>
+                <th class="p-3 text-sm font-semibold">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-shopping-cart text-gray-500"></i>
+                        <span>${t('order_id')}</span>
+                    </div>
+                </th>`;
             
             // Add supplier column header for admin users
             if (!isSupplier) {
@@ -25859,9 +26937,22 @@
                             ? supplierName.charAt(0).toUpperCase()
                             : '?';
                         
-                        let row = `<tr class="border-b hover:bg-gray-50 cursor-pointer" data-return-id="${returnItem.id}">
-                            <td class="p-3 text-sm font-medium text-blue-600">${returnItem.id}</td>
-                            <td class="p-3 text-sm text-gray-500">${returnItem.orderId}</td>`;
+                        let row = `<tr class="return-row border-b hover:bg-red-50 cursor-pointer" data-return-id="${returnItem.id}">
+                            <td class="p-3 text-sm font-medium">
+                                <div class="flex items-center space-x-2">
+                                    <span class="return-badge">
+                                        <i class="fas fa-undo return-icon"></i>
+                                        <span>İADE</span>
+                                    </span>
+                                    <span class="text-red-600 font-mono">${returnItem.id}</span>
+                                </div>
+                            </td>
+                            <td class="p-3 text-sm text-gray-500">
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-shopping-cart text-gray-400 text-xs"></i>
+                                    <span>${returnItem.orderId}</span>
+                                </div>
+                            </td>`;
                         
                         if (!isSupplier) {
                             row += `
@@ -26070,11 +27161,17 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-undo text-blue-600 text-lg"></i>
+                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center border-2 border-red-300">
+                                    <i class="fas fa-undo text-red-600 text-lg"></i>
                                 </div>
                                 <div>
-                                    <h2 class="text-xl font-bold text-gray-900">${returnItem.id}</h2>
+                                    <div class="flex items-center space-x-2 mb-1">
+                                        <span class="return-badge">
+                                            <i class="fas fa-undo return-icon"></i>
+                                            <span>İADE</span>
+                                        </span>
+                                        <h2 class="text-xl font-bold text-red-600">${returnItem.id}</h2>
+                                    </div>
                                     <p class="text-sm text-gray-500">${new Date(returnItem.requestedAt).toLocaleDateString('tr-TR')}</p>
                                 </div>
                             </div>
@@ -26635,6 +27732,10 @@
             else if (page === 'orderDetail' && (id1 || subpage)) { 
                 const orderId = id1 || subpage;
                 renderers.orderDetail(orderId); 
+            } 
+            else if (page === 'payoutDetail' && (id1 || subpage)) { 
+                const payoutId = id1 || subpage;
+                renderers.payoutDetail(payoutId); 
             } 
             else if (page === 'customer' && (id1 || subpage)) { 
                 const customerId = id1 || subpage;
