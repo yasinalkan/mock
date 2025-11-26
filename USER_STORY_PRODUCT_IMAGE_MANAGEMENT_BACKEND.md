@@ -1,11 +1,5 @@
 # Kullanıcı Hikayesi: Ürün Görsel Yönetimi - Backend API
 
-## Hikaye ID
-**US-BACKEND-002**
-
-## Başlık
-**Bir backend developer olarak, ürünlere görsel ekleme ve çıkarma işlemleri için REST API endpoint'leri geliştirmek istiyorum, böylece frontend uygulaması ürün görsellerini güvenli ve verimli bir şekilde yönetebilsin.**
-
 ## Kullanıcı Hikayesi
 Bir **backend developer** olarak,  
 **Ürün görsellerini yönetmek için RESTful API endpoint'leri oluşturmak** istiyorum,  
