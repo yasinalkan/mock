@@ -5517,7 +5517,7 @@
                         </button>
                     </div>
                 `;
-            } else if (window.currentUser?.role === 'supplier' && request.status === 'toBeRevised') {
+            } else if (window.currentUser?.role === 'supplier' && request.status === 'toBeRevised' && request.type === 'stock_price_update') {
                 pageContent += `
                     <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
                         <button onclick="cancelSupplierRequest(${request.id})" 
@@ -21907,23 +21907,21 @@
             });
             
             // Ensure buttons are visible after modal is shown
-            setTimeout(() => {
-                const modalConfirmButton = document.getElementById('modal-confirm');
-                if(modalConfirmButton) {
-                    modalConfirmButton.classList.remove('hidden');
-                    modalConfirmButton.style.display = 'block';
-                    modalConfirmButton.style.visibility = 'visible';
-                    modalConfirmButton.style.opacity = '1';
-                    modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                }
-                const modalCancelButton = document.getElementById('modal-cancel');
-                if(modalCancelButton) {
-                    modalCancelButton.classList.remove('hidden');
-                    modalCancelButton.style.display = 'block';
-                    modalCancelButton.style.visibility = 'visible';
-                    modalCancelButton.style.opacity = '1';
-                }
-            }, 50);
+            const modalConfirmButton = document.getElementById('modal-confirm');
+            if(modalConfirmButton) {
+                modalConfirmButton.classList.remove('hidden');
+                modalConfirmButton.style.display = 'block';
+                modalConfirmButton.style.visibility = 'visible';
+                modalConfirmButton.style.opacity = '1';
+                modalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+            const modalCancelButton = document.getElementById('modal-cancel');
+            if(modalCancelButton) {
+                modalCancelButton.classList.remove('hidden');
+                modalCancelButton.style.display = 'block';
+                modalCancelButton.style.visibility = 'visible';
+                modalCancelButton.style.opacity = '1';
+            }
             
             // Setup category picker event listeners
             setTimeout(() => {

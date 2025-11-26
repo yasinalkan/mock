@@ -62,14 +62,6 @@ export class ProductValidator {
       errors.push({ field: 'name_tr', message: 'Ürün adı en fazla 200 karakter olabilir' });
     }
 
-    // Ürün Adı (İngilizce) Validasyonu
-    if (!data.name_en || data.name_en.trim() === '') {
-      errors.push({ field: 'name_en', message: 'Ürün adı (İngilizce) zorunludur' });
-    } else if (data.name_en.length < 3) {
-      errors.push({ field: 'name_en', message: 'Ürün adı en az 3 karakter olmalıdır' });
-    } else if (data.name_en.length > 200) {
-      errors.push({ field: 'name_en', message: 'Ürün adı en fazla 200 karakter olabilir' });
-    }
 
     // Kategori Validasyonu
     if (!data.category_id) {
