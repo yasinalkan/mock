@@ -811,14 +811,19 @@ window.mockData.orders = window.mockData.orders || [
                             </div>
                         </div>
                     </div>
-                    <!-- Pending Payments -->
+                    <!-- Hakedişler (Combined) -->
                     <div class="bg-white rounded-lg shadow">
                         <div class="px-6 py-4 border-b border-gray-200">
                             <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold text-gray-900">Bekleyen Ödemeler</h3>
-                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'pending').length} ödeme
-                                </span>
+                                <h3 class="text-lg font-semibold text-gray-900">Hakedişler</h3>
+                                <div class="flex gap-3">
+                                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
+                                        Bekleyen: ${(mockData.supplierPayouts || []).filter(p => p.status === 'pending').length}
+                                    </span>
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                                        Geçmiş: ${(mockData.supplierPayouts || []).filter(p => p.status === 'completed').length}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                         <div class="overflow-x-auto">
@@ -830,11 +835,12 @@ window.mockData.orders = window.mockData.orders || [
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş Sayısı</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Komisyon</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Tutar</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tahmini Tarih</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'pending').map(payout => `
+                                    ${(mockData.supplierPayouts || []).map(payout => `
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${payout.id}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payout.period}</td>
@@ -842,66 +848,20 @@ window.mockData.orders = window.mockData.orders || [
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₺${payout.commission.toLocaleString('tr-TR')}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₺${payout.amount.toLocaleString('tr-TR')}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    ${new Date(payout.date).toLocaleDateString('tr-TR')}
+                                                ${new Date(payout.date).toLocaleDateString('tr-TR')}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${payout.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'}">
+                                                    ${payout.status === 'pending' ? 'Bekleyen' : 'Geçmiş'}
                                                 </span>
                                             </td>
                                         </tr>
                                     `).join('')}
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'pending').length === 0 ? `
+                                    ${(mockData.supplierPayouts || []).length === 0 ? `
                                         <tr>
-                                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                                <i class="fas fa-clock text-4xl text-gray-300 mb-2"></i>
-                                                <p>Bekleyen ödeme bulunmuyor</p>
-                                            </td>
-                                        </tr>
-                                    ` : ''}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <!-- Completed Payments -->
-                    <div class="bg-white rounded-lg shadow">
-                        <div class="px-6 py-4 border-b border-gray-200">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-lg font-semibold text-gray-900">Geçmiş Ödemeler</h3>
-                                <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'completed').length} ödeme
-                                </span>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hakediş ID</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dönem</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sipariş Sayısı</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Komisyon</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Net Tutar</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ödeme Tarihi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'completed').map(payout => `
-                                        <tr class="hover:bg-gray-50">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${payout.id}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payout.period}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${payout.orders}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₺${payout.commission.toLocaleString('tr-TR')}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">₺${payout.amount.toLocaleString('tr-TR')}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                    ${new Date(payout.date).toLocaleDateString('tr-TR')}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                    ${(mockData.supplierPayouts || []).filter(p => p.status === 'completed').length === 0 ? `
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                                <i class="fas fa-check-circle text-4xl text-gray-300 mb-2"></i>
-                                                <p>Henüz tamamlanan ödeme bulunmuyor</p>
+                                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                                <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
+                                                <p>Hakediş bulunmuyor</p>
                                             </td>
                                         </tr>
                                     ` : ''}

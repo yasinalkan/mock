@@ -7609,8 +7609,7 @@
                     
                     const tabsHTML = `
                         <a href="#finance/supplier-revenue" class="tab-button ${activeTab === 'supplier-revenue' ? 'active' : 'text-gray-500'} font-medium py-4">Tedarikçi Gelirleri</a>
-                        <a href="#finance/completed" class="tab-button ${activeTab === 'completed' ? 'active' : 'text-gray-500'} font-medium py-4">Geçmiş Ödemeler</a>
-                        <a href="#finance/pending" class="tab-button ${activeTab === 'pending' ? 'active' : 'text-gray-500'} font-medium py-4">Bekleyen Ödemeler</a>
+                        <a href="#finance/all-invoices" class="tab-button ${activeTab === 'all-invoices' ? 'active' : 'text-gray-500'} font-medium py-4">Hakedişler</a>
                         <!-- <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Gider Tablosu</a> -->
                         <!-- <a href="#finance/profitability" class="tab-button ${activeTab === 'profitability' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a> -->
                     `;
@@ -7662,8 +7661,7 @@
                 }
 
                 const tabsHTML = isSupplier ? `
-                    <a href="#finance/completed" class="tab-button ${activeTab === 'completed' ? 'active' : 'text-gray-500'} font-medium py-4">Geçmiş Ödemeler</a>
-                    <a href="#finance/pending" class="tab-button ${activeTab === 'pending' ? 'active' : 'text-gray-500'} font-medium py-4">Bekleyen Ödemeler</a>
+                    <a href="#finance/all-invoices" class="tab-button ${activeTab === 'all-invoices' ? 'active' : 'text-gray-500'} font-medium py-4">Hakedişler</a>
                     <!-- <a href="#finance/revenue-trend" class="tab-button ${activeTab === 'revenue-trend' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a> -->
                 ` : `
                     <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">${t('financial_transactions')}</a>
@@ -9667,7 +9665,7 @@
                         },
                         {
                             question: 'Ödeme takvimi nedir?',
-                            answer: 'Ödemeler genellikle aylık olarak yapılır. Ödeme takvimini "Finans" sayfasından takip edebilirsiniz. Bekleyen ödemeler, tamamlanan ödemeler ve ödeme geçmişi burada görüntülenir. Ödemeler her ayın 15\'inde yapılır ve bir önceki ayın satışları için hesaplanır. Ödeme yöntemleri: banka havalesi, EFT veya çek. Minimum ödeme tutarı 500 TL\'dir. Ödeme detaylarında komisyon kesintileri, vergi hesaplamaları ve net tutar görüntülenir.'
+                            answer: 'Ödemeler genellikle aylık olarak yapılır. Ödeme takvimini "Finans" sayfasından takip edebilirsiniz. Bekleyen hakedişler, tamamlanan ödemeler ve ödeme geçmişi burada görüntülenir. Ödemeler her ayın 15\'inde yapılır ve bir önceki ayın satışları için hesaplanır. Ödeme yöntemleri: banka havalesi, EFT veya çek. Minimum ödeme tutarı 500 TL\'dir. Ödeme detaylarında komisyon kesintileri, vergi hesaplamaları ve net tutar görüntülenir.'
                         },
                         {
                             question: 'Fatura nasıl alabilirim?',
@@ -12829,43 +12827,21 @@
                             </div>
                         `;
                         break;
-                    case 'completed':
+                    case 'all-invoices':
                         infoContent = `
-                            <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="completed-payments-info">
+                            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="all-invoices-info">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
-                                        <i class="fas fa-check-circle text-green-400"></i>
+                                        <i class="fas fa-file-invoice-dollar text-blue-400"></i>
                                     </div>
                                     <div class="ml-3 flex-1">
-                                        <h3 class="text-sm font-medium text-green-800">Geçmiş Ödemeler</h3>
-                                        <div class="mt-2 text-sm text-green-700">
-                                            <p>Bu sekmede tüm tedarikçilerin tamamlanmış ödemelerini görüntüleyebilirsiniz. Ödeme tarihleri, tutarlar ve banka bilgileri burada listelenir.</p>
+                                        <h3 class="text-sm font-medium text-blue-800">Hakedişler</h3>
+                                        <div class="mt-2 text-sm text-blue-700">
+                                            <p>Bu sekmede tüm tedarikçilerin hakedişlerini (bekleyen ve tamamlanmış) görüntüleyebilirsiniz. Ödeme durumları, tarihleri ve tutarlar burada listelenir.</p>
                                         </div>
                                     </div>
                                     <div class="flex-shrink-0">
-                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        break;
-                    case 'pending':
-                        infoContent = `
-                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="pending-payments-info">
-                                <div class="flex">
-                                    <div class="flex-shrink-0">
-                                        <i class="fas fa-clock text-yellow-400"></i>
-                                    </div>
-                                    <div class="ml-3 flex-1">
-                                        <h3 class="text-sm font-medium text-yellow-800">Bekleyen Ödemeler</h3>
-                                        <div class="mt-2 text-sm text-yellow-700">
-                                            <p>Bu sekmede tüm tedarikçilerin bekleyen ödemelerini görüntüleyebilirsiniz. Beklenen ödeme tarihleri ve tutarlar burada takip edilir.</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex-shrink-0">
-                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
@@ -12891,11 +12867,8 @@
                     case 'profitability':
                         renderProfitabilityChart();
                         break;
-                    case 'completed':
-                        renderAdminCompletedPayments();
-                        break;
-                    case 'pending':
-                        renderAdminPendingPayments();
+                    case 'all-invoices':
+                        renderAdminAllInvoices();
                         break;
                     default:
                         renderSupplierRevenueTable();
@@ -12914,6 +12887,241 @@
                     </div>
                 `;
             }
+        }
+
+        function renderAdminAllInvoices() {
+            const contentEl = document.getElementById('finance-tab-content');
+            if (!contentEl) return;
+            
+            // Check if supplierPayouts data exists
+            if (!mockData.supplierPayouts || !Array.isArray(mockData.supplierPayouts)) {
+                contentEl.innerHTML += `
+                    <div class="bg-yellow-50 p-6 rounded-lg shadow">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-yellow-800">Veri Bulunamadı</h3>
+                                <p class="text-sm text-yellow-600">Hakediş verisi bulunamadı.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Helper function to get supplier info from payment
+            function getPaymentSupplier(payment) {
+                // Try to get supplierId from payment directly
+                if (payment.supplierId) {
+                    const supplier = mockData.suppliers?.find(s => s.id === payment.supplierId);
+                    return { id: payment.supplierId, name: supplier?.name || 'Bilinmeyen Tedarikçi' };
+                }
+                
+                // Try to infer from orderDetails
+                if (payment.orderDetails && payment.orderDetails.length > 0) {
+                    const firstOrderId = payment.orderDetails[0].orderId;
+                    const order = mockData.orders?.find(o => o.id === firstOrderId);
+                    if (order && order.supplierId) {
+                        const supplier = mockData.suppliers?.find(s => s.id === order.supplierId);
+                        return { id: order.supplierId, name: supplier?.name || 'Bilinmeyen Tedarikçi' };
+                    }
+                }
+                
+                // Try to match by period/date from adminRevenue
+                if (mockData.adminRevenue && Array.isArray(mockData.adminRevenue)) {
+                    const revenueMatch = mockData.adminRevenue.find(r => 
+                        r.period === payment.period || 
+                        (r.date && payment.date && new Date(r.date).getTime() === new Date(payment.date).getTime())
+                    );
+                    if (revenueMatch && revenueMatch.supplierId) {
+                        const supplier = mockData.suppliers?.find(s => s.id === revenueMatch.supplierId);
+                        return { id: revenueMatch.supplierId, name: revenueMatch.supplierName || supplier?.name || 'Bilinmeyen Tedarikçi' };
+                    }
+                }
+                
+                return { id: null, name: 'Belirlenemedi' };
+            }
+            
+            let filteredAllInvoices = [];
+            
+            function renderFilteredAllInvoices() {
+                // Get filter values
+                const supplierFilter = document.getElementById('admin-all-invoices-supplier')?.value || '';
+                const statusFilter = document.getElementById('admin-all-invoices-status')?.value || '';
+                const dateRangeFilter = document.getElementById('admin-all-invoices-date-range')?.value || '';
+                
+                // For admin, show all invoices (both pending and completed) from all suppliers
+                filteredAllInvoices = mockData.supplierPayouts;
+                
+                // Apply status filter
+                if (statusFilter) {
+                    filteredAllInvoices = filteredAllInvoices.filter(p => p.status === statusFilter);
+                }
+                
+                // Apply supplier filter
+                if (supplierFilter) {
+                    filteredAllInvoices = filteredAllInvoices.filter(p => {
+                        const supplierInfo = getPaymentSupplier(p);
+                        return supplierInfo.id && String(supplierInfo.id) === String(supplierFilter);
+                    });
+                }
+                
+                // Apply date range filter
+                if (dateRangeFilter) {
+                    filteredAllInvoices = filteredAllInvoices.filter(p => {
+                        const dateToCheck = p.status === 'pending' ? (p.expectedDate || p.date) : p.date;
+                        if (!dateToCheck) return false;
+                        const paymentDate = new Date(dateToCheck);
+                        const now = new Date();
+                        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        
+                        switch (dateRangeFilter) {
+                            case 'today':
+                                return paymentDate >= today;
+                            case 'week':
+                                const weekAgo = new Date(today);
+                                weekAgo.setDate(weekAgo.getDate() - 7);
+                                return paymentDate >= weekAgo;
+                            case 'month':
+                                const monthAgo = new Date(today);
+                                monthAgo.setMonth(monthAgo.getMonth() - 1);
+                                return paymentDate >= monthAgo;
+                            case 'quarter':
+                                const quarterAgo = new Date(today);
+                                quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+                                return paymentDate >= quarterAgo;
+                            default:
+                                return true;
+                        }
+                    });
+                }
+                
+                // For admin: commissions are revenue (green), tutar is revenue (green)
+                const user = window.currentUser || {};
+                const isSupplier = user.role === 'supplier';
+                const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
+                const carrierColorClass = 'text-red-600'; // Always red as it's a cost
+                
+                // Paginate the filtered invoices
+                const paginatedInvoices = paginateData(filteredAllInvoices, window.paginationState.currentPage);
+                
+                const allRows = paginatedInvoices.map(p => {
+                    const breakdown = p.breakdown || {};
+                    const supplierInfo = getPaymentSupplier(p);
+                    const dateDisplay = p.status === 'pending' ? (p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi') : new Date(p.date).toLocaleDateString('tr-TR');
+                    const statusBadge = p.status === 'pending' ? '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Bekleyen</span>' : '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Geçmiş</span>';
+                    return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
+                        <td class="p-3 text-sm text-gray-500">${p.id}</td>
+                        <td class="p-3 text-sm font-medium">${supplierInfo.name}</td>
+                        <td class="p-3 text-sm">${dateDisplay}</td>
+                        <td class="p-3 text-sm">${p.period}</td>
+                        <td class="p-3 text-sm">${p.orders} sipariş</td>
+                        <td class="p-3 text-sm">
+                            <div class="space-y-1">
+                                <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                            </div>
+                        </td>
+                        <td class="p-3 text-sm">
+                            <div class="space-y-1">
+                                <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                            </div>
+                        </td>
+                        <td class="p-3 text-sm">${statusBadge}</td>
+                    </tr>`;
+                }).join('');
+                
+                document.getElementById('admin-all-invoices-table-body').innerHTML = allRows || 
+                    '<tr><td colspan="8" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
+                    
+                renderPagination('admin-all-invoices-pagination');
+            }
+            
+            window.paginationState.renderFunction = renderFilteredAllInvoices;
+            
+            // Get suppliers for filter dropdown
+            const suppliers = mockData.suppliers || [];
+            const supplierOptions = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+            
+            contentEl.innerHTML += `
+                <div class="space-y-4">
+                    <!-- Filter Section -->
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label for="admin-all-invoices-supplier" class="block text-xs font-medium text-gray-700 mb-1">Tedarikçi</label>
+                                <select id="admin-all-invoices-supplier" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Tedarikçiler</option>
+                                    ${supplierOptions}
+                                </select>
+                            </div>
+                            <div>
+                                <label for="admin-all-invoices-status" class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
+                                <select id="admin-all-invoices-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Durumlar</option>
+                                    <option value="pending">Bekleyen</option>
+                                    <option value="completed">Geçmiş</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="admin-all-invoices-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+                                <select id="admin-all-invoices-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Zamanlar</option>
+                                    <option value="today">Bugün</option>
+                                    <option value="week">Bu Hafta</option>
+                                    <option value="month">Bu Ay</option>
+                                    <option value="quarter">Son 3 Ay</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end mt-3">
+                            <button id="admin-all-invoices-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
+                                <i class="fas fa-times mr-1"></i>Temizle
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Invoices Table -->
+                    <div class="overflow-x-auto"><table class="w-full text-left">
+                        <thead class="table-header"><tr>
+                            <th class="p-3 text-sm font-semibold">HAKEDIŞ ID</th><th class="p-3 text-sm font-semibold">TEDARİKÇİ</th>
+                            <th class="p-3 text-sm font-semibold">TARİH</th><th class="p-3 text-sm font-semibold">DÖNEM</th>
+                            <th class="p-3 text-sm font-semibold">SİPARİŞ</th><th class="p-3 text-sm font-semibold">Tutar & Gelir</th>
+                            <th class="p-3 text-sm font-semibold">Kesintiler</th><th class="p-3 text-sm font-semibold">DURUM</th>
+                        </tr></thead>
+                        <tbody id="admin-all-invoices-table-body"></tbody>
+                    </table></div>
+                    <div id="admin-all-invoices-pagination"></div>
+                </div>
+            `;
+            
+            // Add event listeners
+            document.getElementById('admin-all-invoices-supplier')?.addEventListener('change', () => {
+                window.paginationState.currentPage = 1;
+                renderFilteredAllInvoices();
+            });
+            document.getElementById('admin-all-invoices-status')?.addEventListener('change', () => {
+                window.paginationState.currentPage = 1;
+                renderFilteredAllInvoices();
+            });
+            document.getElementById('admin-all-invoices-date-range')?.addEventListener('change', () => {
+                window.paginationState.currentPage = 1;
+                renderFilteredAllInvoices();
+            });
+            document.getElementById('admin-all-invoices-clear')?.addEventListener('click', () => {
+                document.getElementById('admin-all-invoices-supplier').value = '';
+                document.getElementById('admin-all-invoices-status').value = '';
+                document.getElementById('admin-all-invoices-date-range').value = '';
+                window.paginationState.currentPage = 1;
+                renderFilteredAllInvoices();
+            });
+            
+            // Initial pagination setup
+            paginateData([], 1);
+            
+            // Initial render
+            renderFilteredAllInvoices();
         }
 
         function renderAdminCompletedPayments() {
@@ -15749,43 +15957,21 @@
                         </div>
                     `;
                     break;
-                case 'completed':
+                case 'all-invoices':
                     infoContent = `
-                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="completed-payments-info">
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6" id="all-invoices-info">
                             <div class="flex">
                                 <div class="flex-shrink-0">
-                                    <i class="fas fa-check-circle text-green-400"></i>
+                                    <i class="fas fa-file-invoice-dollar text-blue-400"></i>
                                 </div>
                                 <div class="ml-3 flex-1">
-                                    <h3 class="text-sm font-medium text-green-800">Geçmiş Ödemeler</h3>
-                                    <div class="mt-2 text-sm text-green-700">
-                                        <p>Bu sekmede tamamlanmış ödemelerinizin detaylarını görüntüleyebilirsiniz. Ödeme tarihleri, tutarlar ve banka bilgileri burada listelenir.</p>
+                                    <h3 class="text-sm font-medium text-blue-800">Hakedişler</h3>
+                                    <div class="mt-2 text-sm text-blue-700">
+                                        <p>Bu sekmede hakedişlerinizin (bekleyen ve tamamlanmış) detaylarını görüntüleyebilirsiniz. Ödeme durumları, tarihleri, tutarlar ve komisyon bilgileri burada listelenir.</p>
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-green-400 hover:text-green-600 focus:outline-none">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    break;
-                case 'pending':
-                    infoContent = `
-                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="pending-payments-info">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-clock text-yellow-400"></i>
-                                </div>
-                                <div class="ml-3 flex-1">
-                                    <h3 class="text-sm font-medium text-yellow-800">Bekleyen Ödemeler</h3>
-                                    <div class="mt-2 text-sm text-yellow-700">
-                                        <p>Bu sekmede henüz tamamlanmamış ödemelerinizi görüntüleyebilirsiniz. Beklenen ödeme tarihleri ve tutarlar burada takip edilir.</p>
-                                    </div>
-                                </div>
-                                <div class="flex-shrink-0">
-                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-blue-400 hover:text-blue-600 focus:outline-none">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
@@ -15847,7 +16033,7 @@
                                 <div class="ml-3 flex-1">
                                     <h3 class="text-sm font-medium text-blue-800">Ödeme Geçmişi</h3>
                                     <div class="mt-2 text-sm text-blue-700">
-                                        <p>Bu sekmede tüm ödeme geçmişinizi detaylı olarak görüntüleyebilirsiniz. Geçmiş ödemelerin tamamı burada arşivlenir.</p>
+                                        <p>Bu sekmede tüm ödeme geçmişinizi detaylı olarak görüntüleyebilirsiniz. Geçmiş hakedişlerin tamamı burada arşivlenir.</p>
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0">
@@ -15917,19 +16103,19 @@
                         <tbody>${transactionRows}</tbody>
                     </table></div>`;
                     break;
-                case 'completed':
-                    // Supplier completed payments with date filter
-                    let filteredSupplierCompletedPayments = [];
+                case 'all-invoices':
+                    // Supplier all invoices (both pending and completed) with status and date filters
+                    let filteredSupplierAllInvoices = [];
                     
-                    function renderFilteredCompletedPayments() {
-                        const dateRangeFilter = document.getElementById('completed-payment-date-range')?.value || '';
+                    function renderFilteredAllInvoices() {
+                        const dateRangeFilter = document.getElementById('all-invoices-date-range')?.value || '';
+                        const statusFilter = document.getElementById('all-invoices-status')?.value || '';
                         const user = window.currentUser || {};
                         const isSupplier = user.role === 'supplier';
                         
-                        // Filter by status and supplier ID (if supplier)
-                        // For suppliers: show all payments if we can't determine supplier ID (mock data scenario)
-                        filteredSupplierCompletedPayments = (mockData.supplierPayouts || []).filter(p => {
-                            if (!p || p.status !== 'completed') return false;
+                        // Filter by supplier ID (if supplier) - include all invoices by default
+                        filteredSupplierAllInvoices = (mockData.supplierPayouts || []).filter(p => {
+                            if (!p) return false;
                             if (isSupplier) {
                                 // Only filter by supplier ID if we have a supplier ID and can determine payment supplier
                                 if (user.supplierId != null) {
@@ -15944,174 +16130,16 @@
                             }
                             return true;
                         });
+                        
+                        // Apply status filter
+                        if (statusFilter) {
+                            filteredSupplierAllInvoices = filteredSupplierAllInvoices.filter(p => p.status === statusFilter);
+                        }
                         
                         // Apply date range filter
                         if (dateRangeFilter) {
-                            filteredSupplierCompletedPayments = filteredSupplierCompletedPayments.filter(p => {
-                                if (!p.date) return false;
-                                const paymentDate = new Date(p.date);
-                                const now = new Date();
-                                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                                
-                                switch (dateRangeFilter) {
-                                    case 'today':
-                                        return paymentDate >= today;
-                                    case 'week':
-                                        const weekAgo = new Date(today);
-                                        weekAgo.setDate(weekAgo.getDate() - 7);
-                                        return paymentDate >= weekAgo;
-                                    case 'month':
-                                        const monthAgo = new Date(today);
-                                        monthAgo.setMonth(monthAgo.getMonth() - 1);
-                                        return paymentDate >= monthAgo;
-                                    case 'quarter':
-                                        const quarterAgo = new Date(today);
-                                        quarterAgo.setMonth(quarterAgo.getMonth() - 3);
-                                        return paymentDate >= quarterAgo;
-                                    default:
-                                        return true;
-                                }
-                            });
-                        }
-                        
-                        // For suppliers: commissions are costs (red), tutar is revenue (green)
-                        const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
-                        const carrierColorClass = 'text-red-600'; // Always red as it's a cost
-                        
-                        // Paginate the filtered payments
-                        paginateData(filteredSupplierCompletedPayments, window.paginationState.currentPage);
-                        const paginatedPayments = window.paginationState.currentData || [];
-                        
-                        const completedRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
-                            const breakdown = p.breakdown || {};
-                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
-                                <td class="p-3 text-sm text-gray-500">${p.id}</td>
-                                <td class="p-3 text-sm">${new Date(p.date).toLocaleDateString('tr-TR')}</td>
-                                <td class="p-3 text-sm">${p.period}</td>
-                                <td class="p-3 text-sm">${p.orders} sipariş</td>
-                                <td class="p-3 text-sm">
-                                    <div class="space-y-1">
-                                        <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                        ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
-                                    </div>
-                                </td>
-                                <td class="p-3 text-sm">
-                                    <div class="space-y-1">
-                                        <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                        <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                    </div>
-                                </td>
-                            </tr>`;
-                        }).join('') : '';
-                        const tableBodyEl = document.getElementById('completed-payment-table-body');
-                        if (tableBodyEl) {
-                            tableBodyEl.innerHTML = completedRows || 
-                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Geçmiş ödeme bulunmuyor.</td></tr>';
-                        } else {
-                            console.error('completed-payment-table-body element not found when trying to render');
-                        }
-                            
-                        renderPagination('supplier-completed-payment-pagination');
-                    }
-                    
-                    window.paginationState.renderFunction = renderFilteredCompletedPayments;
-                    
-                    container.innerHTML += `
-                        <div class="space-y-4">
-                            <!-- Filter Section -->
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="flex-1">
-                                        <label for="completed-payment-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
-                                        <select id="completed-payment-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-                                            <option value="">Tüm Zamanlar</option>
-                                            <option value="today">Bugün</option>
-                                            <option value="week">Bu Hafta</option>
-                                            <option value="month">Bu Ay</option>
-                                            <option value="quarter">Son 3 Ay</option>
-                                        </select>
-                                    </div>
-                                    <div class="pt-5">
-                                        <button id="completed-payment-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
-                                            <i class="fas fa-times mr-1"></i>Temizle
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Payments Table -->
-                            <div class="overflow-x-auto"><table class="w-full text-left">
-                                <thead class="table-header"><tr>
-                                    <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
-                                    <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
-                                    <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
-                                </tr></thead>
-                                <tbody id="completed-payment-table-body"></tbody>
-                            </table></div>
-                            <div id="supplier-completed-payment-pagination"></div>
-                        </div>
-                    `;
-                    
-                    // Add event listeners and initial render after DOM is ready
-                    setTimeout(() => {
-                        document.getElementById('completed-payment-date-range')?.addEventListener('change', () => {
-                            window.paginationState.currentPage = 1;
-                            renderFilteredCompletedPayments();
-                        });
-                        document.getElementById('completed-payment-clear')?.addEventListener('click', () => {
-                            document.getElementById('completed-payment-date-range').value = '';
-                            window.paginationState.currentPage = 1;
-                            renderFilteredCompletedPayments();
-                        });
-                        
-                        // Initial render - ensure DOM element exists
-                        const tableBody = document.getElementById('completed-payment-table-body');
-                        if (tableBody) {
-                            renderFilteredCompletedPayments();
-                        } else {
-                            console.error('completed-payment-table-body element not found');
-                        }
-                    }, 0);
-                    break;
-                case 'pending':
-                    // Supplier pending payments with date filter
-                    let filteredSupplierPendingPayments = [];
-                    
-                    function renderFilteredPendingPayments() {
-                        const dateRangeFilter = document.getElementById('pending-payment-date-range')?.value || '';
-                        const user = window.currentUser || {};
-                        const isSupplier = user.role === 'supplier';
-                        
-                        // Filter by status and supplier ID (if supplier)
-                        // For suppliers: show all payments if we can't determine supplier ID (mock data scenario)
-                        filteredSupplierPendingPayments = (mockData.supplierPayouts || []).filter(p => {
-                            if (!p || p.status !== 'pending') return false;
-                            if (isSupplier) {
-                                // Only filter by supplier ID if we have a supplier ID and can determine payment supplier
-                                if (user.supplierId != null) {
-                                    const paymentSupplierId = getPaymentSupplierId(p);
-                                    // If we can determine supplier ID and it doesn't match, exclude it
-                                    // If we can't determine supplier ID (null), include it (for mock data)
-                                    if (paymentSupplierId != null && paymentSupplierId !== user.supplierId) {
-                                        return false;
-                                    }
-                                }
-                                // If user.supplierId is null or paymentSupplierId is null, include the payment
-                            }
-                            return true;
-                        });
-                        
-                        console.log('Supplier pending payments filter:', {
-                            totalPayments: (mockData.supplierPayouts || []).length,
-                            filteredCount: filteredSupplierPendingPayments.length,
-                            userSupplierId: user.supplierId,
-                            isSupplier: isSupplier
-                        });
-                        
-                        // Apply date range filter (based on expectedDate)
-                        if (dateRangeFilter) {
-                            filteredSupplierPendingPayments = filteredSupplierPendingPayments.filter(p => {
-                                const dateToCheck = p.expectedDate || p.date;
+                            filteredSupplierAllInvoices = filteredSupplierAllInvoices.filter(p => {
+                                const dateToCheck = p.status === 'pending' ? (p.expectedDate || p.date) : p.date;
                                 if (!dateToCheck) return false;
                                 const paymentDate = new Date(dateToCheck);
                                 const now = new Date();
@@ -16142,52 +16170,63 @@
                         const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
                         const carrierColorClass = 'text-red-600'; // Always red as it's a cost
                         
-                        // Paginate the filtered payments
-                        paginateData(filteredSupplierPendingPayments, window.paginationState.currentPage);
-                        const paginatedPayments = window.paginationState.currentData || [];
+                        // Paginate the filtered invoices
+                        paginateData(filteredSupplierAllInvoices, window.paginationState.currentPage);
+                        const paginatedInvoices = window.paginationState.currentData || [];
                         
-                        const pendingRows = paginatedPayments.length > 0 ? paginatedPayments.map(p => {
-                        const breakdown = p.breakdown || {};
-                        return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
-                            <td class="p-3 text-sm text-gray-500">${p.id}</td>
-                            <td class="p-3 text-sm">${p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi'}</td>
-                            <td class="p-3 text-sm">${p.period}</td>
-                            <td class="p-3 text-sm">${p.orders} sipariş</td>
-                            <td class="p-3 text-sm">
-                                <div class="space-y-1">
-                                    <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                    ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
-                                </div>
-                            </td>
-                            <td class="p-3 text-sm">
-                                <div class="space-y-1">
-                                    <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                    <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                </div>
-                            </td>
-                        </tr>`;
+                        const allRows = paginatedInvoices.length > 0 ? paginatedInvoices.map(p => {
+                            const breakdown = p.breakdown || {};
+                            const dateDisplay = p.status === 'pending' ? (p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi') : new Date(p.date).toLocaleDateString('tr-TR');
+                            const statusBadge = p.status === 'pending' ? '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Bekleyen</span>' : '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Geçmiş</span>';
+                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
+                                <td class="p-3 text-sm text-gray-500">${p.id}</td>
+                                <td class="p-3 text-sm">${dateDisplay}</td>
+                                <td class="p-3 text-sm">${p.period}</td>
+                                <td class="p-3 text-sm">${p.orders} sipariş</td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                                    </div>
+                                </td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    </div>
+                                </td>
+                                <td class="p-3 text-sm">${statusBadge}</td>
+                            </tr>`;
                         }).join('') : '';
-                        const tableBodyEl = document.getElementById('pending-payment-table-body');
+                        const tableBodyEl = document.getElementById('all-invoices-table-body');
                         if (tableBodyEl) {
-                            tableBodyEl.innerHTML = pendingRows || 
-                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Bekleyen ödeme bulunmuyor.</td></tr>';
+                            tableBodyEl.innerHTML = allRows || 
+                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
                         } else {
-                            console.error('pending-payment-table-body element not found when trying to render');
+                            console.error('all-invoices-table-body element not found when trying to render');
                         }
                             
-                        renderPagination('supplier-pending-payment-pagination');
+                        renderPagination('supplier-all-invoices-pagination');
                     }
                     
-                    window.paginationState.renderFunction = renderFilteredPendingPayments;
+                    window.paginationState.renderFunction = renderFilteredAllInvoices;
                     
                     container.innerHTML += `
                         <div class="space-y-4">
                             <!-- Filter Section -->
                             <div class="bg-gray-50 p-3 rounded-lg">
-                                <div class="flex items-center space-x-3">
-                                    <div class="flex-1">
-                                        <label for="pending-payment-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
-                                        <select id="pending-payment-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="all-invoices-status" class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
+                                        <select id="all-invoices-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm Durumlar</option>
+                                            <option value="pending">Bekleyen</option>
+                                            <option value="completed">Geçmiş</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="all-invoices-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+                                        <select id="all-invoices-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
                                             <option value="">Tüm Zamanlar</option>
                                             <option value="today">Bugün</option>
                                             <option value="week">Bu Hafta</option>
@@ -16195,45 +16234,51 @@
                                             <option value="quarter">Son 3 Ay</option>
                                         </select>
                                     </div>
-                                    <div class="pt-5">
-                                        <button id="pending-payment-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
-                                            <i class="fas fa-times mr-1"></i>Temizle
-                                        </button>
-                                    </div>
+                                </div>
+                                <div class="flex justify-end mt-3">
+                                    <button id="all-invoices-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
+                                        <i class="fas fa-times mr-1"></i>Temizle
+                                    </button>
                                 </div>
                             </div>
                             
-                            <!-- Payments Table -->
+                            <!-- Invoices Table -->
                             <div class="overflow-x-auto"><table class="w-full text-left">
                                 <thead class="table-header"><tr>
-                                    <th class="p-3 text-sm font-semibold">ÖDEME ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
+                                    <th class="p-3 text-sm font-semibold">HAKEDIŞ ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                                     <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
                                     <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
+                                    <th class="p-3 text-sm font-semibold">DURUM</th>
                                 </tr></thead>
-                                <tbody id="pending-payment-table-body"></tbody>
+                                <tbody id="all-invoices-table-body"></tbody>
                             </table></div>
-                            <div id="supplier-pending-payment-pagination"></div>
+                            <div id="supplier-all-invoices-pagination"></div>
                         </div>
                     `;
                     
                     // Add event listeners and initial render after DOM is ready
                     setTimeout(() => {
-                        document.getElementById('pending-payment-date-range')?.addEventListener('change', () => {
+                        document.getElementById('all-invoices-status')?.addEventListener('change', () => {
                             window.paginationState.currentPage = 1;
-                            renderFilteredPendingPayments();
+                            renderFilteredAllInvoices();
                         });
-                        document.getElementById('pending-payment-clear')?.addEventListener('click', () => {
-                            document.getElementById('pending-payment-date-range').value = '';
+                        document.getElementById('all-invoices-date-range')?.addEventListener('change', () => {
                             window.paginationState.currentPage = 1;
-                            renderFilteredPendingPayments();
+                            renderFilteredAllInvoices();
+                        });
+                        document.getElementById('all-invoices-clear')?.addEventListener('click', () => {
+                            document.getElementById('all-invoices-status').value = '';
+                            document.getElementById('all-invoices-date-range').value = '';
+                            window.paginationState.currentPage = 1;
+                            renderFilteredAllInvoices();
                         });
                         
                         // Initial render - ensure DOM element exists
-                        const tableBody = document.getElementById('pending-payment-table-body');
+                        const tableBody = document.getElementById('all-invoices-table-body');
                         if (tableBody) {
-                            renderFilteredPendingPayments();
+                            renderFilteredAllInvoices();
                         } else {
-                            console.error('pending-payment-table-body element not found');
+                            console.error('all-invoices-table-body element not found');
                         }
                     }, 0);
                     break;
