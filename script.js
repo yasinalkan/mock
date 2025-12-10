@@ -359,9 +359,6 @@ renderers['orders'] = () => {
               </div>
             </div>
           <div class="flex items-center gap-2">
-              <button id="orders-print" class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 text-gray-700 transition-colors" title="Yazdır">
-                <i class="fas fa-print"></i>
-              </button>
               <button id="orders-save" class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium transition-colors shadow-sm">
                 <i class="fas fa-save mr-2"></i>Kaydet
               </button>

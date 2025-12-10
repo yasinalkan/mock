@@ -91,6 +91,22 @@
         .return-icon {
             color: #ef4444;
         }
+        
+        /* Collapsible sections */
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.expanded {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+        
+        .collapsible-content.expanded > * {
+            opacity: 1;
+        }
     </style>
     </head>
 <body class="bg-gray-50 text-gray-800">
@@ -14971,53 +14987,42 @@
                                 <div>
                                     <h1 class="text-2xl font-bold text-gray-900">Sipariş ${order.id}</h1>
                                     <p class="text-sm text-gray-500">Sipariş Tarihi: ${new Date(order.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })}</p>
-                                    <div class="flex items-center mt-2">
+                                    ${!isSupplier ? `<div class="flex items-center mt-2">
                                         <i class="fas fa-truck text-blue-600 mr-2"></i>
                                         <span class="text-sm text-gray-600">Tedarikçi: <span class="font-semibold text-blue-600">${order.supplierId ? mockData.suppliers.find(s => s.id === order.supplierId)?.name || 'Tedarikçi ' + order.supplierId : 'Mağaza'}</span></span>
-                                    </div>
+                                    </div>` : ''}
                                 </div>
                                 <div class="text-right">
-                                    <div class="text-sm text-gray-500">Toplam Tutar</div>
-                                    <div class="text-3xl font-bold text-blue-600">${totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Status Badge -->
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center space-x-4">
-                                    <span class="px-3 py-1 text-sm font-semibold rounded-full ${order.status === 'teslim edildi' ? 'bg-green-100 text-green-800' : order.status === 'hazırlanıyor' ? 'bg-yellow-100 text-yellow-800' : order.status === 'iptal' || order.status === 'iptal edildi' ? 'bg-red-100 text-red-800' : order.status === 'tamamlandı' ? 'bg-green-50 text-green-700' : 'bg-blue-100 text-blue-800'}">
-                                        ${order.status === 'hazırlanıyor' ? 'Hazırlanıyor' : order.status === 'teslim edildi' ? 'Teslim Edildi' : order.status === 'iptal' || order.status === 'iptal edildi' ? 'İptal Edildi' : order.status === 'tamamlandı' ? 'Tamamlandı' : order.status === 'kargolandı' ? 'Kargolandı' : order.status}
-                                    </span>
-                                    ${isSupplier ? `
-                                        <select id="order-status-select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            ${statusOptions.map(status => `
-                                                <option value="${status}" ${status === order.status ? 'selected' : ''}>${status}</option>
-                                            `).join('')}
-                                        </select>
-                                        <button id="order-status-update" class="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm">
-                                            Durumu Güncelle
-                                        </button>
-                                    ` : ''}
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                        <i class="fas fa-print mr-2"></i>Yazdır
-                                    </button>
-                                   
+                                    <div class="flex items-center justify-end space-x-4 mb-2">
+                                        <span class="px-3 py-1 text-sm font-semibold rounded-full ${order.status === 'teslim edildi' ? 'bg-green-100 text-green-800' : order.status === 'hazırlanıyor' ? 'bg-yellow-100 text-yellow-800' : order.status === 'iptal' || order.status === 'iptal edildi' ? 'bg-red-100 text-red-800' : order.status === 'tamamlandı' ? 'bg-green-50 text-green-700' : 'bg-blue-100 text-blue-800'}">
+                                            ${order.status === 'hazırlanıyor' ? 'Hazırlanıyor' : order.status === 'teslim edildi' ? 'Teslim Edildi' : order.status === 'iptal' || order.status === 'iptal edildi' ? 'İptal Edildi' : order.status === 'tamamlandı' ? 'Tamamlandı' : order.status === 'kargolandı' ? 'Kargolandı' : order.status}
+                                        </span>
+                                        ${isSupplier ? `
+                                            <select id="order-status-select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                                ${statusOptions.map(status => `
+                                                    <option value="${status}" ${status === order.status ? 'selected' : ''}>${status}</option>
+                                                `).join('')}
+                                            </select>
+                                            <button id="order-status-update" class="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm">
+                                                Durumu Güncelle
+                                            </button>
+                                        ` : ''}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
                     <!-- Customer Details -->
-                        <div class="bg-white rounded-lg shadow-sm border p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-gray-900">Müşteri Bilgileri</h3>
-                            <button onclick="navigateTo('#customer/${order.customerId || 'CUST-001'}')" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                <i class="fas fa-external-link-alt mr-1"></i>
-                                Detayları Görüntüle
-                            </button>
-                                </div>
+                        <div class="bg-white rounded-lg shadow-sm border">
+                        <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('customer-details-${orderId}')">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Müşteri Bilgileri</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform" id="customer-details-${orderId}-icon"></i>
+                            </div>
+                        </div>
+                        <div id="customer-details-${orderId}" class="collapsible-content">
+                        <div class="p-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="space-y-3">
                                 <div class="flex items-center space-x-3">
@@ -15054,10 +15059,21 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
+                        </div>
                     </div>
                     
                     <!-- Order Stats -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-lg shadow-sm border">
+                        <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('order-stats-${orderId}')">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-gray-900">Sipariş İstatistikleri</h3>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform" id="order-stats-${orderId}-icon"></i>
+                            </div>
+                        </div>
+                        <div id="order-stats-${orderId}" class="collapsible-content">
+                        <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="bg-white rounded-lg shadow-sm border p-6">
                             <div class="flex items-center">
                                 <div class="p-3 bg-green-100 rounded-lg">
@@ -15075,6 +15091,17 @@
                         </div>
                         <div class="bg-white rounded-lg shadow-sm border p-6">
                             <div class="flex items-center">
+                                <div class="p-3 bg-blue-100 rounded-lg">
+                                    <i class="fas fa-lira-sign text-blue-600"></i>
+                                </div>
+                                <div class="ml-4 flex-1">
+                                    <div class="text-sm text-gray-500">Toplam Tutar</div>
+                                    <div class="text-2xl font-bold text-blue-600">${totalAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border p-6">
+                            <div class="flex items-center">
                                 <div class="p-3 bg-yellow-100 rounded-lg">
                                     <i class="fas fa-coins text-yellow-600"></i>
                                 </div>
@@ -15085,72 +15112,94 @@
                             </div>
                         </div>
                     </div>
+                        </div>
+                        </div>
+                    </div>
                     
                     <!-- Order Items -->
                     <div class="bg-white rounded-lg shadow-sm border">
-                        <div class="p-6 border-b border-gray-200">
+                        <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('order-items-${orderId}')">
                             <div class="flex items-center justify-between">
-                            <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
-                                <div class="flex items-center space-x-2 text-sm text-gray-500">
-                                    <i class="fas fa-box text-blue-500"></i>
-                                    <span>${itemCount} ürün</span>
+                                <div class="flex items-center space-x-3">
+                                    <h2 class="text-lg font-semibold text-gray-900">Sipariş Ürünleri</h2>
+                                    <div class="flex items-center space-x-2 text-sm text-gray-500">
+                                        <i class="fas fa-box text-blue-500"></i>
+                                        <span>${itemCount} ürün</span>
+                                    </div>
                                 </div>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform" id="order-items-${orderId}-icon"></i>
                             </div>
                         </div>
+                        <div id="order-items-${orderId}" class="collapsible-content">
                         <div class="p-6">
                             <div class="space-y-0">
                                 ${itemsList}
                             </div>
                         </div>
+                        </div>
                     </div>
                     
                     <!-- Address & Payment Info -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Shipping Address -->
+                    <div class="space-y-6">
+                        <!-- Addresses (Shipping & Billing) -->
                         <div class="bg-white rounded-lg shadow-sm border">
-                            <div class="p-6 border-b border-gray-200">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-truck text-blue-600"></i>
-                                    <h3 class="text-lg font-semibold text-gray-900">Teslimat Adresi</h3>
+                            <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('address-info-${orderId}')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-map-marker-alt text-blue-600"></i>
+                                        <h3 class="text-lg font-semibold text-gray-900">Adres Bilgileri</h3>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 transition-transform" id="address-info-${orderId}-icon"></i>
                                 </div>
                             </div>
+                            <div id="address-info-${orderId}" class="collapsible-content">
                             <div class="p-6">
-                                <div class="space-y-2">
-                                    <div class="font-medium text-gray-900">${order.shippingAddress?.name || '-'}</div>
-                                    <div class="text-gray-600">${order.shippingAddress?.line1 || ''}</div>
-                                    <div class="text-gray-600">${order.shippingAddress?.city || ''} ${order.shippingAddress?.postalCode || ''}</div>
-                                    <div class="text-gray-600">${order.shippingAddress?.country || ''}</div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Shipping Address -->
+                                    <div>
+                                        <div class="flex items-center space-x-2 mb-3">
+                                            <i class="fas fa-truck text-blue-600 text-sm"></i>
+                                            <h4 class="text-sm font-semibold text-gray-700">Teslimat Adresi</h4>
+                                        </div>
+                                        <div class="space-y-2 pl-6">
+                                            <div class="font-medium text-gray-900">${order.shippingAddress?.name || '-'}</div>
+                                            <div class="text-gray-600">${order.shippingAddress?.line1 || ''}</div>
+                                            <div class="text-gray-600">${order.shippingAddress?.city || ''} ${order.shippingAddress?.postalCode || ''}</div>
+                                            <div class="text-gray-600">${order.shippingAddress?.country || ''}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Billing Address -->
+                                    <div>
+                                        <div class="flex items-center space-x-2 mb-3">
+                                            <i class="fas fa-file-invoice text-green-600 text-sm"></i>
+                                            <h4 class="text-sm font-semibold text-gray-700">Fatura Adresi</h4>
+                                        </div>
+                                        <div class="space-y-2 pl-6">
+                                            <div class="font-medium text-gray-900">${order.billingAddress?.name || order.shippingAddress?.name || '-'}</div>
+                                            <div class="text-gray-600">${order.billingAddress?.line1 || order.shippingAddress?.line1 || ''}</div>
+                                            <div class="text-gray-600">${order.billingAddress?.city || order.shippingAddress?.city || ''} ${order.billingAddress?.postalCode || order.shippingAddress?.postalCode || ''}</div>
+                                            <div class="text-gray-600">${order.billingAddress?.country || order.shippingAddress?.country || ''}</div>
+                                            ${order.billingAddress ? '' : '<div class="text-xs text-gray-500 italic">Teslimat adresi ile aynı</div>'}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <!-- Billing Address -->
-                        <div class="bg-white rounded-lg shadow-sm border">
-                            <div class="p-6 border-b border-gray-200">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-file-invoice text-green-600"></i>
-                                    <h3 class="text-lg font-semibold text-gray-900">Fatura Adresi</h3>
-                                </div>
-                            </div>
-                            <div class="p-6">
-                                <div class="space-y-2">
-                                    <div class="font-medium text-gray-900">${order.billingAddress?.name || order.shippingAddress?.name || '-'}</div>
-                                    <div class="text-gray-600">${order.billingAddress?.line1 || order.shippingAddress?.line1 || ''}</div>
-                                    <div class="text-gray-600">${order.billingAddress?.city || order.shippingAddress?.city || ''} ${order.billingAddress?.postalCode || order.shippingAddress?.postalCode || ''}</div>
-                                    <div class="text-gray-600">${order.billingAddress?.country || order.shippingAddress?.country || ''}</div>
-                                    ${order.billingAddress ? '' : '<div class="text-xs text-gray-500 italic">Teslimat adresi ile aynı</div>'}
-                                </div>
                             </div>
                         </div>
                         
                         <!-- Payment Info -->
                         <div class="bg-white rounded-lg shadow-sm border">
-                            <div class="p-6 border-b border-gray-200">
-                                <div class="flex items-center space-x-2">
-                                    <i class="fas fa-credit-card text-purple-600"></i>
-                                    <h3 class="text-lg font-semibold text-gray-900">Ödeme Bilgileri</h3>
+                            <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('payment-info-${orderId}')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-credit-card text-purple-600"></i>
+                                        <h3 class="text-lg font-semibold text-gray-900">Ödeme Bilgileri</h3>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-gray-400 transition-transform" id="payment-info-${orderId}-icon"></i>
                                 </div>
                             </div>
+                            <div id="payment-info-${orderId}" class="collapsible-content">
                             <div class="p-6">
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
@@ -15171,17 +15220,22 @@
                                     </div>
                                 </div>
                             </div>
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Shipping Info -->
                     <div class="bg-white rounded-lg shadow-sm border">
-                        <div class="p-6 border-b border-gray-200">
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-shipping-fast text-orange-600"></i>
-                                <h3 class="text-lg font-semibold text-gray-900">Kargo Bilgileri</h3>
+                        <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('shipping-info-${orderId}')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-shipping-fast text-orange-600"></i>
+                                    <h3 class="text-lg font-semibold text-gray-900">Kargo Bilgileri</h3>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform" id="shipping-info-${orderId}-icon"></i>
                             </div>
                         </div>
+                        <div id="shipping-info-${orderId}" class="collapsible-content">
                         <div class="p-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                 <div>
@@ -15209,21 +15263,24 @@
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
                     
                     <!-- Order Timeline -->
                     <div class="bg-white rounded-lg shadow-sm border">
-                        <div class="p-6 border-b border-gray-200">
+                        <div class="p-6 border-b border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors" onclick="toggleSection('order-timeline-${orderId}')">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <i class="fas fa-history text-purple-600"></i>
                                     <h3 class="text-lg font-semibold text-gray-900">Sipariş Geçmişi</h3>
+                                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">
+                                        ${(order.timeline || []).length} adım
+                                    </span>
                                 </div>
-                                <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">
-                                    ${(order.timeline || []).length} adım
-                                </span>
+                                <i class="fas fa-chevron-down text-gray-400 transition-transform" id="order-timeline-${orderId}-icon"></i>
                             </div>
                         </div>
+                        <div id="order-timeline-${orderId}" class="collapsible-content">
                         <div class="p-6">
                             ${(order.timeline && order.timeline.length > 0) ? `
                                 <div class="flex items-center justify-between overflow-x-auto pb-4">
@@ -15252,9 +15309,23 @@
                                 </div>
                             `}
                         </div>
+                        </div>
                     </div>
                 </div>
             `;
+            
+            // Initialize order stats section - expanded by default
+            setTimeout(() => {
+                const statsSectionId = `order-stats-${orderId}`;
+                const statsSection = document.getElementById(statsSectionId);
+                const statsIcon = document.getElementById(`${statsSectionId}-icon`);
+                if (statsSection) {
+                    statsSection.classList.add('expanded');
+                    if (statsIcon) {
+                        statsIcon.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }, 100);
             
             // Add event listener for status update (suppliers only)
             if (isSupplier) {
@@ -15825,12 +15896,12 @@
                         </div>
                         
                         <div class="content">
-                            <div class="section">
+                            ${!isSupplier ? `<div class="section">
                                 <h3>GÖNDEREN:</h3>
                                 <p>${order.supplierId ? mockData.suppliers.find(s => s.id === order.supplierId)?.name || 'Tedarikçi' : 'Mağaza'}</p>
                                 <p>İstanbul, Türkiye</p>
-                            </div>
-                            
+                            </div>` : ''}
+
                             <div class="section">
                                 <h3>ALICI:</h3>
                                 <p>${order.shippingAddress?.name || '-'}</p>
@@ -28560,6 +28631,28 @@ sidebarNav.addEventListener('click', (e) => {
             }
             userMenuClosing = false;
         });
+        
+        // Toggle function for collapsible sections
+        window.toggleSection = function(sectionId) {
+            const section = document.getElementById(sectionId);
+            const icon = document.getElementById(`${sectionId}-icon`);
+            
+            if (section) {
+                const isExpanded = section.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    section.classList.remove('expanded');
+                    if (icon) {
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                } else {
+                    section.classList.add('expanded');
+                    if (icon) {
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }
+        };
     </script>
 
 <script src="script.js"></script>
