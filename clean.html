@@ -7662,6 +7662,7 @@
 
                 const tabsHTML = isSupplier ? `
                     <a href="#finance/all-invoices" class="tab-button ${activeTab === 'all-invoices' ? 'active' : 'text-gray-500'} font-medium py-4">Hakedişler</a>
+                    <a href="#finance/uncompleted-orders" class="tab-button ${activeTab === 'uncompleted-orders' ? 'active' : 'text-gray-500'} font-medium py-4">Tamamlanmamış Sipariş ve İadeler</a>
                     <!-- <a href="#finance/revenue-trend" class="tab-button ${activeTab === 'revenue-trend' ? 'active' : 'text-gray-500'} font-medium py-4">Gelir Trendi</a> -->
                 ` : `
                     <a href="#finance/transactions" class="tab-button ${activeTab === 'transactions' ? 'active' : 'text-gray-500'} font-medium py-4">${t('financial_transactions')}</a>
@@ -12805,6 +12806,28 @@
                             </div>
                         `;
                         break;
+                    case 'uncompleted-orders':
+                        infoContent = `
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="uncompleted-orders-info">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-clock text-yellow-400"></i>
+                                    </div>
+                                    <div class="ml-3 flex-1">
+                                        <h3 class="text-sm font-medium text-yellow-800">Tamamlanmamış Sipariş ve İadeler</h3>
+                                        <div class="mt-2 text-sm text-yellow-700">
+                                            <p>Bu sekmede tüm tedarikçilerin tamamlanmamış sipariş ve iadelerine ait bekleyen ödemeler görüntülenir. Toplam Bekleyen Tutar: <span id="total-pending-amount" class="font-bold">₺0</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                        <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        break;
                     case 'profitability':
                         infoContent = `
                             <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6" id="profitability-info">
@@ -13028,12 +13051,11 @@
                                 <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                             </div>
                         </td>
-                        <td class="p-3 text-sm">${statusBadge}</td>
                     </tr>`;
                 }).join('');
                 
                 document.getElementById('admin-all-invoices-table-body').innerHTML = allRows || 
-                    '<tr><td colspan="8" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
+                    '<tr><td colspan="7" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
                     
                 renderPagination('admin-all-invoices-pagination');
             }
@@ -13088,7 +13110,7 @@
                             <th class="p-3 text-sm font-semibold">HAKEDIŞ ID</th><th class="p-3 text-sm font-semibold">TEDARİKÇİ</th>
                             <th class="p-3 text-sm font-semibold">TARİH</th><th class="p-3 text-sm font-semibold">DÖNEM</th>
                             <th class="p-3 text-sm font-semibold">SİPARİŞ</th><th class="p-3 text-sm font-semibold">Tutar & Gelir</th>
-                            <th class="p-3 text-sm font-semibold">Kesintiler</th><th class="p-3 text-sm font-semibold">DURUM</th>
+                            <th class="p-3 text-sm font-semibold">Kesintiler</th>
                         </tr></thead>
                         <tbody id="admin-all-invoices-table-body"></tbody>
                     </table></div>
@@ -14948,7 +14970,7 @@
                             <div class="flex items-center justify-between mb-4">
                                 <div>
                                     <h1 class="text-2xl font-bold text-gray-900">Sipariş ${order.id}</h1>
-                                    <p class="text-sm text-gray-500">Sipariş Tarihi: ${new Date(order.date).toLocaleDateString('tr-TR')}</p>
+                                    <p class="text-sm text-gray-500">Sipariş Tarihi: ${new Date(order.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' })}</p>
                                     <div class="flex items-center mt-2">
                                         <i class="fas fa-truck text-blue-600 mr-2"></i>
                                         <span class="text-sm text-gray-600">Tedarikçi: <span class="font-semibold text-blue-600">${order.supplierId ? mockData.suppliers.find(s => s.id === order.supplierId)?.name || 'Tedarikçi ' + order.supplierId : 'Mağaza'}</span></span>
@@ -15141,7 +15163,7 @@
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">Ödeme Tarihi:</span>
-                                        <span class="font-medium">${order.payment?.date ? new Date(order.payment.date).toLocaleDateString('tr-TR') : '-'}</span>
+                                        <span class="font-medium">${order.payment?.date ? new Date(order.payment.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</span>
                                     </div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-600">İşlem No:</span>
@@ -15179,11 +15201,11 @@
                                 </div>
                                 <div>
                                     <div class="text-sm text-gray-600 mb-1">Kargo Tarihi</div>
-                                    <div class="font-medium text-gray-900">${order.shipping?.shippedDate ? new Date(order.shipping.shippedDate).toLocaleDateString('tr-TR') : '-'}</div>
+                                    <div class="font-medium text-gray-900">${order.shipping?.shippedDate ? new Date(order.shipping.shippedDate).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</div>
                                 </div>
                                 <div>
                                     <div class="text-sm text-gray-600 mb-1">Tahmini Teslimat</div>
-                                    <div class="font-medium text-gray-900">${order.shipping?.eta ? new Date(order.shipping.eta).toLocaleDateString('tr-TR') : '-'}</div>
+                                    <div class="font-medium text-gray-900">${order.shipping?.eta ? new Date(order.shipping.eta).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</div>
                                 </div>
                             </div>
                         </div>
@@ -15685,7 +15707,7 @@
                             </div>
                             <div class="text-right">
                                 <div class="text-sm text-gray-600">Tahmini Teslimat</div>
-                                <div class="font-semibold text-green-600">${order.shipping.eta ? new Date(order.shipping.eta).toLocaleDateString('tr-TR') : 'Belirlenmedi'}</div>
+                                <div class="font-semibold text-green-600">${order.shipping.eta ? new Date(order.shipping.eta).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : 'Belirlenmedi'}</div>
                             </div>
                         </div>
                     </div>
@@ -15739,7 +15761,7 @@
                             </div>
                             <div>
                                 <div class="text-sm text-gray-600">Kargo Tarihi</div>
-                                <div class="font-medium text-gray-900">${order.shipping?.shippedDate ? new Date(order.shipping.shippedDate).toLocaleDateString('tr-TR') : '-'}</div>
+                                <div class="font-medium text-gray-900">${order.shipping?.shippedDate ? new Date(order.shipping.shippedDate).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-'}</div>
                             </div>
                         </div>
                     </div>
@@ -15979,6 +16001,28 @@
                         </div>
                     `;
                     break;
+                case 'uncompleted-orders':
+                    infoContent = `
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6" id="uncompleted-orders-info">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-clock text-yellow-400"></i>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <h3 class="text-sm font-medium text-yellow-800">Tamamlanmamış Siparişler ve İadeler</h3>
+                                    <div class="mt-2 text-sm text-yellow-700">
+                                        <p>Bu sayfada henüz tamamlanmamış sipariş ve iadelerinize ait bekleyen ödemeler görüntülenir. Toplam Bekleyen Tutar: <span id="total-pending-amount" class="font-bold">₺0</span></p>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button onclick="this.parentElement.parentElement.style.display='none'" class="text-yellow-400 hover:text-yellow-600 focus:outline-none">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
                 case 'orders':
                     infoContent = `
                         <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-6" id="orders-info">
@@ -16177,7 +16221,6 @@
                         const allRows = paginatedInvoices.length > 0 ? paginatedInvoices.map(p => {
                             const breakdown = p.breakdown || {};
                             const dateDisplay = p.status === 'pending' ? (p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi') : new Date(p.date).toLocaleDateString('tr-TR');
-                            const statusBadge = p.status === 'pending' ? '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Bekleyen</span>' : '<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Geçmiş</span>';
                             return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
                                 <td class="p-3 text-sm text-gray-500">${p.id}</td>
                                 <td class="p-3 text-sm">${dateDisplay}</td>
@@ -16195,13 +16238,12 @@
                                         <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
                                     </div>
                                 </td>
-                                <td class="p-3 text-sm">${statusBadge}</td>
                             </tr>`;
                         }).join('') : '';
                         const tableBodyEl = document.getElementById('all-invoices-table-body');
                         if (tableBodyEl) {
                             tableBodyEl.innerHTML = allRows || 
-                                '<tr><td colspan="7" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
+                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Hakediş bulunmuyor.</td></tr>';
                         } else {
                             console.error('all-invoices-table-body element not found when trying to render');
                         }
@@ -16248,7 +16290,6 @@
                                     <th class="p-3 text-sm font-semibold">HAKEDIŞ ID</th><th class="p-3 text-sm font-semibold">TARİH</th>
                                     <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
                                     <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
-                                    <th class="p-3 text-sm font-semibold">DURUM</th>
                                 </tr></thead>
                                 <tbody id="all-invoices-table-body"></tbody>
                             </table></div>
@@ -16279,6 +16320,251 @@
                             renderFilteredAllInvoices();
                         } else {
                             console.error('all-invoices-table-body element not found');
+                        }
+                    }, 0);
+                    break;
+                case 'uncompleted-orders':
+                    // Supplier uncompleted orders (pending only) with date filters
+                    let filteredUncompletedOrders = [];
+                    
+                    function renderFilteredUncompletedOrders() {
+                        const dateRangeFilter = document.getElementById('uncompleted-orders-date-range')?.value || '';
+                        const searchQuery = document.getElementById('uncompleted-orders-search')?.value.toLowerCase() || '';
+                        const orderTypeFilter = document.getElementById('uncompleted-orders-type')?.value || '';
+                        const user = window.currentUser || {};
+                        const isSupplier = user.role === 'supplier';
+                        
+                        // Filter by supplier ID and only show pending orders
+                        filteredUncompletedOrders = (mockData.supplierPayouts || []).filter(p => {
+                            if (!p) return false;
+                            
+                            // Only show pending orders
+                            if (p.status !== 'pending') return false;
+                            
+                            if (isSupplier) {
+                                // Only filter by supplier ID if we have a supplier ID and can determine payment supplier
+                                if (user.supplierId != null) {
+                                    const paymentSupplierId = getPaymentSupplierId(p);
+                                    // If we can determine supplier ID and it doesn't match, exclude it
+                                    // If we can't determine supplier ID (null), include it (for mock data)
+                                    if (paymentSupplierId != null && paymentSupplierId !== user.supplierId) {
+                                        return false;
+                                    }
+                                }
+                                // If user.supplierId is null or paymentSupplierId is null, include the payment
+                            }
+                            return true;
+                        });
+                        
+                        // Apply search filter
+                        if (searchQuery) {
+                            filteredUncompletedOrders = filteredUncompletedOrders.filter(p => {
+                                const searchableText = `${p.id} ${p.period} ${p.orders}`.toLowerCase();
+                                return searchableText.includes(searchQuery);
+                            });
+                        }
+                        
+                        // Apply order type filter
+                        if (orderTypeFilter) {
+                            filteredUncompletedOrders = filteredUncompletedOrders.filter(p => {
+                                // For now, we can use a simple heuristic or add a type field to data
+                                // If amount is negative, it might be a return
+                                if (orderTypeFilter === 'order') {
+                                    return p.amount >= 0;
+                                } else if (orderTypeFilter === 'return') {
+                                    return p.amount < 0;
+                                }
+                                return true;
+                            });
+                        }
+                        
+                        // Apply date range filter
+                        if (dateRangeFilter) {
+                            filteredUncompletedOrders = filteredUncompletedOrders.filter(p => {
+                                const dateToCheck = p.expectedDate || p.date;
+                                if (!dateToCheck) return false;
+                                const paymentDate = new Date(dateToCheck);
+                                const now = new Date();
+                                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                                
+                                switch (dateRangeFilter) {
+                                    case 'today':
+                                        return paymentDate >= today;
+                                    case 'week':
+                                        const weekAgo = new Date(today);
+                                        weekAgo.setDate(weekAgo.getDate() - 7);
+                                        return paymentDate >= weekAgo;
+                                    case 'month':
+                                        const monthAgo = new Date(today);
+                                        monthAgo.setMonth(monthAgo.getMonth() - 1);
+                                        return paymentDate >= monthAgo;
+                                    case 'quarter':
+                                        const quarterAgo = new Date(today);
+                                        quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+                                        return paymentDate >= quarterAgo;
+                                    default:
+                                        return true;
+                                }
+                            });
+                        }
+                        
+                        // For suppliers: commissions are costs (red), tutar is revenue (green)
+                        const commissionColorClass = isSupplier ? 'text-red-600' : 'text-green-600';
+                        const carrierColorClass = 'text-red-600'; // Always red as it's a cost
+                        
+                        // Calculate total pending amount
+                        const totalPending = filteredUncompletedOrders.reduce((sum, p) => sum + p.amount, 0);
+                        
+                        // Paginate the filtered invoices
+                        paginateData(filteredUncompletedOrders, window.paginationState.currentPage);
+                        const paginatedInvoices = window.paginationState.currentData || [];
+                        
+                        const allRows = paginatedInvoices.length > 0 ? paginatedInvoices.map(p => {
+                            const breakdown = p.breakdown || {};
+                            const dateDisplay = p.expectedDate ? new Date(p.expectedDate).toLocaleDateString('tr-TR') : 'Belirlenmedi';
+                            return `<tr class="border-b hover:bg-gray-50 cursor-pointer" onclick="navigateTo('#payoutDetail/${p.id}')">
+                                <td class="p-3 text-sm text-gray-500">${p.id}</td>
+                                <td class="p-3 text-sm">${dateDisplay}</td>
+                                <td class="p-3 text-sm">${p.period}</td>
+                                <td class="p-3 text-sm">${p.orders} sipariş</td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="font-medium text-green-600">${p.amount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        ${breakdown.orderRevenue ? `<div class="text-xs text-green-500">Gelir: ${breakdown.orderRevenue.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>` : ''}
+                                    </div>
+                                </td>
+                                <td class="p-3 text-sm">
+                                    <div class="space-y-1">
+                                        <div class="text-xs font-medium ${commissionColorClass}">Komisyon: ${isSupplier ? '-' : '+'}${(breakdown.commissionCosts || p.commission || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                        <div class="text-xs font-medium ${carrierColorClass}">Kargo: -${(breakdown.carrierCosts || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</div>
+                                    </div>
+                                </td>
+                            </tr>`;
+                        }).join('') : '';
+                        const tableBodyEl = document.getElementById('uncompleted-orders-table-body');
+                        if (tableBodyEl) {
+                            tableBodyEl.innerHTML = allRows || 
+                                '<tr><td colspan="6" class="p-6 text-center text-gray-500">Tamamlanmamış sipariş bulunmuyor.</td></tr>';
+                        } else {
+                            console.error('uncompleted-orders-table-body element not found when trying to render');
+                        }
+                        
+                        // Update total pending amount display
+                        const totalPendingEl = document.getElementById('total-pending-amount');
+                        if (totalPendingEl) {
+                            totalPendingEl.textContent = totalPending.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' });
+                        }
+                        
+                        // Update result count
+                        const countEl = document.getElementById('uncompleted-orders-count');
+                        if (countEl) {
+                            countEl.textContent = filteredUncompletedOrders.length;
+                        }
+                            
+                        renderPagination('supplier-uncompleted-orders-pagination');
+                    }
+                    
+                    window.paginationState.renderFunction = renderFilteredUncompletedOrders;
+                    
+                    container.innerHTML += `
+                        <div class="space-y-4">
+                            <!-- Search Bar -->
+                            <div class="flex gap-2">
+                                <div class="flex-1 relative">
+                                    <input 
+                                        type="text" 
+                                        id="uncompleted-orders-search" 
+                                        placeholder="Sipariş ID, dönem veya sipariş sayısı ara..." 
+                                        class="w-full px-3 py-2 pl-10 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Filter Section -->
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="uncompleted-orders-type" class="block text-xs font-medium text-gray-700 mb-1">Tip</label>
+                                        <select id="uncompleted-orders-type" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tümü</option>
+                                            <option value="order">Sipariş</option>
+                                            <option value="return">İade</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="uncompleted-orders-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+                                        <select id="uncompleted-orders-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm Zamanlar</option>
+                                            <option value="today">Bugün</option>
+                                            <option value="week">Bu Hafta</option>
+                                            <option value="month">Bu Ay</option>
+                                            <option value="quarter">Son 3 Ay</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center mt-3">
+                                    <div class="text-xs text-gray-600">
+                                        <span id="uncompleted-orders-count">0</span> sonuç bulundu
+                                    </div>
+                                    <button id="uncompleted-orders-clear" class="px-3 py-1.5 text-sm border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 focus:ring-1 focus:ring-gray-500">
+                                        <i class="fas fa-times mr-1"></i>Temizle
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Uncompleted Orders Table -->
+                            <div class="overflow-x-auto"><table class="w-full text-left">
+                                <thead class="table-header"><tr>
+                                    <th class="p-3 text-sm font-semibold">SİPARİŞ ID</th><th class="p-3 text-sm font-semibold">BEKLENEN TARİH</th>
+                                    <th class="p-3 text-sm font-semibold">DÖNEM</th><th class="p-3 text-sm font-semibold">SİPARİŞ</th>
+                                    <th class="p-3 text-sm font-semibold">Tutar & Gelir</th><th class="p-3 text-sm font-semibold">Kesintiler</th>
+                                </tr></thead>
+                                <tbody id="uncompleted-orders-table-body"></tbody>
+                            </table></div>
+                            <div id="supplier-uncompleted-orders-pagination"></div>
+                        </div>
+                    `;
+                    
+                    // Add event listeners and initial render after DOM is ready
+                    setTimeout(() => {
+                        // Search input with debounce
+                        let searchTimeout;
+                        document.getElementById('uncompleted-orders-search')?.addEventListener('input', () => {
+                            clearTimeout(searchTimeout);
+                            searchTimeout = setTimeout(() => {
+                                window.paginationState.currentPage = 1;
+                                renderFilteredUncompletedOrders();
+                            }, 300);
+                        });
+                        
+                        // Order type filter
+                        document.getElementById('uncompleted-orders-type')?.addEventListener('change', () => {
+                            window.paginationState.currentPage = 1;
+                            renderFilteredUncompletedOrders();
+                        });
+                        
+                        // Date range filter
+                        document.getElementById('uncompleted-orders-date-range')?.addEventListener('change', () => {
+                            window.paginationState.currentPage = 1;
+                            renderFilteredUncompletedOrders();
+                        });
+                        
+                        // Clear all filters
+                        document.getElementById('uncompleted-orders-clear')?.addEventListener('click', () => {
+                            document.getElementById('uncompleted-orders-search').value = '';
+                            document.getElementById('uncompleted-orders-type').value = '';
+                            document.getElementById('uncompleted-orders-date-range').value = '';
+                            window.paginationState.currentPage = 1;
+                            renderFilteredUncompletedOrders();
+                        });
+                        
+                        // Initial render - ensure DOM element exists
+                        const tableBody = document.getElementById('uncompleted-orders-table-body');
+                        if (tableBody) {
+                            renderFilteredUncompletedOrders();
+                        } else {
+                            console.error('uncompleted-orders-table-body element not found');
                         }
                     }, 0);
                     break;
@@ -21290,6 +21576,137 @@
             }
         }
 
+        function showAddToInventoryModal(productId, supplierId) {
+            const product = mockData.products.find(p => p.id === productId);
+            
+            // Check if product is already in supplier's inventory
+            const existingEntry = mockData.supplierProducts.find(sp => 
+                sp.productId === productId && sp.supplierId === supplierId
+            );
+            
+            if (existingEntry) {
+                showToast('Bu ürün zaten envanterinizde mevcut.');
+                return;
+            }
+            
+            if (!product) {
+                showToast('Ürün bilgisi bulunamadı.');
+                return;
+            }
+            
+            const title = `Envanterime Ekle: ${t(product.name)}`;
+            const body = `
+                <div class="space-y-4">
+                    <div class="flex items-center bg-gray-50 p-3 rounded-md">
+                        <img src="${product.imageUrl}" alt="${t(product.name)}" class="w-12 h-12 rounded-md mr-3 object-cover">
+                        <div>
+                            <h4 class="font-semibold text-sm">${t(product.name)}</h4>
+                            <p class="text-xs text-gray-500">SKU: ${product.sku}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="stock-amount" class="block text-sm font-medium text-gray-700 mb-1">Stok Miktarı</label>
+                            <input type="number" id="stock-amount" value="1" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   min="0" placeholder="Stok miktarı">
+                        </div>
+                        <div>
+                            <label for="price-amount" class="block text-sm font-medium text-gray-700 mb-1">Fiyat (₺)</label>
+                            <input type="number" id="price-amount" value="0" 
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+                                   min="0" step="0.01" placeholder="Fiyat">
+                        </div>
+                    </div>
+                    
+                    <p class="text-sm text-gray-500">
+                        Ürün envanterinize eklenecektir. Stok ve fiyat bilgilerini belirleyin.
+                    </p>
+                </div>
+            `;
+            
+            showModal(title, body, 'Ekle', () => {
+                const stock = parseInt(document.getElementById('stock-amount').value) || 0;
+                const price = parseFloat(document.getElementById('price-amount').value) || 0;
+                
+                if (stock < 0 || price < 0) {
+                    showToast('Stok ve fiyat değerleri 0 veya daha büyük olmalıdır.');
+                    return;
+                }
+                
+                // Add product to supplier's inventory with specified values
+                mockData.supplierProducts.push({
+                    productId: productId,
+                    supplierId: supplierId,
+                    stock: stock,
+                    price: price
+                });
+                
+                showToast('Ürün envanterinize eklendi.');
+                closeModal();
+                
+                // Refresh the search results to show updated inventory status
+                handleProductSearch();
+            });
+            
+            // Force the modal footer to have the correct buttons and be visible
+            // This overrides any other modal button logic that might interfere
+            setTimeout(() => {
+                const modalFooter = document.getElementById('modal-footer');
+                if (modalFooter) {
+                    // Completely rebuild the footer with our buttons
+                    modalFooter.innerHTML = `
+                        <button id="modal-cancel" class="close-modal px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">İptal</button>
+                        <button id="modal-confirm" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Ekle</button>
+                    `;
+                    
+                    // Make footer visible
+                    modalFooter.classList.remove('hidden');
+                    modalFooter.style.display = 'flex';
+                    modalFooter.style.visibility = 'visible';
+                    modalFooter.style.opacity = '1';
+                    
+                    // Re-attach event listeners since we replaced the HTML
+                    const confirmBtn = document.getElementById('modal-confirm');
+                    const cancelBtn = document.getElementById('modal-cancel');
+                    
+                    if (confirmBtn) {
+                        confirmBtn.onclick = (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            const stock = parseInt(document.getElementById('stock-amount').value) || 0;
+                            const price = parseFloat(document.getElementById('price-amount').value) || 0;
+                            
+                            if (stock < 0 || price < 0) {
+                                showToast('Stok ve fiyat değerleri 0 veya daha büyük olmalıdır.');
+                                return;
+                            }
+                            
+                            // Add product to supplier's inventory with specified values
+                            mockData.supplierProducts.push({
+                                productId: productId,
+                                supplierId: supplierId,
+                                stock: stock,
+                                price: price
+                            });
+                            
+                            showToast('Ürün envanterinize eklendi.');
+                            closeModal();
+                            
+                            // Refresh the search results to show updated inventory status
+                            handleProductSearch();
+                        };
+                    }
+                    
+                    if (cancelBtn) {
+                        cancelBtn.onclick = closeModal;
+                    }
+                }
+            }, 0);
+        }
+        
         function addProductToSupplierInventory(productId, supplierId) {
             // Check if product is already in supplier's inventory
             const existingEntry = mockData.supplierProducts.find(sp => 
@@ -21536,7 +21953,7 @@
                 const addToInventoryBtn = document.getElementById('add-to-inventory-btn');
                 if (addToInventoryBtn) {
                     addToInventoryBtn.addEventListener('click', () => {
-                        addProductToSupplierInventory(product.id, currentSupplierId);
+                        showAddToInventoryModal(product.id, currentSupplierId);
                     });
                 }
                 
@@ -27793,7 +28210,7 @@
             else if (page === 'finance') { 
                 const user = window.currentUser || {};
                 const isSupplier = user.role === 'supplier';
-                const defaultTab = isSupplier ? 'completed' : 'supplier-revenue';
+                const defaultTab = isSupplier ? 'all-invoices' : 'supplier-revenue';
                 renderers.finance(subpage || defaultTab);
             } 
             else if (page === 'commissions') { renderers.commissionManagement(); }

@@ -171,13 +171,66 @@ function exportOrdersToCSV(userType) {
   let filteredOrders = orders;
   
   if (userType === 'admin') {
-    const sup = document.getElementById('ord-supplier')?.value;
-    const q = (document.getElementById('ord-query')?.value || '').toLowerCase();
+    const filterType = document.getElementById('ord-filter-type')?.value || '';
+    const filterValue = (document.getElementById('ord-filter-value')?.value || '').toLowerCase();
+    const supplierFilter = document.getElementById('ord-supplier-id')?.value || '';
+    const statusFilter = document.getElementById('ord-status')?.value || '';
+    const dateRangeFilter = document.getElementById('ord-date-range')?.value || '';
+    
     filteredOrders = orders.filter(o => {
-      if (sup && String(o.supplierId) !== String(sup)) return false;
-      if (!q) return true;
-      const text = `${o.id} ${o.status || ''} ${(o.items || []).map(i => `${i.sku} ${i.name || ""}`).join(' ')}`.toLowerCase();
-      return text.includes(q);
+      // Supplier filter (separate)
+      if (supplierFilter && String(o.supplierId) !== String(supplierFilter)) return false;
+      
+      // Unified filter
+      if (filterValue) {
+        if (filterType === 'search') {
+          const text = `${o.id} ${o.status || ''} ${(o.items || []).map(i => `${i.sku} ${i.name || ""}`).join(' ')}`.toLowerCase();
+          if (!text.includes(filterValue)) return false;
+        } else if (filterType === 'customer') {
+          const name = (o.shippingAddress?.name || '').toLowerCase();
+          const phone = (o.shippingAddress?.phone || '').toLowerCase();
+          const email = (o.shippingAddress?.email || '').toLowerCase();
+          if (!name.includes(filterValue) && !phone.includes(filterValue) && !email.includes(filterValue)) return false;
+        }
+      }
+      
+      // Status filter (separate)
+      if (statusFilter && o.status !== statusFilter) return false;
+      
+      // Date range filter (separate)
+      if (dateRangeFilter && o.date) {
+        const orderDate = new Date(o.date);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        switch (dateRangeFilter) {
+          case 'today':
+            if (orderDate < today) return false;
+            break;
+          case 'week':
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            if (orderDate < weekAgo) return false;
+            break;
+          case 'month':
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            if (orderDate < monthAgo) return false;
+            break;
+          case 'quarter':
+            const quarterAgo = new Date(today);
+            quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+            if (orderDate < quarterAgo) return false;
+            break;
+          case 'year':
+            const yearAgo = new Date(today);
+            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+            if (orderDate < yearAgo) return false;
+            break;
+        }
+      }
+      
+      return true;
     });
   } else if (userType === 'supplier') {
     const currentUser = window.currentUser || {};
@@ -187,17 +240,29 @@ function exportOrdersToCSV(userType) {
     }
     
     // Apply additional filters
-    const searchQuery = (document.getElementById('sord-search')?.value || '').toLowerCase();
+    const filterType = document.getElementById('sord-filter-type')?.value || 'search';
+    const filterValue = (document.getElementById('sord-filter-value')?.value || '').toLowerCase();
     const statusFilter = document.getElementById('sord-status')?.value || '';
     const dateRangeFilter = document.getElementById('sord-date-range')?.value || '';
-    const amountFilter = document.getElementById('sord-amount')?.value || '';
-    
+
     filteredOrders = filteredOrders.filter(order => {
-      if (searchQuery) {
-        const searchText = `${order.id} ${(order.items || []).map(i => `${i.sku} ${i.name || ''}`).join(' ')}`.toLowerCase();
-        if (!searchText.includes(searchQuery)) return false;
+      // Unified filter
+      if (filterValue) {
+        if (filterType === 'search') {
+          const searchText = `${order.id} ${(order.items || []).map(i => `${i.sku} ${i.name || ''}`).join(' ')}`.toLowerCase();
+          if (!searchText.includes(filterValue)) return false;
+        } else if (filterType === 'customer') {
+          const name = (order.shippingAddress?.name || '').toLowerCase();
+          const phone = (order.shippingAddress?.phone || '').toLowerCase();
+          const email = (order.shippingAddress?.email || '').toLowerCase();
+          if (!name.includes(filterValue) && !phone.includes(filterValue) && !email.includes(filterValue)) return false;
+        }
       }
+      
+      // Status filter (separate)
       if (statusFilter && order.status !== statusFilter) return false;
+      
+      // Date range filter (separate)
       if (dateRangeFilter && order.date) {
         const orderDate = new Date(order.date);
         const now = new Date();
@@ -207,18 +272,10 @@ function exportOrdersToCSV(userType) {
           case 'week': const weekAgo = new Date(today); weekAgo.setDate(weekAgo.getDate() - 7); if (orderDate < weekAgo) return false; break;
           case 'month': const monthAgo = new Date(today); monthAgo.setMonth(monthAgo.getMonth() - 1); if (orderDate < monthAgo) return false; break;
           case 'quarter': const quarterAgo = new Date(today); quarterAgo.setMonth(quarterAgo.getMonth() - 3); if (orderDate < quarterAgo) return false; break;
+          case 'year': const yearAgo = new Date(today); yearAgo.setFullYear(yearAgo.getFullYear() - 1); if (orderDate < yearAgo) return false; break;
         }
       }
-      if (amountFilter && typeof order.total === 'number') {
-        const total = order.total;
-        switch (amountFilter) {
-          case '0-500': if (total < 0 || total > 500) return false; break;
-          case '500-1000': if (total < 500 || total > 1000) return false; break;
-          case '1000-2500': if (total < 1000 || total > 2500) return false; break;
-          case '2500-5000': if (total < 2500 || total > 5000) return false; break;
-          case '5000+': if (total < 5000) return false; break;
-        }
-      }
+      
       return true;
     });
   }
@@ -233,7 +290,7 @@ function exportOrdersToCSV(userType) {
     const customerName = order.shippingAddress?.name || 'Bilinmiyor';
     const itemCount = (order.items || []).length;
     const totalItemQuantity = (order.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
-    const dateStr = order.date ? new Date(order.date).toLocaleDateString('tr-TR') : '-';
+    const dateStr = order.date ? new Date(order.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
     const totalAmount = order.total || 0;
     const commissionRate = calculateWeightedAverageCommissionRate(order);
     
@@ -325,26 +382,65 @@ renderers['orders'] = () => {
   if (!pageContent) return;
   pageContent.innerHTML = `
     <div class="space-y-4">
-      <div class="flex flex-col md:flex-row md:items-end gap-2">
-        <div class="flex-1">
-          <label class="block text-xs text-gray-600 mb-1">Tedarikçi</label>
-          <select id="ord-supplier" class="border rounded-md px-2 py-1.5 text-sm w-full">
-            <option value="">Tümü</option>
-            ${suppliers.map(s => `<option value="${s.id}">${s.name || ('Tedarikçi ' + s.id)}</option>`).join('')}
-          </select>
+      <div class="flex flex-col gap-3">
+      <div class="bg-white p-3 rounded-lg shadow-sm border">
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col md:flex-row md:items-end gap-3">
+            <div class="flex-1 md:flex-none md:w-48">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Filtre Türü</label>
+              <select id="ord-filter-type" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="search">Sipariş ID / SKU / Ürün</option>
+                <option value="customer">Müşteri (Ad, Telefon, E-posta)</option>
+              </select>
+            </div>
+            <div class="flex-1" id="ord-filter-input-container">
+              <label class="block text-xs font-medium text-gray-700 mb-1" id="ord-filter-label">Sipariş ID / SKU / Ürün</label>
+              <input id="ord-filter-value" type="text" placeholder="Sipariş ID, SKU veya ürün adı..." class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
+            </div>
+            <div class="flex gap-2">
+              <button id="ord-apply" class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">Uygula</button>
+              <button id="ord-clear" class="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50">Temizle</button>
+              <button id="ord-export" class="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center space-x-1">
+                <i class="fas fa-download"></i>
+                <span>Dışa Aktar</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-col md:flex-row md:items-end gap-3 pt-3 border-t border-gray-200">
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Tedarikçi</label>
+              <div class="relative">
+                <input id="ord-supplier-search" type="text" placeholder="Tedarikçi ara..." class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
+                <div id="ord-supplier-dropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
+                  ${suppliers.map(s => `<div class="px-3 py-2 hover:bg-gray-100 cursor-pointer supplier-option" data-supplier-id="${s.id}">${s.name || ('Tedarikçi ' + s.id)}</div>`).join('')}
+                </div>
+              </div>
+              <input type="hidden" id="ord-supplier-id" value="" />
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
+              <select id="ord-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Tüm Durumlar</option>
+                <option value="hazırlanıyor">Hazırlanıyor</option>
+                <option value="kargolandı">Kargolandı</option>
+                <option value="teslim edildi">Teslim Edildi</option>
+                <option value="iptal">İptal</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+              <select id="ord-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Tüm Zamanlar</option>
+                <option value="today">Bugün</option>
+                <option value="week">Bu Hafta</option>
+                <option value="month">Bu Ay</option>
+                <option value="quarter">Son 3 Ay</option>
+                <option value="year">Bu Yıl</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="flex-1">
-          <label class="block text-xs text-gray-600 mb-1">Ara (Sipariş ID / SKU / Ürün)</label>
-          <input id="ord-query" type="text" placeholder="Ara..." class="border rounded-md px-2 py-1.5 text-sm w-full" />
-        </div>
-        <div class="flex gap-2">
-          <button id="ord-apply" class="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">Uygula</button>
-          <button id="ord-clear" class="px-3 py-1.5 text-sm rounded-md border hover:bg-gray-50">Temizle</button>
-          <button id="ord-export" class="px-3 py-1.5 text-sm rounded-md bg-green-600 text-white hover:bg-green-700 flex items-center space-x-1">
-            <i class="fas fa-download"></i>
-            <span>Dışa Aktar</span>
-          </button>
-        </div>
+      </div>
       </div>
       <div class="rounded-lg border shadow-sm overflow-hidden">
         <div class="max-h-[60vh] overflow-auto">
@@ -354,7 +450,7 @@ renderers['orders'] = () => {
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-36 sortable-header sort-none">Sipariş ID</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-56 sortable-header sort-none">Tedarikçi</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Müşteri</th>
-                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24 sortable-header sort-none">Ürün Sayısı</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24 sortable-header sort-none">Toplam Adet</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Tarih</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Durum</th>
                 <th class="text-right text-xs font-semibold text-gray-500 px-3 py-2 w-28 sortable-header sort-none">Tutar</th>
@@ -710,14 +806,146 @@ window.mockData.orders = window.mockData.orders || [
     const b = (parts[1]||'').charAt(0);
     return (a+b).toUpperCase();
   }
+  // Handle filter type change
+  function updateFilterInput() {
+    const filterType = document.getElementById('ord-filter-type').value;
+    const container = document.getElementById('ord-filter-input-container');
+    const label = document.getElementById('ord-filter-label');
+    
+    const placeholder = filterType === 'search' 
+      ? 'Sipariş ID, SKU veya ürün adı...'
+      : 'Müşteri adı, telefon veya e-posta...';
+    const labelText = filterType === 'search'
+      ? 'Sipariş ID / SKU / Ürün'
+      : 'Müşteri (Ad, Telefon, E-posta)';
+    label.textContent = labelText;
+    container.innerHTML = `
+      <label class="block text-xs font-medium text-gray-700 mb-1" id="ord-filter-label">${labelText}</label>
+      <input id="ord-filter-value" type="text" placeholder="${placeholder}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
+    `;
+  }
+  
+  // Supplier search functionality
+  function initSupplierSearch() {
+    const searchInput = document.getElementById('ord-supplier-search');
+    const dropdown = document.getElementById('ord-supplier-dropdown');
+    const supplierIdInput = document.getElementById('ord-supplier-id');
+    
+    searchInput.addEventListener('focus', () => {
+      dropdown.classList.remove('hidden');
+    });
+    
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const options = dropdown.querySelectorAll('.supplier-option');
+      let hasVisibleOptions = false;
+      
+      options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          option.classList.remove('hidden');
+          hasVisibleOptions = true;
+        } else {
+          option.classList.add('hidden');
+        }
+      });
+      
+      if (hasVisibleOptions) {
+        dropdown.classList.remove('hidden');
+      } else {
+        dropdown.classList.add('hidden');
+      }
+    });
+    
+    dropdown.addEventListener('click', (e) => {
+      const option = e.target.closest('.supplier-option');
+      if (option) {
+        const supplierId = option.getAttribute('data-supplier-id');
+        const supplierName = option.textContent;
+        searchInput.value = supplierName;
+        supplierIdInput.value = supplierId;
+        dropdown.classList.add('hidden');
+        renderRows();
+      }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+    
+    // Clear selection when clearing search
+    searchInput.addEventListener('keyup', (e) => {
+      if (e.target.value === '') {
+        supplierIdInput.value = '';
+        renderRows();
+      }
+    });
+  }
+  
   function renderRows(){
-    const sup=document.getElementById('ord-supplier').value;
-    const q=(document.getElementById('ord-query').value||'').toLowerCase();
+    const filterType = document.getElementById('ord-filter-type').value;
+    const filterValue = (document.getElementById('ord-filter-value')?.value || '').toLowerCase();
+    const supplierFilter = document.getElementById('ord-supplier-id')?.value || '';
+    const statusFilter = document.getElementById('ord-status')?.value || '';
+    const dateRangeFilter = document.getElementById('ord-date-range')?.value || '';
+    
     const filteredOrders = orders.filter(o=>{
-      if(sup && String(o.supplierId)!==String(sup)) return false;
-      if(!q) return true;
-      const text = `${o.id} ${o.status||''} ${(o.items||[]).map(i => `${i.sku} ${i.name||""}`).join(' ')}`.toLowerCase();
-      return text.includes(q);
+      // Supplier filter (separate)
+      if (supplierFilter && String(o.supplierId) !== String(supplierFilter)) return false;
+      
+      // Unified filter
+      if (filterValue) {
+        if (filterType === 'search') {
+          const text = `${o.id} ${o.status||''} ${(o.items||[]).map(i => `${i.sku} ${i.name||""}`).join(' ')}`.toLowerCase();
+          if (!text.includes(filterValue)) return false;
+        } else if (filterType === 'customer') {
+          const name = (o.shippingAddress?.name || '').toLowerCase();
+          const phone = (o.shippingAddress?.phone || '').toLowerCase();
+          const email = (o.shippingAddress?.email || '').toLowerCase();
+          if (!name.includes(filterValue) && !phone.includes(filterValue) && !email.includes(filterValue)) return false;
+        }
+      }
+      
+      // Status filter (separate)
+      if (statusFilter && o.status !== statusFilter) return false;
+      
+      // Date range filter (separate)
+      if (dateRangeFilter && o.date) {
+        const orderDate = new Date(o.date);
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        switch (dateRangeFilter) {
+          case 'today':
+            if (orderDate < today) return false;
+            break;
+          case 'week':
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            if (orderDate < weekAgo) return false;
+            break;
+          case 'month':
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            if (orderDate < monthAgo) return false;
+            break;
+          case 'quarter':
+            const quarterAgo = new Date(today);
+            quarterAgo.setMonth(quarterAgo.getMonth() - 3);
+            if (orderDate < quarterAgo) return false;
+            break;
+          case 'year':
+            const yearAgo = new Date(today);
+            yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+            if (orderDate < yearAgo) return false;
+            break;
+        }
+      }
+      
+      return true;
     });
     
     // Apply pagination
@@ -730,12 +958,12 @@ window.mockData.orders = window.mockData.orders || [
       const supplierName=(suppliers.find(s=>String(s.id)===String(o.supplierId))||{}).name||('Tedarikçi '+o.supplierId);
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
-      const dateStr = o.date ? new Date(o.date).toLocaleDateString('tr-TR') : '-';
+      const dateStr = o.date ? new Date(o.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
       const customerName = o.shippingAddress?.name || 'Bilinmiyor';
       const itemCount = (o.items || []).length;
       const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
       
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs flex items-center justify-center font-semibold shadow-sm\">${initials(supplierName)}</div>\n            <div class=\"leading-5 font-medium text-gray-900\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n    <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">\n          <div class=\"flex items-center gap-2\">\n            <div class=\"w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs flex items-center justify-center font-semibold shadow-sm\">${initials(supplierName)}</div>\n            <div class=\"leading-5 font-medium text-gray-900\">${supplierName}</div>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${totalItemQuantity}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n    <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
     document.getElementById('ord-rows').innerHTML = rows || `<tr><td colspan="7" class="p-8 text-center text-gray-500">
       <div class="flex flex-col items-center space-y-3">
@@ -750,8 +978,26 @@ window.mockData.orders = window.mockData.orders || [
     // Make the admin orders table sortable
     setTimeout(() => makeTableSortable('admin-orders-table'), 100);
   }
+  // Initialize filter input and supplier search
+  updateFilterInput();
+  initSupplierSearch();
+  document.getElementById('ord-filter-type').addEventListener('change', updateFilterInput);
+  
   document.getElementById('ord-apply').addEventListener('click', ()=>{ window.paginationState.currentPage = 1; renderRows(); });
-  document.getElementById('ord-clear').addEventListener('click', ()=>{ document.getElementById('ord-supplier').value=''; document.getElementById('ord-query').value=''; window.paginationState.currentPage = 1; renderRows(); });
+  document.getElementById('ord-clear').addEventListener('click', ()=>{ 
+    document.getElementById('ord-filter-type').value = 'search';
+    updateFilterInput();
+    document.getElementById('ord-supplier-search').value = '';
+    document.getElementById('ord-supplier-id').value = '';
+    document.getElementById('ord-status').value = '';
+    document.getElementById('ord-date-range').value = '';
+    window.paginationState.currentPage = 1; 
+    renderRows(); 
+  });
+  
+  // Add event listeners for separate filters
+  document.getElementById('ord-status')?.addEventListener('change', renderRows);
+  document.getElementById('ord-date-range')?.addEventListener('change', renderRows);
   document.getElementById('ord-export').addEventListener('click', () => exportOrdersToCSV('admin'));
   pageContent.addEventListener('click', (e)=>{
     const tr = e.target.closest('tr[data-order-id]'); 
@@ -1741,45 +1987,42 @@ window.mockData.orders = window.mockData.orders || [
     <div class="space-y-4">
       <!-- Filter Section -->
       <div class="bg-white p-3 rounded-lg shadow-sm border">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div>
-            <label for="sord-search" class="block text-xs font-medium text-gray-700 mb-1">Sipariş Ara</label>
-            <div class="relative">
-              <i class="fas fa-search absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-              <input type="text" id="sord-search" class="pl-8 w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" placeholder="Sipariş ID, ürün SKU...">
+        <div class="flex flex-col gap-3">
+          <div class="flex flex-col md:flex-row md:items-end gap-3">
+            <div class="flex-1 md:flex-none md:w-48">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Filtre Türü</label>
+              <select id="sord-filter-type" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="search">Sipariş ID / SKU / Ürün</option>
+                <option value="customer">Müşteri (Ad, Telefon, E-posta)</option>
+              </select>
+            </div>
+            <div class="flex-1" id="sord-filter-input-container">
+              <label class="block text-xs font-medium text-gray-700 mb-1" id="sord-filter-label">Sipariş ID / SKU / Ürün</label>
+              <input id="sord-filter-value" type="text" placeholder="Sipariş ID, SKU veya ürün adı..." class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
             </div>
           </div>
-          <div>
-            <label for="sord-status" class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
-            <select id="sord-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-              <option value="">Tüm Durumlar</option>
-              <option value="hazırlanıyor">Hazırlanıyor</option>
-              <option value="kargolandı">Kargolandı</option>
-              <option value="teslim edildi">Teslim Edildi</option>
-              <option value="iptal">İptal</option>
-            </select>
-          </div>
-          <div>
-            <label for="sord-date-range" class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
-            <select id="sord-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-              <option value="">Tüm Zamanlar</option>
-              <option value="today">Bugün</option>
-              <option value="week">Bu Hafta</option>
-              <option value="month">Bu Ay</option>
-              <option value="quarter">Son 3 Ay</option>
-              <option value="year">Bu Yıl</option>
-            </select>
-          </div>
-          <div>
-            <label for="sord-amount" class="block text-xs font-medium text-gray-700 mb-1">Tutar Aralığı</label>
-            <select id="sord-amount" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
-              <option value="">Tüm Tutarlar</option>
-              <option value="0-500">₺0 - ₺500</option>
-              <option value="500-1000">₺500 - ₺1.000</option>
-              <option value="1000-2500">₺1.000 - ₺2.500</option>
-              <option value="2500-5000">₺2.500 - ₺5.000</option>
-              <option value="5000+">₺5.000+</option>
-            </select>
+          <div class="flex flex-col md:flex-row md:items-end gap-3 pt-3 border-t border-gray-200">
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Durum</label>
+              <select id="sord-status" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Tüm Durumlar</option>
+                <option value="hazırlanıyor">Hazırlanıyor</option>
+                <option value="kargolandı">Kargolandı</option>
+                <option value="teslim edildi">Teslim Edildi</option>
+                <option value="iptal">İptal</option>
+              </select>
+            </div>
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-gray-700 mb-1">Tarih Aralığı</label>
+              <select id="sord-date-range" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Tüm Zamanlar</option>
+                <option value="today">Bugün</option>
+                <option value="week">Bu Hafta</option>
+                <option value="month">Bu Ay</option>
+                <option value="quarter">Son 3 Ay</option>
+                <option value="year">Bu Yıl</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="flex justify-between items-center mt-3">
@@ -1808,7 +2051,7 @@ window.mockData.orders = window.mockData.orders || [
               <tr>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-36 sortable-header sort-none">Sipariş ID</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Müşteri</th>
-                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24 sortable-header sort-none">Ürün Sayısı</th>
+                <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-24 sortable-header sort-none">Toplam Adet</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Tarih</th>
                 <th class="text-left text-xs font-semibold text-gray-500 px-3 py-2 w-32 sortable-header sort-none">Durum</th>
                 <th class="text-right text-xs font-semibold text-gray-500 px-3 py-2 w-28 sortable-header sort-none">Tutar</th>
@@ -1841,22 +2084,50 @@ window.mockData.orders = window.mockData.orders || [
       ${status||'-'}
     </span>`;
   }
+  // Handle filter type change for supplier
+  function updateSupplierFilterInput() {
+    const filterType = document.getElementById('sord-filter-type').value;
+    const container = document.getElementById('sord-filter-input-container');
+    const label = document.getElementById('sord-filter-label');
+    
+    const placeholder = filterType === 'search' 
+      ? 'Sipariş ID, SKU veya ürün adı...'
+      : 'Müşteri adı, telefon veya e-posta...';
+    const labelText = filterType === 'search'
+      ? 'Sipariş ID / SKU / Ürün'
+      : 'Müşteri (Ad, Telefon, E-posta)';
+    label.textContent = labelText;
+    container.innerHTML = `
+      <label class="block text-xs font-medium text-gray-700 mb-1" id="sord-filter-label">${labelText}</label>
+      <input id="sord-filter-value" type="text" placeholder="${placeholder}" class="w-full px-2 py-1.5 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500" />
+    `;
+  }
+  
   function renderRows(){
-    // Get filter values
-    const searchQuery = (document.getElementById('sord-search')?.value || '').toLowerCase();
+    const filterType = document.getElementById('sord-filter-type')?.value || 'search';
+    const filterValue = (document.getElementById('sord-filter-value')?.value || '').toLowerCase();
     const statusFilter = document.getElementById('sord-status')?.value || '';
     const dateRangeFilter = document.getElementById('sord-date-range')?.value || '';
-    const amountFilter = document.getElementById('sord-amount')?.value || '';
+    
     // Apply filters
     const filteredOrders = orders.filter(o => {
-      // Search filter
-      if (searchQuery) {
-        const searchText = `${o.id} ${o.status||''} ${(o.items||[]).map(i => `${i.sku} ${i.name||''}`).join(' ')}`.toLowerCase();
-        if (!searchText.includes(searchQuery)) return false;
+      // Unified filter
+      if (filterValue) {
+        if (filterType === 'search') {
+          const searchText = `${o.id} ${o.status||''} ${(o.items||[]).map(i => `${i.sku} ${i.name||''}`).join(' ')}`.toLowerCase();
+          if (!searchText.includes(filterValue)) return false;
+        } else if (filterType === 'customer') {
+          const name = (o.shippingAddress?.name || '').toLowerCase();
+          const phone = (o.shippingAddress?.phone || '').toLowerCase();
+          const email = (o.shippingAddress?.email || '').toLowerCase();
+          if (!name.includes(filterValue) && !phone.includes(filterValue) && !email.includes(filterValue)) return false;
+        }
       }
-      // Status filter
+      
+      // Status filter (separate)
       if (statusFilter && o.status !== statusFilter) return false;
-      // Date range filter
+      
+      // Date range filter (separate)
       if (dateRangeFilter && o.date) {
         const orderDate = new Date(o.date);
         const now = new Date();
@@ -1888,27 +2159,7 @@ window.mockData.orders = window.mockData.orders || [
             break;
         }
       }
-      // Amount filter
-      if (amountFilter && typeof o.total === 'number') {
-        const total = o.total;
-        switch (amountFilter) {
-          case '0-500':
-            if (total < 0 || total > 500) return false;
-            break;
-          case '500-1000':
-            if (total < 500 || total > 1000) return false;
-            break;
-          case '1000-2500':
-            if (total < 1000 || total > 2500) return false;
-            break;
-          case '2500-5000':
-            if (total < 2500 || total > 5000) return false;
-            break;
-          case '5000+':
-            if (total < 5000) return false;
-            break;
-        }
-      }
+      
       return true;
     });
     // Apply pagination
@@ -1926,12 +2177,12 @@ window.mockData.orders = window.mockData.orders || [
     const rows = paginatedOrders.map(o => {
       const shown = (o.items||[]).slice(0,3).map(i=>`<span class=\"inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 mr-1 mb-1\"><span class=\"font-mono\">${i.sku}</span>${i.qty?`<span class=\\\"text-indigo-700\\\">×${i.qty}</span>`:''}</span>`).join('');
       const extra = (o.items||[]).length>3 ? `<span class=\"inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700\">+${(o.items||[]).length-3}</span>` : '';
-      const dateStr = o.date ? new Date(o.date).toLocaleDateString('tr-TR') : '-';
+      const dateStr = o.date ? new Date(o.date).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '-';
       const customerName = o.shippingAddress?.name || 'Bilinmiyor';
       const itemCount = (o.items || []).length;
       const totalItemQuantity = (o.items || []).reduce((sum, item) => sum + (item.qty || 0), 0);
       
-      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${itemCount} ürün (${totalItemQuantity} adet)</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n     <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
+      return `<tr class=\"hover:bg-gray-50 even:bg-white odd:bg-gray-50/40 cursor-pointer transition-colors duration-150\" data-order-id=\"${o.id}\">\n        <td class=\"px-3 py-3 text-sm text-gray-700 font-medium\">\n          <div class=\"flex items-center space-x-2\">\n            <i class=\"fas fa-receipt text-blue-500\"></i>\n            <span class=\"font-mono\">${o.id}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-user text-gray-400\"></i>\n            <span class=\"font-medium\">${customerName}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-box text-gray-400\"></i>\n            <span class=\"font-medium\">${totalItemQuantity}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm text-gray-600\">\n          <div class=\"flex items-center space-x-1\">\n            <i class=\"fas fa-calendar-alt text-gray-400\"></i>\n            <span>${dateStr}</span>\n          </div>\n        </td>\n        <td class=\"px-3 py-3 text-sm\">${statusPill(o.status)}</td>\n        <td class=\"px-3 py-3 text-sm text-right font-semibold text-green-600\">\n          <div class=\"flex items-center justify-end space-x-1\">\n     <span>${numberTRY(o.total)}</span>\n          </div>\n        </td>\n      </tr>`;
     }).join('');
     
     document.getElementById('sord-rows').innerHTML = rows || `<tr><td colspan="6" class="p-8 text-center text-gray-500">
@@ -1963,19 +2214,23 @@ window.mockData.orders = window.mockData.orders || [
   renderRows();
   // Add event listeners for filtering
   document.getElementById('sord-apply')?.addEventListener('click', renderRows);
+  // Initialize supplier filter input
+  updateSupplierFilterInput();
+  document.getElementById('sord-filter-type').addEventListener('change', updateSupplierFilterInput);
+  
   document.getElementById('sord-clear')?.addEventListener('click', () => {
-    document.getElementById('sord-search').value = '';
+    document.getElementById('sord-filter-type').value = 'search';
+    updateSupplierFilterInput();
     document.getElementById('sord-status').value = '';
     document.getElementById('sord-date-range').value = '';
-    document.getElementById('sord-amount').value = '';
     renderRows();
   });
   document.getElementById('sord-export')?.addEventListener('click', () => exportOrdersToCSV('supplier'));
   // Auto-filter on input changes
-  document.getElementById('sord-search')?.addEventListener('input', renderRows);
+  document.getElementById('sord-filter-value')?.addEventListener('input', renderRows);
+  document.getElementById('sord-filter-value')?.addEventListener('change', renderRows);
   document.getElementById('sord-status')?.addEventListener('change', renderRows);
   document.getElementById('sord-date-range')?.addEventListener('change', renderRows);
-  document.getElementById('sord-amount')?.addEventListener('change', renderRows);
   function openSupplierOrderDetail(order){
     const bd = document.getElementById('orders-drawer-body');
     const backdrop = document.getElementById('orders-drawer-backdrop');
