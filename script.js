@@ -3626,74 +3626,59 @@ function renderProductTab(tabName, product) {
              category.attributes && category.attributes.includes(attr.id)
          );
          
-         container.innerHTML = `
-             <div class="space-y-6">
-                 <!-- Header -->
-                 <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
-                     <div class="flex items-center justify-between">
-                         <div>
-                             <h3 class="text-lg font-semibold text-gray-900">${isNewProductRequest ? 'Yeni Ürün Talebi - Onay Bekliyor' : 'Güncelleme Onayı Bekleyen Ürün'}</h3>
-                             <p class="text-sm text-gray-600 mt-1">${isNewProductRequest ? 'Gönderdiğiniz yeni ürün talebi admin onayı beklemektedir' : 'Bu ürün için gönderdiğiniz güncelleme talebi admin onayı beklemektedir'}</p>
-                         </div>
-                         <div class="flex items-center space-x-2">
-                             <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full">
-                                 <i class="fas fa-clock mr-1"></i>Onay Bekliyor
-                             </span>
-                         </div>
-                     </div>
-                 </div>
-                 
-                 <!-- Submission Info -->
-                 <div class="bg-white rounded-lg shadow-sm border p-6">
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         <div class="flex items-center space-x-3">
-                             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                 <i class="fas fa-calendar-alt text-blue-600"></i>
-                             </div>
-                             <div>
-                                 <p class="text-sm font-medium text-gray-700">Gönderim Tarihi</p>
-                                 <p class="text-sm text-gray-600">${new Date(submission.submittedAt).toLocaleString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
-                             </div>
-                         </div>
-                         ${!isSupplier ? `
-                         <div class="flex items-center space-x-3">
-                             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                 <i class="fas fa-user text-green-600"></i>
-                             </div>
-                             <div>
-                                 <p class="text-sm font-medium text-gray-700">Tedarikçi</p>
-                                 <p class="text-sm text-gray-600">${mockData.suppliers.find(s => s.id === submission.supplierId)?.name || 'Bilinmeyen Tedarikçi'}</p>
-                             </div>
-                         </div>
-                         ` : ''}
-                     </div>
-                 </div>
-                 
-                 <!-- Changes Overview -->
-                 <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
-                     <div class="px-6 py-4 border-b border-gray-200">
-                         <h4 class="text-lg font-semibold text-gray-900">${isNewProductRequest ? 'Gönderilen Ürün Bilgileri' : 'Gönderilen Güncellemeler'}</h4>
-                         <p class="text-sm text-gray-600 mt-1">${isNewProductRequest ? 'Admin onayı için gönderdiğiniz yeni ürün bilgileri' : 'Admin onayı için gönderdiğiniz değişiklikler'}</p>
-                     </div>
-                      <div class="p-6">
-                          <div class="space-y-4">
+        // Prepare images section
+        const submittedImages = (submission.images && submission.images.length > 0) 
+            ? submission.images 
+            : (submission.imageUrl ? [submission.imageUrl] : []);
+        
+        // Handle product.images - it can be array of URLs or array of objects with url property
+        let currentImages = [];
+        if (product.images && product.images.length > 0) {
+            // Check if it's an array of objects or strings
+            if (typeof product.images[0] === 'object' && product.images[0].url) {
+                currentImages = product.images.map(img => img.url);
+            } else {
+                currentImages = product.images;
+            }
+        } else if (product.imageUrl) {
+            currentImages = [product.imageUrl];
+        }
+        
+        const hasSubmittedImages = submittedImages.length > 0;
+        const hasCurrentImages = currentImages.length > 0;
+        const hasAnyImages = hasSubmittedImages || (isUpdateRequest && hasCurrentImages);
+        
+        container.innerHTML = `
+            <div class="space-y-6">
+                <!-- Two Column Layout: Product Info (Left) & Images (Right) -->
+                <div class="grid grid-cols-1 ${hasAnyImages ? 'lg:grid-cols-3' : 'lg:grid-cols-1'} gap-6">
+                    
+                    <!-- Left Column: Product Information -->
+                    <div class="${hasAnyImages ? 'lg:col-span-2' : 'lg:col-span-1'}">
+                        <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
+                            <div class="px-6 py-4 border-b border-gray-200">
+                                <h4 class="text-lg font-semibold text-gray-900">${isNewProductRequest ? 'Gönderilen Ürün Bilgileri' : 'Gönderilen Güncellemeler'}</h4>
+                                <p class="text-sm text-gray-600 mt-1">${isNewProductRequest ? 'Admin onayı için gönderdiğiniz yeni ürün bilgileri' : 'Admin onayı için gönderdiğiniz değişiklikler'}</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="space-y-3">
                               ${submission.name && submission.name.value ? `
-                              <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                              <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                   <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-tag text-orange-600"></i>
+                                      <i class="fas fa-tag text-gray-600"></i>
                                       <p class="font-medium text-gray-900">Ürün Adı</p>
-                                      <span class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">${isNewProductRequest ? 'Yeni' : 'Güncellendi'}</span>
+                                      <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">${isNewProductRequest ? 'Yeni' : 'Güncellendi'}</span>
                                   </div>
                                   <div class="grid grid-cols-1 ${isNewProductRequest ? '' : 'md:grid-cols-2'} gap-4">
                                       ${!isNewProductRequest ? `
-                                      <div class="bg-white p-3 rounded-lg border">
-                                          <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
-                                          <div class="font-medium text-gray-800">${t(product.name)}</div>
+                                      <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                          <div class="text-xs text-gray-500 mb-1">Mevcut Değer</div>
+                                          <div class="font-medium text-gray-900">${t(product.name)}</div>
                                       </div>
                                       ` : ''}
-                                      <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
-                                          <div class="text-sm text-orange-700 mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Gönderdiğiniz Değer'}</div>
-                                          <div class="font-medium text-orange-900">${t(submission.name.value)}</div>
+                                      <div class="bg-green-50 p-3 rounded-lg border border-green-200">
+                                          <div class="text-xs text-green-700 mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Yeni Değer'}</div>
+                                          <div class="font-medium text-green-900">${t(submission.name.value)}</div>
                                       </div>
                                   </div>
                               </div>
@@ -3701,76 +3686,48 @@ function renderProductTab(tabName, product) {
                               
                               <!-- Category -->
                               ${submission.categoryId ? `
-                              <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                              <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                   <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-folder text-blue-600"></i>
+                                      <i class="fas fa-folder text-gray-600"></i>
                                       <p class="font-medium text-gray-900">Kategori</p>
-                                      <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Yeni</span>
+                                      <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Yeni</span>
                                   </div>
-                                  <div class="bg-white p-3 rounded-lg border">
-                                      <div class="font-medium text-gray-800">${mockData.categories.find(c => c.id === submission.categoryId)?.name?.tr || 'Bilinmiyor'}</div>
+                                  <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                      <div class="font-medium text-gray-900">${mockData.categories.find(c => c.id === submission.categoryId)?.name?.tr || 'Bilinmiyor'}</div>
                                   </div>
                               </div>
                               ` : ''}
                               
                               <!-- SKU -->
                               ${submission.sku ? `
-                              <div class="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                              <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                   <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-barcode text-purple-600"></i>
+                                      <i class="fas fa-barcode text-gray-600"></i>
                                       <p class="font-medium text-gray-900">SKU / Barkod</p>
-                                      <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">Yeni</span>
+                                      <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Yeni</span>
                                   </div>
-                                  <div class="bg-white p-3 rounded-lg border">
-                                      <div class="font-medium text-gray-800">${submission.sku}</div>
-                                  </div>
-                              </div>
-                              ` : ''}
-                              
-                              <!-- Price -->
-                              ${submission.listPrice !== undefined && submission.listPrice !== null ? `
-                              <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
-                                  <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-money-bill-wave text-green-600"></i>
-                                      <p class="font-medium text-gray-900">Fiyat</p>
-                                      <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Yeni</span>
-                                  </div>
-                                  <div class="bg-white p-3 rounded-lg border">
-                                      <div class="font-medium text-gray-800">${submission.listPrice} ₺</div>
-                                  </div>
-                              </div>
-                              ` : ''}
-                              
-                              <!-- Stock -->
-                              ${submission.stock !== undefined && submission.stock !== null ? `
-                              <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                  <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-boxes text-yellow-600"></i>
-                                      <p class="font-medium text-gray-900">Stok</p>
-                                      <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Yeni</span>
-                                  </div>
-                                  <div class="bg-white p-3 rounded-lg border">
-                                      <div class="font-medium text-gray-800">${submission.stock} adet</div>
+                                  <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                      <div class="font-medium text-gray-900">${submission.sku}</div>
                                   </div>
                               </div>
                               ` : ''}
                               
                               <!-- Description -->
                               ${submission.description ? `
-                              <div class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg">
+                              <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                   <div class="flex items-center space-x-3 mb-3">
-                                      <i class="fas fa-file-alt text-indigo-600"></i>
+                                      <i class="fas fa-file-alt text-gray-600"></i>
                                       <p class="font-medium text-gray-900">Açıklama</p>
-                                      <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs font-medium rounded-full">Yeni</span>
+                                      <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Yeni</span>
                                   </div>
-                                  <div class="bg-white p-3 rounded-lg border">
-                                      <div class="font-medium text-gray-800">${submission.description}</div>
+                                  <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                      <div class="text-sm text-gray-700 whitespace-pre-wrap">${submission.description}</div>
                                   </div>
                               </div>
                               ` : ''}
                               
                               <!-- Attributes -->
-                              ${Object.entries(submission.attributes || {}).length > 0 ? `<h5 class="font-medium text-gray-900 mt-4 mb-2">Özellikler</h5>` : ''}
+                              ${Object.entries(submission.attributes || {}).length > 0 ? `<h5 class="font-semibold text-gray-900 mt-6 mb-3 flex items-center gap-2"><i class="fas fa-cog text-gray-500"></i> Özellikler</h5>` : ''}
                               
                               ${Object.entries(submission.attributes || {}).map(([attrId, attrData]) => {
                                   const attribute = mockData.attributes.find(a => a.id == attrId);
@@ -3778,35 +3735,126 @@ function renderProductTab(tabName, product) {
                                   const isChanged = currentValue !== attrData.value;
                                   
                                   return `
-                                  <div class="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                                  <div class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                                       <div class="flex items-center space-x-3 mb-3">
-                                          <i class="fas fa-cog text-orange-600"></i>
+                                          <i class="fas fa-tag text-gray-600"></i>
                                           <p class="font-medium text-gray-900">${attribute ? t(attribute.label) : 'Özellik'}</p>
-                                          <span class="px-2 py-1 ${isNewProductRequest ? 'bg-orange-100 text-orange-800' : (isChanged ? 'bg-orange-100 text-orange-800' : 'bg-gray-100 text-gray-600')} text-xs font-medium rounded-full">
+                                          <span class="px-2 py-1 ${isNewProductRequest ? 'bg-green-100 text-green-700' : (isChanged ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600')} text-xs font-medium rounded-full">
                                               ${isNewProductRequest ? 'Yeni' : (isChanged ? 'Güncellendi' : 'Aynı')}
                                           </span>
                                       </div>
                                       <div class="grid grid-cols-1 ${isNewProductRequest ? '' : 'md:grid-cols-2'} gap-4">
                                           ${!isNewProductRequest ? `
-                                          <div class="bg-white p-3 rounded-lg border">
-                                              <div class="text-sm text-gray-600 mb-1">Mevcut Değer</div>
-                                              <div class="font-medium text-gray-800">${currentValue}</div>
+                                          <div class="bg-white p-3 rounded-lg border border-gray-200">
+                                              <div class="text-xs text-gray-500 mb-1">Mevcut Değer</div>
+                                              <div class="font-medium text-gray-900">${currentValue}</div>
                                           </div>
                                           ` : ''}
-                                          <div class="bg-orange-100 p-3 rounded-lg border border-orange-300">
-                                              <div class="text-sm text-orange-700 mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Gönderdiğiniz Değer'}</div>
-                                              <div class="font-medium text-orange-900">${attrData.value}</div>
+                                          <div class="${isChanged || isNewProductRequest ? 'bg-green-50 border-green-200' : 'bg-white border-gray-200'} p-3 rounded-lg border">
+                                              <div class="text-xs ${isChanged || isNewProductRequest ? 'text-green-700' : 'text-gray-500'} mb-1">${isNewProductRequest ? 'Gönderilen Değer' : 'Yeni Değer'}</div>
+                                              <div class="font-medium ${isChanged || isNewProductRequest ? 'text-green-900' : 'text-gray-900'}">${attrData.value}</div>
                                           </div>
                                       </div>
                                   </div>
                                   `;
                               }).join('')}
-                          </div>
-                      </div>
-                 </div>
-
-             </div>
-         `;
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column: Images (Sticky) -->
+                    ${hasAnyImages ? `
+                    <div class="lg:col-span-1">
+                        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden sticky top-6">
+                            <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-images text-gray-600"></i>
+                                        <h4 class="text-lg font-semibold text-gray-900">Ürün Görselleri</h4>
+                                    </div>
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                                        ${isUpdateRequest ? (hasCurrentImages ? currentImages.length : 0) + (hasSubmittedImages ? submittedImages.length : 0) : submittedImages.length} Görsel
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="p-3 space-y-4">
+                                
+                                ${isUpdateRequest && hasCurrentImages ? `
+                                <!-- Current Images Section -->
+                                <div class="space-y-2">
+                                    <div class="flex items-center space-x-2 pb-2 border-b border-gray-200">
+                                        <i class="fas fa-image text-gray-500 text-xs"></i>
+                                        <h5 class="text-xs font-semibold text-gray-700 uppercase">Mevcut Görseller</h5>
+                                        <span class="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-medium rounded">
+                                            ${currentImages.length}
+                                        </span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        ${currentImages.map((img, index) => `
+                                            <div class="relative group aspect-square">
+                                                <img src="${img}" 
+                                                     alt="Mevcut görsel ${index + 1}" 
+                                                     class="w-full h-full object-cover rounded-md border border-gray-200 hover:border-gray-400 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                                                     onclick="showImageModal('${img.replace(/'/g, "\\'")}')">
+                                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-md flex items-center justify-center">
+                                                    <div class="opacity-0 group-hover:opacity-100 transition-all transform scale-75 group-hover:scale-100">
+                                                        <div class="bg-white rounded-full p-1.5 shadow-lg">
+                                                            <i class="fas fa-search-plus text-gray-600 text-sm"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                ${hasSubmittedImages ? `
+                                <!-- New Images Section -->
+                                <div class="space-y-2">
+                                    ${isUpdateRequest ? `
+                                    <div class="flex items-center space-x-2 pb-2 border-b border-gray-200">
+                                        <i class="fas fa-plus-circle text-green-600 text-xs"></i>
+                                        <h5 class="text-xs font-semibold text-green-700 uppercase">Yeni Gönderilen Görseller</h5>
+                                        <span class="px-1.5 py-0.5 bg-green-100 text-green-700 text-[10px] font-medium rounded">
+                                            ${submittedImages.length}
+                                        </span>
+                                    </div>
+                                    ` : ''}
+                                    <div class="grid grid-cols-2 gap-2">
+                                        ${submittedImages.map((img, index) => `
+                                            <div class="relative group aspect-square">
+                                                <img src="${img}" 
+                                                     alt="${isUpdateRequest ? 'Yeni görsel' : 'Ürün görseli'} ${index + 1}" 
+                                                     class="w-full h-full object-cover rounded-md border border-gray-200 hover:border-green-400 transition-all cursor-pointer shadow-sm hover:shadow-md"
+                                                     onclick="showImageModal('${img.replace(/'/g, "\\'")}')">
+                                                <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-md flex items-center justify-center">
+                                                    <div class="opacity-0 group-hover:opacity-100 transition-all transform scale-75 group-hover:scale-100">
+                                                        <div class="bg-white rounded-full p-1.5 shadow-lg">
+                                                            <i class="fas fa-search-plus text-green-600 text-sm"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                ` : ''}
+                                
+                                <div class="pt-2 mt-2 border-t border-gray-200">
+                                    <p class="text-xs text-gray-500 text-center">
+                                        <i class="fas fa-info-circle mr-1"></i>Görsele tıklayarak büyütebilirsiniz
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                    
+                </div>
+            </div>
+        `;
          
      } catch (error) {
          console.error('Error rendering comparison tab:', error);
