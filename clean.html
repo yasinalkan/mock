@@ -22124,6 +22124,11 @@
             modalConfirm: modalConfirm
         });
         function showModal(title, body, confirmText = t('confirm'), onConfirm = () => {}) {
+            // Cancel any pending closeModal timer so back-to-back modal transitions work correctly
+            if (window._modalCloseTimer) {
+                clearTimeout(window._modalCloseTimer);
+                window._modalCloseTimer = null;
+            }
             console.log('showModal called with title:', title);
             
             // Add null checks for modal elements
@@ -22207,8 +22212,11 @@
         function closeModal() {
             modal.classList.add('opacity-0');
             modalContent.classList.add('opacity-0', '-translate-y-10');
-            setTimeout(() => {
+            // Track the timer so showModal() can cancel it if it's called immediately after
+            if (window._modalCloseTimer) clearTimeout(window._modalCloseTimer);
+            window._modalCloseTimer = setTimeout(() => {
                 modal.classList.add('hidden');
+                window._modalCloseTimer = null;
             }, 300);
         }
         
