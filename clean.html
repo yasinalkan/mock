@@ -5792,6 +5792,26 @@
             const simCategoryObj = (mockData.categories || []).find(c => c.id === similarProduct.categoryId);
             const reqCategory = reqCategoryObj ? (typeof reqCategoryObj.name === 'object' ? (reqCategoryObj.name.tr || reqCategoryObj.name.en || '-') : reqCategoryObj.name) : '-';
             const simCategory = simCategoryObj ? (typeof simCategoryObj.name === 'object' ? (simCategoryObj.name.tr || simCategoryObj.name.en || '-') : simCategoryObj.name) : '-';
+            const similarity = calculateProductSimilarity(requestData, similarProduct);
+            const scorePct = score => `${Math.round((score || 0) * 100)}%`;
+            const scoreColor = score => (score || 0) >= 0.7 ? 'text-red-700' : (score || 0) >= 0.4 ? 'text-orange-700' : 'text-green-700';
+            const showAdminActions = window.currentUser?.role === 'admin' && request.status === 'submitted';
+            const actionButtons = showAdminActions ? `
+                <div class="mt-4 pt-4 border-t border-gray-200 flex items-center justify-end gap-2">
+                    <button onclick="closeModal(); handleRequestDecision(${request.id}, 'toBeRevised')"
+                            class="px-3 py-2 bg-yellow-600 text-white text-sm rounded-md hover:bg-yellow-700">
+                        <i class="fas fa-edit mr-1.5"></i>Revize İste
+                    </button>
+                    <button onclick="closeModal(); handleRequestDecision(${request.id}, 'rejected')"
+                            class="px-3 py-2 bg-red-600 text-white text-sm rounded-md hover:bg-red-700">
+                        <i class="fas fa-times mr-1.5"></i>Reddet
+                    </button>
+                    <button onclick="closeModal(); handleRequestDecision(${request.id}, 'accepted')"
+                            class="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700">
+                        <i class="fas fa-check mr-1.5"></i>Onayla
+                    </button>
+                </div>
+            ` : '';
 
             const modalBody = `
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -5827,11 +5847,44 @@
                     <p class="text-xs text-gray-500 mb-2">Ürün Özellikleri Karşılaştırması</p>
                     ${_renderAttributeComparisonRows(requestData.attributes || {}, similarProduct.attributes || {})}
                 </div>
+                <div class="mt-4 rounded-md border border-gray-200 bg-gray-50 p-3">
+                    <p class="text-xs font-semibold text-gray-700 mb-2">Benzerlik Metrikleri</p>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2">
+                        <div class="bg-white border border-gray-200 rounded-md p-2 text-center">
+                            <p class="text-[11px] text-gray-500">Toplam</p>
+                            <p class="text-sm font-semibold ${scoreColor(similarity.totalScore)}">${scorePct(similarity.totalScore)}</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-2 text-center">
+                            <p class="text-[11px] text-gray-500">Marka</p>
+                            <p class="text-sm font-semibold ${scoreColor(similarity.brandScore)}">${scorePct(similarity.brandScore)}</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-2 text-center">
+                            <p class="text-[11px] text-gray-500">İsim</p>
+                            <p class="text-sm font-semibold ${scoreColor(similarity.nameScore)}">${scorePct(similarity.nameScore)}</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-2 text-center">
+                            <p class="text-[11px] text-gray-500">Kategori</p>
+                            <p class="text-sm font-semibold ${scoreColor(similarity.categoryScore)}">${scorePct(similarity.categoryScore)}</p>
+                        </div>
+                        <div class="bg-white border border-gray-200 rounded-md p-2 text-center">
+                            <p class="text-[11px] text-gray-500">Özellik</p>
+                            <p class="text-sm font-semibold ${scoreColor(similarity.attributesScore)}">${scorePct(similarity.attributesScore)}</p>
+                        </div>
+                    </div>
+                </div>
+                ${actionButtons}
             `;
 
             showModal('Ürün Talebi vs Benzer Ürün Karşılaştırması', modalBody, 'Kapat', () => {
                 closeModal();
             });
+
+            // This modal uses in-body actions and a single close button.
+            const modalCancel = document.getElementById('modal-cancel');
+            if (modalCancel) {
+                modalCancel.classList.add('hidden');
+                modalCancel.style.display = 'none';
+            }
         }
 
         function calculateProductSimilarity(requestData, existingProduct) {
