@@ -4172,6 +4172,65 @@
                     updatedAt: '2025-01-19T10:00:00Z'
                 }
             ],
+            // Campaigns
+            campaigns: [
+                {
+                    id: 1,
+                    name: 'Yaz Sezonu İndirim Kampanyası',
+                    description: 'Yaz sezonu ürünlerinde geçerli özel indirim kampanyası. Tüm giyim kategorisindeki ürünlere %15 indirim uygulanır.',
+                    discountRate: 15,
+                    category: 'Giyim',
+                    startDate: '2026-05-01',
+                    endDate: '2026-08-31',
+                    status: 'active',
+                    participants: [1],
+                    createdAt: '2026-04-01T10:00:00Z',
+                    updatedAt: '2026-04-10T12:00:00Z',
+                    stats: { views: 320, joined: 1, estimatedRevenue: 48500 }
+                },
+                {
+                    id: 2,
+                    name: 'Ramazan Özel Kampanyası',
+                    description: 'Ramazan ayına özel tüm kategorilerde geçerli indirim kampanyası.',
+                    discountRate: 20,
+                    category: 'Tüm Kategoriler',
+                    startDate: '2026-03-01',
+                    endDate: '2026-03-31',
+                    status: 'ended',
+                    participants: [1, 2],
+                    createdAt: '2026-02-10T09:00:00Z',
+                    updatedAt: '2026-03-31T23:59:00Z',
+                    stats: { views: 580, joined: 2, estimatedRevenue: 92000 }
+                },
+                {
+                    id: 3,
+                    name: 'Yeni Tedarikçi Hoş Geldin Kampanyası',
+                    description: 'Platforma yeni katılan tedarikçilere ilk 3 ay boyunca geçerli özel indirim paketi.',
+                    discountRate: 10,
+                    category: 'Tüm Kategoriler',
+                    startDate: '2026-06-01',
+                    endDate: '2026-08-31',
+                    status: 'draft',
+                    participants: [],
+                    createdAt: '2026-04-20T14:00:00Z',
+                    updatedAt: '2026-04-20T14:00:00Z',
+                    stats: { views: 0, joined: 0, estimatedRevenue: 0 }
+                },
+                {
+                    id: 4,
+                    name: 'Sonbahar Koleksiyonu Kampanyası',
+                    description: 'Sonbahar/kış koleksiyonu ürünleri için erken sipariş indirimi.',
+                    discountRate: 12,
+                    category: 'Giyim',
+                    startDate: '2026-09-01',
+                    endDate: '2026-11-30',
+                    status: 'draft',
+                    participants: [],
+                    createdAt: '2026-04-22T10:00:00Z',
+                    updatedAt: '2026-04-22T10:00:00Z',
+                    stats: { views: 45, joined: 0, estimatedRevenue: 0 }
+                }
+            ],
             // Customers
             customers: [
                 {
@@ -10873,6 +10932,423 @@
                         ${actionButtons}
                     </div>
                 `;
+            }
+        };
+
+        // --- CAMPAIGNS PAGE RENDERER ---
+        renderers['campaigns'] = () => {
+            const user = window.currentUser || {};
+            const isAdmin = user.role === 'admin';
+            const supplierId = user.supplierId;
+
+            pageTitle.textContent = 'Kampanyalar';
+
+            const statusBadge = (status) => {
+                const map = {
+                    active:  { cls: 'bg-green-100 text-green-700',  label: 'Aktif' },
+                    draft:   { cls: 'bg-yellow-100 text-yellow-700', label: 'Taslak' },
+                    ended:   { cls: 'bg-gray-100 text-gray-600',     label: 'Sona Erdi' },
+                    passive: { cls: 'bg-red-100 text-red-600',       label: 'Pasif' }
+                };
+                const s = map[status] || map.draft;
+                return `<span class="px-2 py-0.5 rounded-full text-xs font-semibold ${s.cls}">${s.label}</span>`;
+            };
+
+            const formatDate = (d) => d ? new Date(d).toLocaleDateString('tr-TR') : '-';
+
+            /* -------- ADMIN VIEW -------- */
+            if (isAdmin) {
+                const renderAdminTable = (filterStatus) => {
+                    let campaigns = [...(mockData.campaigns || [])];
+                    if (filterStatus && filterStatus !== 'all') campaigns = campaigns.filter(c => c.status === filterStatus);
+                    if (campaigns.length === 0) return `<tr><td colspan="7" class="p-6 text-center text-gray-400">Kampanya bulunamadı.</td></tr>`;
+                    return campaigns.map(c => `
+                        <tr class="border-b hover:bg-gray-50 cursor-pointer campaign-row" data-id="${c.id}">
+                            <td class="p-3 font-medium text-sm text-gray-800">${c.name}</td>
+                            <td class="p-3 text-sm text-gray-600">${c.category}</td>
+                            <td class="p-3 text-sm"><span class="font-semibold text-blue-700">%${c.discountRate}</span></td>
+                            <td class="p-3 text-sm text-gray-600">${formatDate(c.startDate)} – ${formatDate(c.endDate)}</td>
+                            <td class="p-3 text-sm">${statusBadge(c.status)}</td>
+                            <td class="p-3 text-sm text-gray-600">${c.participants.length} tedarikçi</td>
+                            <td class="p-3 text-right">
+                                <button class="campaign-edit-btn p-1.5 text-gray-400 hover:text-blue-600 rounded" data-id="${c.id}" title="Düzenle"><i class="fas fa-edit text-sm"></i></button>
+                                <button class="campaign-participants-btn p-1.5 text-gray-400 hover:text-green-600 rounded" data-id="${c.id}" title="Katılımcılar"><i class="fas fa-users text-sm"></i></button>
+                                <button class="campaign-toggle-btn p-1.5 text-gray-400 hover:text-yellow-600 rounded" data-id="${c.id}" title="${c.status==='active'?'Pasife Al':'Aktif Et'}">
+                                    <i class="fas ${c.status==='active'?'fa-pause-circle':'fa-play-circle'} text-sm"></i>
+                                </button>
+                                <button class="campaign-delete-btn p-1.5 text-gray-400 hover:text-red-600 rounded" data-id="${c.id}" title="Sil"><i class="fas fa-trash text-sm"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                };
+
+                pageContent.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- Header Bar -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <select id="campaign-status-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="all">Tüm Durumlar</option>
+                                    <option value="active">Aktif</option>
+                                    <option value="draft">Taslak</option>
+                                    <option value="ended">Sona Erdi</option>
+                                    <option value="passive">Pasif</option>
+                                </select>
+                            </div>
+                            <button id="new-campaign-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-plus"></i> Yeni Kampanya
+                            </button>
+                        </div>
+
+                        <!-- Stats Row -->
+                        <div class="grid grid-cols-4 gap-4">
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Toplam Kampanya</p>
+                                <p class="text-2xl font-bold text-gray-800">${(mockData.campaigns||[]).length}</p>
+                            </div>
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Aktif Kampanya</p>
+                                <p class="text-2xl font-bold text-green-600">${(mockData.campaigns||[]).filter(c=>c.status==='active').length}</p>
+                            </div>
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Toplam Katılım</p>
+                                <p class="text-2xl font-bold text-blue-600">${(mockData.campaigns||[]).reduce((s,c)=>s+c.participants.length,0)}</p>
+                            </div>
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Taslak</p>
+                                <p class="text-2xl font-bold text-yellow-600">${(mockData.campaigns||[]).filter(c=>c.status==='draft').length}</p>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="bg-white rounded-xl border overflow-hidden">
+                            <table class="w-full text-left">
+                                <thead class="bg-gray-50 border-b">
+                                    <tr>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Kampanya Adı</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Kategori</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">İndirim</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Tarih Aralığı</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Durum</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Katılım</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase text-right">İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="campaign-table-body">
+                                    ${renderAdminTable('all')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Form Modal -->
+                    <div id="campaign-form-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
+                            <div class="flex items-center justify-between p-5 border-b">
+                                <h3 id="campaign-modal-title" class="text-lg font-semibold text-gray-800">Yeni Kampanya Oluştur</h3>
+                                <button id="campaign-modal-close" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-lg"></i></button>
+                            </div>
+                            <div class="p-5 space-y-4">
+                                <input type="hidden" id="campaign-form-id" value="">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Kampanya Adı <span class="text-red-500">*</span></label>
+                                    <input id="campaign-form-name" type="text" placeholder="Örn. Yaz Sezonu İndirim Kampanyası" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                                    <textarea id="campaign-form-desc" rows="3" placeholder="Kampanya detaylarını açıklayın..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">İndirim Oranı (%) <span class="text-red-500">*</span></label>
+                                        <input id="campaign-form-discount" type="number" min="1" max="99" placeholder="Örn. 15" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Kategori</label>
+                                        <input id="campaign-form-category" type="text" placeholder="Örn. Giyim" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Başlangıç Tarihi <span class="text-red-500">*</span></label>
+                                        <input id="campaign-form-start" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Bitiş Tarihi <span class="text-red-500">*</span></label>
+                                        <input id="campaign-form-end" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                                    <select id="campaign-form-status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="draft">Taslak</option>
+                                        <option value="active">Aktif</option>
+                                        <option value="passive">Pasif</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex justify-end gap-3 p-5 border-t">
+                                <button id="campaign-modal-cancel" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">İptal</button>
+                                <button id="campaign-modal-save" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Participants Modal -->
+                    <div id="campaign-participants-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md">
+                            <div class="flex items-center justify-between p-5 border-b">
+                                <h3 id="participants-modal-title" class="text-lg font-semibold text-gray-800">Katılımcı Tedarikçiler</h3>
+                                <button id="participants-modal-close" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-lg"></i></button>
+                            </div>
+                            <div id="participants-modal-body" class="p-5 max-h-80 overflow-y-auto space-y-2"></div>
+                        </div>
+                    </div>
+                `;
+
+                // Filter
+                document.getElementById('campaign-status-filter').addEventListener('change', (e) => {
+                    document.getElementById('campaign-table-body').innerHTML = renderAdminTable(e.target.value);
+                    attachAdminTableEvents();
+                });
+
+                // Open create modal
+                document.getElementById('new-campaign-btn').addEventListener('click', () => {
+                    document.getElementById('campaign-form-id').value = '';
+                    document.getElementById('campaign-form-name').value = '';
+                    document.getElementById('campaign-form-desc').value = '';
+                    document.getElementById('campaign-form-discount').value = '';
+                    document.getElementById('campaign-form-category').value = 'Tüm Kategoriler';
+                    document.getElementById('campaign-form-start').value = '';
+                    document.getElementById('campaign-form-end').value = '';
+                    document.getElementById('campaign-form-status').value = 'draft';
+                    document.getElementById('campaign-modal-title').textContent = 'Yeni Kampanya Oluştur';
+                    document.getElementById('campaign-form-modal').classList.remove('hidden');
+                });
+
+                const closeCampaignModal = () => document.getElementById('campaign-form-modal').classList.add('hidden');
+                document.getElementById('campaign-modal-close').addEventListener('click', closeCampaignModal);
+                document.getElementById('campaign-modal-cancel').addEventListener('click', closeCampaignModal);
+
+                document.getElementById('campaign-modal-save').addEventListener('click', () => {
+                    const name = document.getElementById('campaign-form-name').value.trim();
+                    const discount = parseInt(document.getElementById('campaign-form-discount').value);
+                    const start = document.getElementById('campaign-form-start').value;
+                    const end = document.getElementById('campaign-form-end').value;
+                    if (!name || !discount || !start || !end) {
+                        alert('Lütfen zorunlu alanları doldurun.'); return;
+                    }
+                    const existingId = parseInt(document.getElementById('campaign-form-id').value);
+                    if (existingId) {
+                        const idx = mockData.campaigns.findIndex(c => c.id === existingId);
+                        if (idx > -1) {
+                            mockData.campaigns[idx] = { ...mockData.campaigns[idx],
+                                name, discountRate: discount,
+                                description: document.getElementById('campaign-form-desc').value,
+                                category: document.getElementById('campaign-form-category').value || 'Tüm Kategoriler',
+                                startDate: start, endDate: end,
+                                status: document.getElementById('campaign-form-status').value,
+                                updatedAt: new Date().toISOString()
+                            };
+                        }
+                    } else {
+                        const newId = Math.max(0, ...(mockData.campaigns||[]).map(c=>c.id)) + 1;
+                        mockData.campaigns.push({
+                            id: newId, name,
+                            description: document.getElementById('campaign-form-desc').value,
+                            discountRate: discount,
+                            category: document.getElementById('campaign-form-category').value || 'Tüm Kategoriler',
+                            startDate: start, endDate: end,
+                            status: document.getElementById('campaign-form-status').value,
+                            participants: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+                            stats: { views: 0, joined: 0, estimatedRevenue: 0 }
+                        });
+                    }
+                    closeCampaignModal();
+                    renderers.campaigns();
+                });
+
+                const closeParticipantsModal = () => document.getElementById('campaign-participants-modal').classList.add('hidden');
+                document.getElementById('participants-modal-close').addEventListener('click', closeParticipantsModal);
+
+                function attachAdminTableEvents() {
+                    // Edit
+                    document.querySelectorAll('.campaign-edit-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
+                            if (!c) return;
+                            document.getElementById('campaign-form-id').value = c.id;
+                            document.getElementById('campaign-form-name').value = c.name;
+                            document.getElementById('campaign-form-desc').value = c.description || '';
+                            document.getElementById('campaign-form-discount').value = c.discountRate;
+                            document.getElementById('campaign-form-category').value = c.category;
+                            document.getElementById('campaign-form-start').value = c.startDate;
+                            document.getElementById('campaign-form-end').value = c.endDate;
+                            document.getElementById('campaign-form-status').value = c.status;
+                            document.getElementById('campaign-modal-title').textContent = 'Kampanyayı Düzenle';
+                            document.getElementById('campaign-form-modal').classList.remove('hidden');
+                        });
+                    });
+                    // Participants
+                    document.querySelectorAll('.campaign-participants-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
+                            if (!c) return;
+                            document.getElementById('participants-modal-title').textContent = `Katılımcılar – ${c.name}`;
+                            const body = document.getElementById('participants-modal-body');
+                            if (c.participants.length === 0) {
+                                body.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Henüz katılımcı yok.</p>';
+                            } else {
+                                body.innerHTML = c.participants.map(pid => {
+                                    const sup = mockData.suppliers.find(s => s.id === pid);
+                                    return sup ? `<div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">${sup.name[0]}</div>
+                                        <div><p class="text-sm font-medium text-gray-800">${sup.name}</p><p class="text-xs text-gray-500">${sup.email}</p></div>
+                                        <button class="ml-auto text-xs text-red-500 hover:text-red-700 remove-participant-btn" data-cid="${c.id}" data-sid="${pid}">Çıkar</button>
+                                    </div>` : '';
+                                }).join('');
+                                body.querySelectorAll('.remove-participant-btn').forEach(rbtn => {
+                                    rbtn.addEventListener('click', () => {
+                                        const cid = parseInt(rbtn.dataset.cid), sid = parseInt(rbtn.dataset.sid);
+                                        const camp = mockData.campaigns.find(x => x.id === cid);
+                                        if (camp) camp.participants = camp.participants.filter(p => p !== sid);
+                                        closeParticipantsModal();
+                                        renderers.campaigns();
+                                    });
+                                });
+                            }
+                            document.getElementById('campaign-participants-modal').classList.remove('hidden');
+                        });
+                    });
+                    // Toggle status
+                    document.querySelectorAll('.campaign-toggle-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
+                            if (!c) return;
+                            c.status = c.status === 'active' ? 'passive' : 'active';
+                            c.updatedAt = new Date().toISOString();
+                            renderers.campaigns();
+                        });
+                    });
+                    // Delete
+                    document.querySelectorAll('.campaign-delete-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (!confirm('Bu kampanyayı silmek istediğinize emin misiniz?')) return;
+                            mockData.campaigns = mockData.campaigns.filter(x => x.id !== parseInt(btn.dataset.id));
+                            renderers.campaigns();
+                        });
+                    });
+                }
+
+                attachAdminTableEvents();
+
+            } else {
+                /* -------- SUPPLIER VIEW -------- */
+                const campaigns = mockData.campaigns || [];
+                const joinedIds = new Set(campaigns.filter(c => c.participants.includes(supplierId)).map(c => c.id));
+
+                const renderSupplierCards = () => {
+                    const visible = campaigns.filter(c => c.status !== 'draft');
+                    if (visible.length === 0) return '<p class="text-gray-400 text-center py-10">Şu anda aktif kampanya bulunmuyor.</p>';
+                    return visible.map(c => {
+                        const joined = joinedIds.has(c.id);
+                        const canJoin = c.status === 'active' && !joined;
+                        return `
+                        <div class="bg-white rounded-xl border hover:shadow-md transition-shadow overflow-hidden">
+                            <div class="h-2 ${c.status==='active'?'bg-green-400':'bg-gray-300'}"></div>
+                            <div class="p-5">
+                                <div class="flex items-start justify-between mb-2">
+                                    <h3 class="font-semibold text-gray-800 text-base leading-tight pr-2">${c.name}</h3>
+                                    ${statusBadge(c.status)}
+                                </div>
+                                <p class="text-sm text-gray-500 mb-4 leading-relaxed">${c.description || ''}</p>
+                                <div class="grid grid-cols-2 gap-2 mb-4">
+                                    <div class="bg-blue-50 rounded-lg p-2 text-center">
+                                        <p class="text-xs text-gray-500">İndirim Oranı</p>
+                                        <p class="text-xl font-bold text-blue-600">%${c.discountRate}</p>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-2 text-center">
+                                        <p class="text-xs text-gray-500">Kategori</p>
+                                        <p class="text-sm font-medium text-gray-700 truncate">${c.category}</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-4">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>${formatDate(c.startDate)} – ${formatDate(c.endDate)}</span>
+                                    <span class="ml-auto"><i class="fas fa-users mr-1"></i>${c.participants.length} tedarikçi katıldı</span>
+                                </div>
+                                <div class="border-t pt-3">
+                                    ${joined ? `
+                                        <div class="flex items-center justify-between">
+                                            <span class="flex items-center gap-1.5 text-sm text-green-600 font-medium"><i class="fas fa-check-circle"></i> Kampanyaya Katıldınız</span>
+                                            <button class="leave-campaign-btn text-xs text-red-400 hover:text-red-600" data-id="${c.id}">Ayrıl</button>
+                                        </div>
+                                    ` : canJoin ? `
+                                        <button class="join-campaign-btn w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" data-id="${c.id}">
+                                            <i class="fas fa-plus mr-1"></i> Kampanyaya Katıl
+                                        </button>
+                                    ` : `
+                                        <button class="w-full py-2 bg-gray-100 text-gray-400 rounded-lg text-sm cursor-not-allowed" disabled>
+                                            ${c.status === 'ended' ? 'Kampanya Sona Erdi' : 'Katılım Kapalı'}
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                };
+
+                pageContent.innerHTML = `
+                    <div class="space-y-4">
+                        <!-- Header -->
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm text-gray-500">${campaigns.filter(c=>c.status==='active').length} aktif kampanya mevcut</p>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="flex items-center gap-1 text-green-600 font-medium">
+                                    <i class="fas fa-check-circle"></i> ${joinedIds.size} kampanyaya katıldınız
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Cards Grid -->
+                        <div id="supplier-campaign-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                            ${renderSupplierCards()}
+                        </div>
+                    </div>
+                `;
+
+                const reattachSupplierEvents = () => {
+                    document.querySelectorAll('.join-campaign-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const cid = parseInt(btn.dataset.id);
+                            const c = mockData.campaigns.find(x => x.id === cid);
+                            if (c && !c.participants.includes(supplierId)) {
+                                c.participants.push(supplierId);
+                                c.stats.joined = c.participants.length;
+                                joinedIds.add(cid);
+                            }
+                            document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
+                            reattachSupplierEvents();
+                        });
+                    });
+                    document.querySelectorAll('.leave-campaign-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const cid = parseInt(btn.dataset.id);
+                            const c = mockData.campaigns.find(x => x.id === cid);
+                            if (c) {
+                                c.participants = c.participants.filter(p => p !== supplierId);
+                                c.stats.joined = c.participants.length;
+                                joinedIds.delete(cid);
+                            }
+                            document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
+                            reattachSupplierEvents();
+                        });
+                    });
+                };
+                reattachSupplierEvents();
             }
         };
 
@@ -31042,7 +31518,8 @@
                 renderers.finance(subpage || defaultTab);
             } 
             else if (page === 'commissions') { renderers.commissionManagement(); }
-            else if (page === 'settings') { 
+            else if (page === 'campaigns') { renderers.campaigns(); }
+            else if (page === 'settings') {
                 if (subpage === 'suppliers') {
                     renderers.adminSuppliers?.();
                 } else if (subpage === 'users') {
@@ -31113,9 +31590,10 @@ const navLinksSupplier = [
     ]
   },
   { href: '#finance', icon: 'fa-coins', text: 'Finans', role: 'supplier' },
-  { 
-    type: 'parent', 
-    icon: 'fa-cog', 
+  { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanyalar', role: 'supplier' },
+  {
+    type: 'parent',
+    icon: 'fa-cog',
     text: 'Ayarlar', 
     role: 'supplier',
     children: [
@@ -31161,10 +31639,11 @@ const navLinksAdmin = [
     ]
   },
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden
-  { 
-    type: 'parent', 
-    icon: 'fa-handshake', 
-    text: 'Tedarikçiler', 
+  { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanyalar', role: 'admin' },
+  {
+    type: 'parent',
+    icon: 'fa-handshake',
+    text: 'Tedarikçiler',
     role: 'admin',
     children: [
       { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçi Listesi', role: 'admin' },
