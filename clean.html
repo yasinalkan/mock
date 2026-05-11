@@ -4472,6 +4472,54 @@
                     notes: 'Ürün iade edildi ve ödeme tamamlandı.'
                 },
                 {
+                    id: 'RET-2025-005',
+                    orderId: 'ORD-2025-005',
+                    supplierId: 1,
+                    supplierName: 'ModaTedarik',
+                    customerName: 'Can Yıldız',
+                    customerEmail: 'can.yildiz@email.com',
+                    status: 'pending_approval',
+                    reason: 'defective_product',
+                    description: 'Birden fazla ürün hasarlı geldi; kemer dikişleri sökük, eldivenin fermuarı çalışmıyor.',
+                    refundAmount: 1850.75,
+                    refundMethod: 'original_payment',
+                    requestedAt: '2025-10-01T11:00:00Z',
+                    items: [
+                        {
+                            name: 'Kahverengi Deri Kemer',
+                            sku: '8683822429968',
+                            quantity: 1,
+                            price: 750.00
+                        },
+                        {
+                            name: 'Siyah Deri Eldiven',
+                            sku: '8683822429969',
+                            quantity: 2,
+                            price: 550.375
+                        },
+                        {
+                            name: 'Bakım Kiti',
+                            sku: '8683822429962-Temizlik',
+                            quantity: 1,
+                            price: 500.00
+                        }
+                    ],
+                    images: [
+                        'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400',
+                        'https://images.unsplash.com/photo-1516820612670-e4e9c86f24e1?w=400'
+                    ],
+                    timeline: [
+                        {
+                            date: '2025-10-01T11:00:00Z',
+                            status: 'requested',
+                            message: 'İade talebi oluşturuldu',
+                            user: 'Can Yıldız',
+                            userRole: 'customer'
+                        }
+                    ],
+                    notes: 'Müşteri 3 ürün için birlikte iade talep etti.'
+                },
+                {
                     id: 'RET-2025-004',
                     orderId: 'ORD-2025-004',
                     supplierId: 1,
@@ -4890,6 +4938,64 @@
                         }
                     ],
                     notes: 'Ürün gerçekten hasarlı'
+                },
+                {
+                    id: 'RET-005',
+                    orderId: 'ORD-1006',
+                    supplierId: 1,
+                    customerId: 'CUST-006',
+                    customerName: 'Fatma Şen',
+                    customerEmail: 'fatma.sen@example.com',
+                    status: 'pending_approval',
+                    reason: 'defective_product',
+                    reasonText: 'Birden fazla ürün hasarlı',
+                    description: 'Kemer dikişleri sökük, eldivenin fermuarı çalışmıyor ve bakım kiti eksik ürünle geldi.',
+                    requestedAt: '2025-10-02T09:30:00Z',
+                    approvedAt: null,
+                    rejectedAt: null,
+                    processedAt: null,
+                    refundAmount: 1850.75,
+                    refundMethod: 'original_payment',
+                    items: [
+                        {
+                            sku: '8683822429968',
+                            name: 'Kahverengi Deri Kemer',
+                            quantity: 1,
+                            price: 750.00,
+                            reason: 'defective',
+                            itemStatus: 'pending'
+                        },
+                        {
+                            sku: '8683822429969',
+                            name: 'Siyah Deri Eldiven',
+                            quantity: 2,
+                            price: 550.375,
+                            reason: 'defective',
+                            itemStatus: 'pending'
+                        },
+                        {
+                            sku: '8683822429962-Temizlik',
+                            name: 'Bakım Kiti',
+                            quantity: 1,
+                            price: 500.00,
+                            reason: 'wrong_item',
+                            itemStatus: 'pending'
+                        }
+                    ],
+                    images: [
+                        'https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=400&auto=format&fit=crop&q=60',
+                        'https://images.unsplash.com/photo-1516820612670-e4e9c86f24e1?w=400&auto=format&fit=crop&q=60'
+                    ],
+                    timeline: [
+                        {
+                            date: '2025-10-02T09:30:00Z',
+                            status: 'requested',
+                            message: 'İade talebi oluşturuldu',
+                            user: 'Fatma Şen',
+                            userRole: 'customer'
+                        }
+                    ],
+                    notes: 'Müşteri aynı siparişten 3 ürün için birlikte iade talep etti.'
                 }
             ],
             // Prohibited Words/Phrases
@@ -10712,24 +10818,25 @@
                 
                 const itemsHTML = returnItem.items.map((item, idx) => {
                     const itemStatus = item.itemStatus || 'pending';
-                    const isPending = itemStatus === 'pending';
                     const isApproved = itemStatus === 'approved';
                     const isRejected = itemStatus === 'rejected';
-                    const canSupplierAct = isSupplier && returnItem.status === 'pending_approval' && isPending;
-                    const borderColor = isApproved ? 'border-green-300' : isRejected ? 'border-red-400' : 'border-red-300';
-                    const statusBadge = isPending ? '' : isApproved 
-                        ? '<span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">Onaylandı</span>' 
-                        : '<span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">Reddedildi</span>';
-                    const itemActions = canSupplierAct ? `
-                        <div class="flex gap-2 mt-2">
-                            <button onclick="approveReturnItem('${returnId}', ${idx})" class="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700">
-                                <i class="fas fa-check mr-1"></i>Onayla
-                            </button>
-                            <button onclick="rejectReturnItem('${returnId}', ${idx})" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700">
-                                <i class="fas fa-times mr-1"></i>Reddet
-                            </button>
+                    const canAct = !isSupplier || (String(returnItem.supplierId) === String(user.supplierId));
+                    const borderColor = isApproved ? 'border-green-400' : isRejected ? 'border-red-400' : 'border-yellow-400';
+                    const statusSelectOptions = [
+                        { value: 'pending',  label: '⏳ Beklemede',  cls: 'bg-yellow-100 text-yellow-800' },
+                        { value: 'approved', label: '✅ Onaylandı',   cls: 'bg-green-100 text-green-800' },
+                        { value: 'rejected', label: '❌ Reddedildi', cls: 'bg-red-100 text-red-800' }
+                    ];
+                    const currentStatusInfo = statusSelectOptions.find(s => s.value === itemStatus) || statusSelectOptions[0];
+                    const itemActions = canAct ? `
+                        <div class="flex items-center gap-2 mt-2">
+                            <label class="text-xs text-gray-500 font-medium whitespace-nowrap">Ürün Durumu:</label>
+                            <select onchange="changeReturnItemStatus('${returnId}', ${idx}, this.value)"
+                                    class="text-xs border border-gray-300 rounded-md px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                                ${statusSelectOptions.map(opt => `<option value="${opt.value}" ${itemStatus === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                            </select>
                         </div>
-                    ` : '';
+                    ` : `<div class="mt-1"><span class="px-2 py-0.5 text-xs font-medium rounded-full ${currentStatusInfo.cls}">${currentStatusInfo.label}</span></div>`;
                     return `
                     <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4 ${borderColor}">
                         <div class="flex items-center space-x-4 flex-1">
@@ -10737,7 +10844,7 @@
                                 <i class="fas fa-box text-red-500"></i>
                             </div>
                             <div class="flex-1">
-                                <div class="font-medium text-gray-900 flex items-center">${item.name}${statusBadge}</div>
+                                <div class="font-medium text-gray-900">${item.name}</div>
                                 <div class="text-sm text-gray-500">SKU: ${item.sku} • Adet: ${item.quantity}</div>
                                 ${itemActions}
                             </div>
@@ -14964,7 +15071,12 @@
             if (activeTab === 'yeni-urun-talepleri') {
                 headers += `<th class="p-3 text-sm font-semibold text-left sortable-header sort-none">${t('originality_header')}</th>`;
             }
-            
+
+            // Add Risk Status column for new product requests
+            if (activeTab === 'yeni-urun-talepleri') {
+                headers += `<th class="p-3 text-sm font-semibold text-left sortable-header sort-none">Risk Durumu</th>`;
+            }
+
             // Different headers for request tabs vs regular product tabs
             if (activeTab === 'yeni-urun-talepleri' || activeTab === 'urun-guncelleme') {
                 headers += `
@@ -15247,7 +15359,29 @@
                         </td>
                 `;
                 }
-                
+
+                // Add Risk Status column for new product requests
+                if (activeTab === 'yeni-urun-talepleri') {
+                    const productRequest = (mockData.requests || []).find(r =>
+                        r.type === 'product_create' &&
+                        r.productId === product.id &&
+                        (r.status === 'submitted' || r.status === 'toBeRevised')
+                    );
+                    let riskBadge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-400">–</span>';
+                    if (productRequest && typeof findSimilarProductsForRequest === 'function') {
+                        const similarMatches = findSimilarProductsForRequest(productRequest);
+                        const maxRiskScore = (similarMatches[0] || {}).totalScore || 0;
+                        if (maxRiskScore >= 0.7) {
+                            riskBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200"><i class="fas fa-shield-alt"></i> Yüksek Risk</span>';
+                        } else if (maxRiskScore >= 0.4) {
+                            riskBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 border border-orange-200"><i class="fas fa-shield-alt"></i> Orta Risk</span>';
+                        } else {
+                            riskBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200"><i class="fas fa-shield-alt"></i> Düşük Risk</span>';
+                        }
+                    }
+                    row += `<td class="p-3">${riskBadge}</td>`;
+                }
+
                 // Conditionally add status description column (exclude for Aktif and Pasif tabs)
                 if (activeTab !== 'aktif' && activeTab !== 'out-of-stock' && activeTab !== 'banned' && activeTab !== 'archived-items' && activeTab !== 'yeni-urun-talepleri' && activeTab !== 'urun-guncelleme') {
                     row += `
@@ -30661,24 +30795,25 @@
             
             const itemsHTML = returnItem.items.map((item, idx) => {
                 const itemStatus = item.itemStatus || 'pending';
-                const isPending = itemStatus === 'pending';
                 const isApproved = itemStatus === 'approved';
                 const isRejected = itemStatus === 'rejected';
-                const canSupplierAct = isSupplier && returnItem.status === 'pending_approval' && isPending;
-                const borderColor = isApproved ? 'border-green-300' : isRejected ? 'border-red-400' : 'border-gray-300';
-                const statusBadge = isPending ? '' : isApproved 
-                    ? '<span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">Onaylandı</span>' 
-                    : '<span class="ml-2 px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-800">Reddedildi</span>';
-                const itemActions = canSupplierAct ? `
-                    <div class="flex gap-2 mt-2">
-                        <button onclick="approveReturnItem('${returnId}', ${idx})" class="px-3 py-1.5 text-sm bg-green-600 text-white rounded-md hover:bg-green-700">
-                            <i class="fas fa-check mr-1"></i>Onayla
-                        </button>
-                        <button onclick="rejectReturnItem('${returnId}', ${idx})" class="px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700">
-                            <i class="fas fa-times mr-1"></i>Reddet
-                        </button>
+                const canAct = !isSupplier || (String(returnItem.supplierId) === String(user.supplierId));
+                const borderColor = isApproved ? 'border-green-400' : isRejected ? 'border-red-400' : 'border-yellow-400';
+                const statusSelectOptions = [
+                    { value: 'pending',  label: '⏳ Beklemede',  cls: 'bg-yellow-100 text-yellow-800' },
+                    { value: 'approved', label: '✅ Onaylandı',   cls: 'bg-green-100 text-green-800' },
+                    { value: 'rejected', label: '❌ Reddedildi', cls: 'bg-red-100 text-red-800' }
+                ];
+                const currentStatusInfo = statusSelectOptions.find(s => s.value === itemStatus) || statusSelectOptions[0];
+                const itemActions = canAct ? `
+                    <div class="flex items-center gap-2 mt-2">
+                        <label class="text-xs text-gray-500 font-medium whitespace-nowrap">Ürün Durumu:</label>
+                        <select onchange="changeReturnItemStatus('${returnId}', ${idx}, this.value)"
+                                class="text-xs border border-gray-300 rounded-md px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+                            ${statusSelectOptions.map(opt => `<option value="${opt.value}" ${itemStatus === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                        </select>
                     </div>
-                ` : '';
+                ` : `<div class="mt-1"><span class="px-2 py-0.5 text-xs font-medium rounded-full ${currentStatusInfo.cls}">${currentStatusInfo.label}</span></div>`;
                 return `
                 <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border-l-4 ${borderColor}">
                     <div class="flex items-center space-x-4 flex-1">
@@ -30686,7 +30821,7 @@
                             <i class="fas fa-box text-gray-500"></i>
                         </div>
                         <div class="flex-1">
-                            <div class="font-medium text-gray-900 flex items-center">${item.name}${statusBadge}</div>
+                            <div class="font-medium text-gray-900">${item.name}</div>
                             <div class="text-sm text-gray-500">SKU: ${item.sku} • Adet: ${item.quantity}</div>
                             ${itemActions}
                         </div>
@@ -30974,89 +31109,79 @@
             }
         }
         
-        function approveReturnItem(returnId, itemIndex) {
+        function changeReturnItemStatus(returnId, itemIndex, newStatus) {
             const returnItem = mockData.returns.find(r => r.id === returnId);
             if (!returnItem) return;
             const item = returnItem.items[itemIndex];
-            if (!item || (item.itemStatus && item.itemStatus !== 'pending')) return;
-            
+            if (!item) return;
+
+            const oldStatus = item.itemStatus || 'pending';
+            if (oldStatus === newStatus) return;
+
+            const statusLabels = { pending: 'Beklemede', approved: 'Onaylandı', rejected: 'Reddedildi' };
             const user = window.currentUser || {};
-            if (user.role !== 'supplier' || String(returnItem.supplierId) !== String(user.supplierId)) {
-                showToast('Bu işlem sadece ilgili tedarikçi tarafından yapılabilir.', 'error');
+
+            if (newStatus === 'rejected') {
+                // Ask for rejection reason
+                const body = `
+                    <div class="space-y-4">
+                        <div>
+                            <label for="item-rejection-reason" class="block text-sm font-medium text-gray-700">Red Sebebi (${item.name})</label>
+                            <textarea id="item-rejection-reason" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2" rows="3" placeholder="Bu ürünün reddedilme sebebini açıklayın..."></textarea>
+                        </div>
+                    </div>
+                `;
+                showModal('Ürün İade Talebini Reddet', body, 'Reddet', () => {
+                    const rejectionReason = document.getElementById('item-rejection-reason').value.trim();
+                    if (!rejectionReason) { alert('Lütfen red sebebini belirtin.'); return; }
+                    item.itemStatus = 'rejected';
+                    item.rejectionReason = rejectionReason;
+                    returnItem.timeline.push({
+                        date: new Date().toISOString(),
+                        status: 'rejected',
+                        message: `Ürün durumu değiştirildi: ${item.name} → Reddedildi (${rejectionReason})`,
+                        user: user.name || user.role,
+                        userRole: user.role,
+                        itemIndex
+                    });
+                    updateReturnStatusFromItems(returnItem);
+                    showToast(`Ürün reddedildi: ${item.name}`);
+                    closeModal();
+                    setTimeout(() => handleRouteChange(), 300);
+                });
+                const modalConfirmButton = document.getElementById('modal-confirm');
+                if (modalConfirmButton) {
+                    modalConfirmButton.classList.remove('hidden');
+                    modalConfirmButton.classList.add('bg-red-600', 'hover:bg-red-700');
+                }
+                const modalCancelButton = document.getElementById('modal-cancel');
+                if (modalCancelButton) {
+                    modalCancelButton.textContent = 'Vazgeç';
+                    modalCancelButton.classList.remove('hidden');
+                }
                 return;
             }
-            
-            item.itemStatus = 'approved';
+
+            item.itemStatus = newStatus;
             returnItem.timeline.push({
                 date: new Date().toISOString(),
-                status: 'approved',
-                message: `Ürün onaylandı: ${item.name} (SKU: ${item.sku})`,
-                user: user.name,
+                status: newStatus,
+                message: `Ürün durumu değiştirildi: ${item.name} → ${statusLabels[newStatus]}`,
+                user: user.name || user.role,
                 userRole: user.role,
                 itemIndex
             });
-            
             updateReturnStatusFromItems(returnItem);
-            showToast(`Ürün onaylandı: ${item.name}`);
-            closeModal();
-            setTimeout(() => handleRouteChange(), 500);
+            showToast(`Ürün durumu güncellendi: ${item.name} → ${statusLabels[newStatus]}`);
+            setTimeout(() => handleRouteChange(), 300);
         }
-        
+
+        function approveReturnItem(returnId, itemIndex) {
+            changeReturnItemStatus(returnId, itemIndex, 'approved');
+        }
+
         function rejectReturnItem(returnId, itemIndex) {
-            const returnItem = mockData.returns.find(r => r.id === returnId);
-            if (!returnItem) return;
-            const item = returnItem.items[itemIndex];
-            if (!item || (item.itemStatus && item.itemStatus !== 'pending')) return;
-            
-            const user = window.currentUser || {};
-            if (user.role !== 'supplier' || String(returnItem.supplierId) !== String(user.supplierId)) {
-                showToast('Bu işlem sadece ilgili tedarikçi tarafından yapılabilir.', 'error');
-                return;
-            }
-            
-            const body = `
-                <div class="space-y-4">
-                    <div>
-                        <label for="item-rejection-reason" class="block text-sm font-medium text-gray-700">Red Sebebi (${item.name})</label>
-                        <textarea id="item-rejection-reason" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" rows="3" placeholder="Bu ürünün reddedilme sebebini açıklayın..."></textarea>
-                    </div>
-                </div>
-            `;
-            
-            showModal('Ürün İade Talebini Reddet', body, 'Reddet', () => {
-                const rejectionReason = document.getElementById('item-rejection-reason').value.trim();
-                if (!rejectionReason) {
-                    alert('Lütfen red sebebini belirtin.');
-                    return;
-                }
-                
-                item.itemStatus = 'rejected';
-                item.rejectionReason = rejectionReason;
-                returnItem.timeline.push({
-                    date: new Date().toISOString(),
-                    status: 'rejected',
-                    message: `Ürün reddedildi: ${item.name} (SKU: ${item.sku}) - ${rejectionReason}`,
-                    user: user.name,
-                    userRole: user.role,
-                    itemIndex
-                });
-                
-                updateReturnStatusFromItems(returnItem);
-                showToast(`Ürün reddedildi: ${item.name}`);
-                closeModal();
-                setTimeout(() => handleRouteChange(), 500);
-            });
-            
-            const modalConfirmButton = document.getElementById('modal-confirm');
-            if(modalConfirmButton) {
-                modalConfirmButton.classList.remove('hidden');
-                modalConfirmButton.classList.add('bg-red-600', 'hover:bg-red-700');
-            }
-            const modalCancelButton = document.getElementById('modal-cancel');
-            if(modalCancelButton) {
-                modalCancelButton.textContent = t('cancel');
-                modalCancelButton.classList.remove('hidden');
-            }
+            changeReturnItemStatus(returnId, itemIndex, 'rejected');
         }
         
         function updateReturnStatusFromItems(returnItem) {
