@@ -7438,7 +7438,7 @@ function updateHeaderUserInfo() {
     }
 }
 function renderUserSwitcher() {
-    const userSwitcher = document.getElementById('userSwitcher');
+    const userSwitcher = document.getElementById('user-switcher') || document.getElementById('userSwitcher');
     if (!userSwitcher) return;
     
     const currentUserId = window.currentUser?.id;
@@ -7489,40 +7489,46 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     
-    // Track if sidebar is open to prevent conflicts
-    let sidebarOpen = false;
+    function isDesktopSidebar() {
+        return window.matchMedia('(min-width: 768px)').matches;
+    }
+    
+    // Track if sidebar is open to prevent conflicts (mobile overlay)
+    let sidebarOpen = isDesktopSidebar();
+    if (sidebar && isDesktopSidebar()) {
+        sidebar.classList.remove('-translate-x-full');
+    }
     
     function openSidebar() {
-        if (sidebarOpen) return; // Prevent multiple opens
+        if (!sidebar || isDesktopSidebar()) return;
+        if (sidebarOpen) return;
         
         sidebar.classList.remove('-translate-x-full');
-        sidebarOverlay.classList.remove('hidden');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
         sidebarOpen = true;
     }
     
     function closeSidebar() {
-        if (!sidebarOpen) return; // Prevent multiple closes
+        if (!sidebar || isDesktopSidebar()) return;
+        if (!sidebarOpen) return;
         
         sidebar.classList.add('-translate-x-full');
-        sidebarOverlay.classList.add('hidden');
+        if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
         sidebarOpen = false;
     }
     
-    // Remove any existing event listeners first
-    document.querySelectorAll('#toggleSidebar').forEach(btn => {
-        btn.replaceWith(btn.cloneNode(true)); // Remove all event listeners
-    });
-    
-    // Add event listeners to all toggle buttons
-    document.querySelectorAll('#toggleSidebar').forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    const toggleSidebarBtn = document.getElementById('toggleSidebar');
+    if (toggleSidebarBtn) {
+        toggleSidebarBtn.addEventListener('click', (e) => {
+            if (isDesktopSidebar()) return;
             e.preventDefault();
-            e.stopPropagation();
-            openSidebar();
+            e.stopImmediatePropagation();
+            if (sidebarOpen) closeSidebar();
+            else openSidebar();
         });
-    });
+    }
     
     // Add event listener to close button
     const closeSidebarBtn = document.getElementById('closeSidebar');
