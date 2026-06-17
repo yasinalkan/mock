@@ -116,7 +116,7 @@
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden"></div>
         
         <!-- Sidebar -->
-        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+        <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
             <div class="p-4 border-b border-gray-200">
                 <button id="closeSidebar" class="p-2 rounded-md hover:bg-gray-100 ml-auto">
                     <i class="fas fa-times text-gray-600"></i>
@@ -127,8 +127,36 @@
             </div>
         </nav>
 
+        <!-- Profil / Ayarlar — her zaman görünür sol alt -->
+        <div id="user-account-bar" class="fixed bottom-0 left-0 z-[60] p-3 md:left-0">
+            <div class="relative">
+                <button id="userMenuBtn" type="button" class="flex items-center gap-2 p-2 pr-3 rounded-xl bg-white border border-gray-200 shadow-md hover:bg-gray-50 min-w-[10rem]">
+                    <img src="https://placehold.co/32x32/EFEFEF/4A4A4A?text=A" alt="Avatar" class="rounded-full w-8 h-8 flex-shrink-0">
+                    <span class="font-semibold text-sm truncate max-w-[7rem]">Admin</span>
+                    <i class="fas fa-chevron-up text-xs text-gray-500 ml-1"></i>
+                </button>
+                <div id="userDropdown" class="absolute left-0 bottom-full mb-2 w-56 bg-white rounded-md shadow-lg hidden ring-1 ring-black ring-opacity-5">
+                    <div class="py-1">
+                        <div class="px-4 py-2 border-b">
+                            <p id="currentUserName" class="text-sm font-semibold">Admin</p>
+                            <p id="currentUserEmail" class="text-xs text-gray-500">admin@Marka.com</p>
+                        </div>
+                        <div class="px-4 py-2">
+                            <p class="text-xs text-gray-500 uppercase tracking-wide">Kullanıcı Değiştir</p>
+                        </div>
+                        <div id="user-switcher"></div>
+                        <div class="border-t border-gray-100"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
+                        <a href="#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ayarlar</a>
+                        <div class="border-t border-gray-100"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Çıkış Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main class="flex-1 flex flex-col overflow-hidden md:ml-64">
             <!-- Header -->
             <header class="bg-white border-b border-gray-200 px-4 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-4">
@@ -165,39 +193,11 @@
                             </a>
                         </div>
                     </div>
-                    <div class="w-px h-6 bg-gray-200"></div>
-                    <div class="relative">
-                        <button id="userMenuBtn" class="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100">
-                            <img src="https://placehold.co/32x32/EFEFEF/4A4A4A?text=A" alt="Avatar" class="rounded-full w-8 h-8">
-                            <span class="font-semibold text-sm hidden md:inline">Admin</span>
-                            <i class="fas fa-chevron-down text-xs text-gray-500 mr-2"></i>
-                        </button>
-                        <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden z-10 ring-1 ring-black ring-opacity-5">
-                            <div class="py-1">
-                                <div class="px-4 py-2 border-b">
-                                    <p id="currentUserName" class="text-sm font-semibold">Admin</p>
-                                    <p id="currentUserEmail" class="text-xs text-gray-500">admin@Marka.com</p>
-                                </div>
-                                <div class="border-t border-gray-100"></div>
-                                <div class="px-4 py-2">
-                                    <p class="text-xs text-gray-500 uppercase tracking-wide">Kullanıcı Değiştir</p>
-                                </div>
-                                <div id="user-switcher">
-                                    <!-- User switcher options will be populated here -->
-                                </div>
-                                <div class="border-t border-gray-100"></div>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
-                                <a href="#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Ayarlar</a>
-                                <div class="border-t border-gray-100"></div>
-                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">Çıkış Yap</a>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <div id="pageContent" class="flex-1 overflow-x-hidden overflow-y-auto p-6">
+            <div id="pageContent" class="flex-1 overflow-x-hidden overflow-y-auto p-6 pb-24">
                 <!-- All page content will be dynamically inserted here -->
             </div>
         </main>
@@ -32429,10 +32429,23 @@ sidebarNav.addEventListener('click', (e) => {
             sidebarOverlay.classList.add('hidden');
         };
         document.getElementById('toggleSidebar').addEventListener('click', () => {
-            if (sidebar.classList.contains('-translate-x-full')) {
-                openSidebar();
+            if (window.matchMedia('(min-width: 768px)').matches) {
+                // Masaüstü: sabit kenar çubuğunu daralt/genişlet
+                const mainEl = document.querySelector('main');
+                sidebar.classList.toggle('w-64');
+                sidebar.classList.toggle('w-16');
+                if (mainEl) {
+                    mainEl.classList.toggle('md:ml-64');
+                    mainEl.classList.toggle('md:ml-16');
+                }
+                sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
             } else {
-                closeSidebar();
+                // Mobil: ekran dışı kenar çubuğunu kaydırarak aç/kapat
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
             }
         });
         document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
@@ -32458,7 +32471,7 @@ sidebarNav.addEventListener('click', (e) => {
             if (!languageSwitcherBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
                 languageDropdown.classList.add('hidden');
             }
-            if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+            if (userMenuBtn && userDropdown && !userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
                 userDropdown.classList.add('hidden');
             }
         });
@@ -32540,17 +32553,19 @@ sidebarNav.addEventListener('click', (e) => {
         }
         
         // Initialize user switcher when dropdown is opened
-        userMenuBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (!userMenuClosing) {
-                userDropdown.classList.toggle('hidden');
-                // Initialize user switcher when dropdown opens
-                if (!userDropdown.classList.contains('hidden')) {
-                    window.ensureUserSwitcher();
+        if (userMenuBtn && userDropdown) {
+            userMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!userMenuClosing) {
+                    userDropdown.classList.toggle('hidden');
+                    // Initialize user switcher when dropdown opens
+                    if (!userDropdown.classList.contains('hidden')) {
+                        window.ensureUserSwitcher();
+                    }
                 }
-            }
-            userMenuClosing = false;
-        });
+                userMenuClosing = false;
+            });
+        }
         
         // Toggle function for collapsible sections
         window.toggleSection = function(sectionId) {

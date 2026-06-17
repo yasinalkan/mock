@@ -308,6 +308,17 @@ input[type="checkbox"]:checked {
     background:#F9FAFB; 
 }
 
+#user-account-bar {
+    pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+    #user-account-bar {
+        left: 0.75rem;
+        bottom: 0.75rem;
+    }
+}
+
 /* Orders drawer styles */
 .orders-drawer-backdrop{
     position:fixed;
