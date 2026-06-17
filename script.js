@@ -7306,6 +7306,10 @@ function renderNavigation() {
                 <i class="fas fa-chart-line"></i>
                 <span>Finans</span>
             </a>
+            <a href="#campaigns" class="sidebar-link">
+                <i class="fas fa-bullhorn"></i>
+                <span>Kampanyalar</span>
+            </a>
             
             <div class="px-4 py-2 mt-4">
                 <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ayarlar</h3>
@@ -7340,6 +7344,10 @@ function renderNavigation() {
             <a href="#finance" class="sidebar-link">
                 <i class="fas fa-chart-line"></i>
                 <span>Finans</span>
+            </a>
+            <a href="#campaigns" class="sidebar-link">
+                <i class="fas fa-bullhorn"></i>
+                <span>Kampanyalar</span>
             </a>
             <a href="#categories" class="sidebar-link">
                 <i class="fas fa-tags"></i>

@@ -11062,24 +11062,60 @@
             };
 
             const formatDate = (d) => d ? new Date(d).toLocaleDateString('tr-TR') : '-';
+            const formatCurrency = (amount) => (amount || 0).toLocaleString('tr-TR', { style: 'currency', currency: 'TRY', maximumFractionDigits: 0 });
+            const getCampaignProgress = (campaign) => {
+                const start = new Date(campaign.startDate).getTime();
+                const end = new Date(campaign.endDate).getTime();
+                const now = new Date().getTime();
+                if (!start || !end || end <= start) return campaign.status === 'ended' ? 100 : 0;
+                return Math.max(0, Math.min(100, Math.round(((now - start) / (end - start)) * 100)));
+            };
+            const getDaysText = (campaign) => {
+                const today = new Date();
+                const start = new Date(campaign.startDate);
+                const end = new Date(campaign.endDate);
+                const day = 24 * 60 * 60 * 1000;
+                if (today < start) return `${Math.ceil((start - today) / day)} gün sonra başlıyor`;
+                if (today > end || campaign.status === 'ended') return 'Süresi doldu';
+                return `${Math.max(0, Math.ceil((end - today) / day))} gün kaldı`;
+            };
 
             /* -------- ADMIN VIEW -------- */
             if (isAdmin) {
                 const renderAdminTable = (filterStatus) => {
                     let campaigns = [...(mockData.campaigns || [])];
+                    const query = (document.getElementById('campaign-search')?.value || '').trim().toLowerCase();
                     if (filterStatus && filterStatus !== 'all') campaigns = campaigns.filter(c => c.status === filterStatus);
-                    if (campaigns.length === 0) return `<tr><td colspan="7" class="p-6 text-center text-gray-400">Kampanya bulunamadı.</td></tr>`;
+                    if (query) {
+                        campaigns = campaigns.filter(c => `${c.name} ${c.description || ''} ${c.category || ''}`.toLowerCase().includes(query));
+                    }
+                    campaigns.sort((a, b) => {
+                        const rank = { active: 0, draft: 1, passive: 2, ended: 3 };
+                        return (rank[a.status] ?? 9) - (rank[b.status] ?? 9) || new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0);
+                    });
+                    if (campaigns.length === 0) return `<tr><td colspan="8" class="p-8 text-center text-gray-400">Filtreye uygun kampanya bulunamadı.</td></tr>`;
                     return campaigns.map(c => `
                         <tr class="border-b hover:bg-gray-50 cursor-pointer campaign-row" data-id="${c.id}">
-                            <td class="p-3 font-medium text-sm text-gray-800">${c.name}</td>
+                            <td class="p-3">
+                                <div class="font-medium text-sm text-gray-800">${c.name}</div>
+                                <div class="text-xs text-gray-500 mt-0.5 line-clamp-1">${c.description || '-'}</div>
+                            </td>
                             <td class="p-3 text-sm text-gray-600">${c.category}</td>
                             <td class="p-3 text-sm"><span class="font-semibold text-blue-700">%${c.discountRate}</span></td>
-                            <td class="p-3 text-sm text-gray-600">${formatDate(c.startDate)} – ${formatDate(c.endDate)}</td>
+                            <td class="p-3 text-sm text-gray-600">
+                                <div>${formatDate(c.startDate)} - ${formatDate(c.endDate)}</div>
+                                <div class="mt-1 h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500" style="width:${getCampaignProgress(c)}%"></div></div>
+                            </td>
                             <td class="p-3 text-sm">${statusBadge(c.status)}</td>
                             <td class="p-3 text-sm text-gray-600">${c.participants.length} tedarikçi</td>
+                            <td class="p-3 text-sm">
+                                <div class="font-medium text-gray-800">${formatCurrency(c.stats?.estimatedRevenue)}</div>
+                                <div class="text-xs text-gray-500">${c.stats?.views || 0} görüntüleme</div>
+                            </td>
                             <td class="p-3 text-right">
                                 <button class="campaign-edit-btn p-1.5 text-gray-400 hover:text-blue-600 rounded" data-id="${c.id}" title="Düzenle"><i class="fas fa-edit text-sm"></i></button>
                                 <button class="campaign-participants-btn p-1.5 text-gray-400 hover:text-green-600 rounded" data-id="${c.id}" title="Katılımcılar"><i class="fas fa-users text-sm"></i></button>
+                                <button class="campaign-duplicate-btn p-1.5 text-gray-400 hover:text-indigo-600 rounded" data-id="${c.id}" title="Kopyala"><i class="fas fa-copy text-sm"></i></button>
                                 <button class="campaign-toggle-btn p-1.5 text-gray-400 hover:text-yellow-600 rounded" data-id="${c.id}" title="${c.status==='active'?'Pasife Al':'Aktif Et'}">
                                     <i class="fas ${c.status==='active'?'fa-pause-circle':'fa-play-circle'} text-sm"></i>
                                 </button>
@@ -11092,8 +11128,12 @@
                 pageContent.innerHTML = `
                     <div class="space-y-4">
                         <!-- Header Bar -->
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-3">
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <div class="relative">
+                                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                    <input id="campaign-search" type="search" placeholder="Kampanya ara" class="w-full sm:w-72 border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
                                 <select id="campaign-status-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                                     <option value="all">Tüm Durumlar</option>
                                     <option value="active">Aktif</option>
@@ -11102,9 +11142,14 @@
                                     <option value="passive">Pasif</option>
                                 </select>
                             </div>
-                            <button id="new-campaign-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-                                <i class="fas fa-plus"></i> Yeni Kampanya
-                            </button>
+                            <div class="flex gap-2">
+                                <button id="export-campaigns-btn" class="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors" title="Listeyi CSV olarak indir">
+                                    <i class="fas fa-file-export"></i> Dışa Aktar
+                                </button>
+                                <button id="new-campaign-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                    <i class="fas fa-plus"></i> Yeni Kampanya
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Stats Row -->
@@ -11122,8 +11167,8 @@
                                 <p class="text-2xl font-bold text-blue-600">${(mockData.campaigns||[]).reduce((s,c)=>s+c.participants.length,0)}</p>
                             </div>
                             <div class="bg-white rounded-xl border p-4">
-                                <p class="text-xs text-gray-500 mb-1">Taslak</p>
-                                <p class="text-2xl font-bold text-yellow-600">${(mockData.campaigns||[]).filter(c=>c.status==='draft').length}</p>
+                                <p class="text-xs text-gray-500 mb-1">Tahmini Ciro</p>
+                                <p class="text-2xl font-bold text-indigo-600">${formatCurrency((mockData.campaigns||[]).reduce((s,c)=>s+(c.stats?.estimatedRevenue||0),0))}</p>
                             </div>
                         </div>
 
@@ -11138,6 +11183,7 @@
                                         <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Tarih Aralığı</th>
                                         <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Durum</th>
                                         <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Katılım</th>
+                                        <th class="p-3 text-xs font-semibold text-gray-500 uppercase">Performans</th>
                                         <th class="p-3 text-xs font-semibold text-gray-500 uppercase text-right">İşlem</th>
                                     </tr>
                                 </thead>
@@ -11208,12 +11254,31 @@
                                 <h3 id="participants-modal-title" class="text-lg font-semibold text-gray-800">Katılımcı Tedarikçiler</h3>
                                 <button id="participants-modal-close" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-lg"></i></button>
                             </div>
+                            <div id="add-participant-bar" class="px-5 pt-4 flex gap-2 border-b pb-4">
+                                <select id="add-participant-select" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                                <button id="add-participant-btn" class="px-3 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 whitespace-nowrap"><i class="fas fa-plus mr-1"></i>Ekle</button>
+                            </div>
                             <div id="participants-modal-body" class="p-5 max-h-80 overflow-y-auto space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- Campaign Detail Modal -->
+                    <div id="campaign-detail-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                            <div class="flex items-center justify-between p-5 border-b sticky top-0 bg-white rounded-t-2xl">
+                                <h3 id="detail-modal-title" class="text-lg font-semibold text-gray-800">Kampanya Detayı</h3>
+                                <button id="detail-modal-close" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-lg"></i></button>
+                            </div>
+                            <div id="detail-modal-body" class="p-5 space-y-4"></div>
                         </div>
                     </div>
                 `;
 
                 // Filter
+                document.getElementById('campaign-search').addEventListener('input', () => {
+                    document.getElementById('campaign-table-body').innerHTML = renderAdminTable(document.getElementById('campaign-status-filter').value);
+                    attachAdminTableEvents();
+                });
                 document.getElementById('campaign-status-filter').addEventListener('change', (e) => {
                     document.getElementById('campaign-table-body').innerHTML = renderAdminTable(e.target.value);
                     attachAdminTableEvents();
@@ -11244,6 +11309,12 @@
                     const end = document.getElementById('campaign-form-end').value;
                     if (!name || !discount || !start || !end) {
                         alert('Lütfen zorunlu alanları doldurun.'); return;
+                    }
+                    if (discount < 1 || discount > 99) {
+                        alert('İndirim oranı %1 ile %99 arasında olmalıdır.'); return;
+                    }
+                    if (new Date(end) <= new Date(start)) {
+                        alert('Bitiş tarihi başlangıç tarihinden sonra olmalıdır.'); return;
                     }
                     const existingId = parseInt(document.getElementById('campaign-form-id').value);
                     if (existingId) {
@@ -11278,23 +11349,143 @@
                 const closeParticipantsModal = () => document.getElementById('campaign-participants-modal').classList.add('hidden');
                 document.getElementById('participants-modal-close').addEventListener('click', closeParticipantsModal);
 
+                const refreshTableBody = () => {
+                    document.getElementById('campaign-table-body').innerHTML = renderAdminTable(document.getElementById('campaign-status-filter').value);
+                    attachAdminTableEvents();
+                };
+
+                // Re-usable participants modal (supports both adding and removing suppliers)
+                const openParticipantsModal = (c) => {
+                    document.getElementById('participants-modal-title').textContent = `Katılımcılar – ${c.name}`;
+                    // Populate "add" dropdown with suppliers not already participating
+                    const select = document.getElementById('add-participant-select');
+                    const available = (mockData.suppliers || []).filter(s => !c.participants.includes(s.id));
+                    select.innerHTML = available.length
+                        ? available.map(s => `<option value="${s.id}">${s.name}</option>`).join('')
+                        : '<option value="">Eklenebilecek tedarikçi yok</option>';
+                    document.getElementById('add-participant-btn').disabled = available.length === 0;
+                    document.getElementById('add-participant-btn').onclick = () => {
+                        const sid = parseInt(select.value);
+                        if (!sid) return;
+                        if (!c.participants.includes(sid)) {
+                            c.participants.push(sid);
+                            c.stats = c.stats || {}; c.stats.joined = c.participants.length;
+                            c.updatedAt = new Date().toISOString();
+                        }
+                        openParticipantsModal(c);
+                        refreshTableBody();
+                    };
+                    // Render participant list
+                    const body = document.getElementById('participants-modal-body');
+                    if (c.participants.length === 0) {
+                        body.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Henüz katılımcı yok.</p>';
+                    } else {
+                        body.innerHTML = c.participants.map(pid => {
+                            const sup = mockData.suppliers.find(s => s.id === pid);
+                            return sup ? `<div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+                                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">${sup.name[0]}</div>
+                                <div><p class="text-sm font-medium text-gray-800">${sup.name}</p><p class="text-xs text-gray-500">${sup.email}</p></div>
+                                <button class="ml-auto text-xs text-red-500 hover:text-red-700 remove-participant-btn" data-sid="${pid}">Çıkar</button>
+                            </div>` : '';
+                        }).join('');
+                        body.querySelectorAll('.remove-participant-btn').forEach(rbtn => {
+                            rbtn.addEventListener('click', () => {
+                                const sid = parseInt(rbtn.dataset.sid);
+                                c.participants = c.participants.filter(p => p !== sid);
+                                c.stats = c.stats || {}; c.stats.joined = c.participants.length;
+                                c.updatedAt = new Date().toISOString();
+                                openParticipantsModal(c);
+                                refreshTableBody();
+                            });
+                        });
+                    }
+                    document.getElementById('campaign-participants-modal').classList.remove('hidden');
+                };
+
+                // Campaign detail (read-only overview) modal
+                const closeDetailModal = () => document.getElementById('campaign-detail-modal').classList.add('hidden');
+                document.getElementById('detail-modal-close').addEventListener('click', closeDetailModal);
+                const openCampaignDetail = (c) => {
+                    document.getElementById('detail-modal-title').textContent = c.name;
+                    const progress = getCampaignProgress(c);
+                    const participantList = c.participants.length
+                        ? c.participants.map(pid => {
+                            const sup = mockData.suppliers.find(s => s.id === pid);
+                            return sup ? `<span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 rounded-full text-xs text-gray-700">${sup.name}</span>` : '';
+                        }).join(' ')
+                        : '<span class="text-sm text-gray-400">Henüz katılımcı yok.</span>';
+                    document.getElementById('detail-modal-body').innerHTML = `
+                        <div class="flex items-center gap-2">${statusBadge(c.status)}<span class="text-sm text-gray-500">${getDaysText(c)}</span></div>
+                        <p class="text-sm text-gray-600 leading-relaxed">${c.description || 'Açıklama bulunmuyor.'}</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <div class="bg-blue-50 rounded-lg p-3"><p class="text-xs text-gray-500">İndirim</p><p class="text-lg font-bold text-blue-600">%${c.discountRate}</p></div>
+                            <div class="bg-gray-50 rounded-lg p-3"><p class="text-xs text-gray-500">Kategori</p><p class="text-sm font-semibold text-gray-700">${c.category}</p></div>
+                            <div class="bg-green-50 rounded-lg p-3"><p class="text-xs text-gray-500">Katılımcı</p><p class="text-lg font-bold text-green-600">${c.participants.length}</p></div>
+                            <div class="bg-indigo-50 rounded-lg p-3"><p class="text-xs text-gray-500">Tahmini Ciro</p><p class="text-sm font-bold text-indigo-600">${formatCurrency(c.stats?.estimatedRevenue)}</p></div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between text-xs text-gray-500 mb-1"><span>${formatDate(c.startDate)} - ${formatDate(c.endDate)}</span><span>%${progress} tamamlandı</span></div>
+                            <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500" style="width:${progress}%"></div></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-eye text-gray-400"></i> ${c.stats?.views || 0} görüntüleme</div>
+                            <div class="flex items-center gap-2 text-gray-600"><i class="fas fa-clock text-gray-400"></i> Güncelleme: ${formatDate(c.updatedAt || c.createdAt)}</div>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Katılımcı Tedarikçiler</p>
+                            <div class="flex flex-wrap gap-1.5">${participantList}</div>
+                        </div>
+                        <div class="flex justify-end gap-2 pt-2 border-t">
+                            <button id="detail-edit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"><i class="fas fa-edit mr-1"></i>Düzenle</button>
+                        </div>`;
+                    document.getElementById('detail-edit-btn').onclick = () => { closeDetailModal(); openEditModal(c); };
+                    document.getElementById('campaign-detail-modal').classList.remove('hidden');
+                };
+
+                // Shared edit-modal opener (used by edit button and detail view)
+                const openEditModal = (c) => {
+                    document.getElementById('campaign-form-id').value = c.id;
+                    document.getElementById('campaign-form-name').value = c.name;
+                    document.getElementById('campaign-form-desc').value = c.description || '';
+                    document.getElementById('campaign-form-discount').value = c.discountRate;
+                    document.getElementById('campaign-form-category').value = c.category;
+                    document.getElementById('campaign-form-start').value = c.startDate;
+                    document.getElementById('campaign-form-end').value = c.endDate;
+                    document.getElementById('campaign-form-status').value = c.status;
+                    document.getElementById('campaign-modal-title').textContent = 'Kampanyayı Düzenle';
+                    document.getElementById('campaign-form-modal').classList.remove('hidden');
+                };
+
+                // CSV export of the current campaign list
+                document.getElementById('export-campaigns-btn').addEventListener('click', () => {
+                    const rows = [['Ad', 'Kategori', 'İndirim (%)', 'Başlangıç', 'Bitiş', 'Durum', 'Katılımcı', 'Tahmini Ciro']];
+                    (mockData.campaigns || []).forEach(c => {
+                        rows.push([c.name, c.category, c.discountRate, c.startDate, c.endDate, c.status, c.participants.length, c.stats?.estimatedRevenue || 0]);
+                    });
+                    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+                    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `kampanyalar-${new Date().toISOString().slice(0,10)}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+
                 function attachAdminTableEvents() {
+                    // Row click -> detail view
+                    document.querySelectorAll('.campaign-row').forEach(row => {
+                        row.addEventListener('click', () => {
+                            const c = mockData.campaigns.find(x => x.id === parseInt(row.dataset.id));
+                            if (c) openCampaignDetail(c);
+                        });
+                    });
                     // Edit
                     document.querySelectorAll('.campaign-edit-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
-                            if (!c) return;
-                            document.getElementById('campaign-form-id').value = c.id;
-                            document.getElementById('campaign-form-name').value = c.name;
-                            document.getElementById('campaign-form-desc').value = c.description || '';
-                            document.getElementById('campaign-form-discount').value = c.discountRate;
-                            document.getElementById('campaign-form-category').value = c.category;
-                            document.getElementById('campaign-form-start').value = c.startDate;
-                            document.getElementById('campaign-form-end').value = c.endDate;
-                            document.getElementById('campaign-form-status').value = c.status;
-                            document.getElementById('campaign-modal-title').textContent = 'Kampanyayı Düzenle';
-                            document.getElementById('campaign-form-modal').classList.remove('hidden');
+                            if (c) openEditModal(c);
                         });
                     });
                     // Participants
@@ -11302,31 +11493,23 @@
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
                             const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
+                            if (c) openParticipantsModal(c);
+                        });
+                    });
+                    // Duplicate
+                    document.querySelectorAll('.campaign-duplicate-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const c = mockData.campaigns.find(x => x.id === parseInt(btn.dataset.id));
                             if (!c) return;
-                            document.getElementById('participants-modal-title').textContent = `Katılımcılar – ${c.name}`;
-                            const body = document.getElementById('participants-modal-body');
-                            if (c.participants.length === 0) {
-                                body.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Henüz katılımcı yok.</p>';
-                            } else {
-                                body.innerHTML = c.participants.map(pid => {
-                                    const sup = mockData.suppliers.find(s => s.id === pid);
-                                    return sup ? `<div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-sm">${sup.name[0]}</div>
-                                        <div><p class="text-sm font-medium text-gray-800">${sup.name}</p><p class="text-xs text-gray-500">${sup.email}</p></div>
-                                        <button class="ml-auto text-xs text-red-500 hover:text-red-700 remove-participant-btn" data-cid="${c.id}" data-sid="${pid}">Çıkar</button>
-                                    </div>` : '';
-                                }).join('');
-                                body.querySelectorAll('.remove-participant-btn').forEach(rbtn => {
-                                    rbtn.addEventListener('click', () => {
-                                        const cid = parseInt(rbtn.dataset.cid), sid = parseInt(rbtn.dataset.sid);
-                                        const camp = mockData.campaigns.find(x => x.id === cid);
-                                        if (camp) camp.participants = camp.participants.filter(p => p !== sid);
-                                        closeParticipantsModal();
-                                        renderers.campaigns();
-                                    });
-                                });
-                            }
-                            document.getElementById('campaign-participants-modal').classList.remove('hidden');
+                            const newId = Math.max(0, ...(mockData.campaigns||[]).map(x=>x.id)) + 1;
+                            mockData.campaigns.push({
+                                ...c, id: newId, name: `${c.name} (Kopya)`,
+                                status: 'draft', participants: [],
+                                createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+                                stats: { views: 0, joined: 0, estimatedRevenue: 0 }
+                            });
+                            renderers.campaigns();
                         });
                     });
                     // Toggle status
@@ -11358,9 +11541,55 @@
                 const campaigns = mockData.campaigns || [];
                 const joinedIds = new Set(campaigns.filter(c => c.participants.includes(supplierId)).map(c => c.id));
 
+                // --- Product impact helpers ---
+                // Build the lowercase name chain (category + all ancestors) for a product's category
+                const getCategoryChainNames = (categoryId) => {
+                    const names = [];
+                    let cur = (mockData.categories || []).find(c => c.id === categoryId);
+                    let guard = 0;
+                    while (cur && guard++ < 20) {
+                        names.push(((cur.name && cur.name.tr) || cur.name || '').toString().toLowerCase());
+                        cur = cur.parentId != null ? (mockData.categories || []).find(c => c.id === cur.parentId) : null;
+                    }
+                    return names;
+                };
+                // Does a campaign's category cover this product?
+                const campaignAffectsProduct = (campaign, product) => {
+                    if (!campaign || !product) return false;
+                    const cat = (campaign.category || '').trim().toLowerCase();
+                    if (!cat || cat === 'tüm kategoriler') return true;
+                    return getCategoryChainNames(product.categoryId).includes(cat);
+                };
+                // This supplier's products (joined with the supplierProducts link table)
+                const myProducts = (mockData.supplierProducts || [])
+                    .filter(sp => sp.supplierId === supplierId)
+                    .map(sp => ({ sp, product: (mockData.products || []).find(p => p.id === sp.productId) }))
+                    .filter(x => x.product);
+                const productName = (p) => (p && p.name && (p.name.tr || p.name.en)) || p?.name || '-';
+                // For one of my products, the joined (affecting) and eligible (could-affect) active campaigns
+                const getProductCampaignImpact = (product) => {
+                    const active = campaigns.filter(c => c.status === 'active' && campaignAffectsProduct(c, product));
+                    return {
+                        affecting: active.filter(c => joinedIds.has(c.id)),
+                        eligible: active.filter(c => !joinedIds.has(c.id))
+                    };
+                };
+                // Count of my products covered by a given campaign
+                const affectedProductCount = (campaign) => myProducts.filter(x => campaignAffectsProduct(campaign, x.product)).length;
+
                 const renderSupplierCards = () => {
-                    const visible = campaigns.filter(c => c.status !== 'draft');
-                    if (visible.length === 0) return '<p class="text-gray-400 text-center py-10">Şu anda aktif kampanya bulunmuyor.</p>';
+                    const filter = document.getElementById('supplier-campaign-filter')?.value || 'available';
+                    const query = (document.getElementById('supplier-campaign-search')?.value || '').trim().toLowerCase();
+                    let visible = campaigns.filter(c => c.status !== 'draft');
+                    if (filter === 'available') visible = visible.filter(c => c.status === 'active' && !joinedIds.has(c.id));
+                    if (filter === 'joined') visible = visible.filter(c => joinedIds.has(c.id));
+                    if (filter === 'ended') visible = visible.filter(c => c.status === 'ended' || c.status === 'passive');
+                    if (query) visible = visible.filter(c => `${c.name} ${c.description || ''} ${c.category || ''}`.toLowerCase().includes(query));
+                    visible.sort((a, b) => {
+                        if (joinedIds.has(a.id) !== joinedIds.has(b.id)) return joinedIds.has(a.id) ? -1 : 1;
+                        return new Date(a.endDate) - new Date(b.endDate);
+                    });
+                    if (visible.length === 0) return '<div class="col-span-full bg-white border rounded-xl p-10 text-center text-gray-400">Filtreye uygun kampanya bulunmuyor.</div>';
                     return visible.map(c => {
                         const joined = joinedIds.has(c.id);
                         const canJoin = c.status === 'active' && !joined;
@@ -11383,10 +11612,28 @@
                                         <p class="text-sm font-medium text-gray-700 truncate">${c.category}</p>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-2 text-xs text-gray-400 mb-4">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>${formatDate(c.startDate)} – ${formatDate(c.endDate)}</span>
-                                    <span class="ml-auto"><i class="fas fa-users mr-1"></i>${c.participants.length} tedarikçi katıldı</span>
+                                <div class="space-y-2 mb-4">
+                                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                                        <span>${formatDate(c.startDate)} - ${formatDate(c.endDate)}</span>
+                                        <span class="ml-auto font-medium">${getDaysText(c)}</span>
+                                    </div>
+                                    <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                                        <div class="h-full ${c.status === 'active' ? 'bg-green-500' : 'bg-gray-400'}" style="width:${getCampaignProgress(c)}%"></div>
+                                    </div>
+                                    <div class="flex items-center justify-between text-xs text-gray-500">
+                                        <span><i class="fas fa-users mr-1 text-gray-400"></i>${c.participants.length} tedarikçi katıldı</span>
+                                        <span>${formatCurrency(c.stats?.estimatedRevenue)} tahmini hacim</span>
+                                    </div>
+                                    ${(() => {
+                                        const cnt = affectedProductCount(c);
+                                        if (cnt === 0 || c.status !== 'active') return '';
+                                        const cls = joined ? 'bg-green-50 text-green-700 hover:bg-green-100' : 'bg-amber-50 text-amber-700 hover:bg-amber-100';
+                                        const verb = joined ? 'etkileniyor' : 'etkilenebilir';
+                                        return `<button class="view-affected-products-btn w-full flex items-center justify-center gap-1.5 ${cls} rounded-lg py-1.5 text-xs font-medium transition-colors" data-id="${c.id}">
+                                            <i class="fas fa-box-open"></i> ${cnt} ürününüz ${verb} – Gör
+                                        </button>`;
+                                    })()}
                                 </div>
                                 <div class="border-t pt-3">
                                     ${joined ? `
@@ -11411,34 +11658,177 @@
 
                 pageContent.innerHTML = `
                     <div class="space-y-4">
-                        <!-- Header -->
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm text-gray-500">${campaigns.filter(c=>c.status==='active').length} aktif kampanya mevcut</p>
-                            <div class="flex items-center gap-2 text-sm">
-                                <span class="flex items-center gap-1 text-green-600 font-medium">
-                                    <i class="fas fa-check-circle"></i> ${joinedIds.size} kampanyaya katıldınız
-                                </span>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Katılabileceğiniz</p>
+                                <p class="text-2xl font-bold text-blue-600">${campaigns.filter(c=>c.status==='active' && !c.participants.includes(supplierId)).length}</p>
                             </div>
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Katıldıklarınız</p>
+                                <p class="text-2xl font-bold text-green-600">${joinedIds.size}</p>
+                            </div>
+                            <div class="bg-white rounded-xl border p-4">
+                                <p class="text-xs text-gray-500 mb-1">Ortalama İndirim</p>
+                                <p class="text-2xl font-bold text-indigo-600">%${campaigns.length ? Math.round(campaigns.reduce((s,c)=>s+(c.discountRate||0),0)/campaigns.length) : 0}</p>
+                            </div>
+                            <button id="affected-products-card" class="bg-white rounded-xl border p-4 text-left hover:border-amber-400 hover:shadow-md transition-all">
+                                <p class="text-xs text-gray-500 mb-1 flex items-center gap-1">Etkilenen Ürünleriniz <i class="fas fa-arrow-right text-amber-500"></i></p>
+                                <p class="text-2xl font-bold text-amber-600">${myProducts.filter(x => { const i = getProductCampaignImpact(x.product); return i.affecting.length + i.eligible.length > 0; }).length}</p>
+                            </button>
+                        </div>
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 bg-white border rounded-xl p-4">
+                            <div class="relative">
+                                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                                <input id="supplier-campaign-search" type="search" placeholder="Kampanya ara" class="w-full lg:w-80 border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <select id="supplier-campaign-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="available">Katılabileceklerim</option>
+                                <option value="joined">Katıldıklarım</option>
+                                <option value="all">Tüm Kampanyalar</option>
+                                <option value="ended">Sona Eren/Pasif</option>
+                            </select>
                         </div>
                         <!-- Cards Grid -->
                         <div id="supplier-campaign-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                             ${renderSupplierCards()}
                         </div>
                     </div>
+
+                    <!-- Affected Products Modal -->
+                    <div id="affected-products-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+                        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+                            <div class="flex items-center justify-between p-5 border-b sticky top-0 bg-white rounded-t-2xl">
+                                <div>
+                                    <h3 id="affected-modal-title" class="text-lg font-semibold text-gray-800">Etkilenen Ürünlerim</h3>
+                                    <p id="affected-modal-subtitle" class="text-xs text-gray-500 mt-0.5"></p>
+                                </div>
+                                <button id="affected-modal-close" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-lg"></i></button>
+                            </div>
+                            <div id="affected-modal-body" class="p-5"></div>
+                        </div>
+                    </div>
                 `;
 
+                // --- Affected products modal logic ---
+                const closeAffectedModal = () => document.getElementById('affected-products-modal').classList.add('hidden');
+                document.getElementById('affected-modal-close').addEventListener('click', closeAffectedModal);
+                document.getElementById('affected-products-modal').addEventListener('click', (e) => {
+                    if (e.target.id === 'affected-products-modal') closeAffectedModal();
+                });
+
+                // Perform the actual join (called from the confirmation modal)
+                const doJoinCampaign = (cid) => {
+                    const c = mockData.campaigns.find(x => x.id === cid);
+                    if (c && !c.participants.includes(supplierId)) {
+                        c.participants.push(supplierId);
+                        c.stats = c.stats || {}; c.stats.joined = c.participants.length;
+                        joinedIds.add(cid);
+                    }
+                    document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
+                    reattachSupplierEvents();
+                };
+
+                // campaignId = null -> show all my affected/eligible products across campaigns
+                // opts.joinIntent = true -> render as a "confirm before joining" step with a Join button
+                const openAffectedProductsModal = (campaignId, opts = {}) => {
+                    const campaign = campaignId != null ? campaigns.find(c => c.id === campaignId) : null;
+                    const joinIntent = !!opts.joinIntent && campaign && !joinedIds.has(campaign.id) && campaign.status === 'active';
+                    document.getElementById('affected-modal-title').textContent = joinIntent
+                        ? 'Kampanyaya Katılmadan Önce'
+                        : (campaign ? 'Bu Kampanyadan Etkilenen Ürünleriniz' : 'Etkilenen Ürünlerim');
+
+                    // Build rows
+                    let rows;
+                    if (campaign) {
+                        const joined = joinedIds.has(campaign.id);
+                        document.getElementById('affected-modal-subtitle').textContent = joinIntent
+                            ? `${campaign.name} • Katılırsanız aşağıdaki ürünlerinize %${campaign.discountRate} indirim uygulanacak`
+                            : `${campaign.name} • %${campaign.discountRate} indirim • ${joined ? 'Katıldınız (uygulanıyor)' : 'Katılırsanız uygulanır'}`;
+                        rows = myProducts
+                            .filter(x => campaignAffectsProduct(campaign, x.product))
+                            .map(x => ({ x, best: campaign.discountRate, applied: joined, others: [] }));
+                    } else {
+                        document.getElementById('affected-modal-subtitle').textContent = 'Katıldığınız (etkileniyor) ve katılabileceğiniz (etkilenebilir) aktif kampanyalara göre ürünleriniz.';
+                        rows = myProducts.map(x => {
+                            const impact = getProductCampaignImpact(x.product);
+                            const all = [...impact.affecting, ...impact.eligible];
+                            if (all.length === 0) return null;
+                            const applied = impact.affecting.length > 0;
+                            const pool = applied ? impact.affecting : impact.eligible;
+                            const best = Math.max(...pool.map(c => c.discountRate || 0));
+                            return { x, best, applied, others: all };
+                        }).filter(Boolean);
+                    }
+
+                    const body = document.getElementById('affected-modal-body');
+                    if (rows.length === 0) {
+                        body.innerHTML = '<p class="text-sm text-gray-400 text-center py-10">İlgili kampanyalardan etkilenen ürününüz bulunmuyor.</p>';
+                    } else {
+                        body.innerHTML = `
+                            <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="border-b text-xs text-gray-500 uppercase">
+                                    <tr>
+                                        <th class="py-2 pr-3">Ürün</th>
+                                        <th class="py-2 px-3">Kategori</th>
+                                        <th class="py-2 px-3 text-right">Mevcut Fiyat</th>
+                                        <th class="py-2 px-3 text-right">İndirimli Fiyat</th>
+                                        <th class="py-2 pl-3">Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                ${rows.map(({ x, best, applied }) => {
+                                    const price = x.sp.price || 0;
+                                    const discounted = price * (1 - best / 100);
+                                    const catName = (() => { const c = (mockData.categories||[]).find(cc => cc.id === x.product.categoryId); return (c && c.name && c.name.tr) || '-'; })();
+                                    const badge = applied
+                                        ? '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Etkileniyor</span>'
+                                        : '<span class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Etkilenebilir</span>';
+                                    return `<tr class="border-b last:border-0 hover:bg-gray-50">
+                                        <td class="py-2 pr-3 font-medium text-gray-800">${productName(x.product)}</td>
+                                        <td class="py-2 px-3 text-gray-600">${catName}</td>
+                                        <td class="py-2 px-3 text-right text-gray-500 line-through">${formatCurrency(price)}</td>
+                                        <td class="py-2 px-3 text-right font-semibold text-blue-700">${formatCurrency(discounted)} <span class="text-xs text-gray-400">(-%${best})</span></td>
+                                        <td class="py-2 pl-3">${badge}</td>
+                                    </tr>`;
+                                }).join('')}
+                                </tbody>
+                            </table>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-3"><i class="fas fa-info-circle mr-1"></i>"Etkileniyor": katıldığınız aktif kampanya nedeniyle indirim uygulanıyor. "Etkilenebilir": katılırsanız bu indirim geçerli olur.</p>`;
+                    }
+                    // Confirmation footer when the user is about to join
+                    if (joinIntent) {
+                        const footer = document.createElement('div');
+                        footer.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-5 pt-4 border-t';
+                        footer.innerHTML = `
+                            <span class="text-xs text-gray-500"><i class="fas fa-box-open mr-1"></i>${rows.length} ürününüz bu kampanyadan etkilenecek.</span>
+                            <div class="flex gap-2 justify-end">
+                                <button id="affected-cancel-join" class="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">Vazgeç</button>
+                                <button id="affected-confirm-join" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"><i class="fas fa-plus mr-1"></i>Kampanyaya Katıl</button>
+                            </div>`;
+                        document.getElementById('affected-modal-body').appendChild(footer);
+                        document.getElementById('affected-cancel-join').onclick = closeAffectedModal;
+                        document.getElementById('affected-confirm-join').onclick = () => { doJoinCampaign(campaign.id); closeAffectedModal(); };
+                    }
+                    document.getElementById('affected-products-modal').classList.remove('hidden');
+                };
+
                 const reattachSupplierEvents = () => {
+                    const supplierCampaignSearch = document.getElementById('supplier-campaign-search');
+                    const supplierCampaignFilter = document.getElementById('supplier-campaign-filter');
+                    if (supplierCampaignSearch) supplierCampaignSearch.oninput = () => {
+                        document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
+                        reattachSupplierEvents();
+                    };
+                    if (supplierCampaignFilter) supplierCampaignFilter.onchange = () => {
+                        document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
+                        reattachSupplierEvents();
+                    };
                     document.querySelectorAll('.join-campaign-btn').forEach(btn => {
                         btn.addEventListener('click', () => {
-                            const cid = parseInt(btn.dataset.id);
-                            const c = mockData.campaigns.find(x => x.id === cid);
-                            if (c && !c.participants.includes(supplierId)) {
-                                c.participants.push(supplierId);
-                                c.stats.joined = c.participants.length;
-                                joinedIds.add(cid);
-                            }
-                            document.getElementById('supplier-campaign-grid').innerHTML = renderSupplierCards();
-                            reattachSupplierEvents();
+                            // Instead of joining immediately, show the products that would be affected first
+                            openAffectedProductsModal(parseInt(btn.dataset.id), { joinIntent: true });
                         });
                     });
                     document.querySelectorAll('.leave-campaign-btn').forEach(btn => {
@@ -11454,8 +11844,15 @@
                             reattachSupplierEvents();
                         });
                     });
+                    document.querySelectorAll('.view-affected-products-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openAffectedProductsModal(parseInt(btn.dataset.id));
+                        });
+                    });
                 };
                 reattachSupplierEvents();
+                document.getElementById('affected-products-card').addEventListener('click', () => openAffectedProductsModal(null));
             }
         };
 
@@ -12984,18 +13381,32 @@
                                         <div class="px-4 py-2 text-sm font-medium text-gray-500 border-b border-gray-100">
                                             Şablon Seçin
                                         </div>
-                                        <button onclick="downloadSpecificTemplate('add_update')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
+                                        <button onclick="downloadSpecificTemplate('add')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
                                             <i class="fas fa-plus-circle text-indigo-600"></i>
                                             <div>
-                                                <div class="font-medium text-gray-900">Ürün Ekleme/Güncelleme</div>
-                                                <div class="text-sm text-gray-500">Yeni ürün ekle veya mevcut ürünleri güncelle</div>
+                                                <div class="font-medium text-gray-900">Ürün Ekleme</div>
+                                                <div class="text-sm text-gray-500">Yeni ürünleri toplu olarak ekle</div>
                                             </div>
                                         </button>
-                                        <button onclick="downloadSpecificTemplate('stock_price')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
-                                            <i class="fas fa-edit text-green-600"></i>
+                                        <button onclick="downloadSpecificTemplate('update')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
+                                            <i class="fas fa-sync-alt text-blue-600"></i>
                                             <div>
-                                                <div class="font-medium text-gray-900">Stok/Fiyat Güncelleme</div>
-                                                <div class="text-sm text-gray-500">Stok ve fiyat bilgilerini toplu güncelle</div>
+                                                <div class="font-medium text-gray-900">Ürün Güncelleme</div>
+                                                <div class="text-sm text-gray-500">Mevcut ürünlerin bilgilerini güncelle</div>
+                                            </div>
+                                        </button>
+                                        <button onclick="downloadSpecificTemplate('stock')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
+                                            <i class="fas fa-boxes text-green-600"></i>
+                                            <div>
+                                                <div class="font-medium text-gray-900">Stok Güncelleme</div>
+                                                <div class="text-sm text-gray-500">Stok bilgilerini toplu güncelle</div>
+                                            </div>
+                                        </button>
+                                        <button onclick="downloadSpecificTemplate('price')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
+                                            <i class="fas fa-tag text-teal-600"></i>
+                                            <div>
+                                                <div class="font-medium text-gray-900">Fiyat Güncelleme</div>
+                                                <div class="text-sm text-gray-500">Fiyat bilgilerini toplu güncelle</div>
                                             </div>
                                         </button>
                                         <button onclick="downloadSpecificTemplate('archive')" class="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3">
@@ -13015,25 +13426,43 @@
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">${t('select_action_type')}</h2>
                         <div class="grid md:grid-cols-3 gap-4">
-                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-colors" 
-                                 onclick="selectActionType('add_update')" id="action-add-update">
+                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+                                 onclick="selectActionType('add')" id="action-add">
                                 <div class="text-center">
                                     <i class="fas fa-plus-circle text-3xl text-indigo-600 mb-3"></i>
-                                    <h3 class="font-medium text-gray-900">${t('add_update_products')}</h3>
-                                    <p class="text-sm text-gray-500 mt-1">Yeni ürün ekle veya mevcut ürünleri güncelle</p>
+                                    <h3 class="font-medium text-gray-900">Ürün Ekleme</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Yeni ürünleri toplu olarak ekle</p>
                                 </div>
                             </div>
-                            
-                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-green-300 hover:bg-green-50 transition-colors" 
-                                 onclick="selectActionType('stock_price')" id="action-stock-price">
+
+                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                                 onclick="selectActionType('update')" id="action-update">
                                 <div class="text-center">
-                                    <i class="fas fa-edit text-3xl text-green-600 mb-3"></i>
-                                    <h3 class="font-medium text-gray-900">${t('stock_price_update')}</h3>
-                                    <p class="text-sm text-gray-500 mt-1">Stok ve fiyat bilgilerini toplu güncelle</p>
+                                    <i class="fas fa-sync-alt text-3xl text-blue-600 mb-3"></i>
+                                    <h3 class="font-medium text-gray-900">Ürün Güncelleme</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Mevcut ürünlerin bilgilerini güncelle</p>
                                 </div>
                             </div>
-                            
-                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-300 hover:bg-orange-50 transition-colors" 
+
+                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-green-300 hover:bg-green-50 transition-colors"
+                                 onclick="selectActionType('stock')" id="action-stock">
+                                <div class="text-center">
+                                    <i class="fas fa-boxes text-3xl text-green-600 mb-3"></i>
+                                    <h3 class="font-medium text-gray-900">Stok Güncelleme</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Stok bilgilerini toplu güncelle</p>
+                                </div>
+                            </div>
+
+                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-teal-300 hover:bg-teal-50 transition-colors"
+                                 onclick="selectActionType('price')" id="action-price">
+                                <div class="text-center">
+                                    <i class="fas fa-tag text-3xl text-teal-600 mb-3"></i>
+                                    <h3 class="font-medium text-gray-900">Fiyat Güncelleme</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Fiyat bilgilerini toplu güncelle</p>
+                                </div>
+                            </div>
+
+                            <div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-orange-300 hover:bg-orange-50 transition-colors"
                                  onclick="selectActionType('archive')" id="action-archive">
                                 <div class="text-center">
                                     <i class="fas fa-archive text-3xl text-orange-600 mb-3"></i>
@@ -13177,23 +13606,27 @@
         function selectActionType(actionType) {
             selectedActionType = actionType;
             
+            // Color mapping per action type
+            const actionColors = {
+                'add': ['border-indigo-500', 'bg-indigo-50'],
+                'update': ['border-blue-500', 'bg-blue-50'],
+                'stock': ['border-green-500', 'bg-green-50'],
+                'price': ['border-teal-500', 'bg-teal-50'],
+                'archive': ['border-orange-500', 'bg-orange-50']
+            };
+
             // Reset all action cards
+            const allColorClasses = Object.values(actionColors).flat();
             document.querySelectorAll('[id^="action-"]').forEach(card => {
-                card.classList.remove('border-indigo-500', 'bg-indigo-50', 'border-green-500', 'bg-green-50', 'border-orange-500', 'bg-orange-50');
+                card.classList.remove(...allColorClasses);
                 card.classList.add('border-gray-200');
             });
-            
+
             // Highlight selected card
             const selectedCard = document.getElementById(`action-${actionType.replace('_', '-')}`);
-            if (selectedCard) {
+            if (selectedCard && actionColors[actionType]) {
                 selectedCard.classList.remove('border-gray-200');
-                if (actionType === 'add_update') {
-                    selectedCard.classList.add('border-indigo-500', 'bg-indigo-50');
-                } else if (actionType === 'stock_price') {
-                    selectedCard.classList.add('border-green-500', 'bg-green-50');
-                } else if (actionType === 'archive') {
-                    selectedCard.classList.add('border-orange-500', 'bg-orange-50');
-                }
+                selectedCard.classList.add(...actionColors[actionType]);
             }
             
             // Update required columns display
@@ -13211,20 +13644,26 @@
             let columns = [];
             
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     columns = [
                         'Ürün Adı (name)',
-                        'Açıklama (description)', 
+                        'Açıklama (description)',
                         'Fiyat (price)',
                         'Stok (stock)',
                         'Kategori (category)'
                     ];
                     break;
-                case 'stock_price':
+                case 'stock':
                     columns = [
                         'Ürün ID (id)',
-                        'Yeni Fiyat (new_price)',
                         'Yeni Stok (new_stock)'
+                    ];
+                    break;
+                case 'price':
+                    columns = [
+                        'Ürün ID (id)',
+                        'Yeni Fiyat (new_price)'
                     ];
                     break;
                 case 'archive':
@@ -13591,7 +14030,8 @@
 
         function getValidationErrorTypes(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return [
                         { type: 'missing_required_field' },
                         { type: 'invalid_price' },
@@ -13602,13 +14042,17 @@
                         { type: 'price_too_high' },
                         { type: 'stock_too_high' }
                     ];
-                case 'stock_price':
+                case 'stock':
+                    return [
+                        { type: 'missing_required_field' },
+                        { type: 'negative_stock' },
+                        { type: 'stock_too_high' }
+                    ];
+                case 'price':
                     return [
                         { type: 'missing_required_field' },
                         { type: 'invalid_price' },
-                        { type: 'negative_stock' },
-                        { type: 'price_too_high' },
-                        { type: 'stock_too_high' }
+                        { type: 'price_too_high' }
                     ];
                 case 'archive':
                     return [
@@ -13622,7 +14066,8 @@
 
         function getSampleData(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return {
                         sku: ['SKU001', 'SKU002', 'SKU003', 'SKU004', 'SKU005'],
                         name: ['Kırmızı Elbise', 'Mavi Gömlek', 'Siyah Pantolon', 'Beyaz T-Shirt', 'Kahverengi Ceket'],
@@ -13635,11 +14080,15 @@
                         season: ['Yaz', 'Dört Mevsim', 'Dört Mevsim', 'Yaz', 'Sonbahar/Kış'],
                         style: ['Günlük', 'Klasik', 'Casual', 'Spor', 'Şık']
                     };
-                case 'stock_price':
+                case 'stock':
                     return {
                         id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                        new_price: [299.99, 199.50, 450.00, 89.99, 599.99, 350.00, 120.00, 280.00, 180.00, 420.00],
                         new_stock: [25, 50, 15, 100, 30, 40, 75, 20, 60, 35]
+                    };
+                case 'price':
+                    return {
+                        id: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                        new_price: [299.99, 199.50, 450.00, 89.99, 599.99, 350.00, 120.00, 280.00, 180.00, 420.00]
                     };
                 case 'archive':
                     return {
@@ -13662,7 +14111,8 @@
 
         function getErrorTypes(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return [
                         { message: 'Ürün adı boş olamaz' },
                         { message: 'Geçersiz fiyat formatı' },
@@ -13670,13 +14120,17 @@
                         { message: 'Kategori bulunamadı' },
                         { message: 'Açıklama çok uzun' }
                     ];
-                case 'stock_price':
+                case 'stock':
+                    return [
+                        { message: 'Ürün ID bulunamadı' },
+                        { message: 'Stok miktarı negatif olamaz' },
+                        { message: 'Stok miktarı çok düşük' }
+                    ];
+                case 'price':
                     return [
                         { message: 'Ürün ID bulunamadı' },
                         { message: 'Geçersiz fiyat formatı' },
-                        { message: 'Stok miktarı negatif olamaz' },
-                        { message: 'Fiyat çok yüksek' },
-                        { message: 'Stok miktarı çok düşük' }
+                        { message: 'Fiyat çok yüksek' }
                     ];
                 case 'archive':
                     return [
@@ -13693,10 +14147,13 @@
 
         function getRequiredColumns(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return ['sku', 'name', 'categoryId', 'stock', 'price_TRY'];
-                case 'stock_price':
-                    return ['id', 'new_price', 'new_stock'];
+                case 'stock':
+                    return ['id', 'new_stock'];
+                case 'price':
+                    return ['id', 'new_price'];
                 case 'archive':
                     return ['id', 'archive_status'];
                 default:
@@ -13728,10 +14185,13 @@
 
         function validateRowData(row, rowNumber, actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return validateAddUpdateRow(row, rowNumber);
-                case 'stock_price':
-                    return validateStockPriceRow(row, rowNumber);
+                case 'stock':
+                    return validateStockRow(row, rowNumber);
+                case 'price':
+                    return validatePriceRow(row, rowNumber);
                 case 'archive':
                     return validateArchiveRow(row, rowNumber);
                 default:
@@ -13765,28 +14225,43 @@
             return null;
         }
 
-        function validateStockPriceRow(row, rowNumber) {
+        function validateStockRow(row, rowNumber) {
             const productId = parseInt(row.id);
             if (isNaN(productId) || productId <= 0) {
                 return { row: rowNumber, error: 'Geçerli bir ürün ID giriniz' };
             }
-            
+
             // Check if product exists
             const product = mockData.products.find(p => p.id === productId);
             if (!product) {
                 return { row: rowNumber, error: 'Ürün bulunamadı' };
             }
-            
-            const newPrice = parseFloat(row.new_price);
-            if (isNaN(newPrice) || newPrice <= 0) {
-                return { row: rowNumber, error: 'Geçerli bir fiyat giriniz' };
-            }
-            
+
             const newStock = parseInt(row.new_stock);
             if (isNaN(newStock) || newStock < 0) {
                 return { row: rowNumber, error: 'Geçerli bir stok miktarı giriniz' };
             }
-            
+
+            return null;
+        }
+
+        function validatePriceRow(row, rowNumber) {
+            const productId = parseInt(row.id);
+            if (isNaN(productId) || productId <= 0) {
+                return { row: rowNumber, error: 'Geçerli bir ürün ID giriniz' };
+            }
+
+            // Check if product exists
+            const product = mockData.products.find(p => p.id === productId);
+            if (!product) {
+                return { row: rowNumber, error: 'Ürün bulunamadı' };
+            }
+
+            const newPrice = parseFloat(row.new_price);
+            if (isNaN(newPrice) || newPrice <= 0) {
+                return { row: rowNumber, error: 'Geçerli bir fiyat giriniz' };
+            }
+
             return null;
         }
 
@@ -13936,10 +14411,13 @@
 
         function getColumnCount(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return 10; // sku, name, categoryId, stock, price_TRY, color, size, material, season, style
-                case 'stock_price':
-                    return 5; // id, current_price, new_price, current_stock, new_stock
+                case 'stock':
+                    return 3; // id, current_stock, new_stock
+                case 'price':
+                    return 3; // id, current_price, new_price
                 case 'archive':
                     return 4; // id, name, current_status, new_status
                 default:
@@ -13949,7 +14427,8 @@
 
         function getPreviewTableHeaders(actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return `
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
@@ -13962,13 +14441,17 @@
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sezon</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stil</th>
                     `;
-                case 'stock_price':
+                case 'stock':
+                    return `
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün ID</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Stok</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Stok</th>
+                    `;
+                case 'price':
                     return `
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün ID</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Fiyat</th>
                         <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Fiyat</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Stok</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Stok</th>
                     `;
                 case 'archive':
                     return `
@@ -13984,7 +14467,8 @@
 
         function getPreviewTableRow(row, actionType) {
             switch (actionType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     return `
                         <td class="px-4 py-3 text-sm text-gray-900">${row.sku}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">${row.name}</td>
@@ -13997,15 +14481,22 @@
                         <td class="px-4 py-3 text-sm text-gray-900">${row.season}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">${row.style}</td>
                     `;
-                case 'stock_price':
+                case 'stock': {
+                    const product = mockData.products.find(p => p.id === parseInt(row.id));
+                    return `
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.id}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${product ? product.stock : 'N/A'}</td>
+                        <td class="px-4 py-3 text-sm text-gray-900">${row.new_stock}</td>
+                    `;
+                }
+                case 'price': {
                     const product = mockData.products.find(p => p.id === parseInt(row.id));
                     return `
                         <td class="px-4 py-3 text-sm text-gray-900">${row.id}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">₺${product ? product.price.toFixed(2) : 'N/A'}</td>
                         <td class="px-4 py-3 text-sm text-gray-900">₺${parseFloat(row.new_price).toFixed(2)}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${product ? product.stock : 'N/A'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.new_stock}</td>
                     `;
+                }
                 case 'archive':
                     const archiveProduct = mockData.products.find(p => p.id === parseInt(row.id));
                     const currentStatus = archiveProduct ? (archiveProduct.archived ? 'Arşivli' : 'Aktif') : 'N/A';
@@ -14082,13 +14573,18 @@
                     
                     // Process based on action type and provide specific feedback
                     switch (selectedActionType) {
-                        case 'add_update':
+                        case 'add':
+                        case 'update':
                             const addUpdateResult = processAddUpdate(row);
                             message = addUpdateResult.message;
                             break;
-                        case 'stock_price':
-                            const stockPriceResult = processStockPriceUpdate(row);
-                            message = stockPriceResult.message;
+                        case 'stock':
+                            const stockResult = processStockUpdate(row);
+                            message = stockResult.message;
+                            break;
+                        case 'price':
+                            const priceResult = processPriceUpdate(row);
+                            message = priceResult.message;
                             break;
                         case 'archive':
                             const archiveResult = processArchiveUpdate(row);
@@ -14161,13 +14657,22 @@
             }
         }
 
-        function processStockPriceUpdate(row) {
+        function processStockUpdate(row) {
+            const product = mockData.products.find(p => p.id === parseInt(row.id));
+            if (product) {
+                product.stock = parseInt(row.new_stock);
+                product.updatedAt = new Date().toISOString();
+                return { message: `Stok güncellendi: ${product.name} (Stok: ${row.new_stock})` };
+            }
+            return { message: 'Ürün bulunamadı' };
+        }
+
+        function processPriceUpdate(row) {
             const product = mockData.products.find(p => p.id === parseInt(row.id));
             if (product) {
                 product.price = parseFloat(row.new_price);
-                product.stock = parseInt(row.new_stock);
                 product.updatedAt = new Date().toISOString();
-                return { message: `Stok/Fiyat güncellendi: ${product.name} (Stok: ${row.new_stock}, Fiyat: ${row.new_price}₺)` };
+                return { message: `Fiyat güncellendi: ${product.name} (Fiyat: ${row.new_price}₺)` };
             }
             return { message: 'Ürün bulunamadı' };
         }
@@ -14325,10 +14830,14 @@
 
         function getActionTypeText(actionType) {
             switch (actionType) {
-                case 'add_update':
-                    return 'Ürün Ekleme/Güncelleme';
-                case 'stock_price':
-                    return 'Stok/Fiyat Güncelleme';
+                case 'add':
+                    return 'Ürün Ekleme';
+                case 'update':
+                    return 'Ürün Güncelleme';
+                case 'stock':
+                    return 'Stok Güncelleme';
+                case 'price':
+                    return 'Fiyat Güncelleme';
                 case 'archive':
                     return 'Arşivleme';
                 default:
@@ -14413,8 +14922,8 @@
         function downloadSpecificTemplate(templateType) {
             closeTemplateDropdown();
             
-            // For add_update template, show category selection first
-            if (templateType === 'add_update') {
+            // For add/update templates, show category selection first
+            if (templateType === 'add' || templateType === 'update') {
                 showCategorySelectionModal(templateType);
             } else {
                 // For other templates, download directly
@@ -14495,7 +15004,8 @@
             }
 
             switch (templateType) {
-                case 'add_update':
+                case 'add':
+                case 'update':
                     // Build CSV content based on category attributes
                     let headers = ['sku', 'name', 'categoryId', 'stock', 'price_TRY'];
                     let sampleData = [];
@@ -14538,17 +15048,26 @@
                     }
                     
                     csvContent = headers.join(',') + '\n' + sampleData.join('\n');
-                    filename = categoryId ? `urun_ekleme_sablonu_${categoryName.replace(/[^a-zA-Z0-9]/g, '_')}.csv` : 'urun_ekleme_sablonu.csv';
+                    const baseName = templateType === 'add' ? 'urun_ekleme_sablonu' : 'urun_guncelleme_sablonu';
+                    filename = categoryId ? `${baseName}_${categoryName.replace(/[^a-zA-Z0-9]/g, '_')}.csv` : `${baseName}.csv`;
                     break;
-                    
-                case 'stock_price':
-                    csvContent = 'sku,new_price,new_stock\n' +
-                        'BULK-001,89.99,100\n' +
-                        'BULK-002,199.50,75\n' +
-                        'BULK-003,125.00,50';
-                    filename = 'stok_fiyat_guncelleme_sablonu.csv';
+
+                case 'stock':
+                    csvContent = 'id,new_stock\n' +
+                        '1,100\n' +
+                        '2,75\n' +
+                        '3,50';
+                    filename = 'stok_guncelleme_sablonu.csv';
                     break;
-                    
+
+                case 'price':
+                    csvContent = 'id,new_price\n' +
+                        '1,89.99\n' +
+                        '2,199.50\n' +
+                        '3,125.00';
+                    filename = 'fiyat_guncelleme_sablonu.csv';
+                    break;
+
                 case 'archive':
                     csvContent = 'sku,action\n' +
                         'BULK-001,archive\n' +
@@ -31715,7 +32234,15 @@ const navLinksSupplier = [
     ]
   },
   { href: '#finance', icon: 'fa-coins', text: 'Finans', role: 'supplier' },
-  { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanyalar', role: 'supplier' },
+  {
+    type: 'parent',
+    icon: 'fa-bullhorn',
+    text: 'Pazarlama',
+    role: 'supplier',
+    children: [
+      { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanya Merkezi', role: 'supplier' }
+    ]
+  },
   {
     type: 'parent',
     icon: 'fa-cog',
@@ -31764,7 +32291,15 @@ const navLinksAdmin = [
     ]
   },
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden
-  { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanyalar', role: 'admin' },
+  {
+    type: 'parent',
+    icon: 'fa-bullhorn',
+    text: 'Pazarlama',
+    role: 'admin',
+    children: [
+      { href: '#campaigns', icon: 'fa-bullhorn', text: 'Kampanya Yönetimi', role: 'admin' }
+    ]
+  },
   {
     type: 'parent',
     icon: 'fa-handshake',
@@ -31807,7 +32342,7 @@ function renderGroup(title, links) {
       // Create collapsible parent item
       const children = link.children.map(child => {
         const childLabel = child.text || '';
-        return `<a href="${child.href}" class="sidebar-link flex items-center w-full px-4 py-2 gap-3 hover:bg-gray-50 text-gray-700 pl-24" data-role="${child.role}">
+        return `<a href="${child.href}" class="sidebar-link flex items-center w-full px-4 py-2 gap-3 hover:bg-gray-50 text-gray-700 pl-12" data-role="${child.role}">
           <i class="fas ${child.icon} w-4 text-sm"></i>
           <span class="sidebar-text text-sm">${childLabel}</span>
         </a>`;
@@ -31883,12 +32418,25 @@ sidebarNav.addEventListener('click', (e) => {
         });
         window.addEventListener('hashchange', handleRouteChange);
         
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const openSidebar = () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        };
+        const closeSidebar = () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        };
         document.getElementById('toggleSidebar').addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('w-64');
-            sidebar.classList.toggle('w-16');
-            sidebar.querySelectorAll('.sidebar-text').forEach(el => el.classList.toggle('hidden'));
+            if (sidebar.classList.contains('-translate-x-full')) {
+                openSidebar();
+            } else {
+                closeSidebar();
+            }
         });
+        document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
         document.querySelectorAll('.close-modal').forEach(el => el.addEventListener('click', closeModal));
         document.getElementById('closeFilterPanel').addEventListener('click', closeFilterPanel);
 
