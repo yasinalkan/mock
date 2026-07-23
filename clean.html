@@ -550,11 +550,11 @@
             upload_file: { tr: 'Dosya Yükle', en: 'Upload File' },
             select_file: { tr: 'Dosya Seç', en: 'Select File' },
             supported_formats: { tr: 'Desteklenen Formatlar', en: 'Supported Formats' },
-            csv_excel_formats: { tr: 'CSV, Excel (.xlsx, .xls)', en: 'CSV, Excel (.xlsx, .xls)' },
+            csv_excel_formats: { tr: 'CSV, Excel (.xlsx)', en: 'CSV, Excel (.xlsx)' },
             download_template: { tr: 'Şablon İndir', en: 'Download Template' },
             upload_instructions: { tr: 'Yükleme Talimatları', en: 'Upload Instructions' },
             file_requirements: { tr: 'Dosya Gereksinimleri', en: 'File Requirements' },
-            max_file_size: { tr: 'Maksimum dosya boyutu: 10MB', en: 'Maximum file size: 10MB' },
+            max_file_size: { tr: 'Maksimum dosya boyutu: 5MB', en: 'Maximum file size: 5MB' },
             required_columns: { tr: 'Gerekli Sütunlar', en: 'Required Columns' },
             optional_columns: { tr: 'İsteğe Bağlı Sütunlar', en: 'Optional Columns' },
             preview_data: { tr: 'Veri Önizleme', en: 'Data Preview' },
@@ -5131,6 +5131,128 @@
                     addedAt: '2025-01-15T10:00:00Z',
                     updatedAt: '2025-01-15T10:00:00Z'
                 }*/
+            ],
+            // Bulk Upload History (Toplu İşlemler > Geçmiş Yüklemeler)
+            bulkUploadHistory: [
+                {
+                    id: 1,
+                    supplierId: 1,
+                    fileName: 'urun_ekleme_ocak.xlsx',
+                    fileType: 'xlsx',
+                    fileSize: 245760,
+                    uploadedAt: '2025-01-18T10:30:00Z',
+                    actionType: 'add',
+                    status: 'completed',
+                    totalRows: 6,
+                    successCount: 4,
+                    failCount: 2,
+                    columnErrors: [],
+                    rowResults: [
+                        { rowNumber: 1, status: 'success', message: 'Yeni ürün eklendi: Kışlık Mont' },
+                        { rowNumber: 2, status: 'success', message: 'Yeni ürün eklendi: Yün Kazak' },
+                        { rowNumber: 3, status: 'error', message: 'Geçersiz kategori ID (sayısal değer gerekli)' },
+                        { rowNumber: 4, status: 'success', message: 'Yeni ürün eklendi: Deri Ceket' },
+                        { rowNumber: 5, status: 'error', message: 'Bu SKU zaten kullanılıyor' },
+                        { rowNumber: 6, status: 'success', message: 'Yeni ürün eklendi: Kumaş Pantolon' }
+                    ]
+                },
+                {
+                    id: 2,
+                    supplierId: 1,
+                    fileName: 'stok_guncelleme.csv',
+                    fileType: 'csv',
+                    fileSize: 18432,
+                    uploadedAt: '2025-01-20T14:05:00Z',
+                    actionType: 'stock',
+                    status: 'completed',
+                    totalRows: 5,
+                    successCount: 5,
+                    failCount: 0,
+                    columnErrors: [],
+                    rowResults: [
+                        { rowNumber: 1, status: 'success', message: 'Stok güncellendi: Kışlık Mont (Stok: 25)' },
+                        { rowNumber: 2, status: 'success', message: 'Stok güncellendi: Yün Kazak (Stok: 40)' },
+                        { rowNumber: 3, status: 'success', message: 'Stok güncellendi: Deri Ceket (Stok: 12)' },
+                        { rowNumber: 4, status: 'success', message: 'Stok güncellendi: Kumaş Pantolon (Stok: 60)' },
+                        { rowNumber: 5, status: 'success', message: 'Stok güncellendi: Spor Ayakkabı (Stok: 18)' }
+                    ]
+                },
+                {
+                    id: 3,
+                    supplierId: 1,
+                    fileName: 'fiyat_guncelleme_subat.xlsx',
+                    fileType: 'xlsx',
+                    fileSize: 51200,
+                    uploadedAt: '2025-02-03T09:15:00Z',
+                    actionType: 'price',
+                    status: 'processing',
+                    totalRows: 0,
+                    successCount: 0,
+                    failCount: 0,
+                    columnErrors: [],
+                    rowResults: []
+                },
+                {
+                    id: 4,
+                    supplierId: 2,
+                    fileName: 'urun_guncelleme.csv',
+                    fileType: 'csv',
+                    fileSize: 30720,
+                    uploadedAt: '2025-01-22T16:40:00Z',
+                    actionType: 'update',
+                    status: 'completed',
+                    totalRows: 4,
+                    successCount: 3,
+                    failCount: 1,
+                    columnErrors: ['Kullanılmayan sütunlar: color, size'],
+                    rowResults: [
+                        { rowNumber: 1, status: 'success', message: 'Ürün güncellendi: Kadın Elbise' },
+                        { rowNumber: 2, status: 'error', message: 'Gerekli alan boş: price' },
+                        { rowNumber: 3, status: 'success', message: 'Ürün güncellendi: Erkek Gömlek' },
+                        { rowNumber: 4, status: 'success', message: 'Ürün güncellendi: Çocuk Ayakkabı' }
+                    ]
+                },
+                {
+                    id: 5,
+                    supplierId: 1,
+                    fileName: 'fiyat_guncelleme_mart.csv',
+                    fileType: 'csv',
+                    fileSize: 9216,
+                    uploadedAt: '2025-03-05T11:20:00Z',
+                    actionType: 'price',
+                    status: 'completed',
+                    totalRows: 5,
+                    successCount: 4,
+                    failCount: 1,
+                    columnErrors: [],
+                    rowResults: [
+                        { rowNumber: 1, status: 'success', message: 'Fiyat güncellendi: Kışlık Mont (Fiyat: 899.90₺)' },
+                        { rowNumber: 2, status: 'success', message: 'Fiyat güncellendi: Yün Kazak (Fiyat: 349.90₺)' },
+                        { rowNumber: 3, status: 'error', message: 'Geçersiz fiyat formatı (sayısal değer gerekli)' },
+                        { rowNumber: 4, status: 'success', message: 'Fiyat güncellendi: Deri Ceket (Fiyat: 1299.90₺)' },
+                        { rowNumber: 5, status: 'success', message: 'Fiyat güncellendi: Kumaş Pantolon (Fiyat: 449.90₺)' }
+                    ]
+                },
+                {
+                    id: 6,
+                    supplierId: 1,
+                    fileName: 'arsiv_islemleri_mart.csv',
+                    fileType: 'csv',
+                    fileSize: 6144,
+                    uploadedAt: '2025-03-10T08:45:00Z',
+                    actionType: 'archive',
+                    status: 'completed',
+                    totalRows: 4,
+                    successCount: 3,
+                    failCount: 1,
+                    columnErrors: [],
+                    rowResults: [
+                        { rowNumber: 1, status: 'success', message: 'Ürün arşivlendi: Yazlık Şort' },
+                        { rowNumber: 2, status: 'success', message: 'Ürün arşivden çıkarıldı: Kışlık Mont' },
+                        { rowNumber: 3, status: 'error', message: 'Ürün bulunamadı' },
+                        { rowNumber: 4, status: 'success', message: 'Ürün arşivlendi: Eski Sezon Bluz' }
+                    ]
+                }
             ]
         };
 
@@ -13362,12 +13484,26 @@
                     </div>
                 </div>
                 
-                <div class="space-y-6">
+                <!-- Tabs -->
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="-mb-px flex gap-6">
+                        <button id="bulk-tab-btn-upload" onclick="switchBulkUploadTab('upload')"
+                                class="py-3 px-1 border-b-2 border-indigo-600 text-indigo-600 font-medium text-sm">
+                            <i class="fas fa-file-upload mr-2"></i>Dosya Yükle
+                        </button>
+                        <button id="bulk-tab-btn-history" onclick="switchBulkUploadTab('history')"
+                                class="py-3 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium text-sm">
+                            <i class="fas fa-history mr-2"></i>Geçmiş Yüklemeler
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="bulk-tab-content-upload" class="space-y-6">
                     <!-- Header -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-600">Toplu olarak ürün işlemleri gerçekleştirin. Dosya seçerek işlemi gerçekleştirin. Toplu işlemleri yapılan ürünlerin durumunu ilgili sayfadan takip edebilirsiniz. </p>
+                                <p class="text-gray-600">Toplu olarak ürün işlemleri gerçekleştirin. Dosya seçerek işlemi gerçekleştirin. Toplu işlemleri yapılan ürünlerin durumunu "Geçmiş Yüklemeler" sekmesinden takip edebilirsiniz. </p>
                             </div>
                             <div class="relative">
                                 <button onclick="toggleTemplateDropdown()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2">
@@ -13492,13 +13628,13 @@
                                         </p>
                                     </div>
                                 </div>
-                                <input type="file" id="file-input" accept=".csv,.xlsx,.xls" class="hidden" onchange="handleFileSelect(event)">
-                                <button onclick="document.getElementById('file-input').click()" 
+                                <input type="file" id="file-input" accept=".csv,.xlsx" class="hidden" onchange="handleFileSelect(event)">
+                                <button onclick="document.getElementById('file-input').click()"
                                         class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
                                     ${t('select_file')}
                                 </button>
                             </div>
-                            
+
                             <div id="file-info" class="hidden">
                                 <div class="flex items-center justify-center gap-3">
                                     <i class="fas fa-file-excel text-green-500 text-2xl"></i>
@@ -13513,6 +13649,17 @@
                             </div>
                         </div>
 
+                        <!-- File Validation Info Box -->
+                        <div id="file-validation-info" class="hidden mt-4 p-4 rounded-lg border"></div>
+
+                        <!-- Yükle (Upload to blob) -->
+                        <div class="mt-4 flex justify-end">
+                            <button id="upload-to-blob-btn" onclick="uploadFileToBlob()" disabled
+                                    class="bg-gray-300 text-gray-500 px-6 py-2 rounded-lg cursor-not-allowed transition-colors">
+                                <i class="fas fa-upload mr-2"></i>Yükle
+                            </button>
+                        </div>
+
                         <!-- File Requirements -->
                         <div class="mt-6 grid md:grid-cols-2 gap-6">
                             <div>
@@ -13524,7 +13671,7 @@
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <i class="fas fa-check text-green-500"></i>
-                                        CSV, Excel (.xlsx, .xls) formatları
+                                        CSV, Excel (.xlsx) formatları
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <i class="fas fa-check text-green-500"></i>
@@ -13543,65 +13690,278 @@
                             </div>
                         </div>
 
-                        <!-- Test Error Scenarios -->
-                        <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <h3 class="font-medium text-yellow-800 mb-3">
-                                <i class="fas fa-flask mr-2"></i>
-                                Test Senaryoları
-                            </h3>
-                            <p class="text-sm text-yellow-700 mb-3">
-                                Farklı hata türlerini test etmek için aşağıdaki butonları kullanabilirsiniz:
-                            </p>
-                            <div class="flex flex-wrap gap-2">
-                                <button onclick="testMissingColumns()" class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200">
-                                    <i class="fas fa-exclamation-triangle mr-1"></i>Eksik Sütunlar
-                                </button>
-                                <button onclick="testInvalidValues()" class="px-3 py-1 text-xs bg-orange-100 text-orange-800 rounded-full hover:bg-orange-200">
-                                    <i class="fas fa-times-circle mr-1"></i>Geçersiz Değerler
-                                </button>
-                                <button onclick="testExtraColumns()" class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200">
-                                    <i class="fas fa-info-circle mr-1"></i>Fazla Sütunlar
-                                </button>
-                            </div>
-                        </div>
                     </div>
+                </div>
 
-                    <!-- Preview Section -->
-                    <div id="preview-section" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg font-semibold text-gray-900">${t('preview_data')}</h2>
-                            <div class="flex gap-2">
-                                <button onclick="clearData()" class="text-gray-500 hover:text-gray-700 px-3 py-1 rounded">
-                                    ${t('clear_data')}
-                                </button>
-                                <button onclick="processUpload()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-                                    ${t('process_upload')}
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="preview-table-container" class="overflow-x-auto">
-                            <!-- Preview table will be inserted here -->
-                        </div>
-                    </div>
-
-                    <!-- Results Section -->
-                    <div id="results-section" class="hidden bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">${t('upload_results')}</h2>
-                        <div id="results-content">
-                            <!-- Results will be inserted here -->
+                <!-- Geçmiş Yüklemeler Tab -->
+                <div id="bulk-tab-content-history" class="hidden">
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Geçmiş Yüklemeler</h2>
+                        <div id="bulk-history-table-container" class="overflow-x-auto">
+                            <!-- History table will be inserted here -->
                         </div>
                     </div>
                 </div>
             `;
 
             pageTitle.textContent = t('bulk_upload');
+            switchBulkUploadTab('upload');
         };
 
         // --- BULK UPLOAD FUNCTIONS ---
-        let uploadedData = [];
         let currentFile = null;
         let selectedActionType = null;
+        let lastFileValidation = null;
+        let bulkUploadActiveTab = 'upload';
+
+        // --- BULK UPLOAD TABS ---
+        function switchBulkUploadTab(tab) {
+            bulkUploadActiveTab = tab;
+            const uploadTabBtn = document.getElementById('bulk-tab-btn-upload');
+            const historyTabBtn = document.getElementById('bulk-tab-btn-history');
+            const uploadContent = document.getElementById('bulk-tab-content-upload');
+            const historyContent = document.getElementById('bulk-tab-content-history');
+            if (!uploadTabBtn || !historyTabBtn || !uploadContent || !historyContent) return;
+
+            const activeClasses = ['border-indigo-600', 'text-indigo-600'];
+            const inactiveClasses = ['border-transparent', 'text-gray-500'];
+
+            if (tab === 'history') {
+                historyTabBtn.classList.add(...activeClasses);
+                historyTabBtn.classList.remove(...inactiveClasses);
+                uploadTabBtn.classList.add(...inactiveClasses);
+                uploadTabBtn.classList.remove(...activeClasses);
+                historyContent.classList.remove('hidden');
+                uploadContent.classList.add('hidden');
+                renderBulkUploadHistoryTable();
+            } else {
+                uploadTabBtn.classList.add(...activeClasses);
+                uploadTabBtn.classList.remove(...inactiveClasses);
+                historyTabBtn.classList.add(...inactiveClasses);
+                historyTabBtn.classList.remove(...activeClasses);
+                uploadContent.classList.remove('hidden');
+                historyContent.classList.add('hidden');
+            }
+        }
+
+        const BULK_UPLOAD_ACTION_TYPE_LABELS = {
+            add: 'Ürün Oluşturma',
+            update: 'Ürün Güncelleme',
+            stock: 'Stok Güncelleme',
+            price: 'Fiyat Güncelleme',
+            archive: 'Arşivleme/Arşivden Çıkarma'
+        };
+
+        function bulkUploadActionTypeLabel(actionType) {
+            return BULK_UPLOAD_ACTION_TYPE_LABELS[actionType] || actionType;
+        }
+
+        function bulkUploadStatusBadge(status) {
+            if (status === 'completed') {
+                return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Tamamlandı</span>';
+            }
+            if (status === 'processing') {
+                return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800"><i class="fas fa-spinner fa-spin mr-1"></i>İşleniyor</span>';
+            }
+            return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Başarısız</span>';
+        }
+
+        function renderBulkUploadHistoryTable() {
+            const container = document.getElementById('bulk-history-table-container');
+            if (!container) return;
+
+            const supplierId = window.currentUser?.supplierId;
+            const history = (mockData.bulkUploadHistory || [])
+                .filter(h => !supplierId || h.supplierId === supplierId)
+                .slice()
+                .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-gray-500">
+                        <i class="fas fa-history text-3xl mb-3 block"></i>
+                        Henüz bir yükleme yapılmadı.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosya Adı</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosya Tipi</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dosya Boyutu</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Yüklenme Tarihi</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem Tipi</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                            <th class="px-4 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        ${history.map(h => `
+                            <tr class="cursor-pointer hover:bg-gray-50" onclick="showBulkUploadDetail(${h.id})">
+                                <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                    <i class="fas fa-file-excel text-green-500 mr-2"></i>${h.fileName}
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-500 uppercase">${h.fileType}</td>
+                                <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">${formatFileSize(h.fileSize)}</td>
+                                <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">${new Date(h.uploadedAt).toLocaleString('tr-TR')}</td>
+                                <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">${bulkUploadActionTypeLabel(h.actionType)}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">${bulkUploadStatusBadge(h.status)}</td>
+                                <td class="px-4 py-3 text-right text-gray-400"><i class="fas fa-chevron-right"></i></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function showBulkUploadDetail(id) {
+            const entry = (mockData.bulkUploadHistory || []).find(h => h.id === id);
+            if (!entry) return;
+
+            const summaryRow = (label, value) => `
+                <div>
+                    <p class="text-xs text-gray-500">${label}</p>
+                    <p class="text-sm font-medium text-gray-900">${value}</p>
+                </div>
+            `;
+
+            let body = `
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    ${summaryRow('Dosya Adı', entry.fileName)}
+                    ${summaryRow('Dosya Tipi', entry.fileType.toUpperCase())}
+                    ${summaryRow('Dosya Boyutu', formatFileSize(entry.fileSize))}
+                    ${summaryRow('Yüklenme Tarihi', new Date(entry.uploadedAt).toLocaleString('tr-TR'))}
+                    ${summaryRow('İşlem Tipi', bulkUploadActionTypeLabel(entry.actionType))}
+                    ${summaryRow('Durum', bulkUploadStatusBadge(entry.status))}
+                </div>
+            `;
+
+            if (entry.status === 'processing') {
+                body += `
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-sm text-yellow-800">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>
+                        Bu dosya hâlâ işleniyor. Satır bazlı sonuçlar işlem tamamlandığında burada görüntülenecektir.
+                    </div>
+                `;
+            } else if (entry.status === 'failed') {
+                body += `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-sm text-red-800">
+                        <i class="fas fa-times-circle mr-2"></i>
+                        Dosya işlenirken beklenmeyen bir hata oluştu.
+                    </div>
+                `;
+            } else {
+                if (entry.columnErrors && entry.columnErrors.length > 0) {
+                    body += `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4 text-sm text-red-800">
+                            <p class="font-medium mb-1"><i class="fas fa-exclamation-triangle mr-1"></i>Genel hatalar</p>
+                            <ul class="list-disc list-inside space-y-0.5">
+                                ${entry.columnErrors.map(err => `<li>${err}</li>`).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                body += `
+                    <div class="grid grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
+                            <p class="text-xs text-blue-800">Toplam</p>
+                            <p class="text-xl font-bold text-blue-900">${entry.totalRows}</p>
+                        </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                            <p class="text-xs text-green-800">Başarılı</p>
+                            <p class="text-xl font-bold text-green-900">${entry.successCount}</p>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3 text-center">
+                            <p class="text-xs text-red-800">Hatalı</p>
+                            <p class="text-xl font-bold text-red-900">${entry.failCount}</p>
+                        </div>
+                    </div>
+                `;
+
+                if (entry.rowResults && entry.rowResults.length > 0) {
+                    body += `
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    ${entry.rowResults.map(r => `
+                                        <tr>
+                                            <td class="px-4 py-2 text-sm text-gray-900">${r.rowNumber}</td>
+                                            <td class="px-4 py-2 text-sm">
+                                                ${r.status === 'success'
+                                                    ? '<span class="text-green-700"><i class="fas fa-check-circle mr-1"></i>Başarılı</span>'
+                                                    : '<span class="text-red-700"><i class="fas fa-times-circle mr-1"></i>Hata</span>'}
+                                            </td>
+                                            <td class="px-4 py-2 text-sm text-gray-600">${r.message}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    body += `<div class="text-center py-6 text-gray-500">Satır bazlı sonuç bulunamadı.</div>`;
+                }
+            }
+
+            showBulkUploadDetailModalCustom(`Yükleme Detayı - ${entry.fileName}`, body);
+        }
+
+        // Custom wider modal (the shared showModal template is too narrow for a row-level report)
+        function showBulkUploadDetailModalCustom(title, body) {
+            const modalOverlay = document.createElement('div');
+            modalOverlay.className = 'modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            modalOverlay.style.backdropFilter = 'blur(2px)';
+
+            modalOverlay.innerHTML = `
+                <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-3xl transform opacity-100 max-h-[90vh] overflow-y-auto">
+                    <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10">
+                        <h3 class="text-lg font-semibold">${title}</h3>
+                        <button class="close-modal p-2 rounded-md hover:bg-gray-100" onclick="closeBulkUploadDetailModal()">&times;</button>
+                    </div>
+                    <div class="p-6">
+                        ${body}
+                    </div>
+                    <div class="p-4 bg-gray-50 border-t rounded-b-lg flex justify-end space-x-2 sticky bottom-0">
+                        <button onclick="closeBulkUploadDetailModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Kapat</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modalOverlay);
+
+            modalOverlay.addEventListener('click', (e) => {
+                if (e.target === modalOverlay) {
+                    closeBulkUploadDetailModal();
+                }
+            });
+
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeBulkUploadDetailModal();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
+        }
+
+        function closeBulkUploadDetailModal() {
+            const modalOverlay = document.querySelector('.modal-overlay:not(#modal-template)');
+            if (modalOverlay) {
+                modalOverlay.remove();
+            }
+        }
 
         function selectActionType(actionType) {
             selectedActionType = actionType;
@@ -13637,6 +13997,8 @@
             if (warning) {
                 warning.classList.add('hidden');
             }
+
+            updateUploadButtonState();
         }
 
         function updateRequiredColumns(actionType) {
@@ -13693,7 +14055,7 @@
         function handleFileDrop(event) {
             event.preventDefault();
             event.currentTarget.classList.remove('border-indigo-400', 'bg-indigo-50');
-            
+
             const files = event.dataTransfer.files;
             if (files.length > 0) {
                 if (!selectedActionType) {
@@ -13721,87 +14083,228 @@
         }
 
         // Test functions for different error scenarios
-        function testMissingColumns() {
-            if (!selectedActionType) {
-                showToast('Lütfen önce bir işlem tipi seçin', 'error');
-                return;
-            }
-            
-            const mockCSV = 'sku,name,stock\nSKU001,Test Product,10';
-            parseCSV(mockCSV);
-        }
-
-        function testInvalidValues() {
-            if (!selectedActionType) {
-                showToast('Lütfen önce bir işlem tipi seçin', 'error');
-                return;
-            }
-            
-            const mockCSV = 'sku,name,categoryId,stock,price_TRY,color,size,material,season,style\nSKU001,Test Product,invalid_category,-5,invalid_price,Red,M,Cotton,Summer,Casual';
-            parseCSV(mockCSV);
-        }
-
-        function testExtraColumns() {
-            if (!selectedActionType) {
-                showToast('Lütfen önce bir işlem tipi seçin', 'error');
-                return;
-            }
-            
-            const mockCSV = 'sku,name,categoryId,stock,price_TRY,color,size,material,season,style,extra_column1,extra_column2\nSKU001,Test Product,1,10,299.99,Red,M,Cotton,Summer,Casual,Extra1,Extra2';
-            parseCSV(mockCSV);
-        }
-
         function processFile(file) {
-            // Check if action type is selected
-            if (!selectedActionType) {
-                showToast('Lütfen önce bir işlem tipi seçin (Ürün Ekleme/Güncelleme, Stok/Fiyat Güncelleme, veya Arşivleme)', 'error');
-                return;
-            }
-
-            // Validate file type
-            const allowedTypes = [
-                'text/csv',
-                'application/vnd.ms-excel',
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ];
-            
-            const allowedExtensions = ['.csv', '.xls', '.xlsx'];
-            const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
-            
-            if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-                showToast(t('invalid_file_format'), 'error');
-                return;
-            }
-
-            // Validate file size (10MB limit)
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size > maxSize) {
-                showToast(t('file_too_large'), 'error');
-                return;
-            }
-
             currentFile = file;
             showFileInfo(file);
-            
-            // Process the file
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    if (file.type === 'text/csv' || fileExtension === '.csv') {
-                        parseCSV(e.target.result);
-                    } else {
-                        // For Excel files, we'll use a simple approach
-                        // In a real application, you'd use a library like SheetJS
-                        showToast('Excel dosyaları için gelişmiş işleme gerekli', 'warning');
-                        parseCSV(e.target.result); // Fallback to CSV parsing
+
+            // Step 1-2: validate format & size, show results in the info box
+            lastFileValidation = validateFileChecks(file);
+            renderFileValidationInfo(lastFileValidation);
+            resetUploadButton();
+        }
+
+        function validateFileChecks(file) {
+            const allowedExtensions = ['.csv', '.xlsx'];
+            const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+            const maxSize = 5 * 1024 * 1024; // 5MB
+
+            const formatOk = allowedExtensions.includes(fileExtension);
+            const sizeOk = file.size <= maxSize;
+
+            return {
+                valid: formatOk && sizeOk,
+                fileExtension,
+                checks: [
+                    {
+                        ok: formatOk,
+                        label: formatOk
+                            ? `Dosya formatı geçerli (${fileExtension})`
+                            : 'Geçersiz dosya formatı. Sadece .csv ve .xlsx dosyaları kabul edilir.'
+                    },
+                    {
+                        ok: sizeOk,
+                        label: sizeOk
+                            ? `Dosya boyutu uygun (${formatFileSize(file.size)})`
+                            : `Dosya boyutu 5MB sınırını aşıyor (${formatFileSize(file.size)})`
                     }
-                } catch (error) {
-                    console.error('File processing error:', error);
-                    showToast(t('upload_failed'), 'error');
-                }
+                ]
             };
-            
-            reader.readAsText(file, 'UTF-8');
+        }
+
+        function renderFileValidationInfo(validation) {
+            const box = document.getElementById('file-validation-info');
+            if (!box) return;
+
+            box.classList.remove('hidden', 'bg-green-50', 'border-green-200', 'bg-red-50', 'border-red-200');
+            box.classList.add(
+                validation.valid ? 'bg-green-50' : 'bg-red-50',
+                validation.valid ? 'border-green-200' : 'border-red-200'
+            );
+
+            box.innerHTML = `
+                <div class="flex items-start gap-2 mb-2">
+                    <i class="fas ${validation.valid ? 'fa-check-circle text-green-500' : 'fa-exclamation-circle text-red-500'} mt-0.5"></i>
+                    <p class="text-sm font-medium ${validation.valid ? 'text-green-800' : 'text-red-800'}">
+                        ${validation.valid ? 'Dosya kontrolleri başarılı, yükleyebilirsiniz.' : 'Dosya kontrollerinden geçemedi.'}
+                    </p>
+                </div>
+                <ul class="text-sm space-y-1 ml-6">
+                    ${validation.checks.map(c => `
+                        <li class="flex items-center gap-2 ${c.ok ? 'text-green-700' : 'text-red-700'}">
+                            <i class="fas ${c.ok ? 'fa-check' : 'fa-times'}"></i>${c.label}
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        function canUpload() {
+            return !!(currentFile && lastFileValidation && lastFileValidation.valid && selectedActionType);
+        }
+
+        function updateUploadButtonState() {
+            const btn = document.getElementById('upload-to-blob-btn');
+            if (!btn) return;
+            const enabled = canUpload();
+            btn.disabled = !enabled;
+            btn.classList.toggle('bg-indigo-600', enabled);
+            btn.classList.toggle('hover:bg-indigo-700', enabled);
+            btn.classList.toggle('text-white', enabled);
+            btn.classList.toggle('cursor-pointer', enabled);
+            btn.classList.toggle('bg-gray-300', !enabled);
+            btn.classList.toggle('text-gray-500', !enabled);
+            btn.classList.toggle('cursor-not-allowed', !enabled);
+        }
+
+        function resetUploadButton() {
+            const btn = document.getElementById('upload-to-blob-btn');
+            if (!btn) return;
+            btn.innerHTML = '<i class="fas fa-upload mr-2"></i>Yükle';
+            updateUploadButtonState();
+        }
+
+        function uploadFileToBlob() {
+            if (!canUpload()) return;
+
+            const btn = document.getElementById('upload-to-blob-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Yükleniyor...';
+
+            const file = currentFile;
+            const fileExtension = lastFileValidation.fileExtension;
+            const actionType = selectedActionType;
+
+            setTimeout(() => {
+                // Simulate storing the file in blob storage and log the upload in history
+                const historyEntry = {
+                    id: (mockData.bulkUploadHistory.length ? Math.max(...mockData.bulkUploadHistory.map(h => h.id)) : 0) + 1,
+                    supplierId: window.currentUser?.supplierId || 1,
+                    fileName: file.name,
+                    fileType: fileExtension.replace('.', ''),
+                    fileSize: file.size,
+                    uploadedAt: new Date().toISOString(),
+                    actionType: actionType,
+                    status: 'processing',
+                    totalRows: 0,
+                    successCount: 0,
+                    failCount: 0,
+                    columnErrors: [],
+                    rowResults: []
+                };
+                mockData.bulkUploadHistory.unshift(historyEntry);
+
+                showToast('Dosya yüklendi, arka planda işleniyor. Sonuçları "Geçmiş Yüklemeler" sekmesinden takip edebilirsiniz.', 'success');
+
+                // Reset the upload UI so the supplier can start another upload right away
+                clearFile();
+                if (bulkUploadActiveTab === 'history') {
+                    renderBulkUploadHistoryTable();
+                }
+
+                // Simulate the backend validating & applying the file (real validation/processing happens server-side)
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    setTimeout(() => {
+                        try {
+                            const result = simulateUploadProcessing(actionType, e.target.result);
+                            historyEntry.status = 'completed';
+                            historyEntry.totalRows = result.total;
+                            historyEntry.successCount = result.successCount;
+                            historyEntry.failCount = result.failCount;
+                            historyEntry.columnErrors = result.columnErrors;
+                            historyEntry.rowResults = result.rows;
+                        } catch (error) {
+                            console.error('Bulk upload processing error:', error);
+                            historyEntry.status = 'failed';
+                        }
+                        if (bulkUploadActiveTab === 'history') {
+                            renderBulkUploadHistoryTable();
+                        }
+                    }, 1800);
+                };
+                reader.readAsText(file, 'UTF-8');
+            }, 800);
+        }
+
+        // Stands in for the server-side parsing/validation/apply step. In production this
+        // would be a backend job; here it fabricates row-level results for the history report.
+        function simulateUploadProcessing(actionType, csvText) {
+            const lines = csvText.split('\n').filter(line => line.trim().length > 0);
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const rowCount = Math.max(lines.length - 1, 0);
+
+            const requiredColumns = getRequiredColumns(actionType);
+            const columnIssues = validateColumns(headers, requiredColumns);
+            const parsed = generateMockDataWithValidation(actionType, rowCount, headers, columnIssues);
+
+            const columnErrors = parsed.errors
+                .filter(e => e.type === 'column_error')
+                .map(e => e.error);
+            const rowErrors = parsed.errors.filter(e => e.type !== 'column_error');
+
+            const rows = [];
+
+            parsed.data.forEach((rowData, idx) => {
+                const success = Math.random() > 0.15;
+                let message = '';
+                if (success) {
+                    switch (actionType) {
+                        case 'add':
+                        case 'update':
+                            message = processAddUpdate(rowData).message;
+                            break;
+                        case 'stock':
+                            message = processStockUpdate(rowData).message;
+                            break;
+                        case 'price':
+                            message = processPriceUpdate(rowData).message;
+                            break;
+                        case 'archive':
+                            message = processArchiveUpdate(rowData).message;
+                            break;
+                    }
+                } else {
+                    const errorMessages = [
+                        'SKU bulunamadı',
+                        'Geçersiz fiyat formatı',
+                        'Stok miktarı negatif olamaz',
+                        'Kategori bulunamadı',
+                        'Sunucu hatası - tekrar deneyin',
+                        'Yetki hatası',
+                        'Veri doğrulama hatası'
+                    ];
+                    message = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                }
+                rows.push({
+                    rowNumber: rowData.rowNumber || idx + 1,
+                    status: success ? 'success' : 'error',
+                    message
+                });
+            });
+
+            rowErrors.forEach(err => {
+                rows.push({ rowNumber: err.row, status: 'error', message: err.error });
+            });
+
+            rows.sort((a, b) => a.rowNumber - b.rowNumber);
+
+            return {
+                total: rows.length,
+                successCount: rows.filter(r => r.status === 'success').length,
+                failCount: rows.filter(r => r.status === 'error').length,
+                columnErrors,
+                rows
+            };
         }
 
         function showFileInfo(file) {
@@ -13813,37 +14316,12 @@
 
         function clearFile() {
             currentFile = null;
-            uploadedData = [];
+            lastFileValidation = null;
             document.getElementById('upload-area').classList.remove('hidden');
             document.getElementById('file-info').classList.add('hidden');
-            document.getElementById('preview-section').classList.add('hidden');
-            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('file-validation-info').classList.add('hidden');
             document.getElementById('file-input').value = '';
-        }
-
-        function parseCSV(csvText) {
-            console.log('Parsing CSV with action type:', selectedActionType);
-            const lines = csvText.split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-            console.log('CSV Headers:', headers);
-            
-            // Get required columns based on action type
-            const requiredColumns = getRequiredColumns(selectedActionType);
-            console.log('Required columns:', requiredColumns);
-            const missingColumns = requiredColumns.filter(col => !headers.includes(col));
-            
-            // Check for column issues
-            const columnIssues = validateColumns(headers, requiredColumns);
-            
-            // Generate mock data with realistic validation errors
-            const mockData = generateMockDataWithValidation(selectedActionType, lines.length - 1, headers, columnIssues);
-            uploadedData = mockData.data;
-            
-            console.log('Generated mock data:', mockData.data);
-            console.log('Mock errors:', mockData.errors);
-            console.log('About to call showPreview...');
-            showPreview(mockData.data, mockData.errors);
-            console.log('showPreview called');
+            resetUploadButton();
         }
 
         function validateColumns(headers, requiredColumns) {
@@ -14285,342 +14763,6 @@
             return null;
         }
 
-        function showPreview(data, errors) {
-            console.log('showPreview called with data:', data, 'errors:', errors);
-            const previewSection = document.getElementById('preview-section');
-            const tableContainer = document.getElementById('preview-table-container');
-            
-            console.log('previewSection found:', previewSection);
-            console.log('tableContainer found:', tableContainer);
-            
-            // Create a comprehensive list of all rows (both valid and invalid)
-            const allRows = [];
-            const errorMap = new Map();
-            
-            // Map errors by row number for quick lookup
-            errors.forEach(error => {
-                errorMap.set(error.row, error);
-            });
-            
-            // Add all data rows
-            data.forEach((row, index) => {
-                const rowNumber = index + 1;
-                allRows.push({
-                    rowNumber: rowNumber,
-                    data: row,
-                    status: 'success',
-                    error: null
-                });
-            });
-            
-            // Add error rows that don't have corresponding data
-            errors.forEach(error => {
-                if (!allRows.find(row => row.rowNumber === error.row)) {
-                    allRows.push({
-                        rowNumber: error.row,
-                        data: error.data,
-                        status: 'error',
-                        error: error.error
-                    });
-                } else {
-                    // Update existing row with error
-                    const existingRow = allRows.find(row => row.rowNumber === error.row);
-                    if (existingRow) {
-                        existingRow.status = 'error';
-                        existingRow.error = error.error;
-                    }
-                }
-            });
-            
-            // Sort by row number
-            allRows.sort((a, b) => a.rowNumber - b.rowNumber);
-            
-            const validCount = allRows.filter(row => row.status === 'success').length;
-            const errorCount = allRows.filter(row => row.status === 'error').length;
-            
-            let html = `
-                <div class="mb-4 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm text-gray-600">Toplam ${allRows.length} satır</span>
-                        <span class="text-sm text-green-600">${validCount} geçerli</span>
-                        ${errorCount > 0 ? `<span class="text-sm text-red-600">${errorCount} hatalı</span>` : ''}
-                    </div>
-                </div>
-            `;
-
-            if (allRows.length > 0) {
-                const tableHeaders = getPreviewTableHeaders(selectedActionType);
-                console.log('Table headers:', tableHeaders);
-                
-                html += `
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full bg-white border border-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                                    ${tableHeaders}
-                                    <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                `;
-                
-                allRows.forEach((row, index) => {
-                    console.log(`Processing row ${index}:`, row);
-                    const statusIcon = row.status === 'success' 
-                        ? '<i class="fas fa-check-circle text-green-500"></i>' 
-                        : '<i class="fas fa-times-circle text-red-500"></i>';
-                    const statusColor = row.status === 'success' 
-                        ? 'text-green-800 bg-green-100' 
-                        : 'text-red-800 bg-red-100';
-                    const statusText = row.status === 'success' ? 'Geçerli' : 'Hatalı';
-                    
-                    const tableRow = row.data ? getPreviewTableRow(row.data, selectedActionType) : '<td colspan="' + getColumnCount(selectedActionType) + '" class="px-4 py-3 text-sm text-gray-500">Veri yok</td>';
-                    console.log(`Table row HTML for row ${index}:`, tableRow);
-                    
-                    html += `
-                        <tr class="hover:bg-gray-50 ${row.status === 'error' ? 'bg-red-50' : ''}">
-                            <td class="px-4 py-3 text-sm font-medium text-gray-900">${row.rowNumber}</td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
-                                    ${statusIcon} ${statusText}
-                                </span>
-                            </td>
-                            ${tableRow}
-                            <td class="px-4 py-3 text-sm text-gray-900">
-                                ${row.status === 'success' ? '<span class="text-green-600">✓ Geçerli</span>' : `<span class="text-red-600">✗ ${row.error}</span>`}
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                html += `
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-
-            console.log('Setting tableContainer.innerHTML, HTML length:', html.length);
-            tableContainer.innerHTML = html;
-            console.log('Removing hidden class from previewSection');
-            previewSection.classList.remove('hidden');
-            console.log('Preview section shown, HTML length:', html.length);
-        }
-
-        function getColumnCount(actionType) {
-            switch (actionType) {
-                case 'add':
-                case 'update':
-                    return 10; // sku, name, categoryId, stock, price_TRY, color, size, material, season, style
-                case 'stock':
-                    return 3; // id, current_stock, new_stock
-                case 'price':
-                    return 3; // id, current_price, new_price
-                case 'archive':
-                    return 4; // id, name, current_status, new_status
-                default:
-                    return 1;
-            }
-        }
-
-        function getPreviewTableHeaders(actionType) {
-            switch (actionType) {
-                case 'add':
-                case 'update':
-                    return `
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">SKU</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stok</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fiyat (₺)</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Renk</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Beden</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Materyal</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sezon</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stil</th>
-                    `;
-                case 'stock':
-                    return `
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Stok</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Stok</th>
-                    `;
-                case 'price':
-                    return `
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Fiyat</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Fiyat</th>
-                    `;
-                case 'archive':
-                    return `
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün ID</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ürün Adı</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Mevcut Durum</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Yeni Durum</th>
-                    `;
-                default:
-                    return '';
-            }
-        }
-
-        function getPreviewTableRow(row, actionType) {
-            switch (actionType) {
-                case 'add':
-                case 'update':
-                    return `
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.sku}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.name}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.categoryId}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.stock}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">₺${parseFloat(row.price_TRY).toFixed(2)}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.color}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.size}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.material}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.season}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.style}</td>
-                    `;
-                case 'stock': {
-                    const product = mockData.products.find(p => p.id === parseInt(row.id));
-                    return `
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.id}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${product ? product.stock : 'N/A'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.new_stock}</td>
-                    `;
-                }
-                case 'price': {
-                    const product = mockData.products.find(p => p.id === parseInt(row.id));
-                    return `
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.id}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">₺${product ? product.price.toFixed(2) : 'N/A'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">₺${parseFloat(row.new_price).toFixed(2)}</td>
-                    `;
-                }
-                case 'archive':
-                    const archiveProduct = mockData.products.find(p => p.id === parseInt(row.id));
-                    const currentStatus = archiveProduct ? (archiveProduct.archived ? 'Arşivli' : 'Aktif') : 'N/A';
-                    const newStatus = row.archive_status.toLowerCase() === 'archive' ? 'Arşivli' : 'Aktif';
-                    return `
-                        <td class="px-4 py-3 text-sm text-gray-900">${row.id}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${archiveProduct ? archiveProduct.name : 'N/A'}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${currentStatus}</td>
-                        <td class="px-4 py-3 text-sm text-gray-900">${newStatus}</td>
-                    `;
-                default:
-                    return '';
-            }
-        }
-
-        function clearData() {
-            uploadedData = [];
-            document.getElementById('preview-section').classList.add('hidden');
-            document.getElementById('results-section').classList.add('hidden');
-        }
-
-        function processUpload() {
-            if (uploadedData.length === 0) {
-                showToast(t('no_file_selected'), 'error');
-                return;
-            }
-
-            // Show confirmation dialog
-            if (!confirm(t('upload_warning'))) {
-                return;
-            }
-
-            const processButton = document.querySelector('button[onclick="processUpload()"]');
-            const originalText = processButton.textContent;
-            processButton.textContent = t('processing_upload');
-            processButton.disabled = true;
-
-            // Simulate processing
-            setTimeout(() => {
-                const results = simulateBulkUpload(uploadedData);
-                showResults(results);
-                
-                processButton.textContent = originalText;
-                processButton.disabled = false;
-            }, 2000);
-        }
-
-        function simulateBulkUpload(data) {
-            const results = {
-                total: data.length,
-                successful: 0,
-                failed: 0,
-                errors: [],
-                rowResults: [] // New: detailed results for each row
-            };
-
-            data.forEach((row, index) => {
-                const rowResult = {
-                    rowNumber: index + 1,
-                    data: row,
-                    status: 'pending',
-                    message: '',
-                    action: selectedActionType
-                };
-
-                // Simulate random success/failure with more realistic scenarios
-                const randomValue = Math.random();
-                let success = false;
-                let message = '';
-
-                if (randomValue > 0.15) { // 85% success rate
-                    success = true;
-                    results.successful++;
-                    
-                    // Process based on action type and provide specific feedback
-                    switch (selectedActionType) {
-                        case 'add':
-                        case 'update':
-                            const addUpdateResult = processAddUpdate(row);
-                            message = addUpdateResult.message;
-                            break;
-                        case 'stock':
-                            const stockResult = processStockUpdate(row);
-                            message = stockResult.message;
-                            break;
-                        case 'price':
-                            const priceResult = processPriceUpdate(row);
-                            message = priceResult.message;
-                            break;
-                        case 'archive':
-                            const archiveResult = processArchiveUpdate(row);
-                            message = archiveResult.message;
-                            break;
-                    }
-                } else {
-                    success = false;
-                    results.failed++;
-                    
-                    // Simulate different types of errors
-                    const errorTypes = [
-                        'SKU bulunamadı',
-                        'Geçersiz fiyat formatı',
-                        'Stok miktarı negatif olamaz',
-                        'Kategori bulunamadı',
-                        'Sunucu hatası - tekrar deneyin',
-                        'Yetki hatası',
-                        'Veri doğrulama hatası'
-                    ];
-                    message = errorTypes[Math.floor(Math.random() * errorTypes.length)];
-                    
-                    results.errors.push({
-                        row: index + 1,
-                        error: message
-                    });
-                }
-
-                rowResult.status = success ? 'success' : 'error';
-                rowResult.message = message;
-                results.rowResults.push(rowResult);
-            });
-
-            return results;
-        }
-
         function processAddUpdate(row) {
             // Check if product exists by name
             const existingProduct = mockData.products.find(p => p.name === row.name);
@@ -14686,219 +14828,6 @@
                 return { message: `Ürün ${isArchiving ? 'arşivlendi' : 'arşivden çıkarıldı'}: ${product.name}` };
             }
             return { message: 'Ürün bulunamadı' };
-        }
-
-        function showResults(results) {
-            const resultsSection = document.getElementById('results-section');
-            const resultsContent = document.getElementById('results-content');
-            
-            let html = `
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle text-green-500 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-green-800">${t('successful_uploads')}</p>
-                                <p class="text-2xl font-bold text-green-900">${results.successful}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-times-circle text-red-500 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-red-800">${t('failed_uploads')}</p>
-                                <p class="text-2xl font-bold text-red-900">${results.failed}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-list text-blue-500 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-blue-800">${t('total_processed')}</p>
-                                <p class="text-2xl font-bold text-blue-900">${results.total}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Add detailed row-by-row feedback table
-            if (results.rowResults && results.rowResults.length > 0) {
-                html += `
-                    <div class="bg-white border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-medium text-gray-900 flex items-center">
-                                <i class="fas fa-list-alt text-blue-500 mr-2"></i>
-                                Satır Bazında İşlem Detayları
-                            </h4>
-                            <div class="flex gap-2">
-                                <button onclick="filterResults('all')" class="px-3 py-1 text-xs bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200">
-                                    Tümü (${results.total})
-                                </button>
-                                <button onclick="filterResults('success')" class="px-3 py-1 text-xs bg-green-100 text-green-800 rounded-full hover:bg-green-200">
-                                    Başarılı (${results.successful})
-                                </button>
-                                <button onclick="filterResults('error')" class="px-3 py-1 text-xs bg-red-100 text-red-800 rounded-full hover:bg-red-200">
-                                    Hata (${results.failed})
-                                </button>
-                                <button onclick="exportResults()" class="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded-full hover:bg-gray-200">
-                                    <i class="fas fa-download mr-1"></i>Dışa Aktar
-                                </button>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table id="results-table" class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">İşlem</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                `;
-                
-                results.rowResults.forEach(rowResult => {
-                    const statusIcon = rowResult.status === 'success' 
-                        ? '<i class="fas fa-check-circle text-green-500"></i>' 
-                        : '<i class="fas fa-times-circle text-red-500"></i>';
-                    const statusColor = rowResult.status === 'success' 
-                        ? 'text-green-800 bg-green-100' 
-                        : 'text-red-800 bg-red-100';
-                    const statusText = rowResult.status === 'success' ? 'Başarılı' : 'Hata';
-                    
-                    html += `
-                        <tr class="hover:bg-gray-50 result-row" data-status="${rowResult.status}">
-                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
-                                ${rowResult.rowNumber}
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
-                                    ${statusIcon} ${statusText}
-                                </span>
-                            </td>
-                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                ${getActionTypeText(rowResult.action)}
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-900">
-                                ${rowResult.message}
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                html += `
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Keep the old error summary for backward compatibility
-            if (results.errors.length > 0) {
-                html += `
-                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-                        <h4 class="font-medium text-red-800 mb-2">Hata Özeti</h4>
-                        <div class="space-y-1">
-                `;
-                
-                results.errors.forEach(error => {
-                    html += `
-                        <div class="text-sm text-red-700">
-                            <span class="font-medium">Satır ${error.row}:</span> ${error.error}
-                        </div>
-                    `;
-                });
-                
-                html += `
-                        </div>
-                    </div>
-                `;
-            }
-
-            resultsContent.innerHTML = html;
-            resultsSection.classList.remove('hidden');
-            
-            showToast(t('upload_completed'), 'success');
-        }
-
-        function getActionTypeText(actionType) {
-            switch (actionType) {
-                case 'add':
-                    return 'Ürün Ekleme';
-                case 'update':
-                    return 'Ürün Güncelleme';
-                case 'stock':
-                    return 'Stok Güncelleme';
-                case 'price':
-                    return 'Fiyat Güncelleme';
-                case 'archive':
-                    return 'Arşivleme';
-                default:
-                    return 'Bilinmeyen İşlem';
-            }
-        }
-
-        function filterResults(filter) {
-            const rows = document.querySelectorAll('.result-row');
-            const buttons = document.querySelectorAll('button[onclick^="filterResults"]');
-            
-            // Update button styles
-            buttons.forEach(btn => {
-                btn.classList.remove('bg-blue-200', 'bg-green-200', 'bg-red-200');
-                btn.classList.add('bg-blue-100', 'bg-green-100', 'bg-red-100');
-            });
-            
-            // Highlight active button
-            const activeButton = document.querySelector(`button[onclick="filterResults('${filter}')"]`);
-            if (activeButton) {
-                activeButton.classList.remove('bg-blue-100', 'bg-green-100', 'bg-red-100');
-                if (filter === 'all') activeButton.classList.add('bg-blue-200');
-                else if (filter === 'success') activeButton.classList.add('bg-green-200');
-                else if (filter === 'error') activeButton.classList.add('bg-red-200');
-            }
-            
-            // Filter rows
-            rows.forEach(row => {
-                if (filter === 'all' || row.dataset.status === filter) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        function exportResults() {
-            const rows = document.querySelectorAll('.result-row:not([style*="display: none"])');
-            let csvContent = 'Satır,Durum,İşlem,Mesaj\n';
-            
-            rows.forEach(row => {
-                const cells = row.querySelectorAll('td');
-                const rowNumber = cells[0].textContent.trim();
-                const status = cells[1].textContent.trim();
-                const action = cells[2].textContent.trim();
-                const message = cells[3].textContent.trim().replace(/,/g, ';'); // Replace commas to avoid CSV issues
-                
-                csvContent += `${rowNumber},"${status}","${action}","${message}"\n`;
-            });
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `bulk_upload_results_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showToast('Sonuçlar CSV dosyası olarak indirildi', 'success');
         }
 
         function toggleTemplateDropdown() {
@@ -39977,321 +39906,6 @@ renderers['supplierProductDetail'] = (productId) => {
         }
     }, 100);
 };
-// Render sidebar navigation based on user role
-function renderNavigation() {
-    const sidebarNav = document.getElementById('sidebar-nav');
-    if (!sidebarNav) return;
-    const user = window.currentUser || {};
-    const isSupplier = user.role === 'supplier';
-    let navigationHTML = '';
-    if (isSupplier) {
-        // Supplier navigation - removed "Aktif Ürünler" as it's redundant with "Ürünler"
-        navigationHTML = `
-            <div class="px-4 py-2">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ana Menü</h3>
-            </div>
-            <a href="#dashboard" class="sidebar-link">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#products/gonderilenler" class="sidebar-link">
-                <i class="fas fa-box"></i>
-                <span>Ürünler</span>
-            </a>
-            <a href="#supplierOrders" class="sidebar-link">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Siparişler</span>
-            </a>
-            <a href="#returns" class="sidebar-link">
-                <i class="fas fa-undo"></i>
-                <span>İade İşlemleri</span>
-            </a>
-            <a href="#finance" class="sidebar-link">
-                <i class="fas fa-chart-line"></i>
-                <span>Finans</span>
-            </a>
-            <a href="#campaigns" class="sidebar-link">
-                <i class="fas fa-bullhorn"></i>
-                <span>Kampanyalar</span>
-            </a>
-            
-            <div class="px-4 py-2 mt-4">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ayarlar</h3>
-            </div>
-            <a href="#supplierSettings" class="sidebar-link">
-                <i class="fas fa-cog"></i>
-                <span>Ayarlar</span>
-            </a>
-        `;
-    } else {
-        // Admin navigation
-        navigationHTML = `
-            <div class="px-4 py-2">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ana Menü</h3>
-            </div>
-            <a href="#dashboard" class="sidebar-link">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#products" class="sidebar-link">
-                <i class="fas fa-box"></i>
-                <span>Ürünler</span>
-            </a>
-            <a href="#orders" class="sidebar-link">
-                <i class="fas fa-shopping-cart"></i>
-                <span>Siparişler</span>
-            </a>
-            <a href="#returns" class="sidebar-link">
-                <i class="fas fa-undo"></i>
-                <span>İade İşlemleri</span>
-            </a>
-            <a href="#finance" class="sidebar-link">
-                <i class="fas fa-chart-line"></i>
-                <span>Finans</span>
-            </a>
-            <a href="#campaigns" class="sidebar-link">
-                <i class="fas fa-bullhorn"></i>
-                <span>Kampanyalar</span>
-            </a>
-            <a href="#categories" class="sidebar-link">
-                <i class="fas fa-tags"></i>
-                <span>Kategoriler</span>
-            </a>
-            <!-- <a href="#channels" class="sidebar-link">
-                <i class="fas fa-broadcast-tower"></i>
-                <span>Kanallar</span>
-            </a> --> <!-- Hidden -->
-            <a href="#attributes" class="sidebar-link">
-                <i class="fas fa-list"></i>
-                <span>Özellikler</span>
-            </a>
-            
-            <div class="px-4 py-2 mt-4">
-                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ayarlar</h3>
-            </div>
-            <div class="pl-4">
-                <a href="#adminSuppliers" class="sidebar-link">
-                    <i class="fas fa-handshake"></i>
-                    <span>Tedarikçi Listesi</span>
-                </a>
-                <a href="#settings/users" class="sidebar-link">
-                    <i class="fas fa-users"></i>
-                    <span>Kullanıcı Yönetimi</span>
-                </a>
-                <a href="#settings/api-keys" class="sidebar-link">
-                    <i class="fas fa-key"></i>
-                    <span>API Anahtarları</span>
-                </a>
-#settings/commissions" class="sidebar-link">
-                    <i class="fas fa-percentage"></i>
-                    <span>Komisyon Yönetimi</span>
-                </a>
-            </div>
-        `;
-    }
-    sidebarNav.innerHTML = navigationHTML;
-    // Add click event listeners to navigation links
-    sidebarNav.querySelectorAll('a.sidebar-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            const href = link.getAttribute('href');
-            if (href) {
-                navigateTo(href);
-            }
-        });
-    });
-}
-// User switching functionality
-function switchUser(userId) {
-    const user = window.availableUsers.find(u => u.id === userId);
-    if (user) {
-        window.currentUser = user;
-        
-        // Update header display
-        updateHeaderUserInfo();
-        
-        // Re-render navigation
-        renderNavigation();
-        
-        // Dispatch event for other components that might need to update
-        document.dispatchEvent(new CustomEvent('userChanged', { detail: user }));
-        
-        // Close user dropdown
-        document.getElementById('userDropdown').classList.add('hidden');
-        
-        // Navigate to appropriate dashboard
-        if (user.role === 'supplier') {
-            navigateTo('#products/aktif');
-        } else {
-            navigateTo('#dashboard');
-        }
-    }
-}
-function updateHeaderUserInfo() {
-    const user = window.currentUser || {};
-    
-    // Update header username
-    const headerUsername = document.querySelector('#userMenuBtn span');
-    if (headerUsername) {
-        headerUsername.textContent = user.name || 'User';
-    }
-    
-    // Update dropdown user info
-    const currentUserName = document.getElementById('currentUserName');
-    const currentUserEmail = document.getElementById('currentUserEmail');
-    
-    if (currentUserName) {
-        currentUserName.textContent = user.name || 'User';
-    }
-    
-    if (currentUserEmail) {
-        const email = user.role === 'supplier' ? 'supplier@example.com' : 'admin@Marka.com';
-        currentUserEmail.textContent = email;
-    }
-}
-function renderUserSwitcher() {
-    const userSwitcher = document.getElementById('user-switcher') || document.getElementById('userSwitcher');
-    if (!userSwitcher) return;
-    
-    const currentUserId = window.currentUser?.id;
-    
-    const userOptions = window.availableUsers.map(user => {
-        const isActive = user.id === currentUserId;
-        const roleIcon = user.role === 'supplier' ? 'fas fa-handshake' : 'fas fa-user-shield';
-        
-        return `
-            <button class="user-switch-btn w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center space-x-2 ${isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-700'}" 
-                    data-user-id="${user.id}" ${isActive ? 'disabled' : ''}>
-                <i class="${roleIcon} w-4"></i>
-                <span>${user.name}</span>
-                ${isActive ? '<i class="fas fa-check ml-auto text-blue-600"></i>' : ''}
-            </button>
-        `;
-    }).join('');
-    
-    userSwitcher.innerHTML = userOptions;
-    
-    // Add event listeners to user switch buttons
-    userSwitcher.querySelectorAll('.user-switch-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            const userId = btn.dataset.userId;
-            if (userId && userId !== currentUserId) {
-                switchUser(userId);
-            }
-        });
-    });
-}
-// Add event listeners when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Render navigation on page load
-    renderNavigation();
-    
-    // Render user switcher
-    renderUserSwitcher();
-    
-    // Update header user info
-    updateHeaderUserInfo();
-    
-    // Re-render navigation when user changes
-    document.addEventListener('userChanged', renderNavigation);
-    
-    // Sidebar toggle functionality
-    const sidebar = document.getElementById('sidebar');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
-    
-    function isDesktopSidebar() {
-        return window.matchMedia('(min-width: 768px)').matches;
-    }
-    
-    // Track if sidebar is open to prevent conflicts (mobile overlay)
-    let sidebarOpen = isDesktopSidebar();
-    if (sidebar && isDesktopSidebar()) {
-        sidebar.classList.remove('-translate-x-full');
-    }
-    
-    function openSidebar() {
-        if (!sidebar || isDesktopSidebar()) return;
-        if (sidebarOpen) return;
-        
-        sidebar.classList.remove('-translate-x-full');
-        if (sidebarOverlay) sidebarOverlay.classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
-        sidebarOpen = true;
-    }
-    
-    function closeSidebar() {
-        if (!sidebar || isDesktopSidebar()) return;
-        if (!sidebarOpen) return;
-        
-        sidebar.classList.add('-translate-x-full');
-        if (sidebarOverlay) sidebarOverlay.classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
-        sidebarOpen = false;
-    }
-    
-    const toggleSidebarBtn = document.getElementById('toggleSidebar');
-    if (toggleSidebarBtn) {
-        toggleSidebarBtn.addEventListener('click', (e) => {
-            if (isDesktopSidebar()) return;
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            if (sidebarOpen) closeSidebar();
-            else openSidebar();
-        });
-    }
-    
-    // Add event listener to close button
-    const closeSidebarBtn = document.getElementById('closeSidebar');
-    if (closeSidebarBtn) {
-        closeSidebarBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeSidebar();
-        });
-    }
-    
-    // Add event listener to overlay
-    if (sidebarOverlay) {
-        sidebarOverlay.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            closeSidebar();
-        });
-    }
-    
-    // Close sidebar when clicking on navigation links
-    const sidebarNav = document.getElementById('sidebar-nav');
-    if (sidebarNav) {
-        sidebarNav.addEventListener('click', (e) => {
-            if (e.target.closest('a.sidebar-link')) {
-                closeSidebar();
-            }
-        });
-    }
-    
-    // User menu toggle functionality - removed duplicate event listener
-    // The main event listener is already defined earlier in the script
-    
-    // These will be attached when the product detail page is rendered
-    setTimeout(() => {
-        const saveBtn = document.getElementById('saveSupplierProductInfo');
-        if (saveBtn) {
-            saveBtn.addEventListener('click', saveSupplierProductInfo);
-        }
-        
-        const previewBtn = document.getElementById('previewSupplierProduct');
-        if (previewBtn) {
-            previewBtn.addEventListener('click', previewSupplierProduct);
-        }
-        
-        const saveAttributesBtn = document.getElementById('saveSupplierAttributes');
-        if (saveAttributesBtn) {
-            saveAttributesBtn.addEventListener('click', saveSupplierAttributes);
-        }
-    }, 100);
-});
 // Mock data initialization
 window.mockData = window.mockData || {};
 window.mockData.suppliers = window.mockData.suppliers || [
