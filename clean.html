@@ -5148,12 +5148,12 @@
                     failCount: 2,
                     columnErrors: [],
                     rowResults: [
-                        { rowNumber: 1, status: 'success', message: 'Yeni ürün eklendi: Kışlık Mont' },
-                        { rowNumber: 2, status: 'success', message: 'Yeni ürün eklendi: Yün Kazak' },
-                        { rowNumber: 3, status: 'error', message: 'Geçersiz kategori ID (sayısal değer gerekli)' },
-                        { rowNumber: 4, status: 'success', message: 'Yeni ürün eklendi: Deri Ceket' },
-                        { rowNumber: 5, status: 'error', message: 'Bu SKU zaten kullanılıyor' },
-                        { rowNumber: 6, status: 'success', message: 'Yeni ürün eklendi: Kumaş Pantolon' }
+                        { rowNumber: 1, status: 'success', message: 'Yeni ürün eklendi: Kışlık Mont', data: { sku: 'SKU101', name: 'Kışlık Mont', categoryId: 1, stock: 25, price_TRY: 899.90 } },
+                        { rowNumber: 2, status: 'success', message: 'Yeni ürün eklendi: Yün Kazak', data: { sku: 'SKU102', name: 'Yün Kazak', categoryId: 1, stock: 40, price_TRY: 349.90 } },
+                        { rowNumber: 3, status: 'error', message: 'Geçersiz kategori ID (sayısal değer gerekli)', data: { sku: 'SKU103', name: 'Kadife Bluz', categoryId: 'invalid_category', stock: 15, price_TRY: 259.90 } },
+                        { rowNumber: 4, status: 'success', message: 'Yeni ürün eklendi: Deri Ceket', data: { sku: 'SKU104', name: 'Deri Ceket', categoryId: 2, stock: 12, price_TRY: 1299.90 } },
+                        { rowNumber: 5, status: 'error', message: 'Bu SKU zaten kullanılıyor', data: { sku: 'DUPLICATE_SKU', name: 'Triko Hırka', categoryId: 3, stock: 20, price_TRY: 399.90 } },
+                        { rowNumber: 6, status: 'success', message: 'Yeni ürün eklendi: Kumaş Pantolon', data: { sku: 'SKU106', name: 'Kumaş Pantolon', categoryId: 3, stock: 60, price_TRY: 449.90 } }
                     ]
                 },
                 {
@@ -5170,11 +5170,11 @@
                     failCount: 0,
                     columnErrors: [],
                     rowResults: [
-                        { rowNumber: 1, status: 'success', message: 'Stok güncellendi: Kışlık Mont (Stok: 25)' },
-                        { rowNumber: 2, status: 'success', message: 'Stok güncellendi: Yün Kazak (Stok: 40)' },
-                        { rowNumber: 3, status: 'success', message: 'Stok güncellendi: Deri Ceket (Stok: 12)' },
-                        { rowNumber: 4, status: 'success', message: 'Stok güncellendi: Kumaş Pantolon (Stok: 60)' },
-                        { rowNumber: 5, status: 'success', message: 'Stok güncellendi: Spor Ayakkabı (Stok: 18)' }
+                        { rowNumber: 1, status: 'success', message: 'Stok güncellendi: Kışlık Mont (Stok: 25)', data: { id: 101, new_stock: 25 } },
+                        { rowNumber: 2, status: 'success', message: 'Stok güncellendi: Yün Kazak (Stok: 40)', data: { id: 102, new_stock: 40 } },
+                        { rowNumber: 3, status: 'success', message: 'Stok güncellendi: Deri Ceket (Stok: 12)', data: { id: 104, new_stock: 12 } },
+                        { rowNumber: 4, status: 'success', message: 'Stok güncellendi: Kumaş Pantolon (Stok: 60)', data: { id: 106, new_stock: 60 } },
+                        { rowNumber: 5, status: 'success', message: 'Stok güncellendi: Spor Ayakkabı (Stok: 18)', data: { id: 107, new_stock: 18 } }
                     ]
                 },
                 {
@@ -5206,10 +5206,10 @@
                     failCount: 1,
                     columnErrors: ['Kullanılmayan sütunlar: color, size'],
                     rowResults: [
-                        { rowNumber: 1, status: 'success', message: 'Ürün güncellendi: Kadın Elbise' },
-                        { rowNumber: 2, status: 'error', message: 'Gerekli alan boş: price' },
-                        { rowNumber: 3, status: 'success', message: 'Ürün güncellendi: Erkek Gömlek' },
-                        { rowNumber: 4, status: 'success', message: 'Ürün güncellendi: Çocuk Ayakkabı' }
+                        { rowNumber: 1, status: 'success', message: 'Ürün güncellendi: Kadın Elbise', data: { sku: 'SKU201', name: 'Kadın Elbise', categoryId: 1, stock: 20, price_TRY: 459.90 } },
+                        { rowNumber: 2, status: 'error', message: 'Gerekli alan boş: price', data: { sku: 'SKU202', name: 'Denim Ceket', categoryId: 2, stock: 10, price_TRY: '' } },
+                        { rowNumber: 3, status: 'success', message: 'Ürün güncellendi: Erkek Gömlek', data: { sku: 'SKU203', name: 'Erkek Gömlek', categoryId: 2, stock: 30, price_TRY: 249.90 } },
+                        { rowNumber: 4, status: 'success', message: 'Ürün güncellendi: Çocuk Ayakkabı', data: { sku: 'SKU204', name: 'Çocuk Ayakkabı', categoryId: 4, stock: 45, price_TRY: 199.90 } }
                     ]
                 },
                 {
@@ -5226,11 +5226,11 @@
                     failCount: 1,
                     columnErrors: [],
                     rowResults: [
-                        { rowNumber: 1, status: 'success', message: 'Fiyat güncellendi: Kışlık Mont (Fiyat: 899.90₺)' },
-                        { rowNumber: 2, status: 'success', message: 'Fiyat güncellendi: Yün Kazak (Fiyat: 349.90₺)' },
-                        { rowNumber: 3, status: 'error', message: 'Geçersiz fiyat formatı (sayısal değer gerekli)' },
-                        { rowNumber: 4, status: 'success', message: 'Fiyat güncellendi: Deri Ceket (Fiyat: 1299.90₺)' },
-                        { rowNumber: 5, status: 'success', message: 'Fiyat güncellendi: Kumaş Pantolon (Fiyat: 449.90₺)' }
+                        { rowNumber: 1, status: 'success', message: 'Fiyat güncellendi: Kışlık Mont (Fiyat: 899.90₺)', data: { id: 101, new_price: 899.90 } },
+                        { rowNumber: 2, status: 'success', message: 'Fiyat güncellendi: Yün Kazak (Fiyat: 349.90₺)', data: { id: 102, new_price: 349.90 } },
+                        { rowNumber: 3, status: 'error', message: 'Geçersiz fiyat formatı (sayısal değer gerekli)', data: { id: 108, new_price: 'invalid_price' } },
+                        { rowNumber: 4, status: 'success', message: 'Fiyat güncellendi: Deri Ceket (Fiyat: 1299.90₺)', data: { id: 104, new_price: 1299.90 } },
+                        { rowNumber: 5, status: 'success', message: 'Fiyat güncellendi: Kumaş Pantolon (Fiyat: 449.90₺)', data: { id: 106, new_price: 449.90 } }
                     ]
                 },
                 {
@@ -5247,10 +5247,10 @@
                     failCount: 1,
                     columnErrors: [],
                     rowResults: [
-                        { rowNumber: 1, status: 'success', message: 'Ürün arşivlendi: Yazlık Şort' },
-                        { rowNumber: 2, status: 'success', message: 'Ürün arşivden çıkarıldı: Kışlık Mont' },
-                        { rowNumber: 3, status: 'error', message: 'Ürün bulunamadı' },
-                        { rowNumber: 4, status: 'success', message: 'Ürün arşivlendi: Eski Sezon Bluz' }
+                        { rowNumber: 1, status: 'success', message: 'Ürün arşivlendi: Yazlık Şort', data: { id: 110, archive_status: 'archive' } },
+                        { rowNumber: 2, status: 'success', message: 'Ürün arşivden çıkarıldı: Kışlık Mont', data: { id: 101, archive_status: 'unarchive' } },
+                        { rowNumber: 3, status: 'error', message: 'Ürün bulunamadı', data: { id: 999, archive_status: 'archive' } },
+                        { rowNumber: 4, status: 'success', message: 'Ürün arşivlendi: Eski Sezon Bluz', data: { id: 111, archive_status: 'archive' } }
                     ]
                 }
             ]
@@ -13772,6 +13772,43 @@
             return BULK_UPLOAD_ACTION_TYPE_LABELS[actionType] || actionType;
         }
 
+        // Row-level data columns shown in the upload detail report, per action type
+        const BULK_UPLOAD_ROW_COLUMNS = {
+            add: [
+                { key: 'sku', label: 'SKU' },
+                { key: 'name', label: 'Ürün Adı' },
+                { key: 'categoryId', label: 'Kategori ID' },
+                { key: 'stock', label: 'Stok' },
+                { key: 'price_TRY', label: 'Fiyat (₺)' }
+            ],
+            update: [
+                { key: 'sku', label: 'SKU' },
+                { key: 'name', label: 'Ürün Adı' },
+                { key: 'categoryId', label: 'Kategori ID' },
+                { key: 'stock', label: 'Stok' },
+                { key: 'price_TRY', label: 'Fiyat (₺)' }
+            ],
+            stock: [
+                { key: 'id', label: 'Ürün ID' },
+                { key: 'new_stock', label: 'Yeni Stok' }
+            ],
+            price: [
+                { key: 'id', label: 'Ürün ID' },
+                { key: 'new_price', label: 'Yeni Fiyat (₺)' }
+            ],
+            archive: [
+                { key: 'id', label: 'Ürün ID' },
+                { key: 'archive_status', label: 'Arşiv Durumu' }
+            ]
+        };
+
+        function bulkUploadCellValue(value) {
+            if (value === undefined || value === null || value === '') {
+                return '<span class="text-gray-400">—</span>';
+            }
+            return String(value);
+        }
+
         function bulkUploadStatusBadge(status) {
             if (status === 'completed') {
                 return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Tamamlandı</span>';
@@ -13943,12 +13980,14 @@
                 `;
 
                 if (entry.rowResults && entry.rowResults.length > 0) {
+                    const dataColumns = BULK_UPLOAD_ROW_COLUMNS[entry.actionType] || [];
                     body += `
                         <div class="overflow-x-auto border border-gray-200 rounded-lg">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satır</th>
+                                        ${dataColumns.map(c => `<th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${c.label}</th>`).join('')}
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mesaj</th>
                                     </tr>
@@ -13957,7 +13996,8 @@
                                     ${entry.rowResults.map(r => `
                                         <tr>
                                             <td class="px-4 py-2 text-sm text-gray-900">${r.rowNumber}</td>
-                                            <td class="px-4 py-2 text-sm">
+                                            ${dataColumns.map(c => `<td class="px-4 py-2 text-sm text-gray-600 whitespace-nowrap">${bulkUploadCellValue(r.data?.[c.key])}</td>`).join('')}
+                                            <td class="px-4 py-2 text-sm whitespace-nowrap">
                                                 ${r.status === 'success'
                                                     ? '<span class="text-green-700"><i class="fas fa-check-circle mr-1"></i>Başarılı</span>'
                                                     : '<span class="text-red-700"><i class="fas fa-times-circle mr-1"></i>Hata</span>'}
@@ -13984,7 +14024,7 @@
             modalOverlay.style.backdropFilter = 'blur(2px)';
 
             modalOverlay.innerHTML = `
-                <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-3xl transform opacity-100 max-h-[90vh] overflow-y-auto">
+                <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-5xl transform opacity-100 max-h-[90vh] overflow-y-auto">
                     <div class="p-4 border-b flex justify-between items-center sticky top-0 bg-white z-10">
                         <h3 class="text-lg font-semibold">${title}</h3>
                         <button class="close-modal p-2 rounded-md hover:bg-gray-100" onclick="closeBulkUploadDetailModal()">&times;</button>
@@ -14347,12 +14387,13 @@
                 rows.push({
                     rowNumber: rowData.rowNumber || idx + 1,
                     status: success ? 'success' : 'error',
-                    message
+                    message,
+                    data: rowData
                 });
             });
 
             rowErrors.forEach(err => {
-                rows.push({ rowNumber: err.row, status: 'error', message: err.error });
+                rows.push({ rowNumber: err.row, status: 'error', message: err.error, data: err.data || {} });
             });
 
             rows.sort((a, b) => a.rowNumber - b.rowNumber);
