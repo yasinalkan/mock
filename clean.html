@@ -13696,7 +13696,22 @@
                 <!-- Geçmiş Yüklemeler Tab -->
                 <div id="bulk-tab-content-history" class="hidden">
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                        <h2 class="text-lg font-semibold text-gray-900 mb-4">Geçmiş Yüklemeler</h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                            <h2 class="text-lg font-semibold text-gray-900">Geçmiş Yüklemeler</h2>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <select id="bulk-history-filter-status" onchange="applyBulkUploadHistoryFilters()"
+                                        class="text-sm border border-gray-300 rounded-md px-3 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    ${bulkUploadStatusOptionsHTML(bulkUploadHistoryFilters.status)}
+                                </select>
+                                <select id="bulk-history-filter-action-type" onchange="applyBulkUploadHistoryFilters()"
+                                        class="text-sm border border-gray-300 rounded-md px-3 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    ${bulkUploadActionTypeOptionsHTML(bulkUploadHistoryFilters.actionType)}
+                                </select>
+                                <button onclick="clearBulkUploadHistoryFilters()" class="text-sm text-gray-500 hover:text-gray-700 px-2 py-1.5">
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
                         <div id="bulk-history-table-container" class="overflow-x-auto">
                             <!-- History table will be inserted here -->
                         </div>
@@ -13713,6 +13728,7 @@
         let selectedActionType = null;
         let lastFileValidation = null;
         let bulkUploadActiveTab = 'upload';
+        let bulkUploadHistoryFilters = { status: 'all', actionType: 'all' };
 
         // --- BULK UPLOAD TABS ---
         function switchBulkUploadTab(tab) {
@@ -13766,13 +13782,55 @@
             return '<span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800"><i class="fas fa-times-circle mr-1"></i>Başarısız</span>';
         }
 
+        const BULK_UPLOAD_STATUS_OPTIONS = [
+            ['all', 'Tüm Durumlar'],
+            ['processing', 'İşleniyor'],
+            ['completed', 'Tamamlandı'],
+            ['failed', 'Başarısız']
+        ];
+
+        function bulkUploadStatusOptionsHTML(selected) {
+            return BULK_UPLOAD_STATUS_OPTIONS
+                .map(([value, label]) => `<option value="${value}" ${selected === value ? 'selected' : ''}>${label}</option>`)
+                .join('');
+        }
+
+        function bulkUploadActionTypeOptionsHTML(selected) {
+            const allOption = `<option value="all" ${selected === 'all' ? 'selected' : ''}>Tüm İşlem Tipleri</option>`;
+            const typeOptions = Object.entries(BULK_UPLOAD_ACTION_TYPE_LABELS)
+                .map(([value, label]) => `<option value="${value}" ${selected === value ? 'selected' : ''}>${label}</option>`)
+                .join('');
+            return allOption + typeOptions;
+        }
+
+        function applyBulkUploadHistoryFilters() {
+            bulkUploadHistoryFilters = {
+                status: document.getElementById('bulk-history-filter-status')?.value || 'all',
+                actionType: document.getElementById('bulk-history-filter-action-type')?.value || 'all'
+            };
+            renderBulkUploadHistoryTable();
+        }
+
+        function clearBulkUploadHistoryFilters() {
+            bulkUploadHistoryFilters = { status: 'all', actionType: 'all' };
+            const statusSelect = document.getElementById('bulk-history-filter-status');
+            const actionTypeSelect = document.getElementById('bulk-history-filter-action-type');
+            if (statusSelect) statusSelect.value = 'all';
+            if (actionTypeSelect) actionTypeSelect.value = 'all';
+            renderBulkUploadHistoryTable();
+        }
+
         function renderBulkUploadHistoryTable() {
             const container = document.getElementById('bulk-history-table-container');
             if (!container) return;
 
             const supplierId = window.currentUser?.supplierId;
-            const history = (mockData.bulkUploadHistory || [])
-                .filter(h => !supplierId || h.supplierId === supplierId)
+            const allHistory = (mockData.bulkUploadHistory || [])
+                .filter(h => !supplierId || h.supplierId === supplierId);
+
+            const history = allHistory
+                .filter(h => bulkUploadHistoryFilters.status === 'all' || h.status === bulkUploadHistoryFilters.status)
+                .filter(h => bulkUploadHistoryFilters.actionType === 'all' || h.actionType === bulkUploadHistoryFilters.actionType)
                 .slice()
                 .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
 
@@ -13780,13 +13838,14 @@
                 container.innerHTML = `
                     <div class="text-center py-10 text-gray-500">
                         <i class="fas fa-history text-3xl mb-3 block"></i>
-                        Henüz bir yükleme yapılmadı.
+                        ${allHistory.length === 0 ? 'Henüz bir yükleme yapılmadı.' : 'Filtrelere uyan yükleme bulunamadı.'}
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = `
+                <p class="text-sm text-gray-500 mb-3">Görüntülenen: ${history.length} / Toplam: ${allHistory.length}</p>
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
