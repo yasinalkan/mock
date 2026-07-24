@@ -13857,6 +13857,27 @@
             renderBulkUploadHistoryTable();
         }
 
+        // Returns a downloadable blob URL for a history entry's file, generating and
+        // caching one from its row data if the original File object isn't available
+        // (e.g. seed/demo entries that were never actually uploaded in this session).
+        function getBulkUploadFileUrl(entry) {
+            if (entry.fileUrl) return entry.fileUrl;
+            if (!entry.rowResults || entry.rowResults.length === 0) return null;
+
+            const columns = BULK_UPLOAD_ROW_COLUMNS[entry.actionType] || [];
+            if (columns.length === 0) return null;
+
+            const headerRow = columns.map(c => c.key).join(',');
+            const dataRows = entry.rowResults.map(r => columns.map(c => {
+                const value = r.data ? r.data[c.key] : '';
+                return value === undefined || value === null ? '' : String(value);
+            }).join(','));
+            const csvContent = [headerRow, ...dataRows].join('\n');
+            const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            entry.fileUrl = URL.createObjectURL(blob);
+            return entry.fileUrl;
+        }
+
         function renderBulkUploadHistoryTable() {
             const container = document.getElementById('bulk-history-table-container');
             if (!container) return;
@@ -13896,10 +13917,15 @@
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
-                        ${history.map(h => `
+                        ${history.map(h => {
+                            const fileUrl = getBulkUploadFileUrl(h);
+                            const fileNameHTML = fileUrl
+                                ? `<a href="${fileUrl}" download="${h.fileName}" onclick="event.stopPropagation()" class="text-indigo-600 hover:text-indigo-800 hover:underline">${h.fileName}</a>`
+                                : h.fileName;
+                            return `
                             <tr class="cursor-pointer hover:bg-gray-50" onclick="showBulkUploadDetail(${h.id})">
                                 <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
-                                    <i class="fas fa-file-excel text-green-500 mr-2"></i>${h.fileName}
+                                    <i class="fas fa-file-excel text-green-500 mr-2"></i>${fileNameHTML}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-500 uppercase">${h.fileType}</td>
                                 <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">${formatFileSize(h.fileSize)}</td>
@@ -13908,7 +13934,8 @@
                                 <td class="px-4 py-3 whitespace-nowrap">${bulkUploadStatusBadge(h.status)}</td>
                                 <td class="px-4 py-3 text-right text-gray-400"><i class="fas fa-chevron-right"></i></td>
                             </tr>
-                        `).join('')}
+                        `;
+                        }).join('')}
                     </tbody>
                 </table>
             `;
@@ -13925,9 +13952,14 @@
                 </div>
             `;
 
+            const fileUrl = getBulkUploadFileUrl(entry);
+            const fileNameValue = fileUrl
+                ? `<a href="${fileUrl}" download="${entry.fileName}" class="text-indigo-600 hover:text-indigo-800 hover:underline">${entry.fileName}</a>`
+                : entry.fileName;
+
             let body = `
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                    ${summaryRow('Dosya Adı', entry.fileName)}
+                    ${summaryRow('Dosya Adı', fileNameValue)}
                     ${summaryRow('Dosya Tipi', entry.fileType.toUpperCase())}
                     ${summaryRow('Dosya Boyutu', formatFileSize(entry.fileSize))}
                     ${summaryRow('Yüklenme Tarihi', new Date(entry.uploadedAt).toLocaleString('tr-TR'))}
@@ -14298,7 +14330,8 @@
                     successCount: 0,
                     failCount: 0,
                     columnErrors: [],
-                    rowResults: []
+                    rowResults: [],
+                    fileUrl: URL.createObjectURL(file)
                 };
                 mockData.bulkUploadHistory.unshift(historyEntry);
 
