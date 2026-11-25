@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supplier Hub</title>
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="returns-flow.css">
 
     <style>
         /* Category Picker Styles */
@@ -117,8 +119,18 @@
         
         <!-- Sidebar -->
         <nav id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
-            <div class="p-4 border-b border-gray-200">
-                <button id="closeSidebar" class="p-2 rounded-md hover:bg-gray-100 ml-auto">
+            <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg viewBox="0 0 100 100" class="w-8 h-8 flex-shrink-0">
+                        <rect width="100" height="100" rx="22" fill="#3F46AD"/>
+                        <circle cx="50" cy="52" r="34" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.55"/>
+                        <polygon points="50,26 68,36 50,46 32,36" fill="#FFFFFF"/>
+                        <polygon points="32,36 50,46 50,74 32,64" fill="#FFFFFF" opacity="0.72"/>
+                        <polygon points="68,36 50,46 50,74 68,64" fill="#FFFFFF" opacity="0.5"/>
+                    </svg>
+                    <span class="font-bold text-sm" style="color: rgb(63, 70, 173);">Supplier Hub</span>
+                </div>
+                <button id="closeSidebar" class="p-2 rounded-md hover:bg-gray-100">
                     <i class="fas fa-times text-gray-600"></i>
                 </button>
             </div>
@@ -166,9 +178,16 @@
                     <h2 id="pageTitle" class="text-lg font-semibold text-gray-700">Dashboard</h2>
                 </div>
                 
-                <div class="flex-1 flex justify-center items-center gap-3">
+                <div class="flex-1 flex justify-center items-center gap-2">
+                    <svg viewBox="0 0 100 100" class="w-7 h-7 flex-shrink-0">
+                        <rect width="100" height="100" rx="22" fill="#3F46AD"/>
+                        <circle cx="50" cy="52" r="34" fill="none" stroke="#FFFFFF" stroke-width="4" opacity="0.55"/>
+                        <polygon points="50,26 68,36 50,46 32,36" fill="#FFFFFF"/>
+                        <polygon points="32,36 50,46 50,74 32,64" fill="#FFFFFF" opacity="0.72"/>
+                        <polygon points="68,36 50,46 50,74 68,64" fill="#FFFFFF" opacity="0.5"/>
+                    </svg>
                     <h1 class="text-2xl font-bold" style="color: rgb(63, 70, 173);">Supplier Hub</h1>
-                    <!-- 
+                    <!--
                     <div class="flex items-center justify-center w-12 h-8 bg-red-600 text-white font-bold text-sm rounded">
                         Vakko
                     </div> 
@@ -361,8 +380,8 @@
             supplier_section: { tr: 'Tedarikçi Bölmesi', en: 'Supplier Section' },
             finance: { tr: 'Finans', en: 'Finance' },
             supplier_dashboard: { tr: 'Tedarikçi Paneli', en: 'Supplier Panel' },
-            commission_management: { tr: 'Komisyon Yönetimi', en: 'Commission Management' },
-            commission_rules: { tr: 'Komisyon Kuralları', en: 'Commission Rules' },
+            commission_management: { tr: 'Gelir Modeli Yönetimi', en: 'Revenue Model Management' },
+            commission_rules: { tr: 'Gelir Modeli Kuralları', en: 'Revenue Model Rules' },
             brand_based: { tr: 'Marka Bazlı', en: 'Brand Based' },
             category_based: { tr: 'Kategori Bazlı', en: 'Category Based' },
             seller_based: { tr: 'Satıcı Bazlı', en: 'Seller Based' },
@@ -604,11 +623,25 @@
             bank_info: { tr: 'Banka Bilgisi', en: 'Bank Info' },
             close: { tr: 'Kapat', en: 'Close' },
             total_commission: { tr: 'Toplam Kesinti', en: 'Total Deductions' },
-            // Commission Management
-            commission_management: { tr: 'Komisyon Yönetimi', en: 'Commission Management' },
-            commission_rules: { tr: 'Komisyon Kuralları', en: 'Commission Rules' },
+            // Revenue Model Management (eski adı: Komisyon Yönetimi)
+            commission_management: { tr: 'Gelir Modeli Yönetimi', en: 'Revenue Model Management' },
+            commission_rules: { tr: 'Gelir Modeli Kuralları', en: 'Revenue Model Rules' },
             add_commission_rule: { tr: 'Yeni Kural Ekle', en: 'Add New Rule' },
             commission_rate: { tr: 'Komisyon Oranı (%)', en: 'Commission Rate (%)' },
+            revenue_model: { tr: 'Gelir Modeli', en: 'Revenue Model' },
+            revenue_model_commission: { tr: 'Komisyon', en: 'Commission' },
+            revenue_model_margin: { tr: 'Kâr Marjı', en: 'Profit Margin' },
+            margin_rate: { tr: 'Kâr Marjı (%)', en: 'Profit Margin (%)' },
+            rule_scope: { tr: 'Kural Kapsamı', en: 'Rule Scope' },
+            product_based: { tr: 'Ürün Bazlı', en: 'Product Based' },
+            product: { tr: 'Ürün', en: 'Product' },
+            select_product: { tr: 'Ürün Seçin', en: 'Select Product' },
+            no_product_selected: { tr: 'Ürün seçilmedi', en: 'No product selected' },
+            no_product_found: { tr: 'Ürün bulunamadı', en: 'No product found' },
+            product_picker_description: { tr: 'Ürün listesinden bir ürün seçin veya ad/SKU ile arayın.', en: 'Select a product from the list or search by name/SKU.' },
+            rule_status_active: { tr: 'Aktif', en: 'Active' },
+            rule_status_planned: { tr: 'Planlandı', en: 'Planned' },
+            rule_status_expired: { tr: 'Sona Erdi', en: 'Expired' },
             start_date: { tr: 'Başlangıç Tarihi', en: 'Start Date' },
             end_date: { tr: 'Bitiş Tarihi', en: 'End Date' },
             default_rate: { tr: 'Varsayılan Oran (%)', en: 'Default Rate (%)' },
@@ -631,7 +664,7 @@
             rule_created: { tr: 'Kural Oluşturuldu', en: 'Rule Created' },
             rule_updated: { tr: 'Kural Güncellendi', en: 'Rule Updated' },
             rule_deleted: { tr: 'Kural Silindi', en: 'Rule Deleted' },
-            confirm_delete_rule: { tr: 'Bu komisyon kuralını silmek istediğinizden emin misiniz?', en: 'Are you sure you want to delete this commission rule?' },
+            confirm_delete_rule: { tr: 'Bu gelir modeli kuralını silmek istediğinizden emin misiniz?', en: 'Are you sure you want to delete this revenue model rule?' },
             // Settings
             settings_users: { tr: 'Kullanıcı Yönetimi', en: 'User Management' },
             settings_api_keys: { tr: 'API Anahtarları', en: 'API Keys' },
@@ -664,7 +697,7 @@
             category_required: { tr: 'Kategori gereklidir', en: 'Category is required' },
             reason: { tr: 'Sebep', en: 'Reason' },
             // Supplier Restrictions
-            supplier_restrictions: { tr: 'Tedarikçi Kısıtlamaları', en: 'Supplier Restrictions' },
+            supplier_restrictions: { tr: 'Tedarikçi Satış Yetkileri', en: 'Supplier Sales Permissions' },
             supplier_restrictions_management: { tr: 'Tedarikçi Kısıtlama Yönetimi', en: 'Supplier Restrictions Management' },
             add_supplier_restriction: { tr: 'Kısıtlama Ekle', en: 'Add Restriction' },
             edit_supplier_restriction: { tr: 'Kısıtlamayı Düzenle', en: 'Edit Restriction' },
@@ -4100,76 +4133,210 @@
                 { id: 3, event: 'Stok Güncellendi', url: 'https://webhook.company.com/stock-updated', _rawSecret: 'webhook_secret_789', active: false }
             ],
             // Commission Rules
-            commissionRules: [
-                { 
-                    id: 1, 
-                    type: 'supplier', 
-                    supplierId: 1, 
+            revenueModelRules: [
+                {
+                    id: 1,
+                    revenueModel: 'commission',
+                    type: 'supplier',
+                    supplierId: 1,
                     supplierName: 'ModaTedarik',
-                    categoryId: null, 
+                    categoryId: null,
                     categoryName: null,
+                    productId: null,
+                    productName: null,
                     rate: 15.0,
                     defaultRate: 10.0,
                     startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    endDate: '2026-12-31',
                     createdAt: '2025-01-15T10:00:00Z',
                     updatedAt: '2025-01-15T10:00:00Z'
                 },
-                { 
-                    id: 2, 
-                    type: 'supplier', 
-                    supplierId: 2, 
+                {
+                    id: 2,
+                    revenueModel: 'commission',
+                    type: 'supplier',
+                    supplierId: 2,
                     supplierName: 'Ayakkabı A.Ş.',
-                    categoryId: null, 
+                    categoryId: null,
                     categoryName: null,
+                    productId: null,
+                    productName: null,
                     rate: 12.0,
                     defaultRate: 8.0,
                     startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    endDate: '2026-12-31',
                     createdAt: '2025-01-16T10:00:00Z',
                     updatedAt: '2025-01-16T10:00:00Z'
                 },
-                { 
-                    id: 3, 
-                    type: 'category', 
-                    supplierId: null, 
+                {
+                    id: 3,
+                    revenueModel: 'commission',
+                    type: 'category',
+                    supplierId: null,
                     supplierName: null,
-                    categoryId: 1, 
-                    categoryName: 'Giyim',
+                    categoryId: 1,
+                    categoryName: 'Bermuda Klasik',
+                    productId: null,
+                    productName: null,
                     rate: 18.0,
                     defaultRate: 12.0,
                     startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    endDate: '2026-12-31',
                     createdAt: '2025-01-17T10:00:00Z',
                     updatedAt: '2025-01-17T10:00:00Z'
                 },
-                { 
-                    id: 4, 
-                    type: 'category', 
-                    supplierId: null, 
+                {
+                    id: 4,
+                    revenueModel: 'commission',
+                    type: 'category',
+                    supplierId: null,
                     supplierName: null,
-                    categoryId: 2, 
-                    categoryName: 'Ayakkabı',
+                    categoryId: 2,
+                    categoryName: 'Klasik Ayakkabı',
+                    productId: null,
+                    productName: null,
                     rate: 20.0,
                     defaultRate: 15.0,
                     startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    endDate: '2026-12-31',
                     createdAt: '2025-01-18T10:00:00Z',
                     updatedAt: '2025-01-18T10:00:00Z'
                 },
-                { 
-                    id: 5, 
-                    type: 'supplier_category', 
-                    supplierId: 1, 
+                {
+                    id: 5,
+                    revenueModel: 'commission',
+                    type: 'supplier_category',
+                    supplierId: 1,
                     supplierName: 'ModaTedarik',
-                    categoryId: 1, 
-                    categoryName: 'Giyim',
+                    categoryId: 1,
+                    categoryName: 'Bermuda Klasik',
+                    productId: null,
+                    productName: null,
                     rate: 16.0,
                     defaultRate: 11.0,
                     startDate: '2025-01-01',
-                    endDate: '2025-12-31',
+                    endDate: '2026-12-31',
                     createdAt: '2025-01-19T10:00:00Z',
                     updatedAt: '2025-01-19T10:00:00Z'
+                },
+                {
+                    id: 6,
+                    revenueModel: 'margin',
+                    type: 'supplier_category',
+                    supplierId: 2,
+                    supplierName: 'Ayakkabı A.Ş.',
+                    categoryId: 2,
+                    categoryName: 'Klasik Ayakkabı',
+                    productId: null,
+                    productName: null,
+                    rate: 30.0,
+                    defaultRate: null,
+                    startDate: '2026-01-01',
+                    endDate: '2026-12-31',
+                    createdAt: '2026-01-05T10:00:00Z',
+                    updatedAt: '2026-01-05T10:00:00Z'
+                },
+                {
+                    id: 7,
+                    revenueModel: 'margin',
+                    type: 'category',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: 3,
+                    categoryName: 'Gömlek',
+                    productId: null,
+                    productName: null,
+                    rate: 22.0,
+                    defaultRate: null,
+                    startDate: '2026-01-01',
+                    endDate: '2026-12-31',
+                    createdAt: '2026-01-06T10:00:00Z',
+                    updatedAt: '2026-01-06T10:00:00Z'
+                },
+                {
+                    id: 8,
+                    revenueModel: 'margin',
+                    type: 'product',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: null,
+                    categoryName: null,
+                    productId: 5,
+                    productName: 'Beyaz T-Shirt',
+                    rate: 35.0,
+                    defaultRate: null,
+                    startDate: '2026-08-01',
+                    endDate: '2026-09-30',
+                    createdAt: '2026-07-25T10:00:00Z',
+                    updatedAt: '2026-07-25T10:00:00Z'
+                },
+                {
+                    id: 9,
+                    revenueModel: 'commission',
+                    type: 'product',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: null,
+                    categoryName: null,
+                    productId: 2,
+                    productName: 'Siyah Deri Ayakkabı',
+                    rate: 14.0,
+                    defaultRate: null,
+                    startDate: '2026-01-01',
+                    endDate: '2026-12-31',
+                    createdAt: '2026-01-08T10:00:00Z',
+                    updatedAt: '2026-01-08T10:00:00Z'
+                },
+                {
+                    id: 10,
+                    revenueModel: 'commission',
+                    type: 'category',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: 4,
+                    categoryName: 'T-Shirt',
+                    productId: null,
+                    productName: null,
+                    rate: 15.0,
+                    defaultRate: null,
+                    startDate: '2026-01-01',
+                    endDate: '2026-06-30',
+                    createdAt: '2026-01-09T10:00:00Z',
+                    updatedAt: '2026-01-09T10:00:00Z'
+                },
+                {
+                    id: 11,
+                    revenueModel: 'margin',
+                    type: 'category',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: 4,
+                    categoryName: 'T-Shirt',
+                    productId: null,
+                    productName: null,
+                    rate: 20.0,
+                    defaultRate: null,
+                    startDate: '2026-07-01',
+                    endDate: '2026-12-31',
+                    createdAt: '2026-06-20T10:00:00Z',
+                    updatedAt: '2026-06-20T10:00:00Z'
+                },
+                {
+                    id: 12,
+                    revenueModel: 'margin',
+                    type: 'category',
+                    supplierId: null,
+                    supplierName: null,
+                    categoryId: 102,
+                    categoryName: 'Üst Giyim',
+                    productId: null,
+                    productName: null,
+                    rate: 24.0,
+                    defaultRate: null,
+                    startDate: '2026-11-01',
+                    endDate: '2027-01-31',
+                    createdAt: '2026-08-20T10:00:00Z',
+                    updatedAt: '2026-08-20T10:00:00Z'
                 }
             ],
             // Campaigns
@@ -4729,9 +4896,9 @@
             ],
             users: [
                 { id: 1, name: 'Admin User', email: 'admin@example.com', role: 'admin', active: true, lastLogin: '2025-01-15T10:30:00Z' },
-                { id: 2, name: 'Tedarikçi 1', email: 'tedarikci1@example.com', role: 'supplier', active: true, lastLogin: '2025-01-14T15:45:00Z' },
-                { id: 3, name: 'Tedarikçi 2', email: 'tedarikci2@example.com', role: 'supplier', active: true, lastLogin: '2025-01-13T09:20:00Z' },
-                { id: 4, name: 'Inactive User', email: 'inactive@example.com', role: 'supplier', active: false, lastLogin: '2024-12-20T16:15:00Z' }
+                { id: 2, name: 'Tedarikçi 1', email: 'tedarikci1@example.com', role: 'supplier', active: true, lastLogin: '2025-01-14T15:45:00Z', supplierId: 1, supplierName: 'ModaTedarik' },
+                { id: 3, name: 'Tedarikçi 2', email: 'tedarikci2@example.com', role: 'supplier', active: true, lastLogin: '2025-01-13T09:20:00Z', supplierId: 2, supplierName: 'Ayakkabı A.Ş.' },
+                { id: 4, name: 'Inactive User', email: 'inactive@example.com', role: 'supplier', active: false, lastLogin: '2024-12-20T16:15:00Z', supplierId: 1, supplierName: 'ModaTedarik' }
             ],
             returns: [
                 {
@@ -10342,29 +10509,11 @@
                 let sortDirection = 'desc';
                 
                 // Helper function to get rule display info
-                const getRuleInfo = (rule) => {
-                    let targetName = '';
-                    let ruleType = '';
-                    
-                    if (rule.type === 'supplier') {
-                        const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
-                        targetName = supplier ? supplier.name : 'Bilinmiyor';
-                        ruleType = 'Tedarikçi';
-                    } else if (rule.type === 'category') {
-                        const category = mockData.categories.find(c => c.id === rule.categoryId);
-                        targetName = category ? t(category.name) : 'Bilinmiyor';
-                        ruleType = 'Kategori';
-                    } else if (rule.type === 'supplier_category') {
-                        const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
-                        const category = mockData.categories.find(c => c.id === rule.categoryId);
-                        const supplierName = supplier ? supplier.name : 'Bilinmiyor';
-                        const categoryName = category ? t(category.name) : 'Bilinmiyor';
-                        targetName = `${supplierName} - ${categoryName}`;
-                        ruleType = 'Tedarikçi + Kategori';
-                    }
-                    
-                    return { targetName, ruleType };
-                };
+                const getRuleInfo = (rule) => ({
+                    targetName: getRevenueRuleTargetName(rule),
+                    ruleType: getRuleScopeMeta(rule).short,
+                    modelLabel: getRevenueModelMeta(rule).label
+                });
                 
                 // Render table rows
                 const renderRows = (rules) => {
@@ -10377,19 +10526,21 @@
                         return `
                             <tr class="border-b hover:bg-gray-50">
                                 <td class="p-3 text-sm font-medium">${targetName}${defaultIndicator}</td>
-                                <td class="p-3 text-sm">${rule.rate}%</td>
+                                <td class="p-3 text-sm">${renderRevenueModelBadge(rule)}</td>
+                                <td class="p-3 text-sm font-medium">${rule.rate}%</td>
                                 <td class="p-3 text-sm">${ruleType}</td>
                                 <td class="p-3 text-sm">${startDate}</td>
                                 <td class="p-3 text-sm">${endDate}</td>
+                                <td class="p-3 text-sm">${renderRevenueRuleStatusBadge(rule)}</td>
                                 <td class="p-3 text-sm">${new Date(rule.updatedAt).toLocaleDateString('tr-TR')}</td>
-                                <td class="p-3 text-right">
-                                    <button class="p-2 text-gray-500 hover:text-blue-600 view-commission" data-id="${rule.id}" title="Detayları Görüntüle">
+                                <td class="p-3 text-right whitespace-nowrap">
+                                    <button class="p-1 text-gray-500 hover:text-blue-600 view-commission" data-id="${rule.id}" title="Detayları Görüntüle">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="p-2 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}" title="Düzenle">
+                                    <button class="p-1 text-gray-500 hover:text-blue-600 edit-commission" data-id="${rule.id}" title="Düzenle">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="p-2 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}" title="Sil">
+                                    <button class="p-1 text-gray-500 hover:text-red-600 del-commission" data-id="${rule.id}" title="Sil">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </td>
@@ -10400,7 +10551,7 @@
                 
                 // Filter and sort rules
                 const filterAndSortRules = () => {
-                    let filtered = [...(mockData.commissionRules || [])];
+                    let filtered = [...(mockData.revenueModelRules || [])];
                     
                     // Apply search filter
                     const searchQuery = (document.getElementById('commission-search')?.value || '').toLowerCase();
@@ -10414,10 +10565,22 @@
                         });
                     }
                     
-                    // Apply type filter
+                    // Apply revenue model filter
+                    const modelFilter = document.getElementById('commission-model-filter')?.value || '';
+                    if (modelFilter) {
+                        filtered = filtered.filter(rule => getRevenueModelKey(rule) === modelFilter);
+                    }
+                    
+                    // Apply scope filter
                     const typeFilter = document.getElementById('commission-type-filter')?.value || '';
                     if (typeFilter) {
                         filtered = filtered.filter(rule => rule.type === typeFilter);
+                    }
+                    
+                    // Apply status filter
+                    const statusFilter = document.getElementById('commission-status-filter')?.value || '';
+                    if (statusFilter) {
+                        filtered = filtered.filter(rule => getRevenueRuleStatus(rule).key === statusFilter);
                     }
                     
                     // Apply default filter
@@ -10444,6 +10607,14 @@
                             case 'type':
                                 aVal = getRuleInfo(a).ruleType.toLowerCase();
                                 bVal = getRuleInfo(b).ruleType.toLowerCase();
+                                break;
+                            case 'revenueModel':
+                                aVal = getRevenueModelMeta(a).label.toLowerCase();
+                                bVal = getRevenueModelMeta(b).label.toLowerCase();
+                                break;
+                            case 'status':
+                                aVal = getRevenueRuleStatus(a).label.toLowerCase();
+                                bVal = getRevenueRuleStatus(b).label.toLowerCase();
                                 break;
                             case 'startDate':
                                 aVal = a.startDate ? new Date(a.startDate).getTime() : 0;
@@ -10533,9 +10704,10 @@
                                 <i class="fas fa-percentage text-yellow-400"></i>
                             </div>
                             <div class="ml-3 flex-1">
-                                <h3 class="text-sm font-medium text-yellow-800">Komisyon Yönetimi</h3>
+                                <h3 class="text-sm font-medium text-yellow-800">Gelir Modeli Yönetimi</h3>
                                 <div class="mt-2 text-sm text-yellow-700">
-                                    <p>Bu sayfada tedarikçi, kategori ve tedarikçi+kategori bazlı komisyon oranlarını yönetebilirsiniz. Farklı komisyon stratejileri oluşturabilir ve gelir optimizasyonu yapabilirsiniz.</p>
+                                    <p>Bu sayfada <strong>komisyon</strong> ve <strong>kâr marjı</strong> gelir modellerini; kategori, tedarikçi, tedarikçi+kategori ve ürün bazında yönetebilirsiniz. Kurallar tarih aralığıyla tanımlanır ve en spesifik kapsam uygulanır: <strong>ürün &gt; tedarikçi+kategori &gt; tedarikçi &gt; kategori</strong>.</p>
+                                    <p class="mt-1">Aynı parametreler (kapsam + hedef) örtüşen tarihlerde yalnızca tek bir gelir modeliyle tanımlanabilir; komisyon ve kâr marjı aynı anda geçerli olamaz.</p>
                                 </div>
                             </div>
                             <div class="flex-shrink-0">
@@ -10557,7 +10729,7 @@
                             
                             <!-- Filter Section -->
                             <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
                                         <div class="relative">
@@ -10568,19 +10740,38 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Komisyon Tipi</label>
-                                        <select id="commission-type-filter" 
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Gelir Modeli</label>
+                                        <select id="commission-model-filter" 
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                            <option value="">Tüm Tipler</option>
-                                            <option value="supplier">Tedarikçi Bazlı</option>
-                                            <option value="category">Kategori Bazlı</option>
-                                            <option value="supplier_category">Tedarikçi + Kategori</option>
+                                            <option value="">Tüm Modeller</option>
+                                            <option value="commission">Komisyon</option>
+                                            <option value="margin">Kâr Marjı</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Varsayılan</label>
-                                        <select id="commission-default-filter" 
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Kural Kapsamı</label>
+                                        <select id="commission-type-filter" 
                                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm Kapsamlar</option>
+                                            <option value="supplier">Tedarikçi Bazlı</option>
+                                            <option value="category">Kategori Bazlı</option>
+                                            <option value="supplier_category">Tedarikçi + Kategori</option>
+                                            <option value="product">Ürün Bazlı</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Durum</label>
+                                        <select id="commission-status-filter" 
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option value="">Tüm Durumlar</option>
+                                            <option value="active">Aktif</option>
+                                            <option value="planned">Planlandı</option>
+                                            <option value="expired">Sona Erdi</option>
+                                            <option value="default">Varsayılan</option>
+                                        </select>
+                                    </div>
+                                    <div class="hidden">
+                                        <select id="commission-default-filter">
                                             <option value="">Tümü</option>
                                             <option value="yes">Varsayılan</option>
                                             <option value="no">Varsayılan Değil</option>
@@ -10603,17 +10794,23 @@
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('target')">
                                                 Hedef <span id="sort-icon-target">${getSortIcon('target')}</span>
                                             </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('revenueModel')">
+                                                Gelir Modeli <span id="sort-icon-revenueModel">${getSortIcon('revenueModel')}</span>
+                                            </th>
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('rate')">
-                                                ${t('commission_rate')} <span id="sort-icon-rate">${getSortIcon('rate')}</span>
+                                                Oran (%) <span id="sort-icon-rate">${getSortIcon('rate')}</span>
                                             </th>
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('type')">
-                                                ${t('rule_type')} <span id="sort-icon-type">${getSortIcon('type')}</span>
+                                                ${t('rule_scope') || 'Kural Kapsamı'} <span id="sort-icon-type">${getSortIcon('type')}</span>
                                             </th>
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('startDate')">
                                                 ${t('start_date')} <span id="sort-icon-startDate">${getSortIcon('startDate')}</span>
                                             </th>
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('endDate')">
                                                 ${t('end_date')} <span id="sort-icon-endDate">${getSortIcon('endDate')}</span>
+                                            </th>
+                                            <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('status')">
+                                                Durum <span id="sort-icon-status">${getSortIcon('status')}</span>
                                             </th>
                                             <th class="p-3 text-sm font-semibold cursor-pointer hover:bg-gray-100" onclick="handleCommissionSort('updatedAt')">
                                                 Güncellenme <span id="sort-icon-updatedAt">${getSortIcon('updatedAt')}</span>
@@ -10631,7 +10828,7 @@
                 
                 // Update sort icons after render
                 const updateSortIcons = () => {
-                    ['target', 'rate', 'type', 'startDate', 'endDate', 'updatedAt'].forEach(col => {
+                    ['target', 'revenueModel', 'rate', 'type', 'startDate', 'endDate', 'status', 'updatedAt'].forEach(col => {
                         const iconEl = document.getElementById(`sort-icon-${col}`);
                         if (iconEl) {
                             iconEl.innerHTML = getSortIcon(col);
@@ -10660,6 +10857,14 @@
                     window.paginationState.currentPage = 1;
                     renderTable();
                 });
+                document.getElementById('commission-model-filter')?.addEventListener('change', () => {
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
+                document.getElementById('commission-status-filter')?.addEventListener('change', () => {
+                    window.paginationState.currentPage = 1;
+                    renderTable();
+                });
                 document.getElementById('commission-default-filter')?.addEventListener('change', () => {
                     window.paginationState.currentPage = 1;
                     renderTable();
@@ -10667,6 +10872,8 @@
                 document.getElementById('commission-clear-filters')?.addEventListener('click', () => {
                     document.getElementById('commission-search').value = '';
                     document.getElementById('commission-type-filter').value = '';
+                    document.getElementById('commission-model-filter').value = '';
+                    document.getElementById('commission-status-filter').value = '';
                     document.getElementById('commission-default-filter').value = '';
                     window.paginationState.currentPage = 1;
                     renderTable();
@@ -10966,8 +11173,8 @@
                                 <i class="fas fa-box text-red-500"></i>
                             </div>
                             <div class="flex-1">
-                                <div class="font-medium text-gray-900">${item.name}</div>
-                                <div class="text-sm text-gray-500">SKU: ${item.sku} • Adet: ${item.quantity}</div>
+                                <div class="font-medium text-gray-900">${returnSafeText(item.name)}</div>
+                                <div class="text-sm text-gray-500">SKU: ${returnSafeText(item.sku)} • Adet: ${item.quantity}</div>
                                 ${itemActions}
                             </div>
                         </div>
@@ -11000,13 +11207,13 @@
                                 <i class="fas fa-circle text-blue-500 text-xs"></i>
                             </div>
                             <div class="flex-1">
-                                <div class="text-sm font-medium text-gray-900">${event.message}</div>
+                                <div class="text-sm font-medium text-gray-900">${returnSafeText(event.message)}</div>
                                 <div class="text-xs text-gray-500 mt-1">${eventDate}</div>
                                 <div class="mt-1">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full ${userRoleClass}">
                                         ${event.userRole === 'admin' ? 'Admin' : event.userRole === 'supplier' ? 'Tedarikçi' : 'Müşteri'}
                                     </span>
-                                    <span class="text-xs text-gray-500 ml-2">${event.user}</span>
+                                    <span class="text-xs text-gray-500 ml-2">${returnSafeText(event.user)}</span>
                                 </div>
                             </div>
                         </div>
@@ -11102,16 +11309,16 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <div class="text-sm font-medium text-gray-700">Ad Soyad</div>
-                                    <div class="text-sm text-gray-900">${returnItem.customerName}</div>
+                                    <div class="text-sm text-gray-900">${returnSafeText(returnItem.customerName)}</div>
                                 </div>
                                 <div>
                                     <div class="text-sm font-medium text-gray-700">E-posta</div>
-                                    <div class="text-sm text-gray-900">${returnItem.customerEmail}</div>
+                                    <div class="text-sm text-gray-900">${returnSafeText(returnItem.customerEmail)}</div>
                                 </div>
                             </div>
                             <div class="mt-4">
                                 <div class="text-sm font-medium text-gray-700">Açıklama</div>
-                                <div class="text-sm text-gray-900 mt-1">${returnItem.description}</div>
+                                <div class="text-sm text-gray-900 mt-1">${returnSafeText(returnItem.description)}</div>
                             </div>
                         </div>
 
@@ -11153,7 +11360,7 @@
                                 <i class="fas fa-sticky-note text-yellow-500"></i>
                                 <h3 class="text-lg font-semibold text-gray-900">${t('return_notes')}</h3>
                             </div>
-                            <div class="text-sm text-gray-900">${returnItem.notes}</div>
+                            <div class="text-sm text-gray-900">${returnSafeText(returnItem.notes)}</div>
                         </div>
                         ` : ''}
 
@@ -13132,7 +13339,7 @@
                     questions: [
                         {
                             question: 'Komisyon oranları nasıl belirlenir?',
-                            answer: 'Komisyon oranları kategori, tedarikçi veya genel kurallara göre belirlenir. "Finans" > "Komisyon Yönetimi" sayfasından komisyon kurallarını görüntüleyebilir ve yönetebilirsiniz. Komisyon oranları %5-15 arasında değişebilir ve şu faktörlere göre belirlenir: ürün kategorisi (elektronik %8, giyim %12), tedarikçi anlaşması, satış hacmi (yüksek hacimli satışlarda düşük komisyon), özel kampanyalar. Komisyon hesaplaması sipariş tamamlandıktan sonra yapılır ve aylık ödeme döneminde kesilir.'
+                            answer: 'Gelir modeli kuralları kategori, tedarikçi, tedarikçi+kategori veya ürün bazında tanımlanır ve iki gelir modeli tipi vardır: komisyon ve kâr marjı. "Finans" > "Gelir Modeli Yönetimi" sayfasından bu kuralları görüntüleyebilir ve yönetebilirsiniz. En spesifik kapsam uygulanır (ürün > tedarikçi+kategori > tedarikçi > kategori) ve aynı parametreler örtüşen tarihlerde yalnızca tek bir gelir modeliyle tanımlanabilir. Komisyon oranları %5-15 arasında değişebilir ve şu faktörlere göre belirlenir: ürün kategorisi (elektronik %8, giyim %12), tedarikçi anlaşması, satış hacmi (yüksek hacimli satışlarda düşük komisyon), özel kampanyalar. Komisyon hesaplaması sipariş tamamlandıktan sonra yapılır ve aylık ödeme döneminde kesilir.'
                         },
                         {
                             question: 'Ödeme takvimi nedir?',
@@ -15850,9 +16057,9 @@
                         // Use the function if available
                         if (typeof getSupplierCommissionRate === 'function') {
                             rate = getSupplierCommissionRate(product.id, currentUserSupplierId) || 12;
-                        } else if (typeof mockData !== 'undefined' && mockData.commissionRules) {
+                        } else if (typeof mockData !== 'undefined' && mockData.revenueModelRules) {
                             // Fallback: calculate directly
-                            const commissionRules = mockData.commissionRules || [];
+                            const commissionRules = mockData.revenueModelRules || [];
                             const currentDate = new Date();
                             
                             // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
@@ -28043,7 +28250,7 @@
         function renderCommissionTable(type) { 
             const container = document.getElementById('commission-tab-content'); 
             if (!container) return; 
-            const rules = mockData.commissionRules[type] || []; 
+            const rules = mockData.revenueModelRules[type] || []; 
             let header = ''; 
             let rows = ''; 
             const dataMap = { 
@@ -28100,7 +28307,7 @@
         }
         function showCommissionRuleModal(type, ruleId = null) { 
             const isEditing = ruleId !== null; 
-            const rule = isEditing ? mockData.commissionRules[type].find(r => r.id === ruleId) : null; 
+            const rule = isEditing ? mockData.revenueModelRules[type].find(r => r.id === ruleId) : null; 
             const title = isEditing ? t('edit_rule') : t('add_commission_rule'); 
             const dataMap = { 
                 brand: { source: mockData.brands, name: t('brand') }, 
@@ -28174,7 +28381,7 @@
             }
             
             if (ruleId !== null) { 
-                const rule = mockData.commissionRules[type].find(r => r.id === ruleId); 
+                const rule = mockData.revenueModelRules[type].find(r => r.id === ruleId); 
                 if (rule) { 
                     rule.targetId = targetId; 
                     rule.rate = rate; 
@@ -28184,7 +28391,7 @@
                 } 
             } else { 
                 const newId = Date.now(); 
-                mockData.commissionRules[type].push({ 
+                mockData.revenueModelRules[type].push({ 
                     id: newId, 
                     targetId, 
                     rate, 
@@ -28416,10 +28623,12 @@
                     // Always read fresh data - apply current filters to latest mockData.users
                     const searchInput = document.getElementById('userSearchInput');
                     const roleFilter = document.getElementById('userRoleFilter');
+                    const supplierFilter = document.getElementById('userSupplierFilter');
                     const statusFilter = document.getElementById('userStatusFilter');
                     
                     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
                     const selectedRole = roleFilter?.value || '';
+                    const selectedSupplier = supplierFilter?.value || '';
                     const selectedStatus = statusFilter?.value || '';
                     
                     // Always read fresh data from mockData.users
@@ -28438,6 +28647,18 @@
                         // Role filter
                         if (selectedRole && user.role !== selectedRole) {
                             return false;
+                        }
+                        
+                        // Supplier filter
+                        if (selectedSupplier) {
+                            const selectedSupplierId = parseInt(selectedSupplier);
+                            const userSupplierId = user.supplierId ? parseInt(user.supplierId) : null;
+                            const supplierObj = (mockData.suppliers || []).find(s => s.id === selectedSupplierId);
+                            const supplierNameFromMock = supplierObj ? supplierObj.name : null;
+                            
+                            if (userSupplierId !== selectedSupplierId && user.supplierName !== supplierNameFromMock) {
+                                return false;
+                            }
                         }
                         
                         // Status filter
@@ -28486,6 +28707,12 @@
                 
                 const initialRows = renderUserRows(paginateData(filteredUsers, 1));
                 
+                // Build supplier dropdown options
+                const suppliersList = mockData.suppliers || [];
+                const supplierOptionsHtml = suppliersList.map(s => 
+                    `<option value="${s.id}">${s.name}</option>`
+                ).join('');
+                
                 container.innerHTML = `
                     <div class="flex justify-between items-center mb-4">
                         <div><h3 class="text-lg font-semibold">${t('settings_users')}</h3></div>
@@ -28496,7 +28723,7 @@
                     
                     <!-- Search and Filter Section -->
                     <div class="mb-4 bg-gray-50 rounded-lg p-4">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                             <!-- Search Input -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Arama</label>
@@ -28516,6 +28743,16 @@
                                     <option value="">Tüm Roller</option>
                                     <option value="admin">Admin</option>
                                     <option value="supplier">Tedarikçi Admin</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Supplier Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tedarikçi</label>
+                                <select id="userSupplierFilter" 
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Tüm Tedarikçiler</option>
+                                    ${supplierOptionsHtml}
                                 </select>
                             </div>
                             
@@ -28614,6 +28851,7 @@
                 // Search and Filter Functionality
                 const searchInput = document.getElementById('userSearchInput');
                 const roleFilter = document.getElementById('userRoleFilter');
+                const supplierFilter = document.getElementById('userSupplierFilter');
                 const statusFilter = document.getElementById('userStatusFilter');
                 const tableBody = document.getElementById('userTableBody');
                 const searchResults = document.getElementById('userSearchResults');
@@ -28622,6 +28860,7 @@
                 const applyFilters = () => {
                     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
                     const selectedRole = roleFilter?.value || '';
+                    const selectedSupplier = supplierFilter?.value || '';
                     const selectedStatus = statusFilter?.value || '';
                     
                     // Always read fresh data from mockData.users
@@ -28641,6 +28880,18 @@
                             return false;
                         }
                         
+                        // Supplier filter
+                        if (selectedSupplier) {
+                            const selectedSupplierId = parseInt(selectedSupplier);
+                            const userSupplierId = user.supplierId ? parseInt(user.supplierId) : null;
+                            const supplierObj = (mockData.suppliers || []).find(s => s.id === selectedSupplierId);
+                            const supplierNameFromMock = supplierObj ? supplierObj.name : null;
+                            
+                            if (userSupplierId !== selectedSupplierId && user.supplierName !== supplierNameFromMock) {
+                                return false;
+                            }
+                        }
+                        
                         // Status filter
                         if (selectedStatus) {
                             if (selectedStatus === 'active' && !user.active) {
@@ -28658,7 +28909,7 @@
                     renderUsersTable();
                     
                     // Update results count
-                    if (searchTerm || selectedRole || selectedStatus) {
+                    if (searchTerm || selectedRole || selectedSupplier || selectedStatus) {
                         searchCount.textContent = `${filteredUsers.length} kullanıcı bulundu`;
                         searchResults.classList.remove('hidden');
                     } else {
@@ -28672,6 +28923,9 @@
                 }
                 if (roleFilter) {
                     roleFilter.addEventListener('change', applyFilters);
+                }
+                if (supplierFilter) {
+                    supplierFilter.addEventListener('change', applyFilters);
                 }
                 if (statusFilter) {
                     statusFilter.addEventListener('change', applyFilters);
@@ -28813,126 +29067,7 @@
                 container.querySelectorAll('.edit-word').forEach(btn => btn.addEventListener('click', () => showAddProhibitedWordModal(parseInt(btn.dataset.id))));
                 container.querySelectorAll('.del-word').forEach(btn => btn.addEventListener('click', () => deleteProhibitedWord(parseInt(btn.dataset.id))));
             } else if (tabName === 'supplier-restrictions') {
-                // Supplier Restrictions management tab
-                const allRestrictions = mockData.supplierRestrictions || [];
-                
-                const renderRestrictionsTable = () => {
-                    const paginatedRestrictions = paginateData(allRestrictions, window.paginationState.currentPage);
-                    const rows = paginatedRestrictions.map(restriction => {
-                        const typeLabel = t(`restriction_type_${restriction.restrictionType}`) || restriction.restrictionType;
-                        const statusClass = restriction.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
-                        const statusLabel = restriction.isActive ? t('restriction_active') : t('restriction_inactive');
-                        
-                        return `
-                            <tr class="border-b hover:bg-gray-50">
-                                <td class="p-3 text-sm font-medium">${restriction.supplierName}</td>
-                                <td class="p-3 text-sm">${typeLabel}</td>
-                                <td class="p-3 text-sm">${restriction.restrictionLabel}</td>
-                                <td class="p-3 text-sm">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">
-                                        ${statusLabel}
-                                    </span>
-                                </td>
-                                <td class="p-3 text-sm">${restriction.addedBy}</td>
-                                <td class="p-3 text-sm">${new Date(restriction.addedAt).toLocaleDateString('tr-TR')}</td>
-                                <td class="p-3 text-right">
-                                    <button class="p-2 text-gray-500 hover:text-blue-600 edit-restriction" data-id="${restriction.id}"><i class="fas fa-edit"></i></button>
-                                    <button class="p-2 text-gray-500 hover:text-red-600 del-restriction" data-id="${restriction.id}"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                    }).join('');
-                    
-                    const tbody = container.querySelector('#restrictions-table-body');
-                    if (tbody) {
-                        tbody.innerHTML = rows || `<tr><td colspan="7" class="p-6 text-center text-gray-500">Henüz kısıtlama tanımlanmamış.</td></tr>`;
-                    }
-                    
-                    renderPagination('restrictions-pagination');
-                    
-                    // Re-attach event listeners
-                    container.querySelectorAll('.edit-restriction').forEach(btn => btn.addEventListener('click', () => showAddSupplierRestrictionModal(parseInt(btn.dataset.id))));
-                    container.querySelectorAll('.del-restriction').forEach(btn => btn.addEventListener('click', () => deleteSupplierRestriction(parseInt(btn.dataset.id))));
-                };
-                
-                window.paginationState.renderFunction = renderRestrictionsTable;
-                paginateData(allRestrictions, 1);
-                
-                const initialRows = paginateData(allRestrictions, 1).map(restriction => {
-                    const typeLabel = t(`restriction_type_${restriction.restrictionType}`) || restriction.restrictionType;
-                    const statusClass = restriction.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
-                    const statusLabel = restriction.isActive ? t('restriction_active') : t('restriction_inactive');
-                    
-                    return `
-                        <tr class="border-b hover:bg-gray-50">
-                            <td class="p-3 text-sm font-medium">${restriction.supplierName}</td>
-                            <td class="p-3 text-sm">${typeLabel}</td>
-                            <td class="p-3 text-sm">${restriction.restrictionLabel}</td>
-                            <td class="p-3 text-sm">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${statusClass}">
-                                    ${statusLabel}
-                                </span>
-                            </td>
-                            <td class="p-3 text-sm">${restriction.addedBy}</td>
-                            <td class="p-3 text-sm">${new Date(restriction.addedAt).toLocaleDateString('tr-TR')}</td>
-                            <td class="p-3 text-right">
-                                <button class="p-2 text-gray-500 hover:text-blue-600 edit-restriction" data-id="${restriction.id}"><i class="fas fa-edit"></i></button>
-                                <button class="p-2 text-gray-500 hover:text-red-600 del-restriction" data-id="${restriction.id}"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-                
-                container.innerHTML = `
-                    <div class="mb-6">
-                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <i class="fas fa-info-circle text-blue-400"></i>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-blue-700">
-                                        Tedarikçilerin hangi kategorilerde ürün ekleyebileceğini, maksimum ürün sayısını, 
-                                        fiyat aralıklarını ve diğer kısıtlamaları buradan yönetebilirsiniz.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex justify-between items-center mb-4">
-                        <div>
-                            <h3 class="text-lg font-semibold">${t('supplier_restrictions_management')}</h3>
-                            <p class="text-sm text-gray-600 mt-1">Toplam ${allRestrictions.length} kısıtlama</p>
-                        </div>
-                        <button id="addRestrictionBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                            <i class="fas fa-shield-alt mr-2"></i> ${t('add_supplier_restriction')}
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left">
-                            <thead class="table-header">
-                                <tr>
-                                    <th class="p-3 text-sm font-semibold">${t('supplier')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('restriction_type')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('restriction_value')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('status_header')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('added_by')}</th>
-                                    <th class="p-3 text-sm font-semibold">${t('added_at')}</th>
-                                    <th class="p-3 text-sm font-semibold text-right">${t('actions_header')}</th>
-                                </tr>
-                            </thead>
-                            <tbody id="restrictions-table-body">${initialRows || `<tr><td colspan="7" class="p-6 text-center text-gray-500">Henüz kısıtlama tanımlanmamış.</td></tr>`}</tbody>
-                        </table>
-                    </div>
-                    <div id="restrictions-pagination"></div>
-                `;
-                
-                document.getElementById('addRestrictionBtn')?.addEventListener('click', () => showAddSupplierRestrictionModal());
-                container.querySelectorAll('.edit-restriction').forEach(btn => btn.addEventListener('click', () => showAddSupplierRestrictionModal(parseInt(btn.dataset.id))));
-                container.querySelectorAll('.del-restriction').forEach(btn => btn.addEventListener('click', () => deleteSupplierRestriction(parseInt(btn.dataset.id))));
-                
-                renderPagination('restrictions-pagination');
+                renderSupplierSalesPermissions(container);
             } else if (tabName === 'suppliers') {
                 // Suppliers management tab
                 const allSuppliers = mockData.suppliers || [];
@@ -29203,39 +29338,337 @@
             }
         }
 
+        // ============================================================
+        // Gelir Modeli Kuralları - ortak yardımcılar
+        // Gelir modeli tipleri: 'commission' (Komisyon) | 'margin' (Kâr Marjı)
+        // Kural kapsamları: category | supplier | supplier_category | product
+        // ============================================================
+        const DEFAULT_REVENUE_RATE = 12;
+
+        const REVENUE_MODEL_META = {
+            commission: { key: 'commission', label: 'Komisyon',  valueLabel: 'Komisyon Oranı (%)', shortValueLabel: 'Komisyon Oranı', badge: 'bg-blue-100 text-blue-800',     icon: 'fa-percentage' },
+            margin:     { key: 'margin',     label: 'Kâr Marjı', valueLabel: 'Kâr Marjı (%)',      shortValueLabel: 'Kâr Marjı',      badge: 'bg-purple-100 text-purple-800', icon: 'fa-chart-line' }
+        };
+
+        const RULE_SCOPE_META = {
+            supplier:          { label: 'Tedarikçi Bazlı',             short: 'Tedarikçi',             needsSupplier: true,  needsCategory: false, needsProduct: false },
+            category:          { label: 'Kategori Bazlı',              short: 'Kategori',              needsSupplier: false, needsCategory: true,  needsProduct: false },
+            supplier_category: { label: 'Tedarikçi + Kategori Bazlı',  short: 'Tedarikçi + Kategori',  needsSupplier: true,  needsCategory: true,  needsProduct: false },
+            product:           { label: 'Ürün Bazlı',                  short: 'Ürün',                  needsSupplier: false, needsCategory: false, needsProduct: true }
+        };
+
+        // En spesifik kapsam en başta: ürün > tedarikçi+kategori > tedarikçi > kategori
+        const RULE_SCOPE_PRIORITY = ['product', 'supplier_category', 'supplier', 'category'];
+
+        function getRevenueModelKey(rule) {
+            return rule && rule.revenueModel === 'margin' ? 'margin' : 'commission';
+        }
+
+        function getRevenueModelMeta(rule) {
+            return REVENUE_MODEL_META[getRevenueModelKey(rule)];
+        }
+
+        function getRuleScopeMeta(rule) {
+            const type = typeof rule === 'string' ? rule : (rule && rule.type);
+            return RULE_SCOPE_META[type] || { label: '-', short: '-', needsSupplier: false, needsCategory: false, needsProduct: false };
+        }
+
+        function renderRevenueModelBadge(rule) {
+            const meta = getRevenueModelMeta(rule);
+            return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${meta.badge}"><i class="fas ${meta.icon} mr-1"></i>${meta.label}</span>`;
+        }
+
+        function getRevenueRuleProductName(productId) {
+            const product = (mockData.products || []).find(p => p.id === productId);
+            if (!product) return 'Bilinmiyor';
+            const name = typeof product.name === 'object' ? t(product.name) : product.name;
+            return product.sku ? `${name} (${product.sku})` : name;
+        }
+
+        function getRevenueRuleTargetName(rule) {
+            if (!rule) return 'Bilinmiyor';
+            const supplier = rule.supplierId ? (mockData.suppliers || []).find(s => s.id === rule.supplierId) : null;
+            const category = rule.categoryId ? (mockData.categories || []).find(c => c.id === rule.categoryId) : null;
+            const supplierName = supplier ? supplier.name : 'Bilinmiyor';
+            const categoryName = category ? (typeof category.name === 'object' ? t(category.name) : category.name) : 'Bilinmiyor';
+
+            switch (rule.type) {
+                case 'supplier': return supplierName;
+                case 'category': return categoryName;
+                case 'supplier_category': return `${supplierName} - ${categoryName}`;
+                case 'product': return getRevenueRuleProductName(rule.productId);
+                default: return 'Bilinmiyor';
+            }
+        }
+
+        // Kuralın verilen tarihte yürürlükte olup olmadığı (tarihsiz/varsayılan kural her zaman geçerlidir)
+        function revenueRuleAppliesOn(rule, refDate) {
+            if (!rule) return false;
+            const date = refDate ? new Date(refDate) : new Date();
+            if (isNaN(date.getTime())) return false;
+            if (rule.startDate) {
+                const start = new Date(rule.startDate);
+                start.setHours(0, 0, 0, 0);
+                if (date.getTime() < start.getTime()) return false;
+            }
+            if (rule.endDate) {
+                const end = new Date(rule.endDate);
+                end.setHours(23, 59, 59, 999);
+                if (date.getTime() > end.getTime()) return false;
+            }
+            return true;
+        }
+
+        function getRevenueRuleStatus(rule) {
+            if (!rule) return { key: 'expired', label: 'Sona Erdi', badge: 'bg-gray-100 text-gray-600' };
+            if (rule.isDefault && !rule.startDate && !rule.endDate) {
+                return { key: 'default', label: 'Varsayılan', badge: 'bg-amber-100 text-amber-800' };
+            }
+            const now = new Date();
+            if (rule.startDate) {
+                const start = new Date(rule.startDate);
+                start.setHours(0, 0, 0, 0);
+                if (now.getTime() < start.getTime()) {
+                    return { key: 'planned', label: 'Planlandı', badge: 'bg-sky-100 text-sky-800' };
+                }
+            }
+            if (rule.endDate) {
+                const end = new Date(rule.endDate);
+                end.setHours(23, 59, 59, 999);
+                if (now.getTime() > end.getTime()) {
+                    return { key: 'expired', label: 'Sona Erdi', badge: 'bg-gray-100 text-gray-600' };
+                }
+            }
+            return { key: 'active', label: 'Aktif', badge: 'bg-green-100 text-green-800' };
+        }
+
+        function renderRevenueRuleStatusBadge(rule) {
+            const status = getRevenueRuleStatus(rule);
+            return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.badge}">${status.label}</span>`;
+        }
+
+        // İki tarih aralığı çakışıyor mu (bitiş tarihleri dahil)
+        function revenueRuleDatesOverlap(startA, endA, startB, endB) {
+            if (!startA || !endA || !startB || !endB) return false;
+            const aStart = new Date(startA); aStart.setHours(0, 0, 0, 0);
+            const aEnd = new Date(endA); aEnd.setHours(23, 59, 59, 999);
+            const bStart = new Date(startB); bStart.setHours(0, 0, 0, 0);
+            const bEnd = new Date(endB); bEnd.setHours(23, 59, 59, 999);
+            return aStart.getTime() <= bEnd.getTime() && aEnd.getTime() >= bStart.getTime();
+        }
+
+        // Aynı parametre anahtarı (kapsam + tedarikçi + kategori + ürün) örtüşen tarihlerde
+        // yalnızca TEK bir gelir modeline ait olabilir. Bu yüzden çakışma kontrolü
+        // gelir modeli tipine BAKMAZ: komisyon ile kâr marjı da birbiriyle çakışır.
+        function findConflictingRevenueRule(candidate, excludeId) {
+            const rules = mockData.revenueModelRules || [];
+            const norm = v => (v === undefined || v === '' ? null : v);
+            return rules.find(existing => {
+                if (excludeId !== null && excludeId !== undefined && existing.id === excludeId) return false;
+                if (existing.type !== candidate.type) return false;
+                if (norm(existing.supplierId) !== norm(candidate.supplierId)) return false;
+                if (norm(existing.categoryId) !== norm(candidate.categoryId)) return false;
+                if (norm(existing.productId) !== norm(candidate.productId)) return false;
+
+                const existingIsDefault = !!existing.isDefault;
+                const candidateIsDefault = !!candidate.isDefault;
+                if (candidateIsDefault && existingIsDefault) return true;
+                if (candidateIsDefault !== existingIsDefault) return false;
+
+                return revenueRuleDatesOverlap(candidate.startDate, candidate.endDate, existing.startDate, existing.endDate);
+            }) || null;
+        }
+
+        function buildRevenueConflictMessage(candidate, conflict) {
+            const scopeLabel = getRuleScopeMeta(candidate).label;
+            const conflictModel = getRevenueModelMeta(conflict).label;
+            const candidateModel = REVENUE_MODEL_META[candidate.revenueModel === 'margin' ? 'margin' : 'commission'].label;
+            const fmt = d => d ? new Date(d).toLocaleDateString('tr-TR') : '-';
+
+            let msg = 'Aynı parametrelere sahip ve tarihleri çakışan bir gelir modeli kuralı zaten mevcut.\n\n';
+            msg += `- Kural Kapsamı: ${scopeLabel}\n`;
+            msg += `- Hedef: ${getRevenueRuleTargetName(conflict)}\n`;
+            msg += `- Mevcut Gelir Modeli: ${conflictModel} (%${conflict.rate})\n`;
+            msg += `- Eklenmek İstenen Gelir Modeli: ${candidateModel} (%${candidate.rate})\n`;
+
+            if (!candidate.isDefault && !conflict.isDefault) {
+                msg += `\nMevcut Kural Tarihleri: ${fmt(conflict.startDate)} - ${fmt(conflict.endDate)}\n`;
+                msg += `Yeni Kural Tarihleri: ${fmt(candidate.startDate)} - ${fmt(candidate.endDate)}\n`;
+            } else {
+                msg += `\nHer iki kural da varsayılan olarak işaretli.\n`;
+            }
+
+            if (conflictModel !== candidateModel) {
+                msg += '\nAynı parametreler hem komisyon hem kâr marjı gelir modeliyle tanımlanamaz.';
+            }
+            if (candidate.isDefault && conflict.isDefault) {
+                msg += '\nAynı hedef için yalnızca tek bir varsayılan kural olabilir. Mevcut varsayılan kuralı güncelleyin veya silin.';
+            } else if (conflictModel !== candidateModel) {
+                msg += '\nDevam etmek için mevcut kuralın bitiş tarihini daraltın veya farklı bir tarih aralığı seçin.';
+            } else {
+                msg += '\nDevam etmek için tarih aralığını mevcut kuralla çakışmayacak şekilde güncelleyin.';
+            }
+            return msg;
+        }
+
+        // Merkezî kural çözümleyici: bir ürün/tedarikçi/tarih için hangi kuralın geçerli olduğunu döner.
+        // Öncelik: ürün > tedarikçi+kategori > tedarikçi > kategori > varsayılan kural > sabit oran
+        function resolveRevenueModelRule(productId, supplierId, refDate) {
+            const rules = mockData.revenueModelRules || [];
+            const product = (mockData.products || []).find(p => p.id === productId) || null;
+            const categoryId = product ? product.categoryId : null;
+            const date = refDate ? new Date(refDate) : new Date();
+
+            const matches = {
+                product: r => r.type === 'product' && productId != null && r.productId === productId,
+                supplier_category: r => r.type === 'supplier_category' && supplierId != null && r.supplierId === supplierId && categoryId != null && r.categoryId === categoryId,
+                supplier: r => r.type === 'supplier' && supplierId != null && r.supplierId === supplierId,
+                category: r => r.type === 'category' && categoryId != null && r.categoryId === categoryId
+            };
+
+            let winner = null;
+            for (const scope of RULE_SCOPE_PRIORITY) {
+                winner = rules.find(r => matches[scope](r) && revenueRuleAppliesOn(r, date)) || null;
+                if (winner) break;
+            }
+            if (!winner) {
+                winner = rules.find(r => r.isDefault) || null;
+            }
+
+            return {
+                rule: winner,
+                rate: winner && typeof winner.rate === 'number' ? winner.rate : DEFAULT_REVENUE_RATE,
+                revenueModel: getRevenueModelKey(winner),
+                revenueModelLabel: (winner ? getRevenueModelMeta(winner) : REVENUE_MODEL_META.commission).label,
+                scope: winner ? winner.type : null,
+                isFallback: !winner
+            };
+        }
+
+        // Platformun bir satıştan elde ettiği gelir.
+        // Komisyon: satış fiyatı x oran. Kâr marjı: satış fiyatı üzerinden brüt marj (satış x marj).
+        function calculatePlatformRevenue(resolved, salePrice) {
+            const rate = resolved && typeof resolved.rate === 'number' ? resolved.rate : DEFAULT_REVENUE_RATE;
+            return (salePrice || 0) * (rate / 100);
+        }
+
+        // Kâr marjı modelinde tedarikçi alış fiyatından hedef satış fiyatı türetimi: satış = alış / (1 - marj)
+        function calculateSalePriceFromCost(resolved, costPrice) {
+            const rate = resolved && typeof resolved.rate === 'number' ? resolved.rate : DEFAULT_REVENUE_RATE;
+            if (!resolved || resolved.revenueModel !== 'margin') return costPrice || 0;
+            if (rate >= 100) return costPrice || 0;
+            return (costPrice || 0) / (1 - rate / 100);
+        }
+
+        // ---- Ürün seçici (gelir modeli kuralları için) ----
+        function getCommissionPickerProducts() {
+            return (mockData.products || []).filter(p => !p.isArchived);
+        }
+
+        function renderCommissionProductRows(products, selectedId) {
+            return products.map(p => {
+                const isSelected = selectedId && p.id == selectedId;
+                const name = typeof p.name === 'object' ? t(p.name) : p.name;
+                return `<div class="py-2 px-3 hover:bg-gray-100 transition-colors rounded cursor-pointer ${isSelected ? 'bg-blue-100' : ''}" data-product-id="${p.id}" onclick="selectCommissionProduct('${p.id}');">
+                    <div class="flex items-center">
+                        <i class="fas fa-box text-gray-400 text-xs mr-2"></i>
+                        <span class="text-sm text-gray-700 product-name">${name}</span>
+                        <span class="text-xs text-gray-400 ml-2">${p.sku || ''}</span>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function createCommissionProductPicker(selectedId = null) {
+            const products = getCommissionPickerProducts();
+            const selectedProduct = selectedId ? products.find(p => p.id == selectedId) : null;
+            const selectedName = selectedProduct
+                ? (typeof selectedProduct.name === 'object' ? t(selectedProduct.name) : selectedProduct.name)
+                : (t('no_product_selected') || 'Ürün seçilmedi');
+
+            return `<div class="space-y-3">
+                <div class="bg-gradient-to-r from-emerald-50 to-teal-50 p-4 rounded-lg border border-emerald-200">
+                    <div class="flex items-center space-x-2 mb-2">
+                        <i class="fas fa-box text-emerald-600"></i>
+                        <label class="block text-sm font-semibold text-gray-700">${t('product') || 'Ürün'}</label>
+                    </div>
+                    <p class="text-xs text-gray-600">${t('product_picker_description') || 'Ürün listesinden bir ürün seçin veya ad/SKU ile arayın.'}</p>
+                </div>
+
+                <div id="commission-product-container" class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-4">
+                    <div class="mb-3 pb-3 border-b border-gray-200">
+                        <div class="relative">
+                            <input type="text" id="commission-product-search"
+                                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                   placeholder="${t('search') || 'Ara'}...">
+                            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="commission-product-list">
+                        ${renderCommissionProductRows(products, selectedId)}
+                    </div>
+                </div>
+
+                <div id="commission-selected-product-display" class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                    <small class="text-gray-600">${t('selected') || 'Seçilen'}: </small>
+                    <span id="commission-selected-product-name" class="font-semibold text-emerald-700">
+                        ${selectedName}
+                    </span>
+                </div>
+
+                <input type="hidden" id="commission-product" value="${selectedId || ''}">
+            </div>`;
+        }
+
+        function selectCommissionProduct(productId) {
+            const hiddenInput = document.getElementById('commission-product');
+            const displaySpan = document.getElementById('commission-selected-product-name');
+
+            if (hiddenInput) {
+                hiddenInput.value = productId || '';
+            }
+
+            if (displaySpan) {
+                const product = productId ? (mockData.products || []).find(p => p.id == productId) : null;
+                displaySpan.textContent = product
+                    ? (typeof product.name === 'object' ? t(product.name) : product.name)
+                    : (t('no_product_selected') || 'Ürün seçilmedi');
+            }
+
+            document.querySelectorAll('#commission-product-container [data-product-id]').forEach(el => {
+                el.classList.remove('bg-blue-100');
+            });
+            if (productId) {
+                const selectedEl = document.querySelector(`#commission-product-container [data-product-id="${productId}"]`);
+                if (selectedEl) {
+                    selectedEl.classList.add('bg-blue-100');
+                }
+            }
+        }
+
+        function filterCommissionProductList(searchTerm) {
+            const list = document.getElementById('commission-product-list');
+            if (!list) return;
+            const lower = (searchTerm || '').toLowerCase();
+            const filtered = getCommissionPickerProducts().filter(p => {
+                const name = typeof p.name === 'object' ? t(p.name) : p.name;
+                return (name || '').toLowerCase().includes(lower) || (p.sku || '').toLowerCase().includes(lower);
+            });
+            const selectedId = document.getElementById('commission-product')?.value;
+            list.innerHTML = renderCommissionProductRows(filtered, selectedId)
+                || `<div class="py-2 px-3 text-sm text-gray-500 text-center">${t('no_product_found') || 'Ürün bulunamadı'}</div>`;
+        }
+
         function showAddCommissionModal(editId = null) {
             // Explicitly check if we're editing - only if editId is a valid number
             const isEditing = editId !== null && editId !== undefined && editId !== '' && !isNaN(Number(editId)) && Number(editId) > 0;
-            const rule = isEditing ? mockData.commissionRules.find(x => x.id === editId) : null;
+            const rule = isEditing ? mockData.revenueModelRules.find(x => x.id === editId) : null;
             const title = isEditing ? t('edit_rule') : t('add_commission_rule');
-            
-            console.log('showAddCommissionModal called:', { editId, isEditing, title });
-            
-            const supplierOptions = mockData.suppliers.map(s => `<option value="${s.id}" ${rule?.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`).join('');
-            const categoryOptions = mockData.categories.map(c => `<option value="${c.id}" ${rule?.categoryId === c.id ? 'selected' : ''}>${t(c.name)}</option>`).join('');
-            
-            // Get display names for read-only fields in edit mode
-            let supplierName = '';
-            let categoryName = '';
-            let ruleTypeName = '';
-            if (isEditing && rule) {
-                if (rule.type === 'supplier' && rule.supplierId) {
-                    const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
-                    supplierName = supplier ? supplier.name : 'Bilinmiyor';
-                    ruleTypeName = 'Tedarikçi Bazlı';
-                } else if (rule.type === 'category' && rule.categoryId) {
-                    const category = mockData.categories.find(c => c.id === rule.categoryId);
-                    categoryName = category ? t(category.name) : 'Bilinmiyor';
-                    ruleTypeName = 'Kategori Bazlı';
-                } else if (rule.type === 'supplier_category') {
-                    const supplier = rule.supplierId ? mockData.suppliers.find(s => s.id === rule.supplierId) : null;
-                    const category = rule.categoryId ? mockData.categories.find(c => c.id === rule.categoryId) : null;
-                    supplierName = supplier ? supplier.name : '';
-                    categoryName = category ? t(category.name) : '';
-                    ruleTypeName = 'Tedarikçi + Kategori Bazlı';
-                }
-            }
-            
+
+            const modelKey = getRevenueModelKey(rule);
+            const modelMeta = REVENUE_MODEL_META[modelKey];
+            const scopeMeta = getRuleScopeMeta(rule);
+
             const body = isEditing ? `
                 <div class="space-y-4">
                     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
@@ -29245,7 +29678,8 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-blue-700">
-                                    Düzenleme modunda sadece komisyon oranı ve tarihler değiştirilebilir. Diğer alanlar salt okunurdur.
+                                    Düzenleme modunda sadece oran ve tarihler değiştirilebilir. Gelir modeli, kapsam ve hedef alanları salt okunurdur.
+                                    Gelir modelini değiştirmek için mevcut kuralı sonlandırıp yeni bir kural oluşturun.
                                 </p>
                             </div>
                         </div>
@@ -29254,19 +29688,32 @@
                         <h4 class="text-sm font-semibold text-gray-700 mb-3">Kural Bilgileri (Salt Okunur)</h4>
                         <div class="space-y-3">
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('rule_type')}</label>
-                                <div class="text-sm font-medium text-gray-900">${ruleTypeName}</div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('revenue_model') || 'Gelir Modeli'}</label>
+                                <div>${renderRevenueModelBadge(rule)}</div>
                             </div>
-                            ${rule?.type !== 'category' ? `
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('rule_scope') || 'Kural Kapsamı'}</label>
+                                <div class="text-sm font-medium text-gray-900">${scopeMeta.label}</div>
+                            </div>
+                            ${scopeMeta.needsSupplier ? `
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 mb-1">${t('supplier')}</label>
-                                <div class="text-sm font-medium text-gray-900">${supplierName || 'Tüm Tedarikçiler'}</div>
+                                <div class="text-sm font-medium text-gray-900">${(mockData.suppliers.find(s => s.id === rule?.supplierId) || {}).name || 'Tüm Tedarikçiler'}</div>
                             </div>
                             ` : ''}
-                            ${rule?.type !== 'supplier' ? `
+                            ${scopeMeta.needsCategory ? `
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 mb-1">${t('category')}</label>
-                                <div class="text-sm font-medium text-gray-900">${categoryName || 'Tüm Kategoriler'}</div>
+                                <div class="text-sm font-medium text-gray-900">${(() => {
+                                    const c = mockData.categories.find(c => c.id === rule?.categoryId);
+                                    return c ? t(c.name) : 'Tüm Kategoriler';
+                                })()}</div>
+                            </div>
+                            ` : ''}
+                            ${scopeMeta.needsProduct ? `
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${t('product') || 'Ürün'}</label>
+                                <div class="text-sm font-medium text-gray-900">${getRevenueRuleProductName(rule?.productId)}</div>
                             </div>
                             ` : ''}
                             <div>
@@ -29279,8 +29726,8 @@
                         <h4 class="text-sm font-semibold text-gray-700 mb-3">Düzenlenebilir Alanlar</h4>
                         <div class="space-y-4">
                             <div>
-                                <label for="commission-rate" class="block text-sm font-medium text-gray-700">${t('commission_rate')}</label>
-                                <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.rate || ''}" placeholder="15" min="0" max="100" step="0.1">
+                                <label for="commission-rate" id="commission-rate-label" class="block text-sm font-medium text-gray-700">${modelMeta.valueLabel}</label>
+                                <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.rate ?? ''}" placeholder="15" min="0" max="100" step="0.1">
                             </div>
                             <div>
                                 <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
@@ -29302,52 +29749,65 @@
                             </div>
                             <div class="ml-3">
                                 <p class="text-sm text-green-700">
-                                    Yeni komisyon kuralı oluşturmak için tüm alanları doldurun.
+                                    Yeni gelir modeli kuralı oluşturmak için tüm alanları doldurun.
+                                    Aynı parametreler (kapsam + hedef) örtüşen tarihlerde yalnızca tek bir gelir modeliyle tanımlanabilir.
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <label for="commission-type" class="block text-sm font-medium text-gray-700">${t('rule_type')}</label>
-                        <select id="commission-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                            <option value="supplier" ${rule?.type === 'supplier' ? 'selected' : ''}>Tedarikçi Bazlı</option>
-                            <option value="category" ${rule?.type === 'category' ? 'selected' : ''}>Kategori Bazlı</option>
-                            <option value="supplier_category" ${rule?.type === 'supplier_category' ? 'selected' : ''}>Tedarikçi + Kategori Bazlı</option>
+                        <label for="commission-revenue-model" class="block text-sm font-medium text-gray-700">${t('revenue_model') || 'Gelir Modeli'}</label>
+                        <select id="commission-revenue-model" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="commission">Komisyon</option>
+                            <option value="margin">Kâr Marjı</option>
                         </select>
-                    </div>
-                    <div id="supplier-selection" class="${rule?.type === 'category' ? 'hidden' : ''}">
-                        ${createCommissionSupplierPicker(rule?.supplierId || null)}
-                    </div>
-                    <div id="category-selection" class="${rule?.type === 'supplier' ? 'hidden' : ''}">
-                        ${createCommissionCategoryPicker(rule?.categoryId || null)}
+                        <p id="commission-revenue-model-hint" class="mt-1 text-xs text-gray-500">Komisyon: platform geliri satış fiyatı üzerinden komisyon oranı kadar kesilir.</p>
                     </div>
                     <div>
-                        <label for="commission-rate" class="block text-sm font-medium text-gray-700">${t('commission_rate')}</label>
-                        <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.rate || ''}" placeholder="15" min="0" max="100" step="0.1">
+                        <label for="commission-type" class="block text-sm font-medium text-gray-700">${t('rule_scope') || 'Kural Kapsamı'}</label>
+                        <select id="commission-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="supplier">Tedarikçi Bazlı</option>
+                            <option value="category">Kategori Bazlı</option>
+                            <option value="supplier_category">Tedarikçi + Kategori Bazlı</option>
+                            <option value="product">Ürün Bazlı</option>
+                        </select>
+                    </div>
+                    <div id="supplier-selection">
+                        ${createCommissionSupplierPicker(null)}
+                    </div>
+                    <div id="category-selection" class="hidden">
+                        ${createCommissionCategoryPicker(null)}
+                    </div>
+                    <div id="product-selection" class="hidden">
+                        ${createCommissionProductPicker(null)}
+                    </div>
+                    <div>
+                        <label for="commission-rate" id="commission-rate-label" class="block text-sm font-medium text-gray-700">${REVENUE_MODEL_META.commission.valueLabel}</label>
+                        <input type="number" id="commission-rate" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="" placeholder="15" min="0" max="100" step="0.1">
                     </div>
                     <div class="flex items-center">
-                        <input type="checkbox" id="commission-default" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" ${rule?.isDefault ? 'checked' : ''}>
+                        <input type="checkbox" id="commission-default" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                         <label for="commission-default" class="ml-2 block text-sm font-medium text-gray-700">Varsayılan</label>
                     </div>
                     <div>
-                        <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
-                        <input type="date" id="commission-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.startDate || ''}" ${rule?.isDefault ? 'disabled' : 'required'}>
+                        <label for="commission-start-date" class="block text-sm font-medium text-gray-700">${t('start_date')} <span class="text-red-500">*</span></label>
+                        <input type="date" id="commission-start-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="" required>
                     </div>
                     <div>
-                        <label for="commission-end-date" class="block text-sm font-medium text-gray-700">${t('end_date')}${rule?.isDefault ? '' : ' <span class="text-red-500">*</span>'}</label>
-                        <input type="date" id="commission-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="${rule?.endDate || ''}" ${rule?.isDefault ? 'disabled' : 'required'}>
+                        <label for="commission-end-date" class="block text-sm font-medium text-gray-700">${t('end_date')} <span class="text-red-500">*</span></label>
+                        <input type="date" id="commission-end-date" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="" required>
                     </div>
                 </div>
             `;
-            
+
             showModal(title, body, t('save'), () => saveCommission(editId));
-            
+
             // Ensure buttons are visible after modal is shown
             setTimeout(() => {
                 const modalConfirm = document.getElementById('modal-confirm');
                 const modalCancel = document.getElementById('modal-cancel');
                 const modalFooter = document.getElementById('modal-footer');
-                
+
                 if (modalConfirm) {
                     modalConfirm.classList.remove('hidden');
                     modalConfirm.style.display = 'block';
@@ -29365,208 +29825,120 @@
                     modalFooter.style.display = 'flex';
                 }
             }, 50);
-            
-            // Handle type change (only in create mode, not edit mode)
+
             if (!isEditing) {
                 setTimeout(() => {
+                    // Gelir modeli değişince oran etiketi ve açıklama güncellenir
+                    const modelSelect = document.getElementById('commission-revenue-model');
+                    if (modelSelect) {
+                        modelSelect.addEventListener('change', (e) => {
+                            const meta = REVENUE_MODEL_META[e.target.value] || REVENUE_MODEL_META.commission;
+                            const rateLabel = document.getElementById('commission-rate-label');
+                            const hint = document.getElementById('commission-revenue-model-hint');
+                            if (rateLabel) rateLabel.textContent = meta.valueLabel;
+                            if (hint) {
+                                hint.textContent = e.target.value === 'margin'
+                                    ? 'Kâr marjı: platform geliri satış fiyatı üzerinden brüt marj olarak hesaplanır (satış = alış / (1 - marj)).'
+                                    : 'Komisyon: platform geliri satış fiyatı üzerinden komisyon oranı kadar kesilir.';
+                            }
+                        });
+                    }
+
+                    // Kapsam değişince ilgili seçiciler gösterilir/gizlenir
                     const typeSelect = document.getElementById('commission-type');
                     if (typeSelect) {
                         typeSelect.addEventListener('change', (e) => {
-                            const type = e.target.value;
+                            const meta = getRuleScopeMeta(e.target.value);
                             const supplierDiv = document.getElementById('supplier-selection');
                             const categoryDiv = document.getElementById('category-selection');
-                            
-                            if (type === 'supplier') {
-                                supplierDiv.classList.remove('hidden');
-                                categoryDiv.classList.add('hidden');
-                            } else if (type === 'category') {
-                                supplierDiv.classList.add('hidden');
-                                categoryDiv.classList.remove('hidden');
-                            } else if (type === 'supplier_category') {
-                                supplierDiv.classList.remove('hidden');
-                                categoryDiv.classList.remove('hidden');
-                            }
+                            const productDiv = document.getElementById('product-selection');
+
+                            supplierDiv?.classList.toggle('hidden', !meta.needsSupplier);
+                            categoryDiv?.classList.toggle('hidden', !meta.needsCategory);
+                            productDiv?.classList.toggle('hidden', !meta.needsProduct);
+
+                            // Kapsam dışı kalan seçimleri temizle
+                            if (!meta.needsSupplier) selectCommissionSupplier('');
+                            if (!meta.needsCategory && typeof selectCommissionCategory === 'function') selectCommissionCategory('');
+                            if (!meta.needsProduct) selectCommissionProduct('');
                         });
                     }
-                    
-                    // Add search functionality for supplier picker
-                    const supplierSearchInput = document.getElementById('commission-supplier-search');
-                    if (supplierSearchInput) {
-                        supplierSearchInput.addEventListener('input', (e) => {
-                            filterCommissionSupplierList(e.target.value);
-                        });
-                    }
-                    
-                    // Add click handlers for supplier list items
-                    const supplierContainer = document.getElementById('commission-supplier-container');
-                    if (supplierContainer) {
-                        supplierContainer.addEventListener('click', (e) => {
-                            const supplierItem = e.target.closest('[data-supplier-id]');
-                            if (supplierItem) {
-                                const supplierId = supplierItem.getAttribute('data-supplier-id');
-                                selectCommissionSupplier(supplierId);
-                            }
-                        });
-                    }
-                    
-                    // Add search functionality for category picker
-                    const categorySearchInput = document.getElementById('commission-category-search');
-                    if (categorySearchInput) {
-                        categorySearchInput.addEventListener('input', (e) => {
-                            filterCommissionCategoryTree(e.target.value);
-                        });
-                    }
-                    
-                    // Add click handlers for category tree items
-                    const categoryTreeContainer = document.getElementById('commission-category-tree-container');
-                    if (categoryTreeContainer) {
-                        categoryTreeContainer.addEventListener('click', (e) => {
-                            const categoryItem = e.target.closest('[data-category-id]');
-                            if (categoryItem && !e.target.closest('i.fa-chevron-right')) {
-                                const categoryId = categoryItem.getAttribute('data-category-id');
-                                selectCommissionCategory(categoryId);
-                            }
-                        });
-                    }
-                }, 50);
-            } else {
-                // In edit mode, still add search functionality if supplier/category selection is visible
-                setTimeout(() => {
-                    // Supplier search
-                    const supplierSearchInput = document.getElementById('commission-supplier-search');
-                    if (supplierSearchInput) {
-                        supplierSearchInput.addEventListener('input', (e) => {
-                            filterCommissionSupplierList(e.target.value);
-                        });
-                    }
-                    
-                    const supplierContainer = document.getElementById('commission-supplier-container');
-                    if (supplierContainer) {
-                        supplierContainer.addEventListener('click', (e) => {
-                            const supplierItem = e.target.closest('[data-supplier-id]');
-                            if (supplierItem) {
-                                const supplierId = supplierItem.getAttribute('data-supplier-id');
-                                selectCommissionSupplier(supplierId);
-                            }
-                        });
-                    }
-                    
-                    // Category search
-                    const categorySearchInput = document.getElementById('commission-category-search');
-                    if (categorySearchInput) {
-                        categorySearchInput.addEventListener('input', (e) => {
-                            filterCommissionCategoryTree(e.target.value);
-                        });
-                    }
-                    
-                    const categoryTreeContainer = document.getElementById('commission-category-tree-container');
-                    if (categoryTreeContainer) {
-                        categoryTreeContainer.addEventListener('click', (e) => {
-                            const categoryItem = e.target.closest('[data-category-id]');
-                            if (categoryItem && !e.target.closest('i.fa-chevron-right')) {
-                                const categoryId = categoryItem.getAttribute('data-category-id');
-                                selectCommissionCategory(categoryId);
-                            }
-                        });
-                    }
-                }, 50);
-            }
-            
-            // Handle default checkbox change - disable/enable date fields (only in create mode)
-            if (!isEditing) {
-                setTimeout(() => {
+
+                    // Tedarikçi seçici
+                    document.getElementById('commission-supplier-search')?.addEventListener('input', (e) => {
+                        filterCommissionSupplierList(e.target.value);
+                    });
+                    document.getElementById('commission-supplier-container')?.addEventListener('click', (e) => {
+                        const supplierItem = e.target.closest('[data-supplier-id]');
+                        if (supplierItem) {
+                            selectCommissionSupplier(supplierItem.getAttribute('data-supplier-id'));
+                        }
+                    });
+
+                    // Kategori seçici
+                    document.getElementById('commission-category-search')?.addEventListener('input', (e) => {
+                        filterCommissionCategoryTree(e.target.value);
+                    });
+                    document.getElementById('commission-category-tree-container')?.addEventListener('click', (e) => {
+                        const categoryItem = e.target.closest('[data-category-id]');
+                        if (categoryItem && !e.target.closest('i.fa-chevron-right')) {
+                            selectCommissionCategory(categoryItem.getAttribute('data-category-id'));
+                        }
+                    });
+
+                    // Ürün seçici
+                    document.getElementById('commission-product-search')?.addEventListener('input', (e) => {
+                        filterCommissionProductList(e.target.value);
+                    });
+                    document.getElementById('commission-product-container')?.addEventListener('click', (e) => {
+                        const productItem = e.target.closest('[data-product-id]');
+                        if (productItem) {
+                            selectCommissionProduct(productItem.getAttribute('data-product-id'));
+                        }
+                    });
+
+                    // Varsayılan işaretlenince tarih alanları devre dışı kalır
                     const defaultCheckbox = document.getElementById('commission-default');
                     const startDateInput = document.getElementById('commission-start-date');
                     const endDateInput = document.getElementById('commission-end-date');
-                    
                     if (defaultCheckbox && startDateInput && endDateInput) {
-                    const startDateLabel = document.querySelector('label[for="commission-start-date"]');
-                    const endDateLabel = document.querySelector('label[for="commission-end-date"]');
-                    
-                    // Store base label text (remove asterisk if present)
-                    const getBaseLabelText = (label) => {
-                        if (!label) return '';
-                        const text = label.textContent || label.innerText || '';
-                        return text.replace(/\*/g, '').trim();
-                    };
-                    const startDateLabelText = startDateLabel ? getBaseLabelText(startDateLabel) : t('start_date');
-                    const endDateLabelText = endDateLabel ? getBaseLabelText(endDateLabel) : t('end_date');
-                    
-                    // Set initial state
-                    const toggleDateFields = (disabled, clearValues = false) => {
-                        startDateInput.disabled = disabled;
-                        endDateInput.disabled = disabled;
-                        if (disabled) {
-                            startDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-                            endDateInput.classList.add('bg-gray-100', 'cursor-not-allowed');
-                            startDateInput.removeAttribute('required');
-                            endDateInput.removeAttribute('required');
-                            // Remove required asterisk from labels
-                            if (startDateLabel) {
-                                startDateLabel.innerHTML = startDateLabelText;
+                        const toggleDateFields = (disabled, clearValues = false) => {
+                            startDateInput.disabled = disabled;
+                            endDateInput.disabled = disabled;
+                            startDateInput.classList.toggle('bg-gray-100', disabled);
+                            startDateInput.classList.toggle('cursor-not-allowed', disabled);
+                            endDateInput.classList.toggle('bg-gray-100', disabled);
+                            endDateInput.classList.toggle('cursor-not-allowed', disabled);
+                            if (disabled) {
+                                startDateInput.removeAttribute('required');
+                                endDateInput.removeAttribute('required');
+                                if (clearValues) {
+                                    startDateInput.value = '';
+                                    endDateInput.value = '';
+                                }
+                            } else {
+                                startDateInput.setAttribute('required', 'required');
+                                endDateInput.setAttribute('required', 'required');
                             }
-                            if (endDateLabel) {
-                                endDateLabel.innerHTML = endDateLabelText;
-                            }
-                            // Clear date values only when explicitly requested (user toggled checkbox)
-                            if (clearValues) {
-                                startDateInput.value = '';
-                                endDateInput.value = '';
-                            }
-                        } else {
-                            startDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                            endDateInput.classList.remove('bg-gray-100', 'cursor-not-allowed');
-                            startDateInput.setAttribute('required', 'required');
-                            endDateInput.setAttribute('required', 'required');
-                            // Add required asterisk to labels
-                            if (startDateLabel) {
-                                startDateLabel.innerHTML = startDateLabelText + ' <span class="text-red-500">*</span>';
-                            }
-                            if (endDateLabel) {
-                                endDateLabel.innerHTML = endDateLabelText + ' <span class="text-red-500">*</span>';
-                            }
-                        }
-                    };
-                    
-                    // Set initial state based on checkbox (don't clear values on initial load)
-                    toggleDateFields(defaultCheckbox.checked, false);
-                    
-                    // Add event listener (clear values when user toggles)
-                    defaultCheckbox.addEventListener('change', (e) => {
-                        toggleDateFields(e.target.checked, true);
-                    });
+                        };
+                        toggleDateFields(defaultCheckbox.checked, false);
+                        defaultCheckbox.addEventListener('change', (e) => toggleDateFields(e.target.checked, true));
                     }
                 }, 50);
             }
         }
 
+
         function showCommissionDetailModal(ruleId) {
-            const rule = mockData.commissionRules.find(x => x.id === ruleId);
+            const rule = mockData.revenueModelRules.find(x => x.id === ruleId);
             if (!rule) {
-                alert('Komisyon kuralı bulunamadı.');
+                alert('Gelir modeli kuralı bulunamadı.');
                 return;
             }
-            
-            // Get rule display info
-            let targetName = '';
-            let ruleType = '';
-            
-            if (rule.type === 'supplier') {
-                const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
-                targetName = supplier ? supplier.name : 'Bilinmiyor';
-                ruleType = 'Tedarikçi Bazlı';
-            } else if (rule.type === 'category') {
-                const category = mockData.categories.find(c => c.id === rule.categoryId);
-                targetName = category ? t(category.name) : 'Bilinmiyor';
-                ruleType = 'Kategori Bazlı';
-            } else if (rule.type === 'supplier_category') {
-                const supplier = mockData.suppliers.find(s => s.id === rule.supplierId);
-                const category = mockData.categories.find(c => c.id === rule.categoryId);
-                const supplierName = supplier ? supplier.name : 'Bilinmiyor';
-                const categoryName = category ? t(category.name) : 'Bilinmiyor';
-                targetName = `${supplierName} - ${categoryName}`;
-                ruleType = 'Tedarikçi + Kategori Bazlı';
-            }
+
+            const targetName = getRevenueRuleTargetName(rule);
+            const ruleType = getRuleScopeMeta(rule).label;
+            const modelMeta = getRevenueModelMeta(rule);
             
             const startDate = rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-';
             const endDate = rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-';
@@ -29670,12 +30042,20 @@
                                 <div class="text-sm font-medium text-gray-900">${targetName}${defaultIndicator}</div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Komisyon Tipi</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Gelir Modeli</label>
+                                <div>${renderRevenueModelBadge(rule)}</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Kural Kapsamı</label>
                                 <div class="text-sm font-medium text-gray-900">${ruleType}</div>
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-gray-500 mb-1">Komisyon Oranı</label>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">${modelMeta.shortValueLabel}</label>
                                 <div class="text-sm font-medium text-gray-900">${rule.rate}%</div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-500 mb-1">Durum</label>
+                                <div>${renderRevenueRuleStatusBadge(rule)}</div>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-500 mb-1">Varsayılan</label>
@@ -29710,270 +30090,181 @@
                 </div>
             `;
             
-            showModal('Komisyon Kuralı Detayları', body, 'Kapat', closeModal);
+            showModal('Gelir Modeli Kuralı Detayları', body, 'Kapat', closeModal);
         }
 
         function saveCommission(editId) {
             try {
                 const isEditing = editId !== null && editId !== undefined && !isNaN(editId) && editId > 0;
-                
+
+                const modelEl = document.getElementById('commission-revenue-model');
                 const typeEl = document.getElementById('commission-type');
                 const supplierEl = document.getElementById('commission-supplier');
                 const categoryEl = document.getElementById('commission-category');
+                const productEl = document.getElementById('commission-product');
                 const rateEl = document.getElementById('commission-rate');
-                const defaultRateEl = document.getElementById('commission-default-rate');
                 const startDateEl = document.getElementById('commission-start-date');
                 const endDateEl = document.getElementById('commission-end-date');
                 const defaultCheckboxEl = document.getElementById('commission-default');
-                
-                // In edit mode, we don't need typeEl, supplierEl, categoryEl, or defaultCheckboxEl
-                // Only rateEl is required
+
                 if (!rateEl) {
                     console.error('Required form elements not found');
                     alert('Form alanları bulunamadı. Lütfen sayfayı yenileyin.');
-                    return false; // Return false to prevent modal from closing
+                    return false;
                 }
-                
-                // In edit mode, get values from the original rule instead of form fields
-                let type, supplierId, categoryId, isDefault;
+
+                if (!mockData.revenueModelRules) {
+                    mockData.revenueModelRules = [];
+                }
+
+                // Düzenlemede gelir modeli / kapsam / hedef salt okunur: mevcut kuraldan alınır
+                let revenueModel, type, supplierId, categoryId, productId, isDefault;
                 if (isEditing) {
-                    const rule = mockData.commissionRules.find(x => x.id === editId);
-                    if (!rule) {
+                    const existing = mockData.revenueModelRules.find(x => x.id === editId);
+                    if (!existing) {
                         alert('Düzenlenecek kural bulunamadı.');
                         return false;
                     }
-                    type = rule.type;
-                    supplierId = rule.supplierId;
-                    categoryId = rule.categoryId;
-                    isDefault = rule.isDefault;
+                    revenueModel = getRevenueModelKey(existing);
+                    type = existing.type;
+                    supplierId = existing.supplierId ?? null;
+                    categoryId = existing.categoryId ?? null;
+                    productId = existing.productId ?? null;
+                    isDefault = !!existing.isDefault;
                 } else {
-                    // Create mode - get values from form fields
                     if (!typeEl) {
                         console.error('Required form elements not found');
                         alert('Form alanları bulunamadı. Lütfen sayfayı yenileyin.');
                         return false;
                     }
+                    revenueModel = modelEl && modelEl.value === 'margin' ? 'margin' : 'commission';
                     type = typeEl.value;
-                    supplierId = supplierEl && supplierEl.value && supplierEl.value.trim() !== '' ? parseInt(supplierEl.value) : null;
-                    categoryId = categoryEl && categoryEl.value && categoryEl.value.trim() !== '' ? parseInt(categoryEl.value) : null;
+                    const scopeMeta = getRuleScopeMeta(type);
+                    supplierId = scopeMeta.needsSupplier && supplierEl && supplierEl.value.trim() !== '' ? parseInt(supplierEl.value) : null;
+                    categoryId = scopeMeta.needsCategory && categoryEl && categoryEl.value.trim() !== '' ? parseInt(categoryEl.value) : null;
+                    productId = scopeMeta.needsProduct && productEl && productEl.value.trim() !== '' ? parseInt(productEl.value) : null;
                     isDefault = defaultCheckboxEl ? defaultCheckboxEl.checked : false;
                 }
-                
+
+                const modelMeta = REVENUE_MODEL_META[revenueModel];
+                const scopeMeta = getRuleScopeMeta(type);
                 const rate = parseFloat(rateEl.value);
-                const defaultRate = defaultRateEl ? parseFloat(defaultRateEl.value) : NaN;
-                // Clear dates if default is checked
                 const startDate = isDefault ? '' : (startDateEl ? startDateEl.value : '');
                 const endDate = isDefault ? '' : (endDateEl ? endDateEl.value : '');
-                
-                // Validation
-                if ((!isEditing && !type) || isNaN(rate) || rate < 0 || rate > 100) {
-                    alert('Lütfen tüm alanları doğru doldurun. Komisyon oranı 0-100 arasında olmalıdır.');
-                    return false; // Return false to prevent modal from closing
+
+                // Doğrulama
+                if (!isEditing && !type) {
+                    alert('Lütfen kural kapsamı seçin.');
+                    return false;
                 }
-                
-                // Validate dates are required when not default
+                if (isNaN(rate) || rate < 0 || rate > 100) {
+                    alert(`Lütfen geçerli bir değer girin. ${modelMeta.shortValueLabel} 0-100 arasında olmalıdır.`);
+                    return false;
+                }
+                if (revenueModel === 'margin' && rate >= 100) {
+                    alert('Kâr marjı %100 veya üzeri olamaz.');
+                    return false;
+                }
+                if (!isEditing) {
+                    if (scopeMeta.needsSupplier && !supplierId) {
+                        alert('Lütfen bir tedarikçi seçin.');
+                        return false;
+                    }
+                    if (scopeMeta.needsCategory && !categoryId) {
+                        alert('Lütfen bir kategori seçin.');
+                        return false;
+                    }
+                    if (scopeMeta.needsProduct && !productId) {
+                        alert('Lütfen bir ürün seçin.');
+                        return false;
+                    }
+                }
                 if (!isDefault) {
                     if (!startDate) {
                         alert('Başlangıç tarihi gereklidir.');
-                        return false; // Return false to prevent modal from closing
+                        return false;
                     }
                     if (!endDate) {
                         alert('Bitiş tarihi gereklidir.');
-                        return false; // Return false to prevent modal from closing
+                        return false;
                     }
                     if (new Date(startDate) > new Date(endDate)) {
                         alert('Başlangıç tarihi bitiş tarihinden sonra olamaz.');
-                        return false; // Return false to prevent modal from closing
-                    }
-                }
-                
-                // Ensure commissionRules array exists
-                if (!mockData.commissionRules) {
-                    mockData.commissionRules = [];
-                }
-                
-                // Check for duplicate or overlapping commission rule (only when creating new, not editing)
-                if (editId === null || editId === undefined || isNaN(editId)) {
-                    const conflictingRule = mockData.commissionRules.find(existingRule => {
-                        // Check if type matches
-                        if (existingRule.type !== type) return false;
-                        
-                        // Check if parameters match (supplierId and categoryId)
-                        if (existingRule.supplierId !== supplierId) return false;
-                        if (existingRule.categoryId !== categoryId) return false;
-                        
-                        // If both are default, they conflict
-                        if (isDefault && existingRule.isDefault) {
-                            return true;
-                        }
-                        
-                        // If one is default and the other is not, they don't conflict
-                        if (isDefault !== existingRule.isDefault) {
-                            return false;
-                        }
-                        
-                        // Both are not default - check for date overlap
-                        if (!isDefault && !existingRule.isDefault) {
-                            const existingStartDate = existingRule.startDate || '';
-                            const existingEndDate = existingRule.endDate || '';
-                            
-                            // If existing rule has no dates, skip
-                            if (!existingStartDate || !existingEndDate) {
-                                return false;
-                            }
-                            
-                            // If new rule has no dates, skip (shouldn't happen due to validation, but check anyway)
-                            if (!startDate || !endDate) {
-                                return false;
-                            }
-                            
-                            // Check for date overlap
-                            // Two date ranges overlap if:
-                            // newStart <= existingEnd AND newEnd >= existingStart
-                            // Normalize dates to start of day for accurate comparison
-                            const newStart = new Date(startDate);
-                            newStart.setHours(0, 0, 0, 0);
-                            const newEnd = new Date(endDate);
-                            newEnd.setHours(23, 59, 59, 999); // End of day
-                            
-                            const existingStart = new Date(existingStartDate);
-                            existingStart.setHours(0, 0, 0, 0);
-                            const existingEnd = new Date(existingEndDate);
-                            existingEnd.setHours(23, 59, 59, 999); // End of day
-                            
-                            // Check if dates overlap
-                            // Overlap occurs when: newStart <= existingEnd AND newEnd >= existingStart
-                            const hasOverlap = newStart.getTime() <= existingEnd.getTime() && newEnd.getTime() >= existingStart.getTime();
-                            
-                            if (hasOverlap) {
-                                console.log('Date overlap detected:', {
-                                    newStart: startDate,
-                                    newEnd: endDate,
-                                    existingStart: existingStartDate,
-                                    existingEnd: existingEndDate
-                                });
-                                return true; // Dates overlap
-                            }
-                        }
-                        
                         return false;
-                    });
-                    
-                    if (conflictingRule) {
-                        let conflictMessage = 'Aynı parametrelere sahip ve tarihleri çakışan bir komisyon kuralı zaten mevcut:\n\n';
-                        conflictMessage += `- Komisyon Tipi: ${type === 'supplier' ? 'Tedarikçi Bazlı' : type === 'category' ? 'Kategori Bazlı' : 'Tedarikçi + Kategori Bazlı'}\n`;
-                        
-                        if (supplierId) {
-                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                            conflictMessage += `- Tedarikçi: ${supplier ? supplier.name : 'Bilinmiyor'}\n`;
-                        }
-                        if (categoryId) {
-                            const category = mockData.categories.find(c => c.id === categoryId);
-                            conflictMessage += `- Kategori: ${category ? t(category.name) : 'Bilinmiyor'}\n`;
-                        }
-                        conflictMessage += `- Varsayılan: ${isDefault ? 'Evet' : 'Hayır'}\n`;
-                        
-                        if (!isDefault && !conflictingRule.isDefault) {
-                            conflictMessage += `\nMevcut Kural Tarihleri:\n`;
-                            conflictMessage += `- Başlangıç: ${conflictingRule.startDate ? new Date(conflictingRule.startDate).toLocaleDateString('tr-TR') : '-'}\n`;
-                            conflictMessage += `- Bitiş: ${conflictingRule.endDate ? new Date(conflictingRule.endDate).toLocaleDateString('tr-TR') : '-'}\n`;
-                            conflictMessage += `\nYeni Kural Tarihleri:\n`;
-                            conflictMessage += `- Başlangıç: ${startDate ? new Date(startDate).toLocaleDateString('tr-TR') : '-'}\n`;
-                            conflictMessage += `- Bitiş: ${endDate ? new Date(endDate).toLocaleDateString('tr-TR') : '-'}\n`;
-                        }
-                        
-                        alert(conflictMessage);
-                        return false; // Return false to prevent modal from closing
                     }
                 }
-                
-                // Check if editing (editId is a valid number) or creating new (editId is null/undefined)
-                if (editId !== null && editId !== undefined && !isNaN(editId)) {
-                    const rule = mockData.commissionRules.find(x => x.id === editId);
-                    if (rule) {
-                        // Track changes for change log
-                        const changes = [];
-                        const currentUser = window.currentUser || { name: 'Admin', role: 'admin' };
-                        
-                        if (rule.rate !== rate) {
-                            changes.push({
-                                field: 'Komisyon Oranı',
-                                oldValue: `${rule.rate}%`,
-                                newValue: `${rate}%`
-                            });
-                        }
-                        if (rule.defaultRate !== (isNaN(defaultRate) ? null : defaultRate)) {
-                            changes.push({
-                                field: 'Varsayılan Oran',
-                                oldValue: rule.defaultRate ? `${rule.defaultRate}%` : '-',
-                                newValue: isNaN(defaultRate) ? '-' : `${defaultRate}%`
-                            });
-                        }
-                        if (rule.startDate !== (startDate || null)) {
-                            changes.push({
-                                field: 'Başlangıç Tarihi',
-                                oldValue: rule.startDate ? new Date(rule.startDate).toLocaleDateString('tr-TR') : '-',
-                                newValue: startDate ? new Date(startDate).toLocaleDateString('tr-TR') : '-'
-                            });
-                        }
-                        if (rule.endDate !== (endDate || null)) {
-                            changes.push({
-                                field: 'Bitiş Tarihi',
-                                oldValue: rule.endDate ? new Date(rule.endDate).toLocaleDateString('tr-TR') : '-',
-                                newValue: endDate ? new Date(endDate).toLocaleDateString('tr-TR') : '-'
-                            });
-                        }
-                        
-                        // When editing, only update rate and dates (type, supplierId, categoryId, isDefault are read-only)
-                        rule.rate = rate;
-                        rule.defaultRate = isNaN(defaultRate) ? null : defaultRate;
-                        rule.startDate = startDate || null;
-                        rule.endDate = endDate || null;
-                        rule.updatedAt = new Date().toISOString();
-                        
-                        // Add change log entry if there are changes
-                        if (changes.length > 0) {
-                            if (!rule.changeLogs) {
-                                rule.changeLogs = [];
-                            }
-                            rule.changeLogs.unshift({
-                                id: Date.now(),
-                                timestamp: new Date().toISOString(),
-                                user: currentUser.name || 'Admin',
-                                userRole: currentUser.role || 'admin',
-                                action: 'rule_updated',
-                                actionLabel: 'Kural Güncellendi',
-                                description: 'Komisyon kuralı güncellendi',
-                                details: {
-                                    changes: changes
-                                }
-                            });
-                        }
-                        
-                        // Note: type, supplierId, categoryId, and isDefault are preserved from original rule
-                        // They are disabled in the edit modal, so we don't update them
-                    } else {
-                        alert('Düzenlenecek kural bulunamadı.');
-                        return false; // Return false to prevent modal from closing
+
+                // Çakışma kontrolü - hem yeni kayıtta hem düzenlemede çalışır.
+                // Gelir modeli tipine bakmaz: aynı parametreler örtüşen tarihlerde
+                // hem komisyon hem kâr marjı olarak tanımlanamaz.
+                const candidate = { revenueModel, type, supplierId, categoryId, productId, isDefault, startDate, endDate, rate };
+                const conflictingRule = findConflictingRevenueRule(candidate, isEditing ? editId : null);
+                if (conflictingRule) {
+                    alert(buildRevenueConflictMessage(candidate, conflictingRule));
+                    return false;
+                }
+
+                const currentUser = window.currentUser || { name: 'Admin', role: 'admin' };
+                const now = new Date().toISOString();
+                const fmtDate = d => d ? new Date(d).toLocaleDateString('tr-TR') : '-';
+
+                if (isEditing) {
+                    const rule = mockData.revenueModelRules.find(x => x.id === editId);
+                    const changes = [];
+
+                    if (rule.rate !== rate) {
+                        changes.push({ field: modelMeta.shortValueLabel, oldValue: `${rule.rate}%`, newValue: `${rate}%` });
+                    }
+                    if ((rule.startDate || null) !== (startDate || null)) {
+                        changes.push({ field: 'Başlangıç Tarihi', oldValue: fmtDate(rule.startDate), newValue: fmtDate(startDate) });
+                    }
+                    if ((rule.endDate || null) !== (endDate || null)) {
+                        changes.push({ field: 'Bitiş Tarihi', oldValue: fmtDate(rule.endDate), newValue: fmtDate(endDate) });
+                    }
+
+                    // Gelir modeli, kapsam, hedef ve varsayılan bilgisi korunur (düzenlemede salt okunur)
+                    rule.rate = rate;
+                    rule.startDate = startDate || null;
+                    rule.endDate = endDate || null;
+                    rule.updatedAt = now;
+
+                    if (changes.length > 0) {
+                        if (!rule.changeLogs) rule.changeLogs = [];
+                        rule.changeLogs.unshift({
+                            id: Date.now(),
+                            timestamp: now,
+                            user: currentUser.name || 'Admin',
+                            userRole: currentUser.role || 'admin',
+                            action: 'rule_updated',
+                            actionLabel: 'Kural Güncellendi',
+                            description: 'Gelir modeli kuralı güncellendi',
+                            details: { changes }
+                        });
                     }
                 } else {
-                    const newId = mockData.commissionRules.length > 0 
-                        ? Math.max(...mockData.commissionRules.map(x => x.id || 0), 0) + 1 
+                    const newId = mockData.revenueModelRules.length > 0
+                        ? Math.max(...mockData.revenueModelRules.map(x => x.id || 0), 0) + 1
                         : 1;
-                    const now = new Date().toISOString();
-                    
-                    const currentUser = window.currentUser || { name: 'Admin', role: 'admin' };
-                    
+
+                    const supplier = supplierId ? mockData.suppliers.find(s => s.id === supplierId) : null;
+                    const category = categoryId ? mockData.categories.find(c => c.id === categoryId) : null;
+                    const product = productId ? mockData.products.find(p => p.id === productId) : null;
+
                     const newRule = {
                         id: newId,
+                        revenueModel,
                         type,
                         supplierId,
+                        supplierName: supplier ? supplier.name : null,
                         categoryId,
+                        categoryName: category ? t(category.name) : null,
+                        productId,
+                        productName: product ? (typeof product.name === 'object' ? t(product.name) : product.name) : null,
                         rate,
-                        defaultRate: isNaN(defaultRate) ? null : defaultRate,
+                        defaultRate: null,
                         startDate: startDate || null,
                         endDate: endDate || null,
-                        isDefault: isDefault,
+                        isDefault,
                         createdAt: now,
                         updatedAt: now,
                         changeLogs: [{
@@ -29983,76 +30274,31 @@
                             userRole: currentUser.role || 'admin',
                             action: 'rule_created',
                             actionLabel: 'Kural Oluşturuldu',
-                            description: 'Yeni komisyon kuralı oluşturuldu',
+                            description: 'Yeni gelir modeli kuralı oluşturuldu',
                             details: {
                                 changes: [
-                                    {
-                                        field: 'Komisyon Tipi',
-                                        oldValue: '-',
-                                        newValue: type === 'supplier' ? 'Tedarikçi Bazlı' : type === 'category' ? 'Kategori Bazlı' : 'Tedarikçi + Kategori Bazlı'
-                                    },
-                                    ...(supplierId ? [{
-                                        field: 'Tedarikçi',
-                                        oldValue: '-',
-                                        newValue: (() => {
-                                            const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                                            return supplier ? supplier.name : 'Bilinmiyor';
-                                        })()
-                                    }] : []),
-                                    ...(categoryId ? [{
-                                        field: 'Kategori',
-                                        oldValue: '-',
-                                        newValue: (() => {
-                                            const category = mockData.categories.find(c => c.id === categoryId);
-                                            return category ? t(category.name) : 'Bilinmiyor';
-                                        })()
-                                    }] : []),
-                                    {
-                                        field: 'Komisyon Oranı',
-                                        oldValue: '-',
-                                        newValue: `${rate}%`
-                                    },
-                                    {
-                                        field: 'Varsayılan',
-                                        oldValue: '-',
-                                        newValue: isDefault ? 'Evet' : 'Hayır'
-                                    },
-                                    ...(startDate ? [{
-                                        field: 'Başlangıç Tarihi',
-                                        oldValue: '-',
-                                        newValue: new Date(startDate).toLocaleDateString('tr-TR')
-                                    }] : []),
-                                    ...(endDate ? [{
-                                        field: 'Bitiş Tarihi',
-                                        oldValue: '-',
-                                        newValue: new Date(endDate).toLocaleDateString('tr-TR')
-                                    }] : [])
+                                    { field: 'Gelir Modeli', oldValue: '-', newValue: modelMeta.label },
+                                    { field: 'Kural Kapsamı', oldValue: '-', newValue: scopeMeta.label },
+                                    ...(supplier ? [{ field: 'Tedarikçi', oldValue: '-', newValue: supplier.name }] : []),
+                                    ...(category ? [{ field: 'Kategori', oldValue: '-', newValue: t(category.name) }] : []),
+                                    ...(product ? [{ field: 'Ürün', oldValue: '-', newValue: getRevenueRuleProductName(productId) }] : []),
+                                    { field: modelMeta.shortValueLabel, oldValue: '-', newValue: `${rate}%` },
+                                    { field: 'Varsayılan', oldValue: '-', newValue: isDefault ? 'Evet' : 'Hayır' },
+                                    ...(startDate ? [{ field: 'Başlangıç Tarihi', oldValue: '-', newValue: fmtDate(startDate) }] : []),
+                                    ...(endDate ? [{ field: 'Bitiş Tarihi', oldValue: '-', newValue: fmtDate(endDate) }] : [])
                                 ]
                             }
                         }]
                     };
-                    
-                    // Set names
-                    if (supplierId) {
-                        const supplier = mockData.suppliers.find(s => s.id === supplierId);
-                        newRule.supplierName = supplier?.name;
-                    }
-                    if (categoryId) {
-                        const category = mockData.categories.find(c => c.id === categoryId);
-                        newRule.categoryName = category ? t(category.name) : null;
-                    }
-                    
-                    mockData.commissionRules.push(newRule);
+
+                    mockData.revenueModelRules.push(newRule);
                 }
-                
-                // Show success message
-                showToast(editId ? 'Komisyon kuralı güncellendi!' : 'Komisyon kuralı eklendi!', 'success');
-                
-                // Refresh the commission management page after modal closes (accounting for 300ms animation)
+
+                showToast(isEditing ? 'Gelir modeli kuralı güncellendi!' : 'Gelir modeli kuralı eklendi!', 'success');
+
                 setTimeout(() => {
                     const currentHash = window.location.hash;
                     if (currentHash.includes('#commissions') || currentHash.includes('#settings/commissions') || currentHash.includes('#commission')) {
-                        // Refresh the commission management page
                         if (typeof renderers !== 'undefined' && typeof renderers.commissionManagement === 'function') {
                             renderers.commissionManagement();
                         } else if (typeof renderSettingsSubTab === 'function') {
@@ -30062,20 +30308,25 @@
                         }
                     }
                 }, 400);
-                
-                // Return true to indicate success (modal will close)
+
                 return true;
             } catch (error) {
-                console.error('Error saving commission rule:', error);
-                alert('Komisyon kuralı kaydedilirken bir hata oluştu: ' + error.message);
-                return false; // Return false to prevent modal from closing on error
+                console.error('Error saving revenue model rule:', error);
+                alert('Gelir modeli kuralı kaydedilirken bir hata oluştu: ' + error.message);
+                return false;
             }
         }
 
+
         function deleteCommission(id) {
             if (confirm(t('confirm_delete_rule'))) {
-                mockData.commissionRules = mockData.commissionRules.filter(x => x.id !== id);
-                renderSettingsSubTab('commissions');
+                mockData.revenueModelRules = mockData.revenueModelRules.filter(x => x.id !== id);
+                showToast('Gelir modeli kuralı silindi!', 'success');
+                if (typeof renderers !== 'undefined' && typeof renderers.commissionManagement === 'function') {
+                    renderers.commissionManagement();
+                } else if (typeof renderSettingsSubTab === 'function') {
+                    renderSettingsSubTab('commissions');
+                }
             }
         }
 
@@ -30206,188 +30457,146 @@
             }
         }
 
-        // --- Supplier Restrictions Management Functions ---
-        function showAddSupplierRestrictionModal(editId = null) {
-            const isEditing = editId !== null;
-            const restriction = isEditing ? mockData.supplierRestrictions.find(x => x.id === editId) : null;
-            const title = isEditing ? t('edit_supplier_restriction') : t('add_supplier_restriction');
-            const user = window.currentUser || {};
-            
-            const supplierOptions = mockData.suppliers.map(s => 
-                `<option value="${s.id}" ${restriction?.supplierId === s.id ? 'selected' : ''}>${s.name}</option>`
-            ).join('');
-            
-            const categoryOptions = mockData.categories.map(c => 
-                `<option value="${c.id}" ${restriction?.restrictionType === 'category' && restriction?.restrictionValue?.includes(c.id) ? 'selected' : ''}>${t(c.name)}</option>`
-            ).join('');
-            
-            const body = `
-                <div class="space-y-4">
-                    <div>
-                        <label for="restriction-supplier" class="block text-sm font-medium text-gray-700">${t('supplier')}</label>
-                        <select id="restriction-supplier" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="">${t('select_supplier')}</option>
-                            ${supplierOptions}
-                        </select>
-                    </div>
-                    <div>
-                        <label for="restriction-type" class="block text-sm font-medium text-gray-700">${t('restriction_type')}</label>
-                        <select id="restriction-type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                            <option value="">${t('select_restriction_type')}</option>
-                            <option value="category" ${restriction?.restrictionType === 'category' ? 'selected' : ''}>${t('restriction_type_category')}</option>
-                            <option value="brand" ${restriction?.restrictionType === 'brand' ? 'selected' : ''}>${t('restriction_type_brand')}</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Category Restriction -->
-                    <div id="category-restriction" class="hidden">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">${t('allowed_categories')}</label>
-                        <div class="space-y-2 max-h-32 overflow-y-auto border rounded-md p-2">
-                            ${mockData.categories.map(c => `
-                                <div class="flex items-center">
-                                    <input type="checkbox" id="cat-${c.id}" class="h-4 w-4 text-blue-600 border-gray-300 rounded" 
-                                           ${restriction?.restrictionType === 'category' && restriction?.restrictionValue?.includes(c.id) ? 'checked' : ''}>
-                                    <label for="cat-${c.id}" class="ml-2 text-sm text-gray-700">${t(c.name)}</label>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    
-                    <div class="flex items-center">
-                        <input type="checkbox" id="restriction-active" class="h-4 w-4 text-blue-600 border-gray-300 rounded" ${restriction?.isActive !== false ? 'checked' : ''}>
-                        <label for="restriction-active" class="ml-2 text-sm text-gray-700">${t('restriction_active')}</label>
-                    </div>
-                    <div>
-                        <label for="restriction-reason" class="block text-sm font-medium text-gray-700">${t('reason')}</label>
-                        <textarea id="restriction-reason" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" placeholder="Bu kısıtlamanın nedenini açıklayın...">${restriction?.reason || ''}</textarea>
+        // Supplier sales scope: legacy category/brand selections are allowlists.
+        // Unconfigured or inactive legacy rules retain the unrestricted default.
+        function salesEscape(value) {
+            return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+        }
+
+        function getSupplierSalesScope(supplierId) {
+            const saved = mockData.supplierSalesPermissions?.[supplierId];
+            if (saved) return saved;
+            const rules = (mockData.supplierRestrictions || []).filter(r => String(r.supplierId) === String(supplierId) && r.isActive);
+            const scope = { reason: '', configured: false };
+            ['category', 'brand'].forEach(type => {
+                const matching = rules.filter(r => r.restrictionType === type);
+                const ids = [...new Set(matching.flatMap(r => Array.isArray(r.restrictionValue) ? r.restrictionValue : []))];
+                scope[type] = { mode: matching.length ? (ids.length ? 'selected' : 'none') : 'all', ids };
+                if (matching.length) scope.configured = true;
+            });
+            scope.reason = rules.map(r => r.reason).filter(Boolean).join(' · ');
+            return scope;
+        }
+
+        function salesScopeLabel(type, scope) {
+            if (scope.mode === 'all') return type === 'category' ? 'Tüm kategoriler' : 'Tüm markalar';
+            if (scope.mode === 'none') return 'Ürün ekleyemez';
+            const items = type === 'category' ? mockData.categories : mockData.brands;
+            return scope.ids.map(id => {
+                const item = items.find(item => String(item.id) === String(id));
+                return item ? t(item.name) : `Tanımsız kayıt (#${id})`;
+            }).join(', ');
+        }
+
+        function renderSupplierSalesPermissions(container) {
+            const suppliers = mockData.suppliers || [];
+            container.innerHTML = `
+                <div class="mb-6">
+                    <p class="text-gray-600">Tedarikçilerin hangi kategori ve markalarda ürün ekleyebileceğini yönetin.</p>
+                    <div class="mt-4 p-4 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800">
+                        <i class="fas fa-info-circle mr-2" aria-hidden="true"></i>
+                        Özel yetki tanımlanmayan tedarikçiler için tüm kategori ve markalar açıktır.
+                        Ürün eklemeyi durdurmak için “Ürün ekleyemez” seçeneğini kullanın. Tedarikçi hesap onayı ayrıca geçerlidir.
                     </div>
                 </div>
-            `;
-            
-            showModal(title, body, t('save'), () => {
-                saveSupplierRestriction(editId);
-            });
-            
-            // Ensure buttons are visible
-            const restrictionModalConfirmButton = document.getElementById('modal-confirm');
-            if(restrictionModalConfirmButton) {
-                restrictionModalConfirmButton.classList.remove('hidden');
-                restrictionModalConfirmButton.classList.add('bg-blue-600', 'hover:bg-blue-700');
-            }
-            const restrictionModalCancelButton = document.getElementById('modal-cancel');
-            if(restrictionModalCancelButton) {
-                restrictionModalCancelButton.classList.remove('hidden');
-            }
-            
-            // Add event listener for restriction type change
-            const restrictionTypeSelect = document.getElementById('restriction-type');
-            restrictionTypeSelect.addEventListener('change', toggleRestrictionFields);
-            
-            // Initialize fields visibility
-            toggleRestrictionFields();
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="p-4 border-b flex flex-wrap gap-4 items-end justify-between">
+                        <div><h3 class="text-lg font-semibold">Satış kapsamı</h3><p id="sales-result-count" class="text-sm text-gray-500 mt-1"></p></div>
+                        <div class="flex flex-wrap gap-3">
+                            <div><label for="sales-search" class="block text-xs font-medium text-gray-600 mb-1">Tedarikçi ara</label><input id="sales-search" type="search" placeholder="Ad veya e-posta" class="border border-gray-300 rounded-md px-3 py-2 text-sm"></div>
+                            <div><label for="sales-filter" class="block text-xs font-medium text-gray-600 mb-1">Satış kapsamı</label><select id="sales-filter" class="border border-gray-300 rounded-md px-3 py-2 text-sm"><option value="all">Tüm tedarikçiler</option><option value="open">Tüm kapsam açık</option><option value="selected">Seçili kapsam</option><option value="none">Ürün ekleyemez</option></select></div>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto"><table class="w-full text-left">
+                        <thead class="table-header"><tr>
+                            <th class="p-4 text-sm font-semibold">Tedarikçi</th><th class="p-4 text-sm font-semibold">İzin verilen kategoriler</th>
+                            <th class="p-4 text-sm font-semibold">İzin verilen markalar</th><th class="p-4 text-sm font-semibold">Satış kapsamı</th><th class="p-4 text-sm font-semibold text-right">İşlem</th>
+                        </tr></thead><tbody id="sales-permissions-body"></tbody>
+                    </table></div><div id="sales-pagination" class="px-4"></div>
+                </div>`;
+            const kind = scope => scope.category.mode === 'none' || scope.brand.mode === 'none' ? 'none' : scope.category.mode === 'selected' || scope.brand.mode === 'selected' ? 'selected' : 'open';
+            const render = () => {
+                const search = document.getElementById('sales-search').value.trim().toLocaleLowerCase('tr-TR');
+                const filter = document.getElementById('sales-filter').value;
+                const filtered = suppliers.filter(s => `${s.name} ${s.email || ''}`.toLocaleLowerCase('tr-TR').includes(search) && (filter === 'all' || kind(getSupplierSalesScope(s.id)) === filter));
+                document.getElementById('sales-result-count').textContent = `${filtered.length} / ${suppliers.length} tedarikçi`;
+                const rows = paginateData(filtered, window.paginationState.currentPage);
+                document.getElementById('sales-permissions-body').innerHTML = rows.map(supplier => {
+                    const scope = getSupplierSalesScope(supplier.id);
+                    const state = kind(scope);
+                    const badge = state === 'none' ? ['bg-red-50 text-red-700', 'Ürün ekleyemez'] : state === 'selected' ? ['bg-blue-50 text-blue-700', 'Seçili kapsam'] : ['bg-green-50 text-green-700', 'Tüm kapsam açık'];
+                    return `<tr class="border-b hover:bg-gray-50">
+                        <td class="p-4"><div class="text-sm font-semibold text-gray-900">${salesEscape(supplier.name)}</div><div class="text-xs text-gray-500 mt-1">${salesEscape(supplier.email)}</div></td>
+                        <td class="p-4 text-sm">${salesEscape(salesScopeLabel('category', scope.category))}</td>
+                        <td class="p-4 text-sm">${salesEscape(salesScopeLabel('brand', scope.brand))}</td>
+                        <td class="p-4"><span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${badge[0]}">${badge[1]}</span>${!scope.configured ? '<div class="text-xs text-gray-500 mt-1">Varsayılan kapsam</div>' : ''}</td>
+                        <td class="p-4 text-right"><button class="edit-sales-permissions text-sm font-medium text-blue-600 hover:text-blue-800 whitespace-nowrap" data-id="${supplier.id}" aria-label="${salesEscape(supplier.name)} satış yetkilerini düzenle">Yetkileri düzenle</button></td>
+                    </tr>`;
+                }).join('') || '<tr><td colspan="5" class="p-8 text-center text-gray-500">Aramanıza uygun tedarikçi bulunamadı.</td></tr>';
+                container.querySelectorAll('.edit-sales-permissions').forEach(button => button.addEventListener('click', () => showSupplierSalesPermissionsModal(Number(button.dataset.id))));
+                renderPagination('sales-pagination');
+            };
+            window.paginationState.currentPage = 1;
+            window.paginationState.renderFunction = render;
+            ['sales-search', 'sales-filter'].forEach(id => document.getElementById(id).addEventListener(id === 'sales-search' ? 'input' : 'change', () => { window.paginationState.currentPage = 1; render(); }));
+            render();
         }
 
-        function toggleRestrictionFields() {
-            const restrictionType = document.getElementById('restriction-type').value;
-            
-            // Hide all restriction fields
-            document.getElementById('category-restriction').classList.add('hidden');
-            
-            // Show relevant field
-            if (restrictionType === 'category') {
-                document.getElementById('category-restriction').classList.remove('hidden');
-            }
-        }
-
-        function saveSupplierRestriction(editId) {
-            const supplierId = parseInt(document.getElementById('restriction-supplier').value);
-            const restrictionType = document.getElementById('restriction-type').value;
-            const isActive = document.getElementById('restriction-active').checked;
-            const reason = document.getElementById('restriction-reason').value.trim();
-            
-            if (!supplierId) {
-                alert(t('supplier_required'));
-                return;
-            }
-            
-            if (!restrictionType) {
-                alert(t('restriction_type_required'));
-                return;
-            }
-            
-            let restrictionValue = null;
-            let restrictionLabel = '';
-            
-            if (restrictionType === 'category') {
-                const selectedCategories = [];
-                mockData.categories.forEach(cat => {
-                    if (document.getElementById(`cat-${cat.id}`).checked) {
-                        selectedCategories.push(cat.id);
-                    }
-                });
-                
-                if (selectedCategories.length === 0) {
-                    alert('Lütfen en az bir kategori seçin');
-                    return;
-                }
-                
-                restrictionValue = selectedCategories;
-                restrictionLabel = selectedCategories.map(id => {
-                    const category = mockData.categories.find(c => c.id === id);
-                    return category ? t(category.name) : '';
-                }).join(', ');
-            }
-            
-            const user = window.currentUser || {};
+        function showSupplierSalesPermissionsModal(supplierId) {
             const supplier = mockData.suppliers.find(s => s.id === supplierId);
-            
-            if (editId !== null) {
-                // Update existing restriction
-                const restrictionItem = mockData.supplierRestrictions.find(x => x.id === editId);
-                if (restrictionItem) {
-                    restrictionItem.supplierId = supplierId;
-                    restrictionItem.supplierName = supplier?.name || '';
-                    restrictionItem.restrictionType = restrictionType;
-                    restrictionItem.restrictionValue = restrictionValue;
-                    restrictionItem.restrictionLabel = restrictionLabel;
-                    restrictionItem.isActive = isActive;
-                    restrictionItem.reason = reason;
-                    restrictionItem.updatedAt = new Date().toISOString();
+            if (!supplier) return;
+            const scope = getSupplierSalesScope(supplierId);
+            const section = (type, title, items) => `<fieldset class="border border-gray-200 rounded-lg p-4">
+                <legend class="px-1 text-sm font-semibold">${title}</legend>
+                <div class="space-y-2">${[
+                    ['all', type === 'category' ? 'Tüm kategoriler' : 'Tüm markalar'],
+                    ['selected', type === 'category' ? 'Yalnızca seçili kategoriler' : 'Yalnızca seçili markalar'],
+                    ['none', 'Ürün ekleyemez']
+                ].map(([value, label]) => `<label class="flex items-center gap-2 text-sm cursor-pointer"><input type="radio" name="sales-${type}-mode" value="${value}" ${scope[type].mode === value ? 'checked' : ''}>${label}</label>`).join('')}</div>
+                <div id="sales-${type}-choices" class="mt-3 border-t pt-3 space-y-2 max-h-40 overflow-y-auto">${items.map(item => `<label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" name="sales-${type}-id" value="${item.id}" ${scope[type].ids.some(id => String(id) === String(item.id)) ? 'checked' : ''}>${salesEscape(t(item.name))}</label>`).join('')}</div>
+                ${type === 'category' ? '<p class="text-xs text-gray-500 mt-3">Seçili kapsamda yalnızca işaretlenen kategoriler dahildir; alt kategorileri ayrıca seçin.</p>' : ''}
+            </fieldset>`;
+            showModal('Satış yetkilerini düzenle', `<div class="space-y-4">
+                <div><p class="font-semibold text-gray-900">${salesEscape(supplier.name)}</p><p class="text-sm text-gray-500 mt-1">Kategori ve marka izinleri birlikte uygulanır.</p></div>
+                ${section('category', 'Hangi kategorilerde ürün ekleyebilir?', mockData.categories)}
+                ${section('brand', 'Hangi markalarda ürün ekleyebilir?', mockData.brands)}
+                <div id="sales-scope-summary" role="status" class="p-3 bg-blue-50 text-blue-800 text-sm rounded-lg"></div>
+                <p id="sales-scope-error" role="alert" class="hidden text-sm text-red-600"></p>
+                <div><label for="sales-scope-reason" class="block text-sm font-medium mb-1">Not (isteğe bağlı)</label><textarea id="sales-scope-reason" rows="2" placeholder="Bu yetki kapsamıyla ilgili bir not ekleyin" class="w-full border border-gray-300 rounded-md p-2 text-sm">${salesEscape(scope.reason)}</textarea></div>
+            </div>`, 'Yetkileri kaydet', () => {
+                const next = readScope();
+                const error = document.getElementById('sales-scope-error');
+                for (const type of ['category', 'brand']) {
+                    if (next[type].mode === 'selected' && !next[type].ids.length) {
+                        error.textContent = type === 'category' ? 'En az bir kategori seçin veya başka bir kapsam seçeneği kullanın.' : 'En az bir marka seçin veya başka bir kapsam seçeneği kullanın.';
+                        error.classList.remove('hidden');
+                        return false;
+                    }
                 }
-                showToast(t('restriction_updated'));
-            } else {
-                // Add new restriction
-                const newId = Math.max(...mockData.supplierRestrictions.map(x => x.id), 0) + 1;
-                const now = new Date().toISOString();
-                
-                const newRestriction = {
-                    id: newId,
-                    supplierId,
-                    supplierName: supplier?.name || '',
-                    restrictionType,
-                    restrictionValue,
-                    restrictionLabel,
-                    isActive,
-                    reason,
-                    addedBy: user.name || 'Admin',
-                    addedAt: now,
-                    updatedAt: now
-                };
-                
-                mockData.supplierRestrictions.push(newRestriction);
-                showToast(t('restriction_added'));
-            }
-            
-            renderSettingsSubTab('supplier-restrictions');
-        }
-
-        function deleteSupplierRestriction(id) {
-            if (confirm(t('confirm_delete_restriction'))) {
-                mockData.supplierRestrictions = mockData.supplierRestrictions.filter(x => x.id !== id);
-                showToast(t('restriction_deleted'));
+                mockData.supplierSalesPermissions = mockData.supplierSalesPermissions || {};
+                mockData.supplierSalesPermissions[supplierId] = { ...next, configured: true, reason: document.getElementById('sales-scope-reason').value.trim(), updatedAt: new Date().toISOString(), updatedBy: window.currentUser?.name || 'Admin' };
                 renderSettingsSubTab('supplier-restrictions');
+                showToast('Tedarikçi satış yetkileri güncellendi.');
+            });
+            function readScope() {
+                const next = {};
+                ['category', 'brand'].forEach(type => {
+                    const mode = document.querySelector(`input[name="sales-${type}-mode"]:checked`).value;
+                    next[type] = { mode, ids: mode === 'selected' ? Array.from(document.querySelectorAll(`input[name="sales-${type}-id"]:checked`), input => Number(input.value)) : [] };
+                });
+                return next;
             }
+            function updateSummary() {
+                const next = readScope();
+                ['category', 'brand'].forEach(type => { document.getElementById(`sales-${type}-choices`).hidden = next[type].mode !== 'selected'; });
+                document.getElementById('sales-scope-error').classList.add('hidden');
+                const blocked = next.category.mode === 'none' || next.brand.mode === 'none';
+                document.getElementById('sales-scope-summary').textContent = blocked
+                    ? `${supplier.name} ürün ekleyemez. Kategori veya marka kapsamından birinin kapalı olması yeterlidir.`
+                    : `${supplier.name} için kategori kapsamı: ${salesScopeLabel('category', next.category) || 'Henüz kategori seçilmedi'}. Marka kapsamı: ${salesScopeLabel('brand', next.brand) || 'Henüz marka seçilmedi'}. Ürün her iki kapsama da uygun olmalıdır.`;
+            }
+            document.querySelectorAll('#modal-body input').forEach(input => input.addEventListener('change', updateSummary));
+            updateSummary();
         }
 
         // --- User Management Functions ---
@@ -30423,9 +30632,9 @@
                     { id: 'orders', name: 'Siparişler', icon: 'fa-shopping-bag', category: 'Siparişler', parent: 'orders' },
                     { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
                     { id: 'finance', name: 'Finans Dashboard', icon: 'fa-chart-line', category: 'Finans', parent: 'finance' },
-                    { id: 'commissions', name: 'Komisyon Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
+                    { id: 'commissions', name: 'Gelir Modeli Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
                     { id: 'settings/suppliers', name: 'Tedarikçi Listesi', icon: 'fa-truck-loading', category: 'Tedarikçiler', parent: 'suppliers' },
-                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Kısıtlamaları', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
+                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Satış Yetkileri', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
                     { id: 'settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
                 );
             }
@@ -30798,10 +31007,10 @@
                     { id: 'returns', name: 'İade İşlemleri', icon: 'fa-undo', category: 'Siparişler', parent: 'orders' },
                     // Finans parent with children
                     { id: 'finance', name: 'Finans Dashboard', icon: 'fa-chart-line', category: 'Finans', parent: 'finance' },
-                    { id: 'commissions', name: 'Komisyon Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
+                    { id: 'commissions', name: 'Gelir Modeli Yönetimi', icon: 'fa-percentage', category: 'Finans', parent: 'finance' },
                     // Tedarikçiler parent with children
                     { id: 'settings/suppliers', name: 'Tedarikçi Listesi', icon: 'fa-truck-loading', category: 'Tedarikçiler', parent: 'suppliers' },
-                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Kısıtlamaları', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
+                    { id: 'settings/supplier-restrictions', name: 'Tedarikçi Satış Yetkileri', icon: 'fa-shield-alt', category: 'Tedarikçiler', parent: 'suppliers' },
                     // Ayarlar parent with children
                     { id: 'settings/users', name: 'Kullanıcı Yönetimi', icon: 'fa-users', category: 'Ayarlar', parent: 'settings' }
                 );
@@ -31112,7 +31321,8 @@
                     'approved': 'approved',
                     'processing': 'processing',
                     'completed': 'completed',
-                    'rejected': 'rejected'
+                    'rejected': 'rejected',
+                    'awaiting_return_shipment': 'awaiting_return_shipment'
                 };
                 const targetStatus = statusMap[tabName];
                 if (targetStatus) {
@@ -32344,7 +32554,7 @@
                     pageContent.innerHTML = `<div class="bg-white rounded-lg shadow"><div id="settings-tab-content" class="p-6"></div></div>`;
                     renderSettingsSubTab('api');
                 } else if (subpage === 'supplier-restrictions') {
-                    pageTitle.textContent = 'Tedarikçi Kısıtlamaları';
+                    pageTitle.textContent = 'Tedarikçi Satış Yetkileri';
                     pageContent.innerHTML = `<div id="settings-tab-content"></div>`;
                     renderSettingsSubTab('supplier-restrictions');
                 } else {
@@ -32456,7 +32666,7 @@ const navLinksAdmin = [
     role: 'admin',
     children: [
       { href: '#finance', icon: 'fa-chart-line', text: 'Finans Dashboard', role: 'admin' },
-      { href: '#commissions', icon: 'fa-percentage', text: 'Komisyon Yönetimi', role: 'admin' }
+      { href: '#commissions', icon: 'fa-percentage', text: 'Gelir Modeli Yönetimi', role: 'admin' }
     ]
   },
   // { href: '#channels', icon: 'fa-store', text: 'Kanallar', role: 'admin' }, // Hidden
@@ -32476,7 +32686,7 @@ const navLinksAdmin = [
     role: 'admin',
     children: [
       { href: '#settings/suppliers', icon: 'fa-truck-loading', text: 'Tedarikçi Listesi', role: 'admin' },
-      { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Kısıtlamaları', role: 'admin' }
+      { href: '#settings/supplier-restrictions', icon: 'fa-shield-alt', text: 'Tedarikçi Satış Yetkileri', role: 'admin' }
     ]
   },
   {
@@ -32760,170 +32970,72 @@ sidebarNav.addEventListener('click', (e) => {
     </script>
 
 <script>
-// Function to get commission rate for a supplier and product (for display purposes)
+// ---- Gelir modeli kuralı çözümleyicileri ----
+// Not: her iki gelir modelinde de platformun payı satış fiyatı üzerinden yüzde olarak
+// hesaplandığı için finansal ekranlar tek bir "oran" değeriyle çalışmaya devam eder.
+// Modelin kendisi resolveRevenueModelRule(...).revenueModel ile ayrıca okunabilir.
+
+// Bir ürün/tedarikçi için geçerli oranı döner (görüntüleme amaçlı)
 function getSupplierCommissionRate(productId, supplierId) {
-    const product = mockData.products.find(p => p.id === productId);
-    if (!product) {
-        return 12; // Default commission rate
-    }
-    
-    const commissionRules = mockData.commissionRules || [];
-    const currentDate = new Date();
-    
-    // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
-    const supplierCategoryRule = commissionRules.find(rule => 
-        rule.type === 'supplier_category' && 
-        rule.supplierId === supplierId &&
-        rule.categoryId === product.categoryId &&
-        new Date(rule.startDate) <= currentDate &&
-        (!rule.endDate || new Date(rule.endDate) >= currentDate)
-    );
-    
-    const supplierRule = commissionRules.find(rule => 
-        rule.type === 'supplier' && 
-        rule.supplierId === supplierId &&
-        new Date(rule.startDate) <= currentDate &&
-        (!rule.endDate || new Date(rule.endDate) >= currentDate)
-    );
-    
-    const categoryRule = commissionRules.find(rule => 
-        rule.type === 'category' && 
-        rule.categoryId === product.categoryId &&
-        new Date(rule.startDate) <= currentDate &&
-        (!rule.endDate || new Date(rule.endDate) >= currentDate)
-    );
-    
-    if (supplierCategoryRule) {
-        return supplierCategoryRule.rate;
-    } else if (supplierRule) {
-        return supplierRule.rate;
-    } else if (categoryRule) {
-        return categoryRule.rate;
-    }
-    
-    return 12; // Default rate
+    return resolveRevenueModelRule(productId, supplierId, new Date()).rate;
 }
 
-// Function to calculate commission rate for a specific item
-function calculateItemCommissionRate(item, order) {
-    if (!item || !order) {
-        return 12; // Default commission rate
-    }
-    
-    const commissionRules = mockData.commissionRules || [];
-    
-    // Find the product to get category and supplier info
-    const product = mockData.products.find(p => p.sku === item.sku);
-    if (!product) {
-        return 12; // Default rate if product not found
-    }
-    
-    // Find applicable commission rule
-    let applicableRate = 12; // Default rate
-    
-    // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
-    const supplierCategoryRule = commissionRules.find(rule => 
-        rule.type === 'supplier_category' && 
-        rule.supplierId === order.supplierId &&
-        rule.categoryId === product.categoryId &&
-        new Date(rule.startDate) <= new Date(order.date) &&
-        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-    );
-    
-    const supplierRule = commissionRules.find(rule => 
-        rule.type === 'supplier' && 
-        rule.supplierId === order.supplierId &&
-        new Date(rule.startDate) <= new Date(order.date) &&
-        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-    );
-    
-    const categoryRule = commissionRules.find(rule => 
-        rule.type === 'category' && 
-        rule.categoryId === product.categoryId &&
-        new Date(rule.startDate) <= new Date(order.date) &&
-        (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-    );
-    
-    if (supplierCategoryRule) {
-        applicableRate = supplierCategoryRule.rate;
-    } else if (supplierRule) {
-        applicableRate = supplierRule.rate;
-    } else if (categoryRule) {
-        applicableRate = categoryRule.rate;
-    }
-    
-    return applicableRate;
+// Bir ürün/tedarikçi için geçerli gelir modelini döner ('commission' | 'margin')
+function getSupplierRevenueModel(productId, supplierId, refDate) {
+    return resolveRevenueModelRule(productId, supplierId, refDate || new Date()).revenueModel;
 }
-// Function to calculate weighted average commission rate for an order
+
+// Sipariş satırı için geçerli kuralın tamamını döner
+function resolveOrderItemRevenueRule(item, order) {
+    if (!item || !order) return null;
+    const product = (mockData.products || []).find(p => p.sku === item.sku);
+    return resolveRevenueModelRule(product ? product.id : null, order.supplierId, order.date);
+}
+
+// Sipariş satırı için geçerli oran
+function calculateItemCommissionRate(item, order) {
+    const resolved = resolveOrderItemRevenueRule(item, order);
+    return resolved ? resolved.rate : DEFAULT_REVENUE_RATE;
+}
+
+// Sipariş satırı için geçerli gelir modeli
+function calculateItemRevenueModel(item, order) {
+    const resolved = resolveOrderItemRevenueRule(item, order);
+    return resolved ? resolved.revenueModel : 'commission';
+}
+
+// Sipariş geneli için tutar ağırlıklı ortalama oran
 function calculateWeightedAverageCommissionRate(order) {
     if (!order || !order.items || order.items.length === 0) {
-        return 12; // Default commission rate
+        return DEFAULT_REVENUE_RATE;
     }
-    
-    const commissionRules = mockData.commissionRules || [];
+
     let totalWeightedRate = 0;
     let totalAmount = 0;
-    
-    // Process each item in the order
+
     order.items.forEach(item => {
         const itemAmount = item.total || 0;
         if (itemAmount <= 0) return;
-        
-        // Find the product to get category and supplier info
-        const product = mockData.products.find(p => p.sku === item.sku);
-        if (!product) {
-            // If product not found, use default rate
-            totalWeightedRate += itemAmount * 12; // Default 12%
-            totalAmount += itemAmount;
-            return;
-        }
-        
-        // Find applicable commission rule
-        let applicableRate = 12; // Default rate
-        
-        // Priority: 1. Supplier+Category rule, 2. Supplier-specific rule, 3. Category-specific rule, 4. Default rate
-        const supplierCategoryRule = commissionRules.find(rule => 
-            rule.type === 'supplier_category' && 
-            rule.supplierId === order.supplierId &&
-            rule.categoryId === product.categoryId &&
-            new Date(rule.startDate) <= new Date(order.date) &&
-            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-        );
-        
-        const supplierRule = commissionRules.find(rule => 
-            rule.type === 'supplier' && 
-            rule.supplierId === order.supplierId &&
-            new Date(rule.startDate) <= new Date(order.date) &&
-            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-        );
-        
-        const categoryRule = commissionRules.find(rule => 
-            rule.type === 'category' && 
-            rule.categoryId === product.categoryId &&
-            new Date(rule.startDate) <= new Date(order.date) &&
-            (!rule.endDate || new Date(rule.endDate) >= new Date(order.date))
-        );
-        
-        if (supplierCategoryRule) {
-            applicableRate = supplierCategoryRule.rate;
-        } else if (supplierRule) {
-            applicableRate = supplierRule.rate;
-        } else if (categoryRule) {
-            applicableRate = categoryRule.rate;
-        }
-        
-        // Add to weighted calculation
-        totalWeightedRate += itemAmount * applicableRate;
+        totalWeightedRate += itemAmount * calculateItemCommissionRate(item, order);
         totalAmount += itemAmount;
     });
-    
-    // Calculate weighted average
+
     if (totalAmount > 0) {
-        return Math.round((totalWeightedRate / totalAmount) * 100) / 100; // Round to 2 decimal places
+        return Math.round((totalWeightedRate / totalAmount) * 100) / 100;
     }
-    
-    return 12; // Default rate if no valid items
+
+    return DEFAULT_REVENUE_RATE;
 }
+
+// Bir siparişte kaç farklı gelir modeli kullanıldığını döner (rapor rozetleri için)
+function getOrderRevenueModels(order) {
+    if (!order || !order.items) return [];
+    const models = new Set();
+    order.items.forEach(item => models.add(calculateItemRevenueModel(item, order)));
+    return Array.from(models);
+}
+
+
 // Export function for orders
 function exportOrdersToCSV(userType) {
   const orders = Array.isArray(mockData.orders) ? mockData.orders : [];
@@ -40169,5 +40281,7 @@ window.mockData.orders = window.mockData.orders || [
      // TODO: Implement edit update request functionality
  }
 </script>
+<script src="returns-model.js"></script>
+<script src="returns-flow.js"></script>
 </body>
 </html>
